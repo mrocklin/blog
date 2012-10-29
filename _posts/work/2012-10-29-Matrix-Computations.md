@@ -12,6 +12,8 @@ I want to translate matrix expressions like this
 
 Into Fortran code that call BLAS and LAPACK code like this
 
+{% highlight fortran %}
+
     subroutine f(alpha, A, B, x, n)
 
     real*8, intent(in) :: A(n, n)
@@ -26,11 +28,16 @@ Into Fortran code that call BLAS and LAPACK code like this
     RETURN
     END
 
+{% endhighlight %}
 
 And then call it in Python like this
 
+{% highlight python %}
+
     nA, nB, nx = .... # Get numpy arrays
     f(nalpha, nA, nB.T, nx.T)) 
+
+{% endhighlight %}
 
 What is BLAS?
 -------------
@@ -87,11 +94,15 @@ Question: is `BAB'` symmetric and positive definite?
 
 Lets see how we can pose this question in SymPy.
 
-    In [1]: A = MatrixSymbol('A', n, n)
-    In [2]: B = MatrixSymbol('B', n, n)
-    In [3]: context = Q.symmetric(A) & Q.positive_definite(A) & Q.orthogonal(B)
-    In [4]: ask(Q.symmetric(B*A*B.T) & Q.positive_definite(B*A*B.T), context)
-    Out[4]: True
+{% highlight python %}
+
+    >>> A = MatrixSymbol('A', n, n)
+    >>> B = MatrixSymbol('B', n, n)
+    >>> context = Q.symmetric(A) & Q.positive_definite(A) & Q.orthogonal(B)
+    >>> ask(Q.symmetric(B*A*B.T) & Q.positive_definite(B*A*B.T), context)
+    True
+
+{% endhighlight %}
 
 Positive-Definiteness is a very important property of matrix expressions. It strongly influences our choice of numerical algorithm. For example the fast [Cholesky algorithm](http://en.wikipedia.org/wiki/Cholesky) for LU decomposition may only be used if a matrix is symmetric and positive definite. Expert numerical analysts know this most scientific programmers do not. NumPy does not but SymPy does.
 
