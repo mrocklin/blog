@@ -8,7 +8,11 @@ tags : [SymPy, Matrices]
 
 I want to translate matrix expressions like this
 
+{% highlight python %}
+
     (alpha*A*B).I * x
+
+{% endhighlight %}
 
 Into Fortran code that call BLAS and LAPACK code like this
 
@@ -16,11 +20,11 @@ Into Fortran code that call BLAS and LAPACK code like this
 
     subroutine f(alpha, A, B, x, n)
 
-    real*8, intent(in) :: A(n, n)
-    real*8, intent(inout) :: B(n, n)
-    real*8, intent(in) :: alpha
-    integer, intent(in) :: n
-    real*8, intent(inout) :: x(n, 1)
+    real*8,  intent(in)     :: A(n, n)
+    real*8,  intent(inout)  :: B(n, n)
+    real*8,  intent(in)     :: alpha
+    integer, intent(in)     :: n
+    real*8,  intent(inout)  :: x(n, 1)
 
     call dgemm('N', 'N', n, n, n, alpha, A, n, B, n, 0, B, n)
     call dtrsv('L', 'N', 'N', n, B, n, x, 1)
@@ -56,13 +60,11 @@ Why not just use NumPy?
 If you're reading this then you're probably comfortable with NumPy and you're very happy that it gives you access to highly optimized low-level code like `DGEMM`. What else could we desire? NumPy has two flaws
 
 1.  Each operation occurs at the Python level. This causes sub-optimal operation ordering and lots of unnecessary copies. For example the following code is executed as follows
-
-    `D = A*B*C # store A*B  -> _1`
-
-    `D = _1*C  # store _1*C -> _2`
-
-    `D = _2    # store _2   ->  D`
-
+    {% highlight python %}
+D = A*B*C # store A*B  -> _1
+    D = _1*C  # store _1*C -> _2
+    D = _2    # store _2   ->  D
+    {% endhighlight %}
     It might have been cleaner to multiply `A*B*C` as `(A*B)*C` or `A*(B*C)` depending on the shapes of the matrices. Additionally the temporary matrices `_1`, and `_2` did not need to be created. If we're allowed to *reason about the computation* before execution then we can make some substantial optimizaitons. 
 
 2.  BLAS contains many special functions for special cases. For example you can use `DSYMM` when one of your matrices is **SY**metric or `DTRMM` when one of your matrices is **TR**iangular. These allow for faster execution time if we are able to reason about our matrices. 
@@ -111,16 +113,18 @@ Describing `BLAS`
 
 We describe a new matrix operation in SymPy with code like the following:
 
+{% highlight python %}
     class LU(BLAS):
         """ LU Decomposition """
         _inputs   = (S,)
         _outputs  = (Lof(S), Uof(S))
-        view_map  = {0: 0, 1: 0} # inplace map. Both outputs are stored in first input
+        view_map  = {0: 0, 1: 0} # Both outputs are stored in first input
         condition = True
 
     class Cholesky(LU):
         """ Cholesky LU Decomposition """
         condition = Q.symmetric(S) & Q.positive_definite(S)
+{% endhighlight %}
 
 This description allows us to consisely describe the expert knowledge used by numerical analysts. It allows us to describe the mathematical properties of linear algebraic operations.
 
@@ -140,15 +144,21 @@ Translating Matrix Expressions into Matrix Computations
 
 So how can we transform a matrix expression like 
     
+{% highlight python %}
     (alpha*A*B).I * x
+{% endhighlight %}
 
 And a set of predicates like 
 
+{% highlight python %}
     Q.lower_triangular(A) & Q.lower_triangular(B) & Q.invertible(A*B)
+{% endhighlight %}
 
 Into a graph of `BLAS` calls like one of the following?
 
+{% highlight python %}
     DGEMM(alpha, A, B, 0, B) -> DTRSV(alpha*A*B, x)
     DTRMM(alpha, A, B)       -> DTRSV(alpha*A*B, x)
+{% endhighlight %}
 
 And, once we have this set of valid computations how do we choose the right one? This is the question that this project faces right now. These are both challenging problems.
