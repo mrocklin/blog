@@ -164,3 +164,12 @@ Into a graph of `BLAS` calls like one of the following?
 {% endhighlight %}
 
 And, once we have this set of valid computations how do we choose the right one? This is the question that this project faces right now. These are both challenging problems.
+
+References
+----------
+
+*   [BLAS](http://www.netlib.org/blas/) and [LAPACK](http://www.netlib.org/lapack/)
+*   J. Bergstra, O. Breuleux, F. Bastien, P. Lamblin, R. Pascanu, G. Desjardins, J. Turian, D. Warde-Farley and Y. Bengio. [*Theano: A CPU and GPU Math Expression Compiler*](http://www.iro.umontreal.ca/~lisa/pointeurs/theano_scipy2010.pdf). Proceedings of the Python for Scientific Computing Conference (SciPy) 2010. June 30 - July 3, Austin, TX]
+*   [Numba at Continuum](http://www.continuum.io/)
+*   [NumExpr](http://code.google.com/p/numexpr/)
+*   [M. Rocklin, *Partial Ordering in Theano*](http://matthewrocklin.com/pub/ordering/partial-orders.pdf)
