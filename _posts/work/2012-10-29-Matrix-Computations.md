@@ -1,7 +1,7 @@
 ---
 layout: post
 title: Matrix Computations in SymPy
-tagline: Encoding dense linear algebra mathematically 
+tagline: Encoding mathematical BLAS
 category : SymPy 
 tags : [SymPy, Matrices]
 ---
