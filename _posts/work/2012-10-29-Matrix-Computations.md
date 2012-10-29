@@ -1,6 +1,7 @@
 ---
 layout: post
 title: Matrix Computations in SymPy
+tagline: Encoding dense linear algebra mathematically 
 category : SymPy 
 tags : [SymPy, Matrices]
 ---
