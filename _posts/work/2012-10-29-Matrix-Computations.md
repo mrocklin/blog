@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Matrix Computations
+title: Matrix Computations in SymPy
 category : SymPy 
 tags : [SymPy, Matrices]
 ---
