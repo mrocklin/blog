@@ -49,7 +49,7 @@ What is BLAS?
 
 [BLAS](http://en.wikipedia.org/wiki/BLAS) stands for Basic Linear Algebra Subroutines. It is a library of Fortran functions for dense linear algebra first published in 1979. 
 
-The most famous BLAS routine is [`DGEMM`](http://www.netlib.org/blas/dgemm.f) a routine for **D**ouble precision **GE**nerally structured **M**atrix **M**ultiplication. `DGEMM` is very well implemented. `DGEMM` traditionally handles blocking for fewer cache misses, autotuning for each individual architecture, and even assembly level code optimization. You should never code up your own matrix multiply, you should always use `DGEMM`. Unfortunately, you may not know Fortran, and, even if you did, you might find the function header to be daunting.
+The most famous BLAS routine is [DGEMM](http://www.netlib.org/blas/dgemm.f) a routine for **D**ouble precision **GE**nerally structured **M**atrix **M**ultiplication. `DGEMM` is very well implemented. `DGEMM` traditionally handles blocking for fewer cache misses, autotuning for each individual architecture, and even assembly level code optimization. You should never code up your own matrix multiply, you should always use `DGEMM`. Unfortunately, you may not know Fortran, and, even if you did, you might find the function header to be daunting.
 
     SUBROUTINE DGEMM(TRANSA,TRANSB,M,N,K,ALPHA,A,LDA,B,LDB,BETA,C,LDC)
 
@@ -109,7 +109,7 @@ Lets see how we can pose this question in SymPy.
 
 Positive-Definiteness is a very important property of matrix expressions. It strongly influences our choice of numerical algorithm. For example the fast [Cholesky algorithm](http://en.wikipedia.org/wiki/Cholesky) for LU decomposition may only be used if a matrix is symmetric and positive definite. Expert numerical analysts know this but most scientific programmers do not. NumPy does not know this but SymPy does.
 
-Describing `BLAS`
+Describing BLAS
 -----------------
 
 We describe a new matrix operation in SymPy with code like the following:
@@ -121,7 +121,7 @@ We describe a new matrix operation in SymPy with code like the following:
         _inputs   = (S,)
         _outputs  = (Lof(S), Uof(S))
         view_map  = {0: 0, 1: 0} # Both outputs are stored in first input
-        condition = True
+        condition = True         # Always valid
 
     class Cholesky(LU):
         """ Cholesky LU Decomposition """
