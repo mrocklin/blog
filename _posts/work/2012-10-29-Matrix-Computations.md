@@ -82,7 +82,7 @@ Step (2) is often removed in scripting languages for programmer simplicity. Ther
 
 1.  NumExpr
 2.  Theano
-3.  Copperhead
+3.  Numba
 4.  ... I'm undoubtedly forgetting many excellent projects    
 
 Where does SymPy fit in?
@@ -106,7 +106,7 @@ Lets see how we can pose this question in SymPy.
 
 {% endhighlight %}
 
-Positive-Definiteness is a very important property of matrix expressions. It strongly influences our choice of numerical algorithm. For example the fast [Cholesky algorithm](http://en.wikipedia.org/wiki/Cholesky) for LU decomposition may only be used if a matrix is symmetric and positive definite. Expert numerical analysts know this most scientific programmers do not. NumPy does not but SymPy does.
+Positive-Definiteness is a very important property of matrix expressions. It strongly influences our choice of numerical algorithm. For example the fast [Cholesky algorithm](http://en.wikipedia.org/wiki/Cholesky) for LU decomposition may only be used if a matrix is symmetric and positive definite. Expert numerical analysts know this but most scientific programmers do not. NumPy does not know this but SymPy does.
 
 Describing `BLAS`
 -----------------
@@ -114,6 +114,7 @@ Describing `BLAS`
 We describe a new matrix operation in SymPy with code like the following:
 
 {% highlight python %}
+    S = MatrixSymbol('S', n, n)
     class LU(BLAS):
         """ LU Decomposition """
         _inputs   = (S,)
