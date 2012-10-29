@@ -2,7 +2,7 @@
 layout: post
 title: Matrix Computations in SymPy
 tagline: Encoding mathematical BLAS
-category : SymPy 
+category : work 
 tags : [SymPy, Matrices]
 ---
 {% include JB/setup %}
