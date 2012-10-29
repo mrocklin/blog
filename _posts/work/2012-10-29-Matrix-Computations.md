@@ -84,7 +84,7 @@ Step (2) is often removed in scripting languages for programmer simplicity. Ther
 1.  NumExpr
 2.  Theano
 3.  Numba
-4.  ... I'm undoubtedly forgetting many excellent projects    
+4.  ... I'm undoubtedly forgetting many excellent projects. Here is [a more complete list](https://github.com/Theano/Theano/wiki/Lazy-Matrix-Algebra-Ecosystem)
 
 Where does SymPy fit in?
 ------------------------
@@ -172,4 +172,5 @@ References
 *   J. Bergstra, O. Breuleux, F. Bastien, P. Lamblin, R. Pascanu, G. Desjardins, J. Turian, D. Warde-Farley and Y. Bengio. [*Theano: A CPU and GPU Math Expression Compiler*](http://www.iro.umontreal.ca/~lisa/pointeurs/theano_scipy2010.pdf). Proceedings of the Python for Scientific Computing Conference (SciPy) 2010. June 30 - July 3, Austin, TX]
 *   [Numba at Continuum](http://www.continuum.io/)
 *   [NumExpr](http://code.google.com/p/numexpr/)
+*   [A list of matrix projects in Python](https://github.com/Theano/Theano/wiki/Lazy-Matrix-Algebra-Ecosystem)
 *   [M. Rocklin, *Partial Ordering in Theano*](http://matthewrocklin.com/pub/ordering/partial-orders.pdf)
