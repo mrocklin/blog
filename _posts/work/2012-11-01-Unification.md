@@ -7,9 +7,9 @@ tags : [SymPy, Matrices]
 ---
 {% include JB/setup %}
 
-Unification is a way to ask questions by matching against patterns. It is a powerful form of pattern matching found in logical programming languages like Prolog, Maude, and Datalog. It is the computational backbone behind the logical programming paradigm and is now in SymPy (in a pull request).
+Unification is a way to ask questions by matching expressions against patterns. It is a powerful form of pattern matching found in logical programming languages like Prolog, Maude, and Datalog. It is the computational backbone behind the logical programming paradigm and is now a part of SymPy (in a pull request).
 
-Here is a simple example. Imagine that you want to find the name of the MatrixSymbol within the Transpose in the following expression (i.e. we're looking for the string `'X'`)
+Consider the following example. Imagine that you want to find the name of the MatrixSymbol within the Transpose in the following expression (i.e. we're looking for the string `'X'`)
 
 {% highlight python %}
 
@@ -24,12 +24,10 @@ Traditionally we could solve this toy problem with a simple function
 
 {% highlight python %}
 
-    def name_of_symbol_in_transpose_in_add(expr):
-        assert isinstance(expr, MatAdd)
-        for arg in expr.args:
+    def name_of_symbol_in_transpose_in_add(matadd):
+        for arg in matadd.args:
             if isinstance(arg, Transpose) and isinstance(arg.arg, MatrixSymbol):
                 return arg.arg.name
-        raise ValueError("No Transpose Found")
 
 {% endhighlight %}
 
@@ -44,17 +42,16 @@ We solve this task with unification by setting up a pattern and then unifying th
     >>> pattern = patternify(Transpose(A) + B, 'name', n, m, B)
 
     >>> unify(pattern, expr).next()
-    {name: X, m: 3, n: 3, B: Y}
+    {'name': 'X', m: 3, n: 3, B: Y}
 
 {% endhighlight %}
 
-We get back a dictionary with the mapping and see that `'name'` gets mapped to the string `'X'`. Is this better or worse than the straight Python solution? Given the relative number of users between Python and Prolog it's a safe bet that the style of Python programs have some significant advantages over the logical programming paradigm. Still, this idea has some value in some applications.
+We get back a matching for each of the wildcards (name, n, m, B) and see that `'name'` was matched to the string `'X'`. Is this better or worse than the straight Python solution? Given the relative number of users between Python and Prolog it's a safe bet that the style of Python programs have some significant advantages over the logical programming paradigm. Why would we program in this strange way?
 
-Unification allows a clean separation between *what we're looking for* and *how we find it*. In the python solution the mathematical definition of what we want is spread among a few lines and is buried inside of control flow. 
+Unification allows a clean separation between *what we're looking for* and *how we find it*. In the Python solution the mathematical definition of what we want is spread among a few lines and is buried inside of control flow. 
 
 {% highlight python %}
-    assert isinstance(expr, MatAdd)
-    for arg in expr.args:
+    for arg in matadd.args:
         if isinstance(arg, Transpose) and isinstance(arg.arg, MatrixSymbol):
             return arg.arg.name
 {% endhighlight %}
@@ -95,7 +92,22 @@ In this situation because both matrices `X` and `Y` are inside transposes our pa
 
 Because expr is commutative we can match `{A: Transpose(X), B: Transpose(Y)}` or `{A: Transpose(Y), B: Transpose(X)}` with equal validity. Instead of choosing one `unify`, returns an iterable of all possible matches.
 
-In complex expressions this can quickly lead to computational blowup. Fortunately `unify` evaluates these matches lazily ask you ask for them. You can ask for just one match (a common case) very quickly.
+Combinatorial Blowup
+--------------------
+
+In how many ways can we match the following pattern
+
+    w + x + y + z
+
+to the following expression?
+
+    a + b + c + d + e + f
+
+This is a variant on the standard "N balls in K bins" problem often given in a discrete math courses. The answer is "quite a few." How can we avoid this combinatorial blowup?
+
+`unify` produces matches lazily. It returns a Python generator which yields results only as you ask for them. You can ask for just one match (a common case) very quickly.
+
+The bigger answer is that if you aren't satisfied with this and want a better/stronger/faster way to find your desired match you could always *rewrite unify*. The `unify` function is all about the *how* and is disconnected from the *what*. Algorithmic programmers can tweak unify without disrupting the mathematical code.
 
 Rewrites
 --------
@@ -111,7 +123,7 @@ Unification is commonly used in term rewriting systems. Here is an example
     1
 {% endhighlight %}
 
-We were able to turn a mathematical identity `sin(x)**2 + cos(x)**2 => 1` into a function very simply. Unification only does exact pattern matching however so we can only find the `sin(x)**2 + cos(x)**2` pattern if we are given exactly that. As a result we're not able to apply this simplification within a larger expression tree
+We were able to turn a mathematical identity `sin(x)**2 + cos(x)**2 => 1` into a function very simply using unification. However unification only does exact pattern matching so we can only find the `sin(x)**2 + cos(x)**2` pattern if that pattern is at the top node in the tree. As a result we're not able to apply this simplification within a larger expression tree
 
 
 {% highlight python %}
@@ -135,11 +147,7 @@ Matrix Computations
     (alpha*A*B).I * x
 {% endhighlight %}
 
-*And a set of predicates like *
-
-{% highlight python %}
-    Q.lower_triangular(A) & Q.lower_triangular(B) & Q.invertible(A*B)
-{% endhighlight %}
+...
 
 *Into a graph of `BLAS` calls like one of the following?*
 
@@ -150,7 +158,7 @@ Matrix Computations
 
 * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * 
 
-This problem can be solved by unification and rewrite rules. Each `BLAS` operation is described by a class
+This problem can be partially solved by unification and rewrite rules. Each `BLAS` operation is described by a class
 
 {% highlight python %}
 class MM(BLAS):
@@ -159,7 +167,7 @@ class MM(BLAS):
     _outputs  = (alpha*A*B + beta*C,)
 {% endhighlight %}
 
-The `_outputs` and `_inputs` mathematically define when `MM` is appropriate. This is all we need to make a transformation
+The `_outputs` and `_inputs` fields mathematically define when `MM` is appropriate. This is all we need to make a transformation
 
 {% highlight python %}
     pattern_source = patternify(MM._outputs[0], *MM._inputs)
@@ -167,7 +175,10 @@ The `_outputs` and `_inputs` mathematically define when `MM` is appropriate. Thi
     rewriterule(pattern_source, pattern_target)
 {% endhighlight %}
 
-Unification allows us to describe `BLAS` mathematically without thinking about how each individual operation will be detected in an expression. The control flow and the math are completely separated allowing us to think hard about each problem individually.
+Unification allows us to describe `BLAS` mathematically without thinking about
+how each individual operation will be detected in an expression. The control
+flow and the math are completely separated allowing us to think hard about each
+problem in isolation.
 
 References
 ----------
@@ -179,5 +190,6 @@ I learned a great deal from the following sources
 *   [StackOverflow - Partition N items into K bins in Python lazily](http://stackoverflow.com/questions/13131491/partition-n-items-into-k-bins-in-python-lazily) 
     (Special thanks to Chris Smith who privately provided me with the best answer)
 *   [Logic Programming](http://en.wikipedia.org/wiki/Logic_programming)
+*   [Term Rewriting](http://en.wikipedia.org/wiki/Term_rewriting)
 *   [My favorite Prolog tutorial](http://www.learnprolognow.org/)
 *   [Pull Request](https://github.com/sympy/sympy/pull/1633)
