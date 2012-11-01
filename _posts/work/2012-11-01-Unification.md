@@ -52,22 +52,132 @@ We get back a dictionary with the mapping and see that `'name'` gets mapped to t
 
 Unification allows a clean separation between *what we're looking for* and *how we find it*. In the python solution the mathematical definition of what we want is spread among a few lines and is buried inside of control flow. 
 
+{% highlight python %}
     assert isinstance(expr, MatAdd)
     for arg in expr.args:
         if isinstance(arg, Transpose) and isinstance(arg.arg, MatrixSymbol):
             return arg.arg.name
+{% endhighlight %}
 
 In the unification solution the line 
 
+{% highlight python %}
     pattern = patternify(Transpose(A) + B, 'name', n, m, B)
+{% endhighlight %}
 
 expresses exactly *what* we're looking for and gives no information on *how* it should be found. The how is wrapped up in the call to `unify`
 
+{% highlight python %}
     unify(pattern, expr).next()
+{% endhighlight %}
 
 This separation of the *what* and *how* is what excites me about declarative programming. I think that this separation is useful when mathematical and algorithmic programmers need to work together to solve a large problem. This is often the case in scientific computing. Mathematical programmers think about *what* should be done while algorithmic programmers think about *how* it can be efficiently computed. Declarative techniques like unification enables these two groups to work independently.
 
+Multiple Matches
+----------------
+
+Lets see how unify works on a slightly more interesting expression
+
+{% highlight python %}
+    >>> expr = Transpose(X) + Transpose(Y)
+    >>> unify(pattern, expr)
+    <generator object unify at 0x548cb90>
+{% endhighlight %}
+
+In this situation because both matrices `X` and `Y` are inside transposes our pattern to match "the name of a symbol in a transpose" could equally well return the strings `'X'` or `'Y'`. The unification algorithm will give us both of these options
+
+{% highlight python %}
+    >>> for match in unify(pattern, expr): 
+    ...    print match
+    {'name': 'Y', m: 3, n: 3, B: X'}
+    {'name': 'X', m: 3, n: 3, B: Y'}
+{% endhighlight %}
+
+Because expr is commutative we can match `{A: Transpose(X), B: Transpose(Y)}` or `{A: Transpose(Y), B: Transpose(X)}` with equal validity. Instead of choosing one `unify`, returns an iterable of all possible matches.
+
+In complex expressions this can quickly lead to computational blowup. Fortunately `unify` evaluates these matches lazily ask you ask for them. You can ask for just one match (a common case) very quickly.
+
+Rewrites
+--------
+
+Unification is commonly used in term rewriting systems. Here is an example
+
+{% highlight python %}
+    >>> pattern_source = patternify(sin(x)**2 + cos(x)**2, x)
+    >>> pattern_target = 1
+    >>> sincos_to_one = rewriterule(pattern_source, pattern_target)
+
+    >>> sincos_to_one(sin(a+b)**2 + cos(a+b)**2).next()
+    1
+{% endhighlight %}
+
+We were able to turn a mathematical identity `sin(x)**2 + cos(x)**2 => 1` into a function very simply. Unification only does exact pattern matching however so we can only find the `sin(x)**2 + cos(x)**2` pattern if we are given exactly that. As a result we're not able to apply this simplification within a larger expression tree
+
+
+{% highlight python %}
+    >>> list(sincos_to_one(2 + c**(sin(a+b)**2 + cos(a+b)**2))) # no matches
+    []
+{% endhighlight %}
+
+I will leave the solution of this problem to a future post. Instead, I want to describe why I'm working on all of this. 
+
+Matrix Computations
+-------------------
+
+[My last post](http://matthewrocklin.com/blog/work/2012/10/29/Matrix-Computations/) was about translating Matrix Expressions into high-performance Fortran Code. I ended this post with the following problem:
+
+
+* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * 
+
+*So how can we transform a matrix expression like*
+    
+{% highlight python %}
+    (alpha*A*B).I * x
+{% endhighlight %}
+
+*And a set of predicates like *
+
+{% highlight python %}
+    Q.lower_triangular(A) & Q.lower_triangular(B) & Q.invertible(A*B)
+{% endhighlight %}
+
+*Into a graph of `BLAS` calls like one of the following?*
+
+{% highlight python %}
+    DGEMM(alpha, A, B, 0, B) -> DTRSV(alpha*A*B, x)
+    DTRMM(alpha, A, B)       -> DTRSV(alpha*A*B, x)
+{% endhighlight %}
+
+* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * 
+
+This problem can be solved by unification and rewrite rules. Each `BLAS` operation is described by a class
+
+{% highlight python %}
+class MM(BLAS):
+    """ Matrix Multiply """
+    _inputs   = (alpha, A, B, beta, C)
+    _outputs  = (alpha*A*B + beta*C,)
+{% endhighlight %}
+
+The `_outputs` and `_inputs` mathematically define when `MM` is appropriate. This is all we need to make a transformation
+
+{% highlight python %}
+    pattern_source = patternify(MM._outputs[0], *MM._inputs)
+    pattern_target = MM(*MM._inputs)
+    rewriterule(pattern_source, pattern_target)
+{% endhighlight %}
+
+Unification allows us to describe `BLAS` mathematically without thinking about how each individual operation will be detected in an expression. The control flow and the math are completely separated allowing us to think hard about each problem individually.
 
 References
 ----------
 
+I learned a great deal from the following sources
+
+*   [Artificial Intelligence: A Modern Approach](http://aima.cs.berkeley.edu/) by Stuart Russel and Peter Norvig (Particularly section 9.2 in the second edition)
+*   [StackOverflow - Algorithms for Unification of list-based trees](http://stackoverflow.com/questions/13092092/algorithms-for-unification-of-list-based-trees)
+*   [StackOverflow - Partition N items into K bins in Python lazily](http://stackoverflow.com/questions/13131491/partition-n-items-into-k-bins-in-python-lazily) 
+    (Special thanks to Chris Smith who privately provided me with the best answer)
+*   [Logic Programming](http://en.wikipedia.org/wiki/Logic_programming)
+*   [My favorite Prolog tutorial](http://www.learnprolognow.org/)
+*   [Pull Request](https://github.com/sympy/sympy/pull/1633)
