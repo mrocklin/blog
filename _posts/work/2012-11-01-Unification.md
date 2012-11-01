@@ -103,7 +103,7 @@ to the following expression?
 
     a + b + c + d + e + f
 
-This is a variant on the standard "N balls in K bins" problem often given in a discrete math courses. The answer is "quite a few." How can we avoid this combinatorial blowup?
+This is a variant on the standard "N balls in K bins" problem often given in a discrete math course. The answer is "quite a few." How can we avoid this combinatorial blowup?
 
 `unify` produces matches lazily. It returns a Python generator which yields results only as you ask for them. You can ask for just one match (a common case) very quickly.
 
@@ -187,7 +187,7 @@ I learned a great deal from the following sources
 
 *   [Artificial Intelligence: A Modern Approach](http://aima.cs.berkeley.edu/) by Stuart Russel and Peter Norvig (Particularly section 9.2 in the second edition)
 *   [StackOverflow - Algorithms for Unification of list-based trees](http://stackoverflow.com/questions/13092092/algorithms-for-unification-of-list-based-trees)
-*   [StackOverflow - Partition N items into K bins in Python lazily](http://stackoverflow.com/questions/13131491/partition-n-items-into-k-bins-in-python-lazily) (Special thanks to Chris Smith who provided the best answer)
+*   [StackOverflow - Partition N items into K bins in Python lazily](http://stackoverflow.com/questions/13131491/partition-n-items-into-k-bins-in-python-lazily) (Special thanks to [Chris Smith](https://github.com/smichr) who provided the best answer)
 *   [Logic Programming](http://en.wikipedia.org/wiki/Logic_programming)
 *   [Term Rewriting](http://en.wikipedia.org/wiki/Term_rewriting)
 *   [My favorite Prolog tutorial](http://www.learnprolognow.org/)
