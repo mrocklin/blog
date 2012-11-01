@@ -187,9 +187,9 @@ I learned a great deal from the following sources
 
 *   [Artificial Intelligence: A Modern Approach](http://aima.cs.berkeley.edu/) by Stuart Russel and Peter Norvig (Particularly section 9.2 in the second edition)
 *   [StackOverflow - Algorithms for Unification of list-based trees](http://stackoverflow.com/questions/13092092/algorithms-for-unification-of-list-based-trees)
-*   [StackOverflow - Partition N items into K bins in Python lazily](http://stackoverflow.com/questions/13131491/partition-n-items-into-k-bins-in-python-lazily) 
-    (Special thanks to Chris Smith who privately provided me with the best answer)
+*   [StackOverflow - Partition N items into K bins in Python lazily](http://stackoverflow.com/questions/13131491/partition-n-items-into-k-bins-in-python-lazily) (Special thanks to Chris Smith who provided the best answer)
 *   [Logic Programming](http://en.wikipedia.org/wiki/Logic_programming)
 *   [Term Rewriting](http://en.wikipedia.org/wiki/Term_rewriting)
 *   [My favorite Prolog tutorial](http://www.learnprolognow.org/)
+*   [SymPy E-mail thread on this topic](http://goo.gl/ZqVHJ)
 *   [Pull Request](https://github.com/sympy/sympy/pull/1633)
