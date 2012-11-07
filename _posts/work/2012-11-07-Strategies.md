@@ -7,7 +7,7 @@ tags : [SymPy]
 ---
 {% include JB/setup %}
 
-In [my last post](matthewrocklin.com/blog/work/2012/11/01/Unification/) I showed how unification and rewrite rules allow us to express *what* we want without specifying *how* to compute it. As an example we were able to turn the mathematical identity `sin(x)**2 + cos(x)**2 -> 1` into a function with relatively simple code
+In [my last post](matthewrocklin.com/blog/work/2012/11/01/Unification/) I showed how unification and rewrite rules allow us to express *what* we want without specifying *how* to compute it.  As an example we were able to turn the mathematical identity `sin(x)**2 + cos(x)**2 -> 1` into a function with relatively simple code
 
 {% highlight python %}
     # Transformation : sin(x)**2 + cos(x)**2 -> 1
@@ -25,10 +25,10 @@ However we found that this function did not work deep within an expression tree
     []
 {% endhighlight %}
 
-`sincos_to_one` does not know *how* to traverse a tree. It is pure logic and has no knowledge of control. We define traverals separately using strategies.
+`sincos_to_one` does not know *how* to traverse a tree.  It is pure logic and has no knowledge of control.  We define traverals separately using strategies.
 
 *Short version*: we give you a higher order function, `top_down` which turns a
-expression-wise function into a tree-wise function. We provide a set of similar functions which can be composed to various effects.
+expression-wise function into a tree-wise function.  We provide a set of similar functions which can be composed to various effects.
 
 * * * * 
 
@@ -37,7 +37,7 @@ A Toy Example
 
 How do we express control programmatically? 
 
-Traditional control flow is represented with constructs like `if`, `for`, `while`, `def`, `return`, `try`, etc.... These terms direct the flow of what computation occurs when. Traditionally we mix control and logic. Consider the following toy problem that reduces a number until it reaches a multiple of ten
+Traditional control flow is represented with constructs like `if`, `for`, `while`, `def`, `return`, `try`, etc....  These terms direct the flow of what computation occurs when.  Traditionally we mix control and logic.  Consider the following toy problem that reduces a number until it reaches a multiple of ten
 
 {% highlight python %}
     def reduce_to_ten(x):
@@ -69,7 +69,7 @@ the control pattern is quite common in serious code
     return expr
 {% endhighlight %}
 
-It is the "Exhaustively apply this function until there is no effect" control pattern. It occurs often in general programming and very often in the SymPy sourcecode. We separate this control pattern into a higher order function named `exhaust`
+It is the "Exhaustively apply this function until there is no effect" control pattern. It occurs often in general programming and very often in the SymPy sourcecode.  We separate this control pattern into a higher order function named `exhaust`
 
 {% highlight python %}
     def exhaust(rule):
@@ -96,12 +96,12 @@ By factoring out the control strategy we achieve several benefits
 
 1.  Code reuse of the `while(old != new)` control pattern 
 2.  Exposure of logic - we can use the `dec_10` function in other contexts more easily. This version is more extensible.
-3.  Programmability of control - the control pattern is now first class. We can manipulate and compose it as we would manipulate or compose a variable or function.
+3.  Programmability of control - the control pattern is now first class.  We can manipulate and compose it as we would manipulate or compose a variable or function.
 
 Example - Debug
 ---------------
 
-When debugging code we often want to see the before and after effects of running a function. We often do something like the following
+When debugging code we often want to see the before and after effects of running a function.  We often do something like the following
     
 {% highlight python %}
     new = f(old)
@@ -146,7 +146,7 @@ Because control is separated we can inject this easily into our function
 Traversals
 ----------
 
-Finally we show off the use of a tree traversal strategy which applies a function at each node in an expression tree. Here we use the `Basic` type to denote a tree of generic nodes.
+Finally we show off the use of a tree traversal strategy which applies a function at each node in an expression tree.  Here we use the `Basic` type to denote a tree of generic nodes.
 
 {% highlight python %}
     def top_down(rule):
@@ -168,7 +168,7 @@ Finally we show off the use of a tree traversal strategy which applies a functio
 Use in Practice
 ---------------
 
-We have rewritten the canonicalization code in the Matrix Expression module to use these strategies. There are a number of small functions to represent atomic logical transformations of expressions. We call these rules. Rules are functions from expressions to expressions
+We have rewritten the canonicalization code in the Matrix Expression module to use these strategies.  There are a number of small functions to represent atomic logical transformations of expressions.  We call these rules.  Rules are functions from expressions to expressions
 
     rule :: expr -> expr
 
@@ -208,7 +208,7 @@ We compose these general rules (e.g. 'flatten', 'unpack', 'sort', 'glom') with s
 Going Farther
 -------------
 
-We use strategies to build large rules out of small rules. Can we build large strategies out of small strategies? The `canonicalize` function above follows a common pattern "Apply a set of rules down a tree, repeat until they have no effect." This is built into the `canon` strategy.
+We use strategies to build large rules out of small rules.  Can we build large strategies out of small strategies? The `canonicalize` function above follows a common pattern "Apply a set of rules down a tree, repeat until they have no effect." This is built into the `canon` strategy.
 
 {% highlight python %}
     def canon(*rules):
@@ -219,8 +219,7 @@ We use strategies to build large rules out of small rules. Can we build large st
 Previous Work
 -------------
 
-This implementation of strategies was inspired by the work in the language StrategoXT. Stratego is a language for control that takes these ideas much farther and implements them more cleanly. It is a language where control structure are the primitives that can be built up, composed, and compiled down. It is possible to express ideas like "dynamic programming" in this language.
-
+This implementation of strategies was inspired by the work in the language StrategoXT. Stratego is a language for control that takes these ideas much farther and implements them more cleanly.  It is a language where control structure are the primitives that can be built up, composed, and compiled down.  It is possible to express ideas like "dynamic programming" in this language.
 
 References
 ----------
