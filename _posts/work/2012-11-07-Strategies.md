@@ -219,7 +219,7 @@ We use strategies to build large rules out of small rules.  Can we build large s
 Previous Work
 -------------
 
-This implementation of strategies was inspired by the work in the language StrategoXT. Stratego is a language for control that takes these ideas much farther and implements them more cleanly.  It is a language where control structure are the primitives that can be built up, composed, and compiled down.  It is possible to express ideas like "dynamic programming" in this language.
+This implementation of strategies was inspired by the work in the language StrategoXT. Stratego is a language for control that takes these ideas much farther and implements them more cleanly.  It is a language where control structure are the primitives that can be built up, composed, and compiled down.  It is a language in which ideas like "breadth first search" and "dynamic programming" are natural expressions.
 
 References
 ----------
