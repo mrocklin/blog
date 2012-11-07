@@ -7,23 +7,6 @@ tags : [SymPy]
 ---
 {% include JB/setup %}
 
-*An algorithm can be regarded as consisting of a
-logic component, which specifies the knowledge to be
-used in solving problems, and a control component,
-which determines the problem-solving strategies by
-means of which that knowledge is used. The logic
-component determines the meaning of the algorithm
-whereas the control component only affects its
-effkiency. The effkiency of an algorithm can often be
-improved by improving the control component without
-changing the logic of the algorithm. We argue that
-computer programs would be more often correct and
-more easily improved and modified if their logic and
-control aspects were identified and separated in the
-program text.*
-
--- Robert Kowalski [(1979, Communications of the ACM)](http://dl.acm.org/citation.cfm?id=359136)
-
 In [my last post](matthewrocklin.com/blog/work/2012/11/01/Unification/) I showed how unification and rewrite rules allow us to express *what* we want without specifying *how* to compute it. As an example we were able to turn the mathematical identity `sin(x)**2 + cos(x)**2 -> 1` into a function with relatively simple code
 
 {% highlight python %}
@@ -70,7 +53,7 @@ Traditional control flow is represented with constructs like `if`, `for`, `while
         return x
 {% endhighlight %}
 
-While the logic in this function this function is somewhat trivial 
+While the logic in this function is somewhat trivial 
 
 {% highlight python %}
     if (x % 10 != 0):
@@ -99,7 +82,7 @@ It is the "Exhaustively apply this function until there is no effect" control pa
         return exhaustive_rl
 {% endhighlight %}
 
-We show how to use this function to acheive the previous result. 
+We show how to use this function to achieve the previous result. 
 
 {% highlight python %}
     def dec_10(x):                          # Close to pure logic
@@ -109,14 +92,14 @@ We show how to use this function to acheive the previous result.
     reduce_to_ten = exhaust(dec_10)
 {% endhighlight %}
         
-By factoring out the control strategy we have acheieved several benefits
+By factoring out the control strategy we achieve several benefits
 
 1.  Code reuse of the `while(old != new)` control pattern 
 2.  Exposure of logic - we can use the `dec_10` function in other contexts more easily. This version is more extensible.
 3.  Programmability of control - the control pattern is now first class. We can manipulate and compose it as we would manipulate or compose a variable or function.
 
-A Popular Strategy
-------------------
+Example - Debug
+---------------
 
 When debugging code we often want to see the before and after effects of running a function. We often do something like the following
     
@@ -219,7 +202,7 @@ We compose these general rules (e.g. 'flatten', 'unpack', 'sort', 'glom') with s
              glom(matrix_of, factor_of, combine),
              sort(str))
 
-    canonicalize = exhaust(top_down(typed({MatAdd, do_one(*rules)})))
+    canonicalize = exhaust(top_down(typed({MatAdd: do_one(*rules)})))
 {% endhighlight %}
 
 Going Farther
@@ -233,19 +216,14 @@ We use strategies to build large rules out of small rules. Can we build large st
         return exhaust(top_down(do_one(*rules)))
 {% endhighlight %}
 
+Previous Work
+-------------
+
 This implementation of strategies was inspired by the work in the language StrategoXT. Stratego is a language for control that takes these ideas much farther and implements them more cleanly. It is a language where control structure are the primitives that can be built up, composed, and compiled down. It is possible to express ideas like "dynamic programming" in this language.
 
-Performance Concerns
---------------------
-
-Separating logic and control yields greater reuse and ease of modification. It's often challenging to find a clean separation without hurting performance. Dense matrix multiplications demand very tight coupling. As we move from low-level to high-level programming performance becomes less of an issue and Kowalski's ideal may again have some value.
-
-For many scientific problems the answer is a resounding no. Many problems require tight integration between the logic of the problem and the control flow of the computation. When predicting the weather for example we find that need to resolve our mesh 
-
-The separation of logic and control is a central theme in my recent work on scientific computing. 
 
 References
 ----------
 
-1.  R.A.Kowalski (July 1979). ["Algorithm=Logic + Control"](http://www.icsd.aegean.gr/lecturers/stamatatos/courses/Logic/Prolog/Ch1/Ch1_files/algorithm%3Dlogic%2Bcontrol.pdf). Communications of the
-ACM 22 (7): 424–436.
+1.  Ralf Lämmel , Eelco Visser , Joost Visser, [*The Essence of Strategic Programming*](http://www.google.com/url?sa=t&rct=j&q=&esrc=s&source=web&cd=1&cad=rja&ved=0CDMQFjAA&url=http%3A%2F%2Fhomepages.cwi.nl%2F~ralf%2Feosp%2Fpaper.pdf&ei=bJuaUNWwNuOc2AWQtICYCA&usg=AFQjCNHG1lJTjP05tO1aElYQkXMYSmgNuw&sig2=EwanltC52lXaC4gU4OtVvA), 2002
+2.  Eelco Visser, [*Program Transformation with Stratego/XT*](http://www.springerlink.com/content/my9we5tj86u2f59n/)
