@@ -3,7 +3,6 @@ layout: post
 title: Strategies
 tagline: Programming control flow
 category : work 
-draft : true
 tags : [SymPy]
 ---
 {% include JB/setup %}
