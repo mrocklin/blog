@@ -32,7 +32,9 @@ Usage:
       <ul>
     {% endif %}
   
+    {% if post.draft != true %}
     <li><span>{{ post.date | date: "%B %e, %Y" }}</span> &raquo; <a href="{{ BASE_PATH }}{{ post.url }}">{{ post.title }}</a></li>
+    {% endif %}
   
     {% if forloop.last %}
       </ul>
