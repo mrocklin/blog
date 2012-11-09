@@ -3,7 +3,6 @@ layout: post
 title: Branching Strategies
 tagline: handling divergent rules
 category : work 
-draft : true
 tags : [SymPy]
 ---
 {% include JB/setup %}
