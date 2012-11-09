@@ -7,7 +7,7 @@ tags : [SymPy]
 ---
 {% include JB/setup %}
 
-In [my last post](matthewrocklin.com/blog/work/2012/11/01/Unification/) I showed how unification and rewrite rules allow us to express *what* we want without specifying *how* to compute it.  As an example we were able to turn the mathematical identity `sin(x)**2 + cos(x)**2 -> 1` into a function with relatively simple code
+In [my last post](http://matthewrocklin.com/blog/work/2012/11/01/Unification/) I showed how unification and rewrite rules allow us to express *what* we want without specifying *how* to compute it.  As an example we were able to turn the mathematical identity `sin(x)**2 + cos(x)**2 -> 1` into a function with relatively simple code
 
 {% highlight python %}
     # Transformation : sin(x)**2 + cos(x)**2 -> 1
