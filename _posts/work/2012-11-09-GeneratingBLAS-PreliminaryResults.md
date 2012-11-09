@@ -21,8 +21,6 @@ In this post I'll pull them all together for my first substantial results genera
 We set up a problem that we'd like to solve. This case we try to compute  \\((4 X X^{T} + 2 Z)^{-1} X\\\) where \\( X \\) and \\(Z\\) are positive definite and \\(Z\\) is also symmetric.
 
 {% highlight python %}
->>> from sympy.matrices.expressions.gen import build_rule, top_down,rr_from_blas
->>> from sympy.matrices.expressions import MatrixSymbol
 
 >>> # Set up a mathematical problem to solve
 >>> X = MatrixSymbol('X', n, n)
@@ -35,7 +33,15 @@ We set up a problem that we'd like to solve. This case we try to compute  \\((4 
 We have described a set of BLAS operations to perform certain transformations when the right conditions are met.  Each BLAS operation is a single rewrite rule.  We need to combine them to turn the target expression into a set of atomic inputs.  Some of the BLAS routines overlap so there are potentially many possibilities.
 
 {% highlight python %}
->>> computations = list(top_down(build_rule(assumptions))(target))
+>>> from sympy.matrices.expressions.gen import top_down, rr_from_blas
+>>> from sympy.rules.branch import multiplex
+>>> from sympy.matrices.expressions.blas import   GEMM, SYMM, TRMM, TRSV
+>>> from sympy.matrices.expressions.lapack import POSV, GESV
+
+>>> routines = (TRSV, POSV, GESV, GEMM, SYMM, TRMM)
+>>> rule = top_down(multiplex(*[rr_from_blas(r, assumptions) for r in routines]))
+
+>>> computations = list(rule(target))
 >>> len(computations)
 2
 {% endhighlight %}
