@@ -88,10 +88,12 @@ This Fortran code is independent of Python or SymPy and can be used in any proje
     >>> f = computations[0].build(str, assumptions) 
     >>> f?
     f - Function signature:
-      info = f(x,z)
+      info = f(x,z,[n])
     Required arguments:
-      x : in/output rank-2 array('d') with bounds (3,3)
-      z : in/output rank-2 array('d') with bounds (3,3)
+      x : in/output rank-2 array('d') with bounds (n,n)
+      z : in/output rank-2 array('d') with bounds (n,n)
+    Optional arguments:
+      n := shape(x,0) input int
     Return objects:
       info : int
 
@@ -127,6 +129,16 @@ END
 This solution uses the general solve `GESV` routine in place of the specialized `POSV` for symmetric positive definite matrices.  Which is best?  In this case `POSV` is likely faster because it is able to use faster algorithms due to the symmetric positive definite assumption.  After looking at both possibilities we choose it. 
 
 For large matrix expressions the number of possible computations may stop us from inspecting all possible solutions.  How can we ensure that the best solution is in the first few?
+
+Code Separation
+---------------
+
+The definition of BLAS/LAPACK is completely separated from the pattern matching code and the branching control code. This allows me (or other people) to develop one without thinking about the other. If anyone is interested I could use more routines than just the six used in this example. 
+
+Caveats
+-------
+
+This code is still very experimental. It is not yet merged into the SymPy master branch. The interface may change. Results are promising but there is still more work to do.
 
 References
 ----------
