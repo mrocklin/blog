@@ -13,7 +13,8 @@ assumptions = (Q.positive_definite(X) & Q.positive_definite(Z) &
                Q.symmetric(Z))
 
 routines = (TRSV, POSV, GESV, GEMM, SYMM, TRMM)
-rule = top_down(multiplex(*[rr_from_blas(r, assumptions) for r in routines]))
+rules = [rr_from_blas(r, assumptions) for r in routines]
+rule = top_down(multiplex(*rules))
 computations = list(rule(target))
 
 print computations[0].print_Fortran(str, assumptions)
