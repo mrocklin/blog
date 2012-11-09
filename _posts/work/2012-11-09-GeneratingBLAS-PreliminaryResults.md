@@ -30,16 +30,28 @@ We set up a problem that we'd like to solve. This case we try to compute  \\((4 
                    Q.symmetric(Z))
 {% endhighlight %}
 
-We have described a set of BLAS operations to perform certain transformations when the right conditions are met.  Each BLAS operation is a single rewrite rule.  We need to combine them to turn the target expression into a set of atomic inputs.  Some of the BLAS routines overlap so there are potentially many possibilities.
+We have described a set of BLAS operations to perform certain transformations when the right conditions are met.  Each BLAS operation is a single rewrite rule.  
 
 {% highlight python %}
->>> from sympy.matrices.expressions.gen import top_down, rr_from_blas
->>> from sympy.rules.branch import multiplex
+>>> from sympy.matrices.expressions.gen import rr_from_blas
 >>> from sympy.matrices.expressions.blas import   GEMM, SYMM, TRMM, TRSV
 >>> from sympy.matrices.expressions.lapack import POSV, GESV
+>>> routines = (TRSV, POSV, GESV, TRMM, SYMM, GEMM)
+>>> rules = [rr_from_blas(r, assumptions) for r in routines]
+{% endhighlight %}
 
->>> routines = (TRSV, POSV, GESV, GEMM, SYMM, TRMM)
->>> rule = top_down(multiplex(*[rr_from_blas(r, assumptions) for r in routines]))
+Each of these rules can convert one kind of expression into a computation given
+certain conditions. For example
+
+    SYMM:  alpha A B + beta C -> SYMM(alpha, A, B, beta, C) if A or B are symmetric
+
+We need to combine them to turn the large target expression into a set of atomic inputs.  Some of the BLAS routines overlap so there are potentially many possibilities.
+
+{% highlight python %}
+>>> from sympy.matrices.expressions.gen import top_down 
+>>> from sympy.rules.branch import multiplex
+
+>>> rule = top_down(multiplex(*rules))
 
 >>> computations = list(rule(target))
 >>> len(computations)
