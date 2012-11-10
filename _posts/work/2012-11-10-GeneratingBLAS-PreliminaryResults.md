@@ -16,8 +16,7 @@ In the last few posts I've built up some independent technology.
 
 In this post I'll pull them all together for my first substantial results generating Fortran code to call BLAS/LAPACK. Lets go through a working example
 
-
-We set up a problem that we'd like to solve. This case we try to compute  \\((4 X X^{T} + 2 Z)^{-1} X\\\) where \\( X \\) and \\(Z\\) are positive definite and \\(Z\\) is also symmetric.
+We set up a problem that we'd like to solve. We want to compute \\((4 X X^{T} + 2 Z)^{-1} X\\\) where \\( X \\) is invertible and and \\(Z\\) is symmetric positive definite.
 
 {% highlight python %}
 
@@ -29,7 +28,7 @@ We set up a problem that we'd like to solve. This case we try to compute  \\((4 
 
 {% endhighlight %}
 
-We have described a set of BLAS operations to perform certain transformations when the right conditions are met.  Each BLAS operation is a single rewrite rule.  
+We have described a set of BLAS/LAPACK operations to perform certain transformations when the right conditions are met.  Each BLAS operation is a single rewrite rule.  
 
 {% highlight python %}
 >>> from sympy.matrices.expressions.gen import rr_from_blas
@@ -42,7 +41,7 @@ We have described a set of BLAS operations to perform certain transformations wh
 Each of these rules can convert one kind of expression into a computation given
 certain conditions. For example
 
-    SYMM:  alpha A B + beta C -> SYMM(alpha, A, B, beta, C) if A or B are symmetric
+    SYMM:  alpha*A*B + beta*C -> SYMM(alpha, A, B, beta, C) if A or B is symmetric
 
 We need to combine them to turn the large target expression into a set of atomic inputs.  Some of the BLAS routines overlap so there are potentially many possibilities.
 
