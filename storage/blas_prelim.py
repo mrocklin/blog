@@ -9,8 +9,7 @@ n = Symbol('n')
 X = MatrixSymbol('X', n, n)
 Z = MatrixSymbol('Z', n, n)
 target = (4*X*X.T + 2*Z).I*X
-assumptions = (Q.positive_definite(X) & Q.positive_definite(Z) &
-               Q.symmetric(Z))
+assumptions = Q.invertible(X) & Q.positive_definite(Z) & Q.symmetric(Z)
 
 routines = (TRSV, POSV, GESV, GEMM, SYMM, TRMM)
 rules = [rr_from_blas(r, assumptions) for r in routines]

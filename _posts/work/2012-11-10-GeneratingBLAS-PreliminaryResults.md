@@ -26,8 +26,8 @@ We set up a problem that we'd like to solve. This case we try to compute  \\((4 
 >>> X = MatrixSymbol('X', n, n)
 >>> Z = MatrixSymbol('Z', n, n)
 >>> target = (4*X*X.T + 2*Z).I*X
->>> assumptions = (Q.positive_definite(X) & Q.positive_definite(Z) &
-                   Q.symmetric(Z))
+>>> assumptions = Q.invertible(X) & Q.positive_definite(Z) & Q.symmetric(Z)
+
 {% endhighlight %}
 
 We have described a set of BLAS operations to perform certain transformations when the right conditions are met.  Each BLAS operation is a single rewrite rule.  
