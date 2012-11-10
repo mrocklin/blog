@@ -146,5 +146,6 @@ References
 ----------
 
 1.  [F2PY](http://cens.ioc.ee/projects/f2py2e/)
+2.  D. Fabregat-Traver, P. Bientinesi, [*A Domain-Specific Comiler for Linear Algebra Operations*](http://www.aices.rwth-aachen.de:8080/aices/preprint/documents/AICES-2012-01-02.pdf), arXiv preprint arXiv:1205.5975 (2012).
 2.  [Example code]({{ BASE_PATH }}/storage/blas_prelim.py) from this post
 3.  [My development branch of SymPy](https://github.com/mrocklin/sympy/tree/blas)
