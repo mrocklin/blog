@@ -133,12 +133,14 @@ For large matrix expressions the number of possible computations may stop us fro
 Code Separation
 ---------------
 
-The definition of BLAS/LAPACK is completely separated from the pattern matching code and the branching control code. This allows me (or other people) to develop one without thinking about the other. If anyone is interested I could use more routines than just the six used in this example. 
+The definition of BLAS/LAPACK is separated from the pattern matching code and the branching control code. This allows me (or other people) to develop one without thinking about the other. It also allows for a declarative definition of BLAS and LAPACK routines. If anyone is interested I could use more routines than just the six used in this example. 
+
+This project requires the technology from the previous four posts. While all of that technology (strategies, unification, code generation) is necessary to this project none of it is specific to this project. All of the pieces are general, composable, and applicable to other ends. I hope that others are able to find some use for them. 
 
 Caveats
 -------
 
-This code is still very experimental. It is not yet merged into the SymPy master branch. The interface may change. Results are promising but there is still more work to do.
+This code is still experimental. It is not yet merged into the SymPy master branch. The interface may change. Results are promising but there are stil big pieces missing before its ready for public use.
 
 References
 ----------
