@@ -77,7 +77,14 @@ RETURN
 END
 {% endhighlight %}
 
-This solution first uses `GEMM` to multiply \\(4X X^{T} + 2 Z\\). It then uses `POSV` to perform the solve \\((4X X^{T} + 2Z)^{-1} X\\).  The `POSV` routine solves systems of the form \\(A^{-1}B\\) where \\(A\\) is symmetric positive definite.  We used a logical programming framework to infer that \\(4X X^{T} + 2Z\\) is symmetric positive definite given the original mathematical assumptions.  
+This solution first uses `GEMM` to multiply \\(4X X^{T} + 2 Z\\). It then uses `POSV` to perform the solve \\((4X X^{T} + 2Z)^{-1} X\\).  The `POSV` routine solves systems of the form \\(A^{-1}B\\) where \\(A\\) is symmetric positive definite.  Internally we used a logical programming framework to infer that \\(4X X^{T} + 2Z\\) is symmetric positive definite given the original mathematical assumptions.
+
+{% highlight python %}
+>>> assumptions = Q.invertible(X) & Q.positive_definite(Z) & Q.symmetric(Z)
+>>> expr = 4*X*X.T + 2*Z
+>>> ask(Q.symmetric(expr) & Q.positive_definite(expr), assumptions)
+True
+{% endhighlight %}
 
 This computation is in-place. `GEMM` stores its result in the argument `Z`. `POSV` uses `Z` and stores the output in `X`. Note that both `X` and `Z` have been declared with `inout` intents in the Fortran code.
 
