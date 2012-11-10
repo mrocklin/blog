@@ -79,9 +79,9 @@ RETURN
 END
 {% endhighlight %}
 
-This solution first uses `GEMM` to multiply \\(4X X^{T} + 2 Z\\). It then uses `POSV` to perform the solve \\((4X X^{T} + 2Z)^{-1} X\\).  The `POSV` routine solves systems the form \\(A^{-1}B\\) where \\(A\\) is symmetric positive definite.  We were able to infer that \\(4X X^{T} + 2Z\\) is symmetric positive definite given the assumptions stated in the problem.  
+This solution first uses `GEMM` to multiply \\(4X X^{T} + 2 Z\\). It then uses `POSV` to perform the solve \\((4X X^{T} + 2Z)^{-1} X\\).  The `POSV` routine solves systems of the form \\(A^{-1}B\\) where \\(A\\) is symmetric positive definite.  We used a logical programming framework to infer that \\(4X X^{T} + 2Z\\) is symmetric positive definite given the original mathematical assumptions.  
 
-This computation is in-place. `GEMM` stores its result in the argument `Z`. `POSV` uses `Z` and stores the output in `X`. Note that both `X` and `Z` have been declared with `inout` intents.
+This computation is in-place. `GEMM` stores its result in the argument `Z`. `POSV` uses `Z` and stores the output in `X`. Note that both `X` and `Z` have been declared with `inout` intents in the Fortran code.
 
 This Fortran code is independent of Python or SymPy and can be used in any project. However, if we prefer the Python environment we can bring it back into the Python session with F2PY.
 
@@ -97,7 +97,7 @@ This Fortran code is independent of Python or SymPy and can be used in any proje
     Return objects:
       info : int
 
-This function seemlessly accepts numpy arrays
+This function accepts numpy arrays and so integrates well into the Python scientific computing stack.
 
 Multiple Matches 
 ----------------
@@ -126,7 +126,7 @@ RETURN
 END
 {% endhighlight %}
 
-This solution uses the general solve `GESV` routine in place of the specialized `POSV` for symmetric positive definite matrices.  Which is best?  In this case `POSV` is likely faster because it is able to use faster algorithms due to the symmetric positive definite assumption.  After looking at both possibilities we choose it. 
+This solution uses the `GESV` routine for general matrices in place of the specialized `POSV` for symmetric positive definite matrices.  Which is best?  In this case `POSV` is likely faster because it is able to use faster algorithms due to the symmetric positive definite assumption.  After looking at both possibilities we choose it. 
 
 For large matrix expressions the number of possible computations may stop us from inspecting all possible solutions.  How can we ensure that the best solution is in the first few?
 
@@ -147,4 +147,4 @@ References
 
 1.  [F2PY](http://cens.ioc.ee/projects/f2py2e/)
 2.  [Example code]({{ BASE_PATH }}/storage/blas_prelim.py) from this post
-3.  [BLAS branch](https://github.com/mrocklin/sympy/tree/blas)
+3.  [My development branch of SymPy](https://github.com/mrocklin/sympy/tree/blas)
