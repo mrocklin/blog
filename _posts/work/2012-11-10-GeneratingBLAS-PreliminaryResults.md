@@ -3,7 +3,6 @@ layout: post
 title: Preliminary BLAS Results
 tagline: putting it all together
 category : work 
-draft : true
 tags : [SymPy, Matrices]
 ---
 {% include JB/setup %}
