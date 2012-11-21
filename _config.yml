@@ -11,6 +11,7 @@ pygments: true
 #
 title : Matthew Rocklin 
 tagline: Notes from a computational scientist
+baseurl: /blog
 author :
   name : Matthew Rocklin 
   email : mrocklin@gmail.com
