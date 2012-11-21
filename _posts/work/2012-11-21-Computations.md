@@ -21,7 +21,7 @@ This `MinMax` operation takes two inputs variables, `x`, and `y`, and produces t
 ![]({{ BASE_PATH }}/images/min-tree.png)
 ![]({{ BASE_PATH }}/images/max-tree.png)
 
-Because the `MinMax` operation has two outputs we can no longer represent its graph with a single tree, we need a more general data structure.  This graph can be described as a bipartite directed acyclic graph (BiDAG).  It is bipartite because there are two types of nodes, variables (circles) and operations \[boxes\].  It is directed and acyclic by the dependence of data (e.g. if `Min(x, y)` depends on `x` and `y` then `x` can not depend on `Min(x, y)`).
+Because the `MinMax` operation has two outputs we can no longer represent its graph with a single tree, we need a more general data structure.  This graph can be described as a bipartite directed acyclic graph (BiDAG).  It is bipartite because there are two types of nodes, variables (circles) and operations \[boxes\].  It is directed and acyclic by the dependence of data (e.g. if `Min(x, y)` depends on `x` then `x` can not depend on `Min(x, y)`).
 
 Computation Type
 ----------------
@@ -38,7 +38,7 @@ Note that `A` produces `x` which is used by `MinMax`.  This computation has inpu
 Internal Representation
 -----------------------
 
-My current implementation of `CompositeComputation` is represented internally as an immutable set of computations.  Inter-computation interactions are inferred as needed by their variables.  We provide methods to form an alternative dict-based data structure with fast access and traversal should performance become necessary.
+My current implementation of `CompositeComputation` is represented internally as an immutable set of computations.  Inter-computation interactions are inferred as needed by their variables.  We provide methods to form an alternative dict-based data structure with fast access and traversal should performance become necessary (speed has not yet been an issue however).
 
 All variables are assumed immutable and unique.  The intention is that variables should be entirely defined by their mathematical meaning.  The expectation is that the variables are SymPy expressions. 
 
@@ -47,11 +47,11 @@ This approach has a focus on immutability and mathematical attributes rather tha
 Inplace
 -------
 
-Copies and inplace operations are important parts of computation.  We make an explicit separation between mathematics-based optimizations and infrastructure-based optimizations (like inplace).  We perform this transition by replacing each variable with a pair that contains a purely mathematical expression (left)  and a purely computational variable (right). 
+And yet copies and inplace operations are important parts of real computation.  We make an explicit separation between mathematics-based optimizations and infrastructure-based optimizations (like inplace).  We perform this transition by replacing each variable with a pair that contains a purely mathematical expression (left)  and a purely computational variable (right). 
 
 ![]({{ BASE_PATH }}/images/min-max-dag-pure.png)
 
-In the example above we see the `MinMax` computation where the `x` and `y` expressions are stored in variables `"x"` and `"y"` and the outputs are stored in dummy variables `"_1"` and `"_2"`.  For performance reasons a computation may write the outputs back into the memory for the inputs as follows
+In the example above we see the `MinMax` computation where the `x` and `y` expressions are stored in variables `"x"` and `"y"` and the outputs are stored in dummy variables `"_1"` and `"_2"`.  For performance reasons a computation may write the outputs back into the memory for the inputs as follows (note that the two outputs are stored in the same variables as the inputs.)
 
 ![]({{ BASE_PATH }}/images/min-max-dag-inplace.png)
 
