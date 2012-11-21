@@ -3,7 +3,6 @@ layout: post
 title: Computations
 tagline: beyond expression trees
 category : work
-draft : true
 tags : [SymPy]
 ---
 {% include JB/setup %}
@@ -67,3 +66,8 @@ I am working to translate matrix expressions (tree) into a computation (DAG) of 
     alpha*X*Y + beta*Z -> GEMM(alpha, X, Y, beta, Z)
 
 However the available operations (like `GEMM`) are inplace by default.  These two goals of mathematical pattern matching and inplace computations are challenging to solve simultaneously for non-trivial expressions.  My solution has been to consider the mathematical pattern matching problem first and then switch to 'inplace mode' and resolve the inplace issues separately.
+
+Question
+--------
+
+Should this be a part of SymPy? 
