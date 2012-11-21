@@ -10,16 +10,16 @@ tags : [SymPy]
 
 How can we symbolically represent computations? In SymPy we normally represent expressions as trees.  Each node in the graph is an expression; it depends on some operation like `Add` or `Mul` and a sequence of arguments/children.
 
-![](/assets/images/add-mul-tree.png)
+![]({{ BASE_PATH }}/images/add-mul-tree.png)
 
 While trees are a convenient data structure they are also very restrictive. Consider the following operation
 
-![](/assets/images/min-max-dag.png)
+![]({{ BASE_PATH }}/images/min-max-dag.png)
 
 This `MinMax` operation takes two inputs variables, `x`, and `y`, and produces two outputs `Min(x, y)`, `Max(x, y)`.  Computationally you might prefer this over two separate trees because both outptus can be produced at once with a single comparison.  This also supports natural grouping of common sub-expressions.  If `x` and `y` were large trees we would not want two have copies of each as children of separate `Min` and `Max` operations.
 
-![](/assets/images/min-tree.png)
-![](/assets/images/max-tree.png)
+![]({{ BASE_PATH }}/images/min-tree.png)
+![]({{ BASE_PATH }}/images/max-tree.png)
 
 Because the `MinMax` operation has two outputs we can no longer represent its graph with a single tree, we need a more general data structure.  This graph can be described as a bipartite directed acyclic graph (BiDAG).  It is bipartite because there are two types of nodes, variables (circles) and operations \[boxes\].  It is directed and acyclic by the dependence of data (e.g. if `Min(x, y)` depends on `x` and `y` then `x` can not depend on `Min(x, y)`).
 
@@ -30,8 +30,8 @@ Enter the `Computation` base type.  This is an abstract interface that must prov
 
 We also add a `CompositeComputation` type which collects many computations together.  Consider the collection of the following computations.
 
-![](/assets/images/min-max-dag.png)
-![](/assets/images/op.png)
+![]({{ BASE_PATH }}/images/min-max-dag.png)
+![]({{ BASE_PATH }}/images/op.png)
 
 Note that `A` produces `x` which is used by `MinMax`.  This computation has inputs (`w`, `y`) and outputs (`Min(x, y)`, `Max(x, y)`).  The data dependencies infer an ordering; the `A` computation must occur before the `MinMax` computation.
 
@@ -49,15 +49,15 @@ Inplace
 
 Copies and inplace operations are important parts of computation.  We make an explicit separation between mathematics-based optimizations and infrastructure-based optimizations (like inplace).  We perform this transition by replacing each variable with a pair that contains a purely mathematical expression (left)  and a purely computational variable (right). 
 
-![](/assets/images/min-max-dag-pure.png)
+![]({{ BASE_PATH }}/images/min-max-dag-pure.png)
 
 In the example above we see the `MinMax` computation where the `x` and `y` expressions are stored in variables `"x"` and `"y"` and the outputs are stored in dummy variables `"_1"` and `"_2"`.  For performance reasons a computation may write the outputs back into the memory for the inputs as follows
 
-![](/assets/images/min-max-dag-inplace.png)
+![]({{ BASE_PATH }}/images/min-max-dag-inplace.png)
 
 Inplace computations provide higher performance at the cost of memory safety.  We must avoid situations like the following where the `x` variable may be overwritten (for example by `B`) before it is read (by `C`).
 
-![](/assets/images/dangerous-inplace.png)
+![]({{ BASE_PATH }}/images/dangerous-inplace.png)
 
 Motivation
 ----------
