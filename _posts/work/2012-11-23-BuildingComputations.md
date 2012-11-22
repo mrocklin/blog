@@ -26,10 +26,10 @@ We also specify a list of conditional rewrite patterns.  A pattern has the
 following form
 
 {% highlight python %}
-Source:     alpha*A*B
-Target:     SYMM(alpha, A, B, S.Zero, B)
-Wilds:      alpha, A, B
-Condition:  Q.symmetric(A) | Q.symmetric(B))
+    Source:     alpha*A*B
+    Target:     SYMM(alpha, A, B, S.Zero, B)
+    Wilds:      alpha, A, B
+    Condition:  Q.symmetric(A) | Q.symmetric(B))
 {% endhighlight %}
 
 This means that we convert the expression `alpha*A*B` into the computation `SYMM(alpha, A, B, S.Zero, B)` (a SYmmetric Matrix Multiply) for any `(alpha, A, B)` when either `A` is symmetric or `B` is symmetric.
@@ -98,3 +98,8 @@ There are a couple of small items and one large one.
 2.  I need to refactor my old Fortran generation code to work with the new inplace system.
 
 3.  The largest challenge is to build strategies for intelligent application of rewrite rules.  Expressions are large enough and the list of patterns is long enough so that checking all possiblities is strictly infeasible.  Fortunately this problem is purely algorithmic and has no connection to BLAS, inplace computations, etc....  I should be able to think about it in isolation.
+
+Closing Note
+------------
+
+Except for the mathematical definition of BLAS none of this code is specific to generating matrix computations.  The majority of this technology isn't even specific to building computations.  My final `sympy.computations.matrices` directory is small.  Throughout this project I've tried to keep all of the technology as general as possible in hopes that others will make use of it.  Only a small fraction of my work has been specific to my application.  I hope that others find this work interesting.  I hope that this technology enables other, completely unrelated projects.
