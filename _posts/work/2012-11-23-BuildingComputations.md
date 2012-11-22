@@ -48,7 +48,7 @@ into a computation.  We start with an identity computation
     identcomp = Identity(expr)
 {% endhighlight %}
 
-And we cycle our rules over the inputs.  Whenever we find a match we add a new atomic computation onto the composite one.  We use [branching strategies]({{BASE_PATH}}work/2012/11/09/BranchingStrategies/) to orchestrate *how* these rules are applied.  This is in the last line of the `make_matrix_rule` function
+And we cycle our rules over the inputs.  Whenever we find a match we add a new atomic computation onto the composite one.  We use [branching strategies]({{BASE_PATH}}/work/2012/11/09/BranchingStrategies/) to orchestrate *how* these rules are applied.  This is in the last line of the `make_matrix_rule` function
 
 {% highlight python %}
     def make_matrix_rule(patterns, assumptions):
