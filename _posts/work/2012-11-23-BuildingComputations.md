@@ -53,7 +53,7 @@ Computations are able to print themselves in the [DOT Language](http://en.wikipe
 
 ![]({{ BASE_PATH }}/images/complex-matrix-computation-identity.png)
 
-And we cycle our rules over the inputs.  Whenever we find a match we add a new atomic computation onto the composite one.  We use [branching strategies]({{BASE_PATH}}/work/2012/11/09/BranchingStrategies/) to orchestrate *how* these rules are applied.  This is in the last line of the `make_matrix_rule` function
+We convert each of our patterns into a rule.  This rule looks at the inputs and, if it finds a matching expression adds on a new computation to break down that expression.  We use [branching strategies]({{BASE_PATH}}/work/2012/11/09/BranchingStrategies/) to orchestrate *how* these rules are applied.  This is accomplished in the last line of the `make_matrix_rule` function
 
 {% highlight python %}
     def make_matrix_rule(patterns, assumptions):
@@ -72,10 +72,12 @@ This function combines the logic (`patterns/assumptions`) with the control (`exh
 
 ![]({{ BASE_PATH }}/images/complex-matrix-computation.png)
 
+`rule(identcomp)` iterates over all possible computations to compute this expression.  If you are not satisfied with the computation above you may ask for more. 
+
 Inplace Computations
 --------------------
 
-BLAS/LAPACK routines are *inplace*; they write their results to the memory locations of their inputs.  We have a separate system to deal with inplace computations. 
+BLAS/LAPACK routines are *inplace*; they write their results to the memory locations of some of their inputs.  We have a separate system to deal with inplace computations. 
 
 {% highlight python %}
     from sympy.computations.inplace import inplace_compile
@@ -85,24 +87,26 @@ BLAS/LAPACK routines are *inplace*; they write their results to the memory locat
 
 ![]({{ BASE_PATH }}/images/complex-matrix-computation-inplace.png)
 
-Note the introduction of `Copy` operations and that each variable is now of the form
+Note the introduction of `Copy` operations into the graph and that each variable is now of the form
 
     Mathematical Expression @ memory location
 
-If you track the memory locations you can see which operations work in place.
+If you track the memory locations you can see which operations overwrite which variables.  For example `Z` is never overwritten and so is never copied. On the other hand `W` is used in two overwrite operations and so it is copied to two new variables, `W_2` and `W_3`.
 
 Future Work
 -----------
 
 There are a couple of small items and one large one. 
 
-1.  An expert in BLAS/LAPACK will note that there are some issues with my graphs; they are not yet ideal.  I don't handle `IPIV` permutation operations well (I just need to add some new patterns), am overwriting the `INFO` out parameter, and there are a few cases (but not many!) where I copy unnecessarily.
+1.  An expert in BLAS/LAPACK will note that there are some issues with my graphs; they are not yet ideal.  I don't handle `IPIV` permutation operations well (I just need to add some new patterns), I am overwriting the `INFO` out parameter, and there are a few cases where a copy could be avoided by operation reordering.
 
 2.  I need to refactor my old Fortran generation code to work with the new inplace system.
 
-3.  The largest challenge is to build strategies for intelligent application of rewrite rules.  Expressions are large enough and the list of patterns is long enough so that checking all possiblities is strictly infeasible.  Fortunately this problem is purely algorithmic and has no connection to BLAS, inplace computations, etc....  I should be able to think about it in isolation.
+3.  The largest challenge is to build strategies for intelligent application of rewrite rules.  Expressions are now large enough and the list of patterns is now long enough so that checking all possiblities is strictly infeasible.  Fortunately this problem is purely algorithmic and has no connection to BLAS, inplace computations, etc....  I should be able to think about it in isolation.
 
 Closing Note
 ------------
 
-Except for the mathematical definition of BLAS none of this code is specific to generating matrix computations.  The majority of this technology isn't even specific to building computations.  My final `sympy.computations.matrices` directory is small.  Throughout this project I've tried to keep all of the technology as general as possible in hopes that others will make use of it.  Only a small fraction of my work has been specific to my application.  I hope that others find this work interesting.  I hope that this technology enables other, completely unrelated projects.
+Except for the mathematical definition of BLAS none of this code is specific to generating matrix computations.  The majority of this technology isn't even specific to building computations.  The computaitonal core of most of the technologies isn't even dependent on SymPy.  My final `sympy.computations.matrices` directory is small.  
+
+Throughout this project I've tried to keep all of the technology as general as possible in hopes that others will make use of it.  Only a small fraction of my work has been specific to my application.  I hope that others find this work interesting.  I hope that this technology enables a variety of other unrelated projects.
