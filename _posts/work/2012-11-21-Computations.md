@@ -15,17 +15,19 @@ While trees are a convenient data structure they are also very restrictive. Cons
 
 ![]({{ BASE_PATH }}/images/min-max-dag.png)
 
-This `MinMax` operation takes two inputs variables, `x`, and `y`, and produces two outputs `Min(x, y)`, `Max(x, y)`.  Computationally you might prefer this over two separate trees because both outptus can be produced at once with a single comparison.  This also supports natural grouping of common sub-expressions.  If `x` and `y` were large trees we would not want two have copies of each as children of separate `Min` and `Max` operations.
+This `MinMax` operation takes two inputs variables, `x`, and `y`, and produces two outputs `Min(x, y)`, `Max(x, y)`.  Computationally you might prefer this over two separate trees because both outputs can be produced at once with a single comparison.  This also supports natural grouping of common sub-expressions.  If `x` and `y` were large trees we would not want two have copies of each in separate `Min` and `Max` trees.
 
 ![]({{ BASE_PATH }}/images/min-tree.png)
 ![]({{ BASE_PATH }}/images/max-tree.png)
 
 Because the `MinMax` operation has two outputs we can no longer represent its graph with a single tree, we need a more general data structure.  This graph can be described as a bipartite directed acyclic graph (BiDAG).  It is bipartite because there are two types of nodes, variables (circles) and operations \[boxes\].  It is directed and acyclic by the dependence of data (e.g. if `Min(x, y)` depends on `x` then `x` can not depend on `Min(x, y)`).
 
+A DAG is the next most restrictive graph subtype.  In some sense this is the smallest generalization we can make.
+
 Computation Type
 ----------------
 
-Enter the `Computation` base type.  This is an abstract interface that must provide tuples of `inputs` and `outputs` instead of the standard `args` we use for trees.
+Enter the `Computation` base type.  This is an interface that must provide tuples of `inputs` and `outputs` instead of the standard `args` we use for trees.
 
 We also add a `CompositeComputation` type which collects many computations together.  Consider the collection of the following computations.
 
@@ -37,7 +39,7 @@ Note that `A` produces `x` which is used by `MinMax`.  This computation has inpu
 Internal Representation
 -----------------------
 
-My current implementation of `CompositeComputation` is represented internally as an immutable set of computations.  Inter-computation interactions are inferred as needed by their variables.  We provide methods to form an alternative dict-based data structure with fast access and traversal should performance become necessary (speed has not yet been an issue however).
+My current implementation of `CompositeComputation` is represented internally as an immutable set of computations.  Inter-computation interactions are inferred as needed by their variables.  We provide methods to form an alternative dict-based data structure with fast access and traversal should performance become necessary.
 
 All variables are assumed immutable and unique.  The intention is that variables should be entirely defined by their mathematical meaning.  The expectation is that the variables are SymPy expressions. 
 
