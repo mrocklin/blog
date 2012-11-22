@@ -81,3 +81,15 @@ BLAS/LAPACK routines are *inplace*; they write their results to the memory locat
 {% endhighlight %}
 
 ![]({{ BASE_PATH }}/images/complex-matrix-computation-inplace.png)
+
+
+Future Work
+-----------
+
+There are a couple of small items and one large one. 
+
+1.  An expert in BLAS/LAPACK will note that there are some issues with my graphs; they are not yet ideal.  I don't handle `IPIV` permutation operations well (I just need to add some new patterns) and there are a few cases (but not many!) where I copy unnecessarily.
+
+2.  I need to refactor my old Fortran generation code to work with the new inplace system.
+
+3.  The largest challenge is to build strategies for intelligent application of rewrite rules.  Expressions are large enough and the list of patterns is long enough so that checking all possiblities is strictly infeasible.  Fortunately this problem is purely algorithmic and has no connection to BLAS, inplace computations, etc....  I should be able to think about it in isolation.
