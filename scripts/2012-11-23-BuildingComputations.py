@@ -10,10 +10,11 @@ Y = MatrixSymbol('Y', n, n)
 Z = MatrixSymbol('Z', n, n)
 W = MatrixSymbol('W', n, n)
 expr = (Y.I*Z*Y + b*Z*Y + c*W*W).I*Z*W
-comp = Identity(expr)
 assumptions = Q.symmetric(Y) & Q.positive_definite(Y) & Q.symmetric(X)
+identcomp = Identity(expr)
+
 rule = make_rule(patterns, assumptions)
-mathcomp = next(rule(comp))
+mathcomp = next(rule(identcomp))
 mathcomp.show()
 icomp = inplace_compile(mathcomp)
 icomp.show()

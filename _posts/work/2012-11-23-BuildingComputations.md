@@ -10,7 +10,7 @@ tags : [SymPy, Matrices]
 
 In my [last post]({{ BASE_PATH }}/work/2012/11/21/Computations/) I described a
 base type that represented a computation as a directed acyclic graph.  In my
-post on [preliminary results]({{ BASE_PATH }}/work/2012/11/10/GeneratingBLAS-PreliminaryResults/) I showed how we could write Fortran code for a simple expression.  In this post I want to show how unificaiton, rewrite rules, and manipulations on computations can compile computations from fairly complex matrix expressions.
+post on [preliminary results]({{ BASE_PATH }}/work/2012/11/10/GeneratingBLAS-PreliminaryResults/) I showed how we could write Fortran code for a simple matrix expression.  In this post I want to show how unificaiton, rewrite rules, and manipulations on computations can compile computations from fairly complex matrix expressions.
 
 Inputs
 ------
@@ -34,7 +34,7 @@ following form
 
 This means that we convert the expression `alpha*A*B` into the computation `SYMM(alpha, A, B, S.Zero, B)` (a SYmmetric Matrix Multiply) for any `(alpha, A, B)` when either `A` is symmetric or `B` is symmetric.
 
-Thanks to [unification]({{BASE_PATH}}/work/2012/11/01/Unification/) rewrite patterns are simple to make.  Someone who is familiar with BLAS/LAPACK but unfamiliar with compilers would be able to make many of these simply.
+Thanks to [unification]({{BASE_PATH}}/work/2012/11/01/Unification/) rewrite patterns are simple to make.  Someone who is familiar with BLAS/LAPACK but unfamiliar with compilers would be able to make many of these easily.
 
 Expressions to Computations
 ---------------------------
@@ -46,7 +46,12 @@ into a computation.  We start with an identity computation
     expr = (Y.I*Z*Y + b*Z*Y + c*W*W).I*Z*W
     assumptions = Q.symmetric(Y) & Q.positive_definite(Y) & Q.symmetric(X)
     identcomp = Identity(expr)
+    identcomp.show()
 {% endhighlight %}
+
+Computations are able to print themselves in the [DOT Language](http://en.wikipedia.org/wiki/DOT_language) enabling simple visualization
+
+![]({{ BASE_PATH }}/images/complex-matrix-computation-identity.png)
 
 And we cycle our rules over the inputs.  Whenever we find a match we add a new atomic computation onto the composite one.  We use [branching strategies]({{BASE_PATH}}/work/2012/11/09/BranchingStrategies/) to orchestrate *how* these rules are applied.  This is in the last line of the `make_matrix_rule` function
 
@@ -57,15 +62,13 @@ And we cycle our rules over the inputs.  Whenever we find a match we add a new a
         return exhaust(multiplex(*map(input_crunch, rules)))
 {% endhighlight %}
 
-We then apply this rule to our identity computation and pull off compiled results
+This function combines the logic (`patterns/assumptions`) with the control (`exhaust/multiplex/input_crunch`) to create a [complete algorithm](http://www.icsd.aegean.gr/lecturers/stamatatos/courses/Logic/Prolog/Ch1/Ch1_files/algorithm%3Dlogic%2Bcontrol.pdf).  We then apply this algorithm to our identity computation and pull off compiled results
 
 {% highlight python %}
-    rule = make_rule(patterns, assumptions)
+    rule = make_matrix_rule(patterns, assumptions)
     comp = next(rule(identcomp))
     comp.show()
 {% endhighlight %}
-
-Computations are able to print themselves in the [DOT Language](http://en.wikipedia.org/wiki/DOT_language) enabling simple visualization
 
 ![]({{ BASE_PATH }}/images/complex-matrix-computation.png)
 
