@@ -3,7 +3,6 @@ layout: post
 title: Building Computations 
 tagline: Non-trivial results
 category : work
-draft : true
 tags : [SymPy, Matrices]
 ---
 {% include JB/setup %}
@@ -113,3 +112,9 @@ Closing Note
 Except for the mathematical definition of BLAS none of this code is specific to generating matrix computations.  The majority of this technology isn't even specific to building computations.  The computaitonal core of most of the technologies isn't even dependent on SymPy.  My final `sympy.computations.matrices` directory is small.  
 
 Throughout this project I've tried to keep all of the technology as general as possible in hopes that others will make use of it.  Only a small fraction of my work has been specific to my application.  I hope that others find this work interesting.  I hope that this technology enables a variety of other unrelated projects.
+
+Links
+-----
+
+1.  [Development Branch](https://github.com/mrocklin/sympy/tree/compblas)
+2.  [Script to generate images within this post]({{BASE_PATH}}/scripts/2012-11-23-BuildingComputations.py)
