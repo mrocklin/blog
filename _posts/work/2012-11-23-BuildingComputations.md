@@ -53,7 +53,7 @@ Computations are able to print themselves in the [DOT Language](http://en.wikipe
 
 ![]({{ BASE_PATH }}/images/complex-matrix-computation-identity.png)
 
-Our patterns know how to break down big computations into smaller ones.  We convert each of our patterns into a rule.  This rule looks at the inputs and, if it finds a matching expression adds on a new computation to break down that expression.  We use [branching strategies]({{BASE_PATH}}/work/2012/11/09/BranchingStrategies/) to orchestrate *how* these rules are applied.  This is accomplished in the last line of the `make_matrix_rule` function
+Our patterns know how to break down big expressions into smaller ones by adding the right computation (e.g `alpha*A*B` -> `alpha, A, B` via `SYMM`.)  We convert each of our patterns into a rule.  This rule looks at the inputs and, if it finds a matching expression adds on a new computation to break down that expression.  We use [branching strategies]({{BASE_PATH}}/work/2012/11/09/BranchingStrategies/) to orchestrate *how* all of  these rules are applied.  This is accomplished in the last line of the `make_matrix_rule` function
 
 {% highlight python %}
     def make_matrix_rule(patterns, assumptions):
@@ -74,12 +74,12 @@ This function combines logic (`patterns/assumptions`) with control (`exhaust/mul
 
 We still have same output but now the input is broken down into smaller pieces by a set of computations.  These computations are arranged in a graph based on their dependencies.  We had to use a `GESV`, a `POSV`, two `GEMM`s a `SYMM` and two `AXPY`s to break down this computation.  Our inputs are now `a,b,c,W,X,Y,Z` as desired.
 
-`rule(identcomp)` iterates over all possible computations to compute this expression.  If you are not satisfied with the computation above you may ask for more. 
+`rule(identcomp)` iterates over all possible computations to compute this expression.  If you are not satisfied with the computation above you may ask for another. 
 
 Inplace Computations
 --------------------
 
-The BLAS/LAPACK routines are *inplace*; they write their results to the memory locations of some of their inputs.  The above *matheamtical* graph doesn't have the necessary information to think about this *computational* concern. We have a separate system to deal with inplace computations. 
+The BLAS/LAPACK routines are *inplace*; they write their results to the memory locations of some of their inputs.  The above *matheamtical* graph doesn't have the necessary information to think about this *computational* concern. We have a separate system to compile and optimize inplace computations. 
 
 {% highlight python %}
     from sympy.computations.inplace import inplace_compile
@@ -94,18 +94,18 @@ Each variable is now of the form
     Mathematical Expression @ memory location
 
 We have introduced `Copy` operations into the graph where necessary to prevent dangerous overwrites. 
-If you track the memory locations you can see which BLAS/LAPACK operations overwrite which variables.  For example `Z` is never overwritten and so is never copied. On the other hand `W` is used in two overwrite operations and so it is copied to two new variables, `W_2` and `W_3`.
+If you track the memory locations you can see which BLAS/LAPACK operations overwrite which variables.  For example `Z` is never overwritten and so is never copied. On the other hand `W` is used in two overwrite operations and so it is copied to two new variables, `W_2` and `W_3`.  Copies are not added if obviously unnecessary.
 
 Future Work
 -----------
 
 There are a couple of small items and one large one. 
 
-1.  An expert in BLAS/LAPACK will note that there are some issues with my graphs; they are not yet ideal.  I don't handle `IPIV` permutation operations well (I just need to add some new patterns for the `LASWP` permutation operation), I am overwriting the `INFO` out parameter, and there are a few cases where a copy could be avoided by operation reordering.
+1.  An expert in BLAS/LAPACK will note that there are some issues with my graphs; they are not yet ideal.  I don't handle `IPIV` permutation operations well (I need to add some new patterns), I am overwrie the `INFO` out parameter, and there are a few cases where a copy could be avoided by operation reordering.
 
 2.  I need to refactor my old Fortran generation code to work with the new inplace system.
 
-3.  The largest challenge is to build strategies for intelligent application of rewrite rules.  Expressions are now large enough and the list of patterns is now long enough so that checking all possiblities is strictly infeasible.  I need to think hard about traversals.  Fortunately this problem is purely algorithmic and has no connection to BLAS, inplace computations, etc....  I should be able to think about it in isolation.
+3.  The largest challenge is to build strategies for intelligent application of rewrite rules.  Expressions are now large enough and the list of patterns is now long enough so that checking all possiblities is definitely infeasible.  I need to think hard about traversals.  Fortunately this problem is purely algorithmic and has no connection to BLAS, inplace computations, etc....  I should be able to think about it in isolation.
 
 Closing Note
 ------------
