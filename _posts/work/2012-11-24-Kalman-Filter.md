@@ -34,8 +34,8 @@ R       = MatrixSymbol('R', k, k)
 data    = MatrixSymbol('data', k, 1)
 I       = Identity(n)
 
-newmu       = mu + Sigma*H.T * (R + H*Sigma*H.T).I * (H*mu - data)
-newSigma    = (I - Sigma*H.T * (R + H*Sigma*H.T).I * H) * Sigma
+new_mu      = mu + Sigma*H.T * (R + H*Sigma*H.T).I * (H*mu - data)
+new_Sigma   = (I - Sigma*H.T * (R + H*Sigma*H.T).I * H) * Sigma
 
 assumptions = (Q.positive_definite(Sigma) & Q.symmetric(Sigma) &
                Q.positive_definite(R) & Q.symmetric(R))
@@ -45,11 +45,11 @@ We convert these matrix expressions into a computation
 
 {% highlight python %}
 # kalman_computation.py
-from kalman import newmu, newSigma, assumptions
+from kalman import new_mu, new_Sigma, assumptions
 from sympy.computations.matrices.compile import make_rule, patterns
 from sympy.computations.core import Identity
 
-ident = Identity(newmu, newSigma)
+ident = Identity(new_mu, new_Sigma)
 rule = make_rule(patterns, assumptions)
 mathcomp = next(rule(ident))
 mathcomp.show()
@@ -89,7 +89,7 @@ Features and Flaws in the Kalman graph
 
 Lets investigate the Kalman computation.  It contains a few notable features.
 
-First, unlike previous examples it has two outputs, `newmu` and `newSigma`.  These two have large common subexpressions like `H*Sigma*H' + R`.  You can see that these were computed once and shared.
+First, unlike previous examples it has two outputs, `new_mu` and `new_Sigma`.  These two have large common subexpressions like `H*Sigma*H' + R`.  You can see that these were computed once and shared.
 
 Second, lets appreciate that `H*Sigma*H + R` is identified as symmetric positive definite allowing the more efficient `POSV` routine.  I've brought this up before in artificial examples.  It's nice to see that this occurs in practice.
 
