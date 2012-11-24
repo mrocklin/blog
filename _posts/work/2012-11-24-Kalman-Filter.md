@@ -3,7 +3,6 @@ layout: post
 title: Computing the Kalman Filter
 tagline: connecting pieces
 category : work
-draft: true
 tags : [SymPy, Matrices, Uncertainty]
 ---
 {% include JB/setup %}
