@@ -15,8 +15,8 @@ In this post I will
 2.  Relate this to old work on `sympy.stats`
 3.  Analyze the computation graph for some flaws and features
 
-Images
-------
+Results
+-------
 
 The Kalman filter can be defined as a pair of matrix expressions
 
