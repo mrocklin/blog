@@ -55,7 +55,7 @@ mathcomp.show()
 
 {% endhighlight %}
 
-![]({{ BASE_PATH }}/images/kalman-math-1.png)
+[![]({{ BASE_PATH }}/images/kalman-math-1.png)]({{ BASE_PATH }}/images/kalman-math-1.pdf)
 
 This is a useful result. 
 
