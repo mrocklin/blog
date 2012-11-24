@@ -75,7 +75,7 @@ The goal was to turn a specialized problem (uncertainty quantification) into a g
 
 The first blogpost on the univariate kalman filter produced integral expressions that were then solved by SymPy's integration routines.  The [second blogpost](http://sympystats.wordpress.com/2011/07/19/multivariate-normal-random-variables/) on the multivariate Kalman filter generated the following matrix expressions
 
-$$\mu' = \Sigma H^T \left( R + H \Sigma H^T \right )^{-1} \left(H\mu - \textrm{data} \right) $$
+$$\mu' = \mu + \Sigma H^T \left( R + H \Sigma H^T \right )^{-1} \left(H\mu - \textrm{data} \right) $$
 $$\Sigma' = \left( \mathbb{I} - \Sigma H^T \left(R + H \Sigma H^T \right)^{-1} H \right) \Sigma $$
 
 That blogpost finished with this result, claiming that the job of `sympy.stats` was finished and that any of the popular numerical linear algebra packages could pick up from that point. 
