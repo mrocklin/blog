@@ -8,7 +8,7 @@ tags : [SymPy, Stats, scipy]
 ---
 {% include JB/setup %}
 
-In a recent post, [Characteristic Functions and scipy.stats](http://jpktd.blogspot.com/2012/12/characteristic-functions-and-scipystats.html), [Josef Perktold](https://github.com/josef-pkt) created functions for the [characteristic functions](http://en.wikipedia.org/wiki/Characteristic_function) of the [Normal](http://en.wikipedia.org/wiki/Normal_distribution) (easy) and [t](http://en.wikipedia.org/wiki/Student%27s_t-distribution) (hard) distributions.  The t-distribution is challenging because the solution involves special functions and has numerically challenging behavior around 0.
+In a recent post, [Characteristic Functions and scipy.stats](http://jpktd.blogspot.com/2012/12/characteristic-functions-and-scipystats.html), [Josef Perktold](https://github.com/josef-pkt) created functions for the [characteristic functions](http://en.wikipedia.org/wiki/Characteristic_function) of the [Normal](http://en.wikipedia.org/wiki/Normal_distribution) (easy) and [t](http://en.wikipedia.org/wiki/Student%27s_t-distribution) (hard) distributions.  The t-distribution is challenging because the solution involves special functions and has numerically challenging behavior around 0 for high degrees of freedom.
 
 Lets see if SymPy can do this work symbolically.  Wikipedia says that the characteristic function \\(\phi(t)\\) of a random variable `X` is defined as follows
 
@@ -87,7 +87,7 @@ Closing Notes
 The `sympy.stats` module was not designed with characteristic functions in mind.  I was pleasantly surprised when I entered the following mathematical code 
 
     X = Normal('X', mu, sigma)
-    E(I*t*X)
+    E(exp(I*t*X))
 
 and received the answer on Wikipedia.  I am always happy when projects work on problems for which they were not originally designed.
 
