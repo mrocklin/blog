@@ -76,7 +76,7 @@ The solution is in terms of [Meijer-G](http://en.wikipedia.org/wiki/Meijer-G) fu
 
 And finally can we plot it?
 
-    >>> plot(re(simplify(E(exp(I*t*X)))), (t, 1e-7, 1e-3))
+    >>> plot(re(simplify(E(exp(I*t*X)))), (t, 1e-7, 1e-1))
 
 ![]({{ BASE_PATH }}/images/student-t-characteristic-near-zero.png)
 
