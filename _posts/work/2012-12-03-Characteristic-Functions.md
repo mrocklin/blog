@@ -1,9 +1,9 @@
 ---
 layout: post
 title: Characteristic Functions
-tagline: 
+tagline: stressing sympy.stats
 category : work 
-tags : [SymPy, Stats]
+tags : [SymPy, Stats, scipy]
 ---
 {% include JB/setup %}
 
