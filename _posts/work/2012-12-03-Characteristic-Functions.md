@@ -75,7 +75,12 @@ The solution is in terms of [Meijer-G](http://en.wikipedia.org/wiki/Meijer-G) fu
     >>> simplify(E(exp(I*t*X))).subs(t, 1e-6).evalf()
     0.999999999999479 + 1.56564942264937e-29⋅ⅈ
 
-And finally can we plot it?
+    >>> simplify(E(exp(I*t*X))).subs(t, 1e-30).evalf()  
+    1.0 - 1.2950748484704e-53⋅ⅈ
+
+This is where scipy's special functions failed in Josef's post, yielding infinity instead of 1.
+
+And finally we plot the behavior around 1.
 
     >>> plot(re(simplify(E(exp(I*t*X)))), (t, 1e-7, 1e-1))
 
@@ -84,11 +89,11 @@ And finally can we plot it?
 Closing Notes
 -------------
 
-The `sympy.stats` module was not designed with characteristic functions in mind.  I was pleasantly surprised when I entered the following mathematical code 
+The `sympy.stats` module was not designed with characteristic functions in mind.  I was pleasantly surprised when I entered code almost identical to the mathematical definition
 
     X = Normal('X', mu, sigma)
     E(exp(I*t*X))
 
-and received the answer on Wikipedia.  I am always happy when projects work on problems for which they were not originally designed.
+and received the correct answer.  I am always happy when projects work on problems for which they were not originally designed.
 
 If you do complex work on statistical functions I recommend you take a look at `sympy.stats`.  It's able to perform some interesting high level transformations.  Thanks to recent work by [Raoul Bourquin](https://github.com/raoulb) many of the common distributions found in `scipy.stats` are now available (with even more in a [pull request](https://github.com/sympy/sympy/pull/1413)).
