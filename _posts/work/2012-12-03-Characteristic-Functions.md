@@ -3,7 +3,6 @@ layout: post
 title: Characteristic Functions
 tagline: and sympy.stats
 category : work 
-draft : true
 tags : [SymPy, Stats, scipy]
 ---
 {% include JB/setup %}
