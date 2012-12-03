@@ -1,38 +1,47 @@
 ---
 layout: post
 title: Characteristic Functions
-tagline: stressing sympy.stats
+tagline: and sympy.stats
 category : work 
 draft : true
 tags : [SymPy, Stats, scipy]
 ---
 {% include JB/setup %}
 
-In a recent post, [Characteristic Functions and scipy.stats](http://jpktd.blogspot.com/2012/12/characteristic-functions-and-scipystats.html), [Josef Perktold](https://github.com/josef-pkt) created functions for the [characteristic functions](http://en.wikipedia.org/wiki/Characteristic_function) of the [Normal](http://en.wikipedia.org/wiki/Normal_distribution) (easy) and [t](http://en.wikipedia.org/wiki/Student%27s_t-distribution) (hard) distributions.  The t-distribution is challenging because the solution involves special functions and has numerically challenging behavior around 0 for high degrees of freedom.
+In a recent post, [Characteristic Functions and scipy.stats](http://jpktd.blogspot.com/2012/12/characteristic-functions-and-scipystats.html), [Josef Perktold](https://github.com/josef-pkt) created functions for the [characteristic functions](http://en.wikipedia.org/wiki/Characteristic_function) of the [Normal](http://en.wikipedia.org/wiki/Normal_distribution) (easy) and [t](http://en.wikipedia.org/wiki/Student%27s_t-distribution) (hard) distributions.  The t-distribution is challenging because the solution involves special functions and has numerically challenging behavior around 0 for high degrees of freedom.  Some quotes
 
-Lets see if SymPy can do this work symbolically.  Wikipedia says that the characteristic function \\(\phi(t)\\) of a random variable `X` is defined as follows
+*The characteristic function for the normal distribution is easy, but looking at the characteristic function of the t-distribution, I wish someone had translated it into code already*
+
+*Since I haven't seen it yet, I sat down and tried it myself. I managed to code the characteristic function of the t-distribution, but it returns NaNs when it is evaluated close to zero for large df.  I didn't find a Bessel "k" function that works in this case*
+
+He then includes his code and discusses a particular application of the characteristic function which I won't discuss here. 
+
+
+Symbolic Solution
+-----------------
+
+Josef wished that this code had been written already.  Characteristic functions aren't built into SymPy but we may be able to derive them automatically.
+
+Wikipedia says that the characteristic function \\(\phi(t)\\) of a random variable `X` is defined as follows
 
 $$ \phi_X(t) = E(e^{itX}) $$
 
 It equal to the expectation of `exp(i*t*X)`.  Lets do this in SymPy
 
-{% highlight python %}
->>> from sympy.stats import *
->>> mu = Symbol('mu', bounded=True)
->>> sigma = Symbol('sigma', positive=True, bounded=True)
->>> X = Normal('X', mu, sigma)
->>> t = Symbol('t', positive=True)
+    >>> from sympy.stats import *
+    >>> mu = Symbol('mu', bounded=True)
+    >>> sigma = Symbol('sigma', positive=True, bounded=True)
+    >>> X = Normal('X', mu, sigma)
+    >>> t = Symbol('t', positive=True)
+    
+    >>> simplify(E(exp(I*t*X)))
+                  2  2
+                 σ ⋅t 
+         ⅈ⋅μ⋅t - ─────
+                   2  
+       ℯ             
 
->>> simplify(E(exp(I*t*X)))
-              2  2
-             σ ⋅t 
-     ⅈ⋅μ⋅t - ─────
-               2  
-   ℯ             
-{% endhighlight %}
-
-
-Wikipedia verifies that this is the correct answer.  I was actually pretty surprised that this worked as smoothly as it did.  SymPy stats wasn't designed to support characteristic functions natively. 
+Wikipedia verifies that this is the correct answer.  I was actually pretty surprised that this worked as smoothly as it did.  SymPy stats wasn't designed for this.
 
 Here are some gists for the [Cauchy](https://gist.github.com/4186685) and [Student-T](https://gist.github.com/4186709) distributions.  Cauchy simplifies down pretty well but the Student-T characteristic function has a few special functions included.
 
@@ -94,6 +103,6 @@ The `sympy.stats` module was not designed with characteristic functions in mind.
     X = Normal('X', mu, sigma)
     E(exp(I*t*X))
 
-and received the correct answer.  I am always happy when projects work on problems for which they were not originally designed.
+and received the correct answer.  I am always happy when projects work on problems for which they were not originally designed.  The fact that this works is largely due to SymPy's excellent handling of integrals of special functions, due largely to [Tom Bachmann](https://github.com/ness01).
 
 If you do complex work on statistical functions I recommend you take a look at `sympy.stats`.  It's able to perform some interesting high level transformations.  Thanks to recent work by [Raoul Bourquin](https://github.com/raoulb) many of the common distributions found in `scipy.stats` are now available (with even more in a [pull request](https://github.com/sympy/sympy/pull/1413)).
