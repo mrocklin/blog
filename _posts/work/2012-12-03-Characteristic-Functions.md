@@ -30,17 +30,17 @@ It equal to the expectation of `exp(i*t*X)`.  Lets do this in SymPy
     >>> from sympy.stats import *
     >>> mu = Symbol('mu', bounded=True)
     >>> sigma = Symbol('sigma', positive=True, bounded=True)
-    >>> X = Normal('X', mu, sigma)
     >>> t = Symbol('t', positive=True)
     
-    >>> simplify(E(exp(I*t*X)))
+    >>> X = Normal('X', mu, sigma)  # Normal random variable
+    >>> simplify(E(exp(I*t*X)))     # Expectation of exp(I*t*X)
                   2  2
                  σ ⋅t 
          ⅈ⋅μ⋅t - ─────
                    2  
        ℯ             
 
-Wikipedia verifies that this is the correct answer.  I was actually pretty surprised that this worked as smoothly as it did.  SymPy stats wasn't designed for this.
+I was actually pretty surprised that this worked as smoothly as it did.  SymPy stats wasn't designed for this.
 
 Here are some gists for the [Cauchy](https://gist.github.com/4186685) and [Student-T](https://gist.github.com/4186709) distributions.  Cauchy simplifies down pretty well but the Student-T characteristic function has a few special functions included.
 
@@ -53,8 +53,9 @@ challenging to compute numerically.  Can SymPy handle this symbolically?
 
 {% highlight python %}
 >>> nu = Symbol('nu', positive=True, integer=True)
->>> X = StudentT('X', nu)
 >>> t = Symbol('t', positive=True)
+
+>>> X = StudentT('X', nu)
 >>> simplify(E(exp(I*t*X)))
 {% endhighlight %}
 
@@ -88,7 +89,7 @@ The solution is in terms of [Meijer-G](http://en.wikipedia.org/wiki/Meijer-G) fu
 
 This is where scipy's special functions failed in Josef's post, yielding infinity instead of 1.
 
-And finally we plot the behavior around 1.
+And finally we plot the behavior around 0.
 
     >>> plot(re(simplify(E(exp(I*t*X)))), (t, 1e-7, 1e-1))
 
