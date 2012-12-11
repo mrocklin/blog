@@ -39,7 +39,7 @@ The surrounding infrastructure looks like this
 
 ![]({{ BASE_PATH }}/images/stats-simp.png)
 
-When SymPy expressions are imbued with random variables they form stochastic expressions.  `sympy.stats` transforms these into integral expressions which are then transformed into baser expressions through a variety of methods, either numeric or again symbolic. 
+When SymPy expressions are imbued with random variables they form stochastic expressions.  Sympy.stats transforms these into integral expressions which are then transformed into baser expressions through a variety of methods, either numeric or again symbolic. 
 
 Each stage within this pipeline presents us with the opportunity to simplify the expression with knowledge relevant to that stage.  For example at the input and output SymPy Expr layers we make trigonometric and algebraic simplifications like the following
 
@@ -55,7 +55,7 @@ Currently sympy.stats does not simplify stochastic expressions with expert knowl
 {% highlight python %}
 In [1]: from sympy.stats import *
 
-In [2]: X = Normal('X', 0, 1)
+In [2]: X = Normal('X', 0, 1)  # A standard normal random variable
 
 In [3]: density(X**2)  
 Out[3]: 
@@ -64,11 +64,11 @@ Out[3]:
 
 Any statistician could tell you that the expression `X**2` has a Chi Squared distribution which has a simple and well understood density.  This relation is commonly known and commonly occuring in practice.  SymPy stats is evidently a poor statistician.
 
-Instead `sympy.stats` blindly takes the expression `density(X**2)` and converts it directly into an integral.  The resulting integral is difficult and stumped the integration routines.  In this case knowing basic statistics would have turned an impossible problem into a trivial one.
+Instead sympy.stats blindly takes the expression `density(X**2)` and converts it directly into an integral.  The resulting integral is difficult and stumps the integration routines.  In this case knowing basic statistics would have turned an impossible problem into a trivial one.
 
 ### Future work
 
-We should encode relations on distributions into SymPy. The knowledge in Leemis's chart could be written down as a knowledgebase of known transformations.  Transformations like the following could solve our problem.
+We should encode relations on distributions into SymPy. The knowledge in Leemis's chart could be written down as a knowledgebase of known transformations.  Transformations like the following could solve our immediate problem.
 
 {% highlight python %}
 Normal(0, 1) -> StandardNormal()
@@ -76,11 +76,11 @@ StandardNormal()**2 -> ChiSquared(1)
 StandardNormal()**2 + ChiSquared(n) -> ChiSquared(n+1)
 {% endhighlight %}
 
-Leemis's chart is written declaratively, highlighting transformations possible under certain conditions.  The new modules on 
+Leemis's chart is written declaratively, highlighting logical transformations possible under certain conditions.  The new modules on 
 [unification]({{ BASE_PATH }}/work/2012/11/01/Unification/)
 and 
 [strategies]({{ BASE_PATH }}/work/2012/11/07/Strategies/)
-should provide all of the necessary infrastructure to translate Leemis' chart to functioning code.  It might be as simple as 
+should provide all of the necessary infrastructure to translate Leemis' chart to functioning code.  Writing a minimal simpliication scheme might be as simple as 
 
 {% highlight python %}
 #    rewriterule(from-pattern, to-pattern, wilds)
