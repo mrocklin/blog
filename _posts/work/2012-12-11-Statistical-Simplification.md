@@ -3,6 +3,7 @@ layout: post
 title: Statistical Simplification
 tagline: example of multi-compilation
 category : work 
+draft: true
 tags : [SymPy, stats]
 ---
 {% include JB/setup %}
