@@ -1,7 +1,7 @@
 ---
 layout: post
 title: Statistical Simplification
-tagline: example of multi-compilation
+tagline: an example of multi-compilation
 category : work 
 draft: true
 tags : [SymPy, stats]
@@ -50,7 +50,7 @@ Notice that there is no such simplification self-loop at the `Stochastic Expr` n
 
 ### A Failing of sympy.stats
 
-Currently sympy.stats does not simplify stochastic expressions with expert knowledge.  The information in the Loomis' chart is not encoded.  This causes some fairly embarassing failures like the following
+Currently sympy.stats does not simplify stochastic expressions with expert knowledge.  The information in the Leemis' chart is not encoded.  This causes some fairly embarassing failures like the following
 
 {% highlight python %}
 In [1]: from sympy.stats import *
