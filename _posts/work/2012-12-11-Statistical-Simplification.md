@@ -8,7 +8,7 @@ tags : [SymPy, stats]
 ---
 {% include JB/setup %}
 
-[Lawrence Leemis](), a statistician at Williams and Mary, recently published a wonderful interactive visualization on the reduction relationships of statistical distributions. (found via [John Cook's blog](http://www.johndcook.com/blog/2012/12/10/extended-distribution-chart/))
+[Lawrence Leemis](), a statistician at Williams and Mary, recently published [a wonderful interactive visualization](http://www.math.wm.edu/~leemis/chart/UDR/UDR.html) on the reduction relationships of statistical distributions. (found via [John Cook's blog](http://www.johndcook.com/blog/2012/12/10/extended-distribution-chart/))
 
 [![](http://www.johndcook.com/leemis.png)](http://www.math.wm.edu/~leemis/chart/UDR/UDR.html)
 
@@ -21,7 +21,7 @@ The Big Challenge
 
 Correct use of mathematical information can accelerate important computations by several orders of magnitude.  Unfortunately the people who know the mathematics are not always the ones doing the computation.  This results in substantial waste.
 
-How do we integrate expert mathematical knowledge everywhere?  One solution is to collaborate more.  This is a good idea but does not scale well.  As problems become more complex it is more difficult to find all of the necessary experts.  Also, smaller projects may not be able to engage multiple experts.  Finally, collaboration rarely results in reusable infrastructure.  Statistical chemistry projects usually aren't helpful for statistical biology problems.
+How do we integrate expert mathematical knowledge everywhere?  One solution is to collaborate more.  While collaboration is generally good it doesn't scale well.  As problems become more complex it is more difficult to find all of the necessary experts, especially for smaller relatively unimportant projects.  Also, collaboration rarely results in reusable infrastructure.  Statistical chemistry projects are rarely applicable to statistical biology problems.
 
 One Solution - Multi-Stage Compilation
 --------------------------------------
@@ -39,18 +39,20 @@ The surrounding infrastructure looks like this
 
 ![]({{ BASE_PATH }}/images/stats-simp.png)
 
-When SymPy expressions are imbued with random variables they form stochastic expressions.  Sympy.stats transforms these into integral expressions which are then transformed into baser expressions through a variety of methods, either numeric or again symbolic. 
+When SymPy expressions are imbued with random variables they form stochastic expressions.  Sympy.stats transforms these into integral expressions which are then again converted through a variety of methods, either numeric (like Monte Carlo) or again symbolic. 
 
-Each stage within this pipeline presents us with the opportunity to simplify the expression with knowledge relevant to that stage.  For example at the input and output SymPy Expr layers we make trigonometric and algebraic simplifications like the following
+Each stage within this pipeline presents us with the opportunity to simplify the expression with knowledge relevant to that stage.  For example at the input and output SymPy Expr layers we make algebraic and trigonometric simplifications like the following
 
-    sin(x)**2 + cos(x)**2 -> 1 
     X + X -> 2*X
+    sin(x)**2 + cos(x)**2 -> 1 
+
+At the integration stage we might separate multivariate integrals if possible or use integration by parts.
 
 Notice that there is no such simplification self-loop at the `Stochastic Expr` node.  This is where the information in Leemis' chart would fit.
 
 ### A Failing of sympy.stats
 
-Currently sympy.stats does not simplify stochastic expressions with expert knowledge.  The information in the Leemis' chart is not encoded.  This causes some fairly embarassing failures like the following
+Currently sympy.stats does not simplify stochastic expressions with expert knowledge; it converts directly from stochastic expressions to integral expressions without first applying known simplifications like what is encoded in Leemis' chart.  This causes some fairly embarassing failures
 
 {% highlight python %}
 In [1]: from sympy.stats import *
@@ -62,9 +64,9 @@ Out[3]:
 << failure: unevaluated integral >>
 {% endhighlight %}
 
-Any statistician could tell you that the expression `X**2` has a Chi Squared distribution which has a simple and well understood density.  This relation is commonly known and commonly occuring in practice.  SymPy stats is evidently a poor statistician.
+Any statistician could tell you that the expression `X**2` has a Chi Squared distribution which has a simple and well understood density.  This relation is commonly known and commonly occurs in practice.
 
-Instead sympy.stats blindly takes the expression `density(X**2)` and converts it directly into an integral.  The resulting integral is difficult and stumps the integration routines.  In this case knowing basic statistics would have turned an impossible problem into a trivial one.
+Because sympy.stats doesn't know this it blindly takes the expression `density(X**2)` and converts it directly into an integral.  The resulting integral is difficult and stumps the integration routines.\*  In this case knowing basic statistics would have turned an impossible problem into a trivial one.
 
 ### Future work
 
@@ -76,11 +78,13 @@ StandardNormal()**2 -> ChiSquared(1)
 StandardNormal()**2 + ChiSquared(n) -> ChiSquared(n+1)
 {% endhighlight %}
 
-Leemis's chart is written declaratively, highlighting logical transformations possible under certain conditions.  The new modules on 
+Each stage in the compilation pipeline presents us with an opportunity to apply expert knowledge.  The `Stochastic Expr` stage is such an opportunity of which we are not currently taking advantage.
+
+Leemis's chart is written declaratively, highlighting which logical transformations are possible under which conditions.  The new modules on 
 [unification]({{ BASE_PATH }}/work/2012/11/01/Unification/)
 and 
 [strategies]({{ BASE_PATH }}/work/2012/11/07/Strategies/)
-should provide all of the necessary infrastructure to translate Leemis' chart to functioning code.  Writing a minimal simpliication scheme might be as simple as 
+should provide all of the necessary infrastructure to translate Leemis' chart to functioning code.  Writing a minimal simpliication scheme for the above problem might be as simple as 
 
 {% highlight python %}
 #    rewriterule(from-pattern, to-pattern, wilds)
@@ -92,4 +96,4 @@ p3 = rewriterule(StandardNormal(name)**2 + ChiSquared(name, n),
 statsimp = exhaust(bottom_up(multiplex(p1, p2, p3)))
 {% endhighlight %}
 
-But that's wishful thinking.  If anyone is interested in this I'd be happy to help out.  This is the sort of project that really excites me but that I can't currently justify time-wise.
+If anyone is interested in this I'd be happy to help out.  This is the sort of project that really excites me but that I can't currently justify time-wise.
