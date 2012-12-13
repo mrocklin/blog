@@ -20,7 +20,7 @@ The Big Challenge
 
 Correct use of mathematical information can accelerate important computations by several orders of magnitude.  Unfortunately the people who know the mathematics are not always the ones doing the computation.  This results in substantial waste.
 
-How do we integrate expert mathematical knowledge everywhere?  One solution is to collaborate more.  While collaboration is generally good it doesn't scale well.  As problems become more complex it is more difficult to find all of the necessary experts, especially for smaller relatively unimportant projects.  Also, collaboration rarely results in reusable infrastructure.  Statistical chemistry projects are rarely applicable to statistical biology problems.
+How do we integrate expert mathematical knowledge everywhere?  One solution is to collaborate more.  While collaboration is generally good it doesn't scale well.  As problems become more complex it is more difficult to find all of the necessary experts, especially for smaller relatively unimportant projects.  Also, collaboration rarely results in reusable infrastructure.  Statistical chemistry projects are rarely applicable to statistical biology problems despite their shared interest in statistics.
 
 One Solution - Multi-Stage Compilation
 --------------------------------------
