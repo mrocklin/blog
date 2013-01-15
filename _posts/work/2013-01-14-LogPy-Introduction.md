@@ -3,8 +3,7 @@ layout: post
 title:  Introducing LogPy
 tagline: 
 category : work 
-tags : [LogPy]
-draft: true
+tags : [LogPy, SymPy]
 ---
 {% include JB/setup %}
 
@@ -114,6 +113,16 @@ We can express the grandfather relationship separately.  In this example we use 
 {% endhighlight %}
 
 `grandparent` demonstrates that we can construct complex relations programmatically.  How would you define sibling?  How about uncle or aunt?  How about descendant?
+
+If you'd like to play with LogPy you can install it with pip or easy_install using
+
+    pip install logic
+
+or clone it directly from github
+
+    git clone git@github.com:logpy/logpy.git
+
+Source is available at [http://github.com/logpy/logpy/](http://github.com/logpy/logpy/), design input and contributions are much appreciated.
 
 Logic Programming in General
 ----------------------------
