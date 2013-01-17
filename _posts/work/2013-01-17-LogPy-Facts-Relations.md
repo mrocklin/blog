@@ -84,11 +84,12 @@ Once have asserted the relevant facts we can run queries with the logical expres
 We can construct more complex queries with multiple goals.  In SQL the following queries would require a `JOIN`
 
 {% highlight python %}
+>>> y = var()  # create second variable for complex queries
+
 >>> print run(0, x, adjacent('TX', x),    # all coastal states next to Texas
 ...                 coastal(x))
 ('LA',)
 
->>> y = var()                             # create another variable
 >>> print run(5, x, coastal(y),           # five states that border a coastal state
 ...                 adjacent(x, y))
 ('VT', 'AL', 'WV', 'DE', 'WA')
@@ -104,5 +105,6 @@ Facts and relations are currently indexed by default, yielding relatively fast q
 Conclusion
 ----------
 
-LogPy provides a clean declarative interface to query complex data.  Data is stored as facts/tuples and queries are expressed as logical goals.  This system is expressive and can match SQL in many respects.  This effort of using Logic programming languages for database queries has roots in [Datalog](http://en.wikipedia.org/wiki/Datalog) a subset of Prolog designed for this purpose.
-
+LogPy provides a declarative interface to query complex data.  Data is stored
+as facts/tuples and queries are expressed as logical goals.  This system is
+expressive and can match SQL in many respects.  The use of Logic programming languages for database queries has roots in [Datalog](http://en.wikipedia.org/wiki/Datalog) a subset of Prolog designed for databases.
