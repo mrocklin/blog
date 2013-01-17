@@ -3,7 +3,6 @@ layout: post
 title:  LogPy - Facts and Relations
 tagline: a quick and dirty in-memory database
 category : work 
-draft: true
 tags : [LogPy, SymPy, scipy]
 ---
 {% include JB/setup %}
