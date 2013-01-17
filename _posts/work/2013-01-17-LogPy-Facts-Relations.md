@@ -35,14 +35,15 @@ here we have asserted the fact that `'CA'` is coastal.  Lets quickly do this for
 ...     fact(coastal, state)
 {% endhighlight %}
 
-Adjacency is only slightly more complex to express.  The following code asserts that California (CA) is adjacent to Arizona (AZ)
+Adjacency is only slightly more complex to express.  The following code asserts that California (CA) is adjacent to Arizona (AZ) and that California (CA) is adjacent to Oregon (OR).
 
 {% highlight python %}
 >>> adjacent = Relation()
 >>> fact(adjacent, 'CA', 'AZ')
+>>> fact(adjacent, 'CA', 'OR')
 {% endhighlight %}
 
-Fortunately [someone else](http://writeonly.wordpress.com/2009/03/20/adjacency-list-of-states-of-the-united-states-us/) has compiled a list of adjacent states.  His data looks like this
+Now we need a list of all adjacent pairs of states.  Fortunately [someone else](http://writeonly.wordpress.com/2009/03/20/adjacency-list-of-states-of-the-united-states-us/) has already compiled such a list.  His data looks like this
 
     AK
     AL,MS,TN,GA,FL
