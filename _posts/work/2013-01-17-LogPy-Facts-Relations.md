@@ -66,7 +66,7 @@ for L in adjlist:                   # ['CA', 'OR', 'NV', 'AZ']
                                     #      'CA' is adjacent to 'NV', etc...
 {% endhighlight %}
 
-Querys
+Queries
 ------
 
 Once have asserted the relevant facts we can run queries with the logical expressions of LogPy.  Recall from the [last post]({{ BASE_PATH }}/work/2013/01/14/LogPy-Introduction/) that we can use relations to express logical goals and use `run` to search for cases that satisfy those goals.  Here are two simple queries 
