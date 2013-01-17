@@ -1,18 +1,20 @@
 ---
 layout: post
-title:  LogPy: Facts and Relations
+title:  LogPy - Facts and Relations
 tagline: a quick and simple in-memory database
 category : work 
-tags : [LogPy, SymPy]
+draft: true
+tags : [LogPy, SymPy, scipy]
 ---
 {% include JB/setup %}
 
 In [my last post]({{ BASE_PATH }}/work/2013/01/14/LogPy-Introduction/) I introduced [LogPy](http://github.com/logpy/logpy), a library for logic and relational programming in Python.  In this post I will show how LogPy can be used as a quick and dirty in-memory database.
 
+
 Data
 ----
 
-I'll use data on the 50 states in the US.  We know two things about each state. 
+As an example we'll look at the 50 states in the US.  We know two things about each state. 
 
 1.  Is it coastal? E.g. California (CA) is coastal because it is next to the Pacific Ocean, Arizona (AZ) is not.
 2.  To which other states is it adjacent?  E.g. California (CA) is adjacent to Oregon (OR), Arizona (AZ) and Nevada (NV). 
@@ -50,12 +52,12 @@ Fortunately [someone else](http://writeonly.wordpress.com/2009/03/20/adjacency-l
     CO,WY,NE,KS,OK,NM,AZ,UT
     ...
 
-Each line says that the first element is adjacent to the following ones.  So for example Alaska (AK) is adjacent to no states and California (CA) is adjacent to Oregon (Or), Nevada (NV) and Arizona (AZ).  We can parse this file and assert the relevant facts with fairly standard Python code 
-o
+Each line says that the first element is adjacent to the following ones.  So for example Alaska (AK) is adjacent to no states and California (CA) is adjacent to Oregon (OR), Nevada (NV) and Arizona (AZ).  We can parse this file and assert the relevant facts with fairly standard Python code 
 
 {% highlight python %}
 f = open('examples/data/adjacent-states.txt')  # lines like 'CA,OR,NV,AZ'
 adjlist = [line.strip().split(',') for line in f]
+f.close()
 
 for L in adjlist:                   # ['CA', 'OR', 'NV', 'AZ']
     head, tail = L[0], L[1:]        # 'CA', ['OR', 'NV', 'AZ']
@@ -67,10 +69,10 @@ for L in adjlist:                   # ['CA', 'OR', 'NV', 'AZ']
 Querys
 ------
 
-Now we can query our facts using logical the expressions of LogPy.  Recall from the [last post]({{ BASE_PATH }}/work/2013/01/14/LogPy-Introduction/) that we can use relations to express logical goals and use `run` to search for examples that satisfy those goals.  Here are two simple examples
+Once have asserted the relevant facts we can run queries with the logical expressions of LogPy.  Recall from the [last post]({{ BASE_PATH }}/work/2013/01/14/LogPy-Introduction/) that we can use relations to express logical goals and use `run` to search for cases that satisfy those goals.  Here are two simple queries 
 
 {% highlight python %}
->>> from logpy import run, eq, var
+>>> from logpy import var, run
 >>> x = var()
 >>> print run(0, x, adjacent('CA', 'NY')) # is California adjacent to New York?
 ()
@@ -86,9 +88,20 @@ We can construct more complex queries with multiple goals.  In SQL the following
 ...                 coastal(x))
 ('LA',)
 
->>> print run(5, x, coastal(y),           # five that border a coastal state
+>>> print run(5, x, coastal(y),           # five states that border a coastal state
 ...                 adjacent(x, y))
 ('VT', 'AL', 'WV', 'DE', 'WA')
+
+>>> print run(0, x, adjacent('TN', x),    # all states adjacent to Tennessee
+...                 adjacent('FL', x))    #        and adjacent to Florida
+('GA', 'AL')
 {% endhighlight %}
 
+Facts and relations are currently indexed by default, yielding relatively fast query times.
+
+
+Conclusion
+----------
+
+LogPy provides a clean declarative interface to query complex data.  Data is stored as facts/tuples and queries are expressed as logical goals.  This system is expressive and can match SQL in many respects.  This effort of using Logic programming languages for database queries has roots in [Datalog](http://en.wikipedia.org/wiki/Datalog) a subset of Prolog designed for this purpose.
 
