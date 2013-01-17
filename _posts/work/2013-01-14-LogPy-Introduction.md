@@ -12,7 +12,7 @@ tags : [LogPy, SymPy]
 Informative Examples
 --------------------
 
-LogPy enables the expression of relations and the search for values which satisfy them.  The following code asks for `1` number, `x`, such that `x == 5`
+LogPy enables the expression of relations and the search for values which satisfy them.  The following code is the "Hello, world!" of logic programming.  It asks for `1` number, `x`, such that `x == 5`
 
 {% highlight python %}
 >>> from logpy import run, eq, membero, var, conde
@@ -22,13 +22,13 @@ LogPy enables the expression of relations and the search for values which satisf
 {% endhighlight %}
 
 Multiple variables and multiple goals can be used simultaneously.  The
-following code asks for a number x such that `x == z` and `z == 5`
+following code asks for a number x such that `x == z` and `z == 3`
 
 {% highlight python %}
 >>> z = var()
 >>> run(1, x, eq(x, z),
               eq(z, 5))
-(5,)
+(3,)
 {% endhighlight %}
 
 LogPy uses [unification](http://en.wikipedia.org/wiki/Unification_%28computer_science%29), an advanced form of pattern matching, to match within expression trees.
