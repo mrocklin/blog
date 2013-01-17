@@ -1,14 +1,14 @@
 ---
 layout: post
 title:  LogPy - Facts and Relations
-tagline: a quick and simple in-memory database
+tagline: a quick and dirty in-memory database
 category : work 
 draft: true
 tags : [LogPy, SymPy, scipy]
 ---
 {% include JB/setup %}
 
-In [my last post]({{ BASE_PATH }}/work/2013/01/14/LogPy-Introduction/) I introduced [LogPy](http://github.com/logpy/logpy), a library for logic and relational programming in Python.  In this post I will show how LogPy can be used as a quick and dirty in-memory database.
+In [my last post]({{ BASE_PATH }}/work/2013/01/14/LogPy-Introduction/) I introduced [LogPy](http://github.com/logpy/logpy), a library for logic and relational programming in Python.  In this post I show how LogPy can be used as a quick and dirty in-memory database.
 
 
 Data
@@ -16,8 +16,8 @@ Data
 
 As an example we'll look at the 50 states in the US.  We know two things about each state. 
 
-1.  Is it coastal? E.g. California (CA) is coastal because it is next to the Pacific Ocean, Arizona (AZ) is not.
-2.  To which other states is it adjacent?  E.g. California (CA) is adjacent to Oregon (OR), Arizona (AZ) and Nevada (NV). 
+1.  Is it coastal? For example California (CA) is coastal because it is next to the Pacific Ocean, Arizona (AZ) is not.
+2.  To which other states is it adjacent?  For example California (CA) is adjacent to Oregon (OR), Arizona (AZ) and Nevada (NV). 
 
 We express data in LogPy using relations and facts
 
@@ -31,7 +31,7 @@ here we have asserted the fact that `'CA'` is coastal.  Lets quickly do this for
 
 {% highlight python %}
 >>> coastal_states = 'WA,OR,CA,TX,LA,MI,AL,GA,FL,SC,NC,VI,MD,DW,NJ,NY,CT,RI,MA,MN,NH,AK,HI'
->>> for state in coastal_states.split(',')
+>>> for state in coastal_states.split(','):
 ...     fact(coastal, state)
 {% endhighlight %}
 
@@ -88,6 +88,7 @@ We can construct more complex queries with multiple goals.  In SQL the following
 ...                 coastal(x))
 ('LA',)
 
+>>> y = var()                             # create another variable
 >>> print run(5, x, coastal(y),           # five states that border a coastal state
 ...                 adjacent(x, y))
 ('VT', 'AL', 'WV', 'DE', 'WA')
