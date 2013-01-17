@@ -27,7 +27,7 @@ following code asks for a number x such that `x == z` and `z == 3`
 {% highlight python %}
 >>> z = var()
 >>> run(1, x, eq(x, z),
-              eq(z, 5))
+              eq(z, 3))
 (3,)
 {% endhighlight %}
 
