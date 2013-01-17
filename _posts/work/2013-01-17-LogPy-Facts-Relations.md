@@ -29,7 +29,7 @@ We express data in LogPy using relations and facts
 here we have asserted the fact that `'CA'` is coastal.  Lets quickly do this for all of the coastal states
 
 {% highlight python %}
->>> coastal_states = 'WA,OR,CA,TX,LA,MI,AL,GA,FL,SC,NC,VI,MD,DW,NJ,NY,CT,RI,MA,MN,NH,AK,HI'
+>>> coastal_states = 'WA,OR,CA,TX,LA,MS,AL,GA,FL,SC,NC,VA,MD,DE,NJ,NY,CT,RI,MA,ME,NH,AK,HI'
 >>> for state in coastal_states.split(','):
 ...     fact(coastal, state)
 {% endhighlight %}
@@ -92,7 +92,7 @@ We can construct more complex queries with multiple goals.  In SQL the following
 
 >>> print run(5, x, coastal(y),           # five states that border a coastal state
 ...                 adjacent(x, y))
-('VT', 'AL', 'WV', 'DE', 'WA')
+('VT', 'AL', 'WV', 'DE', 'MA')
 
 >>> print run(0, x, adjacent('TN', x),    # all states adjacent to Tennessee
 ...                 adjacent('FL', x))    #        and adjacent to Florida
