@@ -40,24 +40,24 @@ $$
 And it's equivalent in Python
 
 {% highlight python %}
-    def f(x):
-        if 0 < x < 5:   yield x - 1
-        if 5 < x < 10:  yield x + 1
-        if x == 5:      yield x + 1; yield x - 1
+def f(x):
+    if 0 < x < 5:   yield x - 1
+    if 5 < x < 10:  yield x + 1
+    if x == 5:      yield x + 1; yield x - 1
 {% endhighlight %}
 
 Notice that in the case where `x = 5` there are two possible outcomes. Each of these is preserved by the application of branching strategies. We use the branching version of the `exhaust` strategy to make a new exhaustive
 version of this function
 
 {% highlight python %}
-    >>> from sympy.rules.branch import exhaust
-    >>> newf = exhaust(f)
-    >>> set(newf(6))
-    {10}
-    >>> set(newf(3))
-    {0}
-    >>> set(newf(5))
-    {0, 10}
+>>> from sympy.rules.branch import exhaust
+>>> newf = exhaust(f)
+>>> set(newf(6))
+{10}
+>>> set(newf(3))
+{0}
+>>> set(newf(5))
+{0, 10}
 {% endhighlight %}
 
 * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * 
