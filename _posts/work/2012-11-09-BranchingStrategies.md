@@ -68,29 +68,27 @@ Practical Problem
 We have all the machinery necessary. Lets make a `sin(x)**2 + cos(x)**2 -> 1` tree-wise simplification function.
 
 {% highlight python %}
-    >>> from sympy.rules.branch.traverse import top_down
-    >>> from sympy.unify.usympy import patternify
-    >>> from sympy.unify.rewrite import rewriterule
+>>> from sympy.rules.branch.traverse import top_down
+>>> from sympy.unify.rewrite import rewriterule
+>>> from sympy.abc import a, b, c, x, y
 
-    >>> pattern_source = patternify(sin(x)**2 + cos(x)**2, x)
-    >>> sincos_to_one = rewriterule(pattern_source, S.One)
-    >>> sincos_tree = top_down(sincos_to_one)
-    
-    >>> list(sincos_tree(2 + c**(sin(a+b)**2 + cos(a+b)**2)))  # see footnote
-    [c**1 + 2] 
+>>> sincos_to_one = rewriterule(sin(x)**2 + cos(x)**2, S.One, wilds=[x])
+>>> sincos_tree = top_down(sincos_to_one)
+
+>>> list(sincos_tree(2 + c**(sin(a+b)**2 + cos(a+b)**2)))  # see footnote
+[c**1 + 2] 
 {% endhighlight %}
 
 Lets make a rule to simplify expressions like `c**1` 
 {% highlight python %}
 
-    >>> from sympy.rules.branch.strat_pure import multiplex, exhaust 
+>>> pow_simp = rewriterule(Pow(x, 1, evaluate=False), x, wilds=[x]) # footnote 2
 
-    >>> pattern = patternify(Pow(x, 1, evaluate=False), x)
-    >>> pow_simp = rewriterule(pattern, x)                  # footnote 2
+>>> from sympy.rules.branch.strat_pure import multiplex, exhaust 
+>>> simplify = exhaust(top_down(multiplex(sincos_to_one, pow_simp)))
 
-    >>> simplify = exhaust(top_down(multiplex(sincos_to_one, pow_simp)))
-    >>> list(simplify(2 + c**(sin(a+b)**2 + cos(a+b)**2)))
-    [c + 2]
+>>> list(simplify(2 + c**(sin(a+b)**2 + cos(a+b)**2)))
+[c + 2]
 {% endhighlight %}
 
 We see how we can easiy build up powerful simplification functions through the separate description of logic 

@@ -11,8 +11,7 @@ In [my last post](http://matthewrocklin.com/blog/work/2012/11/01/Unification/) I
 
 {% highlight python %}
     # Transformation : sin(x)**2 + cos(x)**2 -> 1
-    >>> pattern = patternify(sin(x)**2 + cos(x)**2, x)
-    >>> sincos_to_one = rewriterule(pattern, 1)
+    >>> sincos_to_one = rewriterule(sin(x)**2 + cos(x)**2, 1, wilds=[x])
 
     >>> sincos_to_one(sin(a+b)**2 + cos(a+b)**2).next()
     1

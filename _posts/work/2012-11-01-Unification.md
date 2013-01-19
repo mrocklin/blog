@@ -39,9 +39,10 @@ We solve this task with unification by setting up a pattern and then unifying th
     >>> B = MatrixSymbol('B', m, n)
     # Look for an expression tree like A.T + B
     # Treat the leaves 'name', n, m, B as Wilds
-    >>> pattern = patternify(Transpose(A) + B, 'name', n, m, B)
+    >>> pattern = Transpose(A) + B
+    >>> wilds = 'name', n, m, B
 
-    >>> unify(pattern, expr).next()
+    >>> unify(pattern, expr, wilds=wilds).next()
     {'name': 'X', m: 3, n: 3, B: Y}
 
 {% endhighlight %}
@@ -56,16 +57,17 @@ Unification allows a clean separation between *what we're looking for* and *how 
             return arg.arg.name
 {% endhighlight %}
 
-In the unification solution the line 
+In the unification solution the lines
 
 {% highlight python %}
-    pattern = patternify(Transpose(A) + B, 'name', n, m, B)
+    pattern = Transpose(A) + B
+    wilds = 'name', n, m, B
 {% endhighlight %}
 
-expresses exactly *what* we're looking for and gives no information on *how* it should be found. The how is wrapped up in the call to `unify`
+expresse exactly *what* we're looking for and gives no information on *how* it should be found. The how is wrapped up in the call to `unify`
 
 {% highlight python %}
-    unify(pattern, expr).next()
+    unify(pattern, expr, wilds=wilds).next()
 {% endhighlight %}
 
 This separation of the *what* and *how* is what excites me about declarative programming. I think that this separation is useful when mathematical and algorithmic programmers need to work together to solve a large problem. This is often the case in scientific computing. Mathematical programmers think about *what* should be done while algorithmic programmers think about *how* it can be efficiently computed. Declarative techniques like unification enables these two groups to work independently.
@@ -86,8 +88,8 @@ In this situation because both matrices `X` and `Y` are inside transposes our pa
 {% highlight python %}
     >>> for match in unify(pattern, expr): 
     ...    print match
-    {'name': 'Y', m: 3, n: 3, B: X'}
-    {'name': 'X', m: 3, n: 3, B: Y'}
+    {'name': 'Y', m: 3, n: 3, B: 'X'}
+    {'name': 'X', m: 3, n: 3, B: 'Y'}
 {% endhighlight %}
 
 Because expr is commutative we can match `{A: Transpose(X), B: Transpose(Y)}` or `{A: Transpose(Y), B: Transpose(X)}` with equal validity. Instead of choosing one `unify`, returns an iterable of all possible matches.
@@ -115,10 +117,7 @@ Rewrites
 Unification is commonly used in term rewriting systems. Here is an example
 
 {% highlight python %}
-    >>> pattern_source = patternify(sin(x)**2 + cos(x)**2, x)
-    >>> pattern_target = 1
-    >>> sincos_to_one = rewriterule(pattern_source, pattern_target)
-
+    >>> sincos_to_one = rewriterule(sin(x)**2 + cos(x)**2, 1, wilds=[x])
     >>> sincos_to_one(sin(a+b)**2 + cos(a+b)**2).next()
     1
 {% endhighlight %}
@@ -170,9 +169,10 @@ class MM(BLAS):
 The `_outputs` and `_inputs` fields mathematically define when `MM` is appropriate. This is all we need to make a transformation
 
 {% highlight python %}
-    pattern_source = patternify(MM._outputs[0], *MM._inputs)
-    pattern_target = MM(*MM._inputs)
-    rewriterule(pattern_source, pattern_target)
+    source = MM._outputs[0]
+    target = MM(*MM._inputs)
+    wilds  = MM._inputs
+    rewriterule(source, target, wilds)
 {% endhighlight %}
 
 Unification allows us to describe `BLAS` mathematically without thinking about
