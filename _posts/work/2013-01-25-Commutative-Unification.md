@@ -21,7 +21,7 @@ Expression Trees
 
 We traditionally represent both mathematical expressions and computer programs with expression trees.  For example \\(y * (1 + x)\\) can be visualized as follows
 
-![]({{ BASE_PATH }}/images/arith-expr.png)
+![](http://mrocklin.github.com/blog/images/arith-expr.png)
 
 We represent this expression in LogPy with tuples.  The head/first element of each tuple is an operation like `add` or `mul`.  All subsequent elements (the tail) are the arguments/children of that expression.  
 
