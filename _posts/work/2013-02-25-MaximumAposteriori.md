@@ -15,7 +15,7 @@ Imagine you are a scientist studying some [counting process](http://en.wikipedia
 
 If you have no preconceptions about the rate then this problem is easy.  You just divide total counts by total time and you're done.
 
-A more complex problem arises when external theory provides prior information about your rate parameter (for example physics might impose rules on the rate of radioactive decay).  Lets model this problem in SymPy.  For the sake of concreteness lets arbitrarily assume that the rate follows a Beta distribution with parameters `a` and `b`.
+A more complex problem arises when external theory provides prior information about your rate parameter (for example physics might impose rules on the rate of radioactive decay).  Lets model this problem in SymPy.  For the sake of concreteness lets arbitrarily assume that \\( \lambda \\), the rate parameter, follows a Beta distribution with parameters `a` and `b`.
 
 {% highlight python %}
 a, b = symbols('a,b', positive=True)
@@ -69,7 +69,7 @@ Looking at the equation above it's clear that this problem can be simplified fur
 
 I suspect that the problem given here is analytically solvable.  To the extent possible SymPy should try to solve these problems.  However for the vast number of problems without analytic solutions I suspect there is still a great deal we can do, either by reducing the problem as above or through the mathematically informed selection of numeric algorithms.
 
-Various root finding algorithms are appropriate in different cases.  Wikipedia suggests [Householder's Method](http://en.wikipedia.org/wiki/Householder%27s_method) a generalization on Newton's method for scalar systems with known derivatives.  Perhaps in cases where SymPy is unable to solve the problem analytically it could select the correct numeric algorithm.  Is this a reasonable use case for SymPy?
+Various root finding algorithms are appropriate in different cases.  Wikipedia suggests [Householder's Method](http://en.wikipedia.org/wiki/Householder%27s_method), a generalization on Newton's method for scalar systems with known derivatives.  Perhaps in cases where SymPy is unable to solve the problem analytically it could select the correct numeric algorithm.  Is this a reasonable use case for SymPy?
 
 References
 ----------
