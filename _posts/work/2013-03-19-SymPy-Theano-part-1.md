@@ -1,7 +1,8 @@
 ---
 layout: post
-title:  Theano code generation from SymPy
+title:  SymPy -> Theano -- Code Generation
 tagline:  
+draft: true
 category : work 
 tags : [SymPy, Theano]
 ---
@@ -23,6 +24,7 @@ SymPy knows Physics.  For example, here is the radial wavefunction corresponding
     from sympy.physics.hydrogen import R_nl
     from sympy.abc import x
     expr = R_nl(3, 1, x, 6)
+    print latex(expr)
 
 $$\frac{8}{3} x \left(- 4 x + 4\right) e^{- 2 x}$$
 
@@ -48,7 +50,7 @@ Fortunately there are methods to offload the work to numerical projects like `nu
     >>> fn_fortran(xx)
     [ 0.          1.21306132  0.98101184  0.44626032  0.        ]
 
-We use these functions to plot the original equation
+We use these functions and `matplotlib` to plot the original equation
 
     from pylab import plot, show, legend
     xx = linspace(0, 5, 50000)
@@ -83,10 +85,11 @@ Leveraging Theano
 In the above example we used Theano to copy the behavior of SymPy's existing `numpy` and `Fortran` numeric solutions.  Theano is capable of substantially more than this.  To show a simple example we'll compute both our original output and the derivative simultaneously.
 
     outputs = expr, simplify(expr.diff(x))
+    print latex(outputs)
 
 $$ \begin{pmatrix}\frac{8}{3} x \left(- 4 x + 4\right) e^{- 2 x}, & \frac{32}{3} \left(2 x^{2} - 4 x + 1\right) e^{- 2 x}\end{pmatrix} $$
 
-We redefine our functions to produce both outputs
+We redefine our functions to produce both outputs, instead of just `expr` alone 
 
     fn_numpy = fn_numpy = lambdify([x], outputs, 'numpy')
     fn_theano = theano_function([x], outputs, dims={x: 1}, dtypes={x: 'float64'})
@@ -94,7 +97,7 @@ We redefine our functions to produce both outputs
     fns_fortran = [ufuncify([x], output) for output in outputs]
     fn_fortran = lambda xx: [fn_fortran(xx) for fn_fortran in fns_fortran]
 
-The expressions look like this.
+The expression and its derivative look like this:
 
     for y in fn_theano(xx):
         plot(xx, y)
@@ -115,12 +118,15 @@ Because Theano handles common subexpressions well it is able to perform the extr
 Conclusion
 ----------
 
-The Theano project is devoted to code generation at a level that exceeds the devotion of SymPy to this same topic.  This is natural and prevalent.  When we combine the good parts of both projects we often achieve a better result than with an in-house solution.
+The Theano project is devoted to code generation at a level that exceeds the devotion of SymPy to this same topic.  This is natural and prevalent.  When we combine the good parts of both projects we often achieve a better result than with an in-house solution
+
+In-house solutions to foreign problems lack persistence.  As programmers within an ecosystem we should make projects that do one thing well and provide clean interfaces and simple data structures to encourage inter-project communication.
 
 
 References
 ----------
 
+*   [SymPy](http://sympy.org/)
 *   [Theano](http://deeplearning.net/software/theano)
 *   [Jensen's Blogpost](http://ojensen.wordpress.com/2010/08/10/fast-ufunc-ish-hydrogen-solutions/)
 *   [Development git repository](https://github.com/mrocklin/sympy/tree/theano-print)
