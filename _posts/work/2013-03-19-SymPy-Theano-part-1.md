@@ -2,7 +2,6 @@
 layout: post
 title:  SymPy -> Theano -- Code Generation
 tagline:  
-draft: true
 category : work 
 tags : [SymPy, Theano]
 ---
