@@ -90,11 +90,11 @@ $$ \begin{pmatrix}\frac{8}{3} x \left(- 4 x + 4\right) e^{- 2 x}, & \frac{32}{3}
 
 We redefine our functions to produce both outputs, instead of just `expr` alone 
 
-    fn_numpy = fn_numpy = lambdify([x], outputs, 'numpy')
+    fn_numpy  = lambdify([x], outputs, 'numpy')
     fn_theano = theano_function([x], outputs, dims={x: 1}, dtypes={x: 'float64'})
 
     fns_fortran = [ufuncify([x], output) for output in outputs]
-    fn_fortran = lambda xx: [fn_fortran(xx) for fn_fortran in fns_fortran]
+    fn_fortran  = lambda xx: [fn_fortran(xx) for fn_fortran in fns_fortran]
 
 The expression and its derivative look like this:
 
