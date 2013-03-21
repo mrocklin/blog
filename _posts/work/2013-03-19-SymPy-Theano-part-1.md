@@ -113,6 +113,10 @@ Because Theano handles common subexpressions well it is able to perform the extr
     >>> timeit fn_theano(xx)
     1000 loops, best of 3: 1.16 ms per loop
 
+When we extend this experiment and vary the number of simultaneous derivatives we observe the following runtimes
+
+![]({{ BASE_PATH }}/images/profile-theano-fortran-numpy.png)
+
 
 Conclusion
 ----------
