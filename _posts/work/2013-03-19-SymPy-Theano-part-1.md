@@ -3,7 +3,7 @@ layout: post
 title:  SymPy -> Theano -- Code Generation
 tagline:  
 category : work 
-tags : [SymPy, Theano]
+tags : [SymPy, Theano, scipy]
 ---
 {% include JB/setup %}
 
