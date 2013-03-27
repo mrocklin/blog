@@ -19,7 +19,7 @@ In this post I'll show how Theano can benefit from SymPy.  In particular I'll de
 
 After re-reading over this post I realize that it's somewhat long.  I've decided to put the results first in hopes that it'll motivate you to keep reading.
 
-| Project(s)       | operation count  |
+| Project          | operation count  |
 |:-----------------|:----------------:|
 | SymPy            |       27         |
 | Theano           |       24         |
@@ -42,6 +42,8 @@ We use a larger version of our problem from last time; a radial wavefunction cor
 $$\frac{1}{210} \sqrt{70} x^{2} \left(- \frac{4}{3} x^{3} + 16 x^{2} - 56 x + 56\right) e^{- x}$$
 
 We want to generate code to compute both this expression and its derivative.  Both SymPy and Theano can compute and simplify derivatives.  In this post we'll measure the complexity of a computation that simultaneously computes both the above expression and its derivative.  We'll arrive at this computation through a couple of different routes that use overlapping parts of SymPy and Theano.  This will supply a couple of direct comparisons.
+
+*Disclaimer: I've chosen a larger expression here to exaggerate results.  Simpler expressions yield less impressive results.*
 
 Simplification
 --------------
@@ -86,7 +88,7 @@ Bounds on the cost of Differentiation
 
 Scalar differentiation is actually a very simple transformation.  
 
-You need to know how to transform all of the elementary functions (`exp, sin, cos, polynomials, etc...`), the chain rule, and that's it.  Theorems behind automatic differentiation state that the cost of a derivative will be at most five times the cost to of the original.  In this case we're guaranteed to have at most `17*5 == 85` operations in the derivative computation; this holds in our case because `48 < 85`
+You need to know how to transform all of the elementary functions (`exp, sin, cos, polynomials, etc...`), the chain rule, and that's it.  Theorems behind automatic differentiation state that the cost of a derivative will be at most five times the cost of the original.  In this case we're guaranteed to have at most `17*5 == 85` operations in the derivative computation; this holds in our case because `48 < 85`
 
 However derivatives are often far simpler than this upper bound.  We see that after simplification the operation count of the derivative is `18`, only one more than the original.  This is common.
 
@@ -139,7 +141,6 @@ for expr in exprs:
     print latex(expr)
     print "Operations:                             ", theano_count_ops(fgraph)
     print "Operations after Theano Simplification: ", theano_count_ops(simp_fgraph)
-    print
 {% endhighlight %}
 
 
@@ -160,7 +161,7 @@ $$ \frac{2}{315} \sqrt{70} x \left(x^{4} - 17 x^{3} + 90 x^{2} - 168 x + 84\righ
 Analysis
 --------
 
-On its own Theano produces a derivative expression that is about as complex as the unsimplified SymPy version.  Theano simplification actually does a surprisingly good job, roughly halving the amount of work needed (`40 -> 21`) to compute the result.  If you dig deeper however you find that this isn't because it was able to algebraically simplify the computation (it wasn't) but rather because the computation contained several common sub-expressions.  The Theano version looks a lot like the unsimplified SymPy version.  Note the common sub-expressions like `56*x` below.
+On its own Theano produces a derivative expression that is about as complex as the unsimplified SymPy version.  Theano simplification then does a surprisingly good job, roughly halving the amount of work needed (`40 -> 21`) to compute the result.  If you dig deeper however you find that this isn't because it was able to algebraically simplify the computation (it wasn't) but rather because the computation contained several common sub-expressions.  The Theano version looks a lot like the unsimplified SymPy version.  Note the common sub-expressions like `56*x` below.
 
 $$ \frac{1}{210} \sqrt{70} x^{2} \left(- 4 x^{2} + 32 x - 56\right) e^{- x} - \frac{1}{210} \sqrt{70} x^{2} \left(- \frac{4}{3} x^{3} + 16 x^{2} - 56 x + 56\right) e^{- x} + \frac{1}{105} \sqrt{70} x \left(- \frac{4}{3} x^{3} + 16 x^{2} - 56 x + 56\right) e^{- x} $$
 
@@ -180,7 +181,6 @@ for expr in exprs:
     print latex((expr, orig_expr))
     print "Operations:                             ", len(fgraph.apply_nodes)
     print "Operations after Theano Simplification: ", len(simp_fgraph.apply_nodes)
-    print
 {% endhighlight %}
 
 $$ \begin{pmatrix}\frac{\partial}{\partial x}\left(\frac{1}{210} \sqrt{70} x^{2} \left(- \frac{4}{3} x^{3} + 16 x^{2} - 56 x + 56\right) e^{- x}\right), & \frac{1}{210} \sqrt{70} x^{2} \left(- \frac{4}{3} x^{3} + 16 x^{2} - 56 x + 56\right) e^{- x}\end{pmatrix} $$
@@ -197,7 +197,7 @@ The combination of SymPy's scalar simplification and Theano's common sub-express
 
 To summarize
 
-| Project(s)       | operation count  |
+| Project          | operation count  |
 |:-----------------|:----------------:|
 | SymPy            |       27         |
 | Theano           |       24         |
@@ -206,4 +206,4 @@ To summarize
 References
 ----------
 
-*   [A script of this session]({{ BASE_PATH }}/scripts/sympy_theano_simplificaiton.py)
+*   [A script of this session]({{ BASE_PATH }}/scripts/sympy_theano_simplification.py)
