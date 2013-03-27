@@ -3,7 +3,6 @@ layout: post
 title:  SymPy -> Theano -- Scalar Simplification
 tagline:  
 category : work 
-draft: true
 tags : [SymPy, Theano]
 ---
 {% include JB/setup %}
