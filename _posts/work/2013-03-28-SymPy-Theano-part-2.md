@@ -12,7 +12,7 @@ Introduction
 
 *This post uses some LaTeX.  You may want to read it on the original site.*
 
-In my [last post]() I showed how SymPy can benefit from Theano.  In particular Theano provided a mature platform for code generation that outperformed SymPy's attempt at the same problem.  I argued that projects should stick to one specialty and depend on others for secondary concerns.  Interfaces are better than add-ons.
+In my [last post](http://matthewrocklin.com/blog/work/2013/03/19/SymPy-Theano-part-1/) I showed how SymPy can benefit from Theano.  In particular Theano provided a mature platform for code generation that outperformed SymPy's attempt at the same problem.  I argued that projects should stick to one specialty and depend on others for secondary concerns.  Interfaces are better than add-ons.
 
 In this post I'll show how Theano can benefit from SymPy.  In particular I'll demonstrate the practicality of SymPy's impressive scalar simplification routines for generating efficient programs.  
 
@@ -110,7 +110,8 @@ Here is some setup code that you can safely ignore:
 {% highlight python %}
 def fgraph_of(*exprs):
     """ Transform SymPy expressions into Theano Computation """
-    ins, outs = [theano_code(x)], map(theano_code, exprs)
+    outs = map(theano_code, exprs)
+    ins = theano.gof.graph.inputs(outs)
     ins, outs = theano.gof.graph.clone(ins, outs)
     return theano.gof.FunctionGraph(ins, outs)
 

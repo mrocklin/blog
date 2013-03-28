@@ -21,7 +21,9 @@ print '\n\n\n'
 # Theano simplification functions
 def fgraph_of(*exprs):
     """ Transform SymPy expressions into Theano Computation """
-    ins, outs = [theano_code(x)], map(theano_code, exprs)
+    outs = map(theano_code, exprs)
+    ins = theano.gof.graph.inputs(outs)
+
     ins, outs = theano.gof.graph.clone(ins, outs)
     return theano.gof.FunctionGraph(ins, outs)
 

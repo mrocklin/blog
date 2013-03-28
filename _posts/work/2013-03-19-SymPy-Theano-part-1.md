@@ -70,6 +70,7 @@ When we profile these functions we find that the `Fortran` solution runs a bit f
 
 This weekend I built up a translation from SymPy expressions to Theano computations.  This builds off of [old work](http://github.com/nouiz/theano_sympy/) done with [Frederic Bastien](http://github.com/nouiz) at SciPy2012.
 
+    >>> from sympy.printing.theanocode import theano_function
     >>> fn_theano  = theano_function([x], [expr], dims={x: 1}, dtypes={x: 'float64'})
     >>> timeit fn_theano(xx)
     1000 loops, best of 3: 1.04 ms per loop
