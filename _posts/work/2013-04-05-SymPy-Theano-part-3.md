@@ -123,6 +123,11 @@ collapsed_outputs = map(block_collapse, blockoutputs)
 fblocked = theano_function(inputs, collapsed_outputs, dtypes=dtypes)
 {% endhighlight %}
 
+At this stage the expresssions/computations are fairly complex.  Here is an
+image (click for vector graphic)
+
+[![]({{ BASE_PATH }}/images/fblocked.png)]({{ BASE_PATH }}/images/fblocked.pdf)
+
 Results
 -------
 
