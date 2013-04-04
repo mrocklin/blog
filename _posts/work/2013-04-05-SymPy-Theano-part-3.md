@@ -12,7 +12,7 @@ Introduction
 
 *This post uses some LaTeX.  You may want to read it on the original site.*
 
-This is the last of a three part series connecting SymPy and Theano to transform mathematical expressions into efficient numeric code (see [part 1](http://matthewrocklin.com/blog/work/2013/03/19/SymPy-Theano-part-1/) and [part 2](http://localhost:4000/work/2013/03/28/SymPy-Theano-part-2/)).  We have seen that it is simple and computationally profitable to combine the best parts of both projects.
+This is the last of a three part series connecting SymPy and Theano to transform mathematical expressions into efficient numeric code (see [part 1](http://matthewrocklin.com/blog/work/2013/03/19/SymPy-Theano-part-1/) and [part 2](http://matthewrocklin.com/blog/work/2013/03/28/SymPy-Theano-part-2/)).  We have seen that it is simple and computationally profitable to combine the best parts of both projects.
 
 In this post we'll switch from computing scalar expressionss to computing matrix expressions.  We'll define the Kalman filter in SymPy and send it to Theano for code generation.  We'll then use SymPy to define a more performant blocked version of the same algorithm.
 
