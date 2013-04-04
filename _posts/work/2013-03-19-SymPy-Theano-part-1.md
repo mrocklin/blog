@@ -77,7 +77,7 @@ This weekend I built up a translation from SymPy expressions to Theano computati
 
 Theano generates `C` code that performs the same loop fusion done in `Fortran` but it incurs a bit more startup time.  It performs somewhere between the `numpy` and `Fortran` solutions.
 
-However, the `SymPy -> Theano` system only takes up about a page of code while the `lambdify` and `autowrap` modules are substantially more complex.  Additionally, Theano is actively developed and is sure to improve and track changes in hardware well into the future.  `lambdify` and `autowrap` have been relatively untouched over the past year.
+However, the `SymPy to Theano` translation interface only takes up about a page of code while the `lambdify` and `autowrap` modules are substantially more complex.  Additionally, Theano is actively developed and is sure to improve and track changes in hardware well into the future.  `lambdify` and `autowrap` have been relatively untouched over the past year.  For example Theano is able to seemlessly compile these computations to the GPU.
 
 Leveraging Theano
 -----------------
@@ -118,6 +118,7 @@ When we extend this experiment and vary the number of simultaneous derivatives w
 
 ![]({{ BASE_PATH }}/images/profile-theano-fortran-numpy.png)
 
+In the case of highly structured computation Theano is able to scale very favorably.
 
 Conclusion
 ----------
