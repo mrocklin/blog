@@ -61,7 +61,7 @@ Theano builds a Python function that calls down to a combination of low-level `C
 {% highlight python %}
 import numpy
 ninputs = [numpy.random.rand(*i.shape).astype('float64') for i in inputs]
-noutputs = f(*ninputs)
+nmu, nSigma = f(*ninputs)
 {% endhighlight %}
 
 Blocked Execution
@@ -72,23 +72,24 @@ These arrays are too large to fit comfortably in the fastest parts of the memory
 A common approach to reduce memory shuffling is to cut the computation into smaller blocks.  We then perform as many computations as possible on a single block before moving on.  This is a standard technique in matrix multiplication.
 
 {% highlight python %}
-A, B, C, D, E, F, G, H = [MatrixSymbol(a, n, n) for a in 'ABCDEFGH']
+from sympy import BlockMatrix, block_collapse
+A, B, C, D, E, F, G, K = [MatrixSymbol(a, n, n) for a in 'ABCDEFGK']
 X = BlockMatrix([[A, B],
                  [C, D]])
 Y = BlockMatrix([[E, F],
-                 [G, H]])
+                 [G, K]])
 print latex(X*Y)
 {% endhighlight %}
 
 $$ \begin{bmatrix} A & B \\\\ C & D \end{bmatrix} 
-   \begin{bmatrix} E & F \\\\ G & H \end{bmatrix}$$
+   \begin{bmatrix} E & F \\\\ G & K \end{bmatrix}$$
 
 {% highlight python %}
 print latex(block_collapse(X*Y))
 {% endhighlight %}
 
-$$ \begin{bmatrix} A E + B G & A F + B H \\\\ 
-                   C E + D G & C F + D H\end{bmatrix} $$
+$$ \begin{bmatrix} A E + B G & A F + B K \\\\ 
+                   C E + D G & C F + D K\end{bmatrix} $$
 
 We are now able to focus on substantially smaller chunks of the array.  For example we can choose to keep `A` in local memory and perform all computations that involve `A`.  We will still need to shuffle some memory around (this is inevitable) but by organizing with blocks we're able to shuffle less.
 
@@ -135,13 +136,13 @@ Lets time each function on the same inputs and see which is faster
 
 {% highlight python %}
 >>> timeit f(*ninputs)
-1 loops, best of 3: 2.82 s per loop
+1 loops, best of 3: 2.69 s per loop
 
 >>> timeit fblocked(*ninputs)
-1 loops, best of 3: 2.07 s per loop
+1 loops, best of 3: 2.12 s per loop
 {% endhighlight %}
 
-That's a 25% performance increase from just a few lines of high-level code.
+That's a 20% performance increase from just a few lines of high-level code.
 
 Blocked matrix multiply and blocked solve routines have long been established as *a good idea*.  High level mathematical and array programming libraries like SymPy and Theano allow us to extend this good idea to *arbitrary* array computations.
 
