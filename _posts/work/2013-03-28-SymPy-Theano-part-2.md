@@ -87,9 +87,9 @@ Bounds on the cost of Differentiation
 
 Scalar differentiation is actually a very simple transformation.  
 
-You need to know how to transform all of the elementary functions (`exp, sin, cos, polynomials, etc...`), the chain rule, and that's it.  Theorems behind automatic differentiation state that the cost of a derivative will be at most five times the cost of the original.  In this case we're guaranteed to have at most `17*5 == 85` operations in the derivative computation; this holds in our case because `48 < 85`
+You need to know how to transform all of the elementary functions (`exp, log, sin, cos, polynomials, etc...`), the chain rule, and that's it.  Theorems behind automatic differentiation state that the cost of a derivative will be at most five times the cost of the original.  In this case we're guaranteed to have at most `17*5 == 85` operations in the derivative computation; this holds in our case because `48 < 85`
 
-However derivatives are often far simpler than this upper bound.  We see that after simplification the operation count of the derivative is `18`, only one more than the original.  This is common.
+However derivatives are often far simpler than this upper bound.  We see that after simplification the operation count of the derivative is `18`, only one more than the original.  This is common in practice.
 
 
 Theano Simplification
