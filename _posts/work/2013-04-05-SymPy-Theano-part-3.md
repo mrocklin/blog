@@ -61,7 +61,7 @@ Theano builds a Python function that calls down to a combination of low-level `C
 {% highlight python %}
 import numpy
 ninputs = [numpy.random.rand(*i.shape).astype('float64') for i in inputs]
-noutputs = f(*inputs)
+noutputs = f(*ninputs)
 {% endhighlight %}
 
 Blocked Execution
