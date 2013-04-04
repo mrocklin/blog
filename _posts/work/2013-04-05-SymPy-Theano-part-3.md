@@ -12,7 +12,7 @@ Introduction
 
 *This post uses some LaTeX.  You may want to read it on the original site.*
 
-This is the last of a three part series connecting SymPy and Theano to transform mathematical expressions into efficient numeric code (see parts [1](http://matthewrocklin.com/blog/work/2013/03/19/SymPy-Theano-part-1/) and [2](http://localhost:4000/work/2013/03/28/SymPy-Theano-part-2/)).  We have seen that it is simple and computationally profitable to combine the best parts of both projects.
+This is the last of a three part series connecting SymPy and Theano to transform mathematical expressions into efficient numeric code (see [part 1](http://matthewrocklin.com/blog/work/2013/03/19/SymPy-Theano-part-1/) and [part 2](http://localhost:4000/work/2013/03/28/SymPy-Theano-part-2/)).  We have seen that it is simple and computationally profitable to combine the best parts of both projects.
 
 In this post we'll switch from computing scalar expressionss to computing matrix expressions.  We'll define the Kalman filter in SymPy and send it to Theano for code generation.  We'll then use SymPy to define a more performant blocked version of the same algorithm.
 
@@ -20,9 +20,10 @@ In this post we'll switch from computing scalar expressionss to computing matrix
 Kalman Filter
 -------------
 
-The [Kalman filter](http://en.wikipedia.org/wiki/Kalman_filter) is an algorithm to compute the Bayesian update of a normal random variable given a linear observation with normal noise.  It is commonly used when an uncertain quantity is updated with the results of noisy observations.  For example it is used in weather forecasting after weather stations report in with new measurements, aircraft control to automatically adjust for real-time turbulence, or even on your smartphone's GPS navigation.   It's everywhere, it's important, and it needs to be computed quickly and continuously.  It suits our needs today because it can be completely defined with a pair of matrix expressions.
+The [Kalman filter](http://en.wikipedia.org/wiki/Kalman_filter) is an algorithm to compute the Bayesian update of a normal random variable given a linear observation with normal noise.  It is commonly used when an uncertain quantity is updated with the results of noisy observations.  For example it is used in weather forecasting after weather stations report in with new measurements, in aircraft/car control to automatically adjust for external conditions real-time, or even on your smartphone's GPS navigation as you update your position based on fuzzy GPS signals.   It's everywhere, it's important, and it needs to be computed quickly and continuously.  It suits our needs today because it can be completely defined with a pair of matrix expressions.
 
 {% highlight python %}
+from sympy import MatrixSymbol, latex
 n       = 1000                          # Number of variables in our system/current state
 k       = 500                           # Number of variables in the observation
 mu      = MatrixSymbol('mu', n, 1)      # Mean of current state
@@ -44,15 +45,14 @@ $$ - \Sigma H^T \left(H \Sigma H^T + R\right)^{-1} H \Sigma + \Sigma $$
 Theano Execution
 ----------------
 
-The objects above are for symbolic mathematics, not for numeric computation.  If we want a Python function to compute this expression we call on Theano
+The objects above are for symbolic mathematics, not for numeric computation.  If we want to compute this expression we pass our expressions to Theano.
 
 {% highlight python %}
 inputs = [mu, Sigma, H, R, data]
 outputs = [newmu, newSigma]
+dtypes = {inp: 'float64' for inp in inputs}
 
 from sympy.printing.theanocode import theano_function
-
-dtypes = {inp: 'float64' for inp in inputs}
 f = theano_function(inputs, outputs, dtypes=dtypes)
 {% endhighlight %}
 
@@ -103,11 +103,11 @@ $$ \begin{bmatrix}
 - \left(- C A^{-1} B + D\right)^{-1} C A^{-1} & \left(- C A^{-1} B + D\right)^{-1}
 \end{bmatrix} $$
 
-High performance dense linear algebra libraries hard-code all of these tricks.  The call to the general matrix multiply routine `DGEMM` performs blocked matrix multiply within the call.  The call to the general matrix solve routine `DGESV` can perform blocked matrix solve.  Unfortunately these routines are unable to coordinate blocked computation *between* calls.
+High performance dense linear algebra libraries hard-code all of these tricks into each individual routine.  The call to the general matrix multiply routine `DGEMM` performs blocked matrix multiply within the call.  The call to the general matrix solve routine `DGESV` can perform blocked matrix solve.  Unfortunately these routines are unable to coordinate blocked computation *between* calls.
 
 Fortunately, SymPy and Theano can.
 
-SymPy can define and reduce the blocked matrix expressions using tricks like what are shown above.
+SymPy can define and reduce the blocked matrix expressions using relations like what are shown above.
 {% highlight python %}
 from sympy import blockcut, block_collapse
 blocksizes = {
@@ -124,14 +124,14 @@ collapsed_outputs = map(block_collapse, blockoutputs)
 fblocked = theano_function(inputs, collapsed_outputs, dtypes=dtypes)
 {% endhighlight %}
 
-Theano is then able to coordinate this computation and compile it to low-level code.  At this stage the expresssions/computations are fairly complex and difficult to present.  Here is an image of the computation (click for zoomable PDF).
+Theano is then able to coordinate this computation and compile it to low-level code.  At this stage the expresssions/computations are fairly complex and difficult to present.  Here is an image of the computation (click for zoomable PDF) as a directed acyclic graph.
 
 [![]({{ BASE_PATH }}/images/fblocked-small.png)]({{ BASE_PATH }}/images/fblocked.pdf)
 
 Results
 -------
 
-Lets time the difference
+Lets time each function on the same inputs and see which is faster
 
 {% highlight python %}
 >>> timeit f(*ninputs)
@@ -143,7 +143,7 @@ Lets time the difference
 
 That's a 25% performance increase from just a few lines of high-level code.
 
-Blocked matrix multiply and blocked solve routines have long been established as *a good idea*.  High level mathematical and array programming libraries like SymPy and Theano allow us to extend this good idea to arbitrary array computations.
+Blocked matrix multiply and blocked solve routines have long been established as *a good idea*.  High level mathematical and array programming libraries like SymPy and Theano allow us to extend this good idea to *arbitrary* array computations.
 
 
 Analysis
@@ -151,9 +151,9 @@ Analysis
 
 ### Good Things
 
-First, lets note that I'm not introducing a new library for dense linear algebra.  Instead I'm noting that existing general purpose high-level tools can be composed to that effect.
+First, lets note that we're not introducing a new library for dense linear algebra.  Instead we're noting that pre-existing general purpose high-level tools can be composed to that effect.
 
-Second, lets acknoledge that we could take this further.  For example Theano seemlessly handles GPU interactions.  I could take this same code to a GPU accelerated machine and my code would just run faster without any action on my part. 
+Second, lets acknoledge that we could take this further.  For example Theano seemlessly handles GPU interactions.  We could take this same code to a GPU accelerated machine and it would just run faster without any action on our part.
 
 ### Bad Things
 
