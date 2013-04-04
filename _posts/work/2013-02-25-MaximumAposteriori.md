@@ -15,7 +15,10 @@ Imagine you are a scientist studying some [counting process](http://en.wikipedia
 
 If you have no preconceptions about the rate then this problem is easy.  You just divide total counts by total time and you're done.
 
-A more complex problem arises when external theory provides prior information about your rate parameter (for example physics might impose rules on the rate of radioactive decay).  Lets model this problem in SymPy.  For the sake of concreteness lets arbitrarily assume that \\( \lambda \\), the rate parameter, follows a Beta distribution with parameters `a` and `b`.
+A more complex problem arises when external theory provides prior information
+about your rate parameter (for example physics might impose rules on the rate
+of radioactive decay).  Lets model this problem in SymPy.  For the sake of
+concreteness lets arbitrarily assume that $\lambda$, the rate parameter, follows a Beta distribution with parameters `a` and `b`.
 
 {% highlight python %}
 a, b = symbols('a,b', positive=True)
@@ -24,7 +27,7 @@ rate = Beta(lam, a, b)
 count = Poisson('X', rate)
 {% endhighlight %}
 
-In the lab we observe many samples \\( x_i \\) taken from `count`.  From these we wish to find the most likely value of `rate`.  The probability of any single value of `rate` given our data can be rewritten with Bayes' rule.
+In the lab we observe many samples $x_i$ taken from `count`.  From these we wish to find the most likely value of `rate`.  The probability of any single value of `rate` given our data can be rewritten with Bayes' rule.
 
 $$ p(\lambda \vert x_i) \propto \prod_i p(x_i \vert \lambda) \cdot p(\lambda) $$
 
@@ -37,7 +40,7 @@ pdf = density(rate);         print latex(pdf(lam))
 $$ p(x_i \vert \lambda) = \frac{\lambda^{x}}{e^{\lambda} x!} \;\;\;\;
 p(\lambda) = \frac{\lambda^{a - 1} \left(- \lambda + 1\right)^{b - 1} \Gamma\left(a +   b\right)}{\Gamma\left(a\right) \Gamma\left(b\right)}$$ 
 
-To find the maximizer of \\( p(\lambda \vert x_i) \\) we set the derivative equal to zero.  We simplify the computation by taking the `log`.  Because `log` is monotonic this does not change the solution.
+To find the maximizer of $p(\lambda \vert x_i)$ we set the derivative equal to zero.  We simplify the computation by taking the `log`.  Because `log` is monotonic this does not change the solution.
 
 $$ 0 = \frac{d}{d\lambda} \log\left( \prod_i p(x_i \vert \lambda) \cdot                 p(\lambda)\right) =
 \frac{d}{d\lambda} \sum_i \log(p(x_i \vert \lambda) \cdot p(\lambda)) $$
