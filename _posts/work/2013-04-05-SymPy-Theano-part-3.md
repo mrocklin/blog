@@ -10,7 +10,7 @@ tags : [Matrices]
 Introduction
 ------------
 
-*This post uses some LaTeX.  You may want to read it on the original site.*
+*This post uses some LaTeX.  You may want to read it on the [original site](http://matthewrocklin.com/blog/work/2013/04/05/SymPy-Theano-part-3/).*
 
 This is the last of a three part series connecting SymPy and Theano to transform mathematical expressions into efficient numeric code (see [part 1](http://matthewrocklin.com/blog/work/2013/03/19/SymPy-Theano-part-1/) and [part 2](http://matthewrocklin.com/blog/work/2013/03/28/SymPy-Theano-part-2/)).  We have seen that it is simple and computationally profitable to combine the best parts of both projects.
 
