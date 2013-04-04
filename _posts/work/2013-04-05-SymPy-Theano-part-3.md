@@ -127,7 +127,7 @@ fblocked = theano_function(inputs, collapsed_outputs, dtypes=dtypes)
 
 Theano is then able to coordinate this computation and compile it to low-level code.  At this stage the expresssions/computations are fairly complex and difficult to present.  Here is an image of the computation (click for zoomable PDF).
 
-[![]({{ BASE_PATH }}/images/fblocked.png)]({{ BASE_PATH }}/images/fblocked.pdf)
+[![]({{ BASE_PATH }}/images/fblocked-small.png)]({{ BASE_PATH }}/images/fblocked.pdf)
 
 Results
 -------
