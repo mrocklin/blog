@@ -3,7 +3,7 @@ layout: post
 title:  SymPy -> Theano -- Matrix Expressions
 tagline:  
 category : work 
-tags : [Matrices]
+tags : [SymPy, scipy, Matrices, Theano]
 ---
 {% include JB/setup %}
 
