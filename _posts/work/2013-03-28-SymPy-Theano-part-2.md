@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  SymPy -> Theano -- Scalar Simplification
+title:  SymPy and Theano -- Scalar Simplification
 tagline:  
 category : work 
 tags : [SymPy, Theano, scipy]

@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  SymPy -> Theano -- Matrix Expressions
+title:  SymPy and Theano -- Matrix Expressions
 tagline:  
 category : work 
 tags : [SymPy, scipy, Matrices, Theano]

@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  SymPy -> Theano -- Code Generation
+title:  SymPy and Theano -- Code Generation
 tagline:  
 category : work 
 tags : [SymPy, Theano, scipy]
