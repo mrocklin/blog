@@ -2,9 +2,8 @@
 layout: post
 title:  Using SymPy within Theano
 tagline:  
-draft: true
 category : work 
-tags : [SymPy, Theano, scipy]
+tags : [SymPy, Theano]
 ---
 {% include JB/setup %}
 
@@ -14,22 +13,22 @@ Several months ago I published a sequence of blogposts about using SymPy and The
 *   [Scalar Simplificaiton](http://matthewrocklin.com/blog/work/2013/03/28/SymPy-Theano-part-2/):  We used SymPy's simplification routines to accelerate programs prior to code printing in Theano
 *   [Matrix Expressions](http://matthewrocklin.com/blog/work/2013/04/05/SymPy-Theano-part-3/):  We generate fast blocked numeric linear algebra programs from SymPy's matrix expressions using Theano array operations.
 
-A week ago someone popped up on the SymPy mailing list asking if a particular SymPy operation (`sympy.Piecewise`) could be supported in the SymPy-Theano translation.  Because Theano has a similar operation (`theano.tensor.switch`) it was simple to add this translation.  In general though this post raised some interesting questions:
+A week ago [someone popped up on the SymPy mailing list](https://groups.google.com/d/topic/sympy/VtaxCRNO4sE/discussion) asking if a particular SymPy operation (`sympy.Piecewise`) could be supported in the SymPy-Theano translation.  Because Theano has a similar operation (`theano.tensor.switch`) it was simple to add this translation.  In general though this post raised some interesting questions:
 
 *   Is there a way to avoid constantly making new translations for operations that exist both in SymPy and in Theano?
 *   What do we do with SymPy's more exotic operations for which no Theano analog exists?  E.g. how do we generate code for factorial or bessel functions?
 
-In an attempt to resolve these issues we recently merged a general `SymPyCCode` operation into the `Theano` project.  It enables the expression of a Theano scalar operation through SymPy expressions.  For example we can create a simple addition operation like so
+In an attempt to resolve these issues we recently merged a general `SymPyCCode` operation into the `Theano` project.  It enables the expression of a Theano scalar operation through SymPy expressions using SymPy's original code generation capability.  For example we can create a simple addition operation like so
 
 {% highlight python %}
 from sympy import Symbol, symbols
 from theano.scalar.basic_sympy import SymPyCCode
 
-x, y = symbols('x,y')
+x, y = symbols('x,y')            # SymPy Symbols
 add = SymPyCCode([x, y], x + y)  # A Theano addition operator
 {% endhighlight %}
 
-Theano operators can be applied to Theano variables to make compound Theano variables
+Theano operators can be applied to Theano variables to make compound Theano expressions
 
 {% highlight python %}
 from theano.scalar import floats
