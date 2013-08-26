@@ -3,7 +3,7 @@ layout: post
 title:  Using SymPy within Theano
 tagline:  
 category : work 
-tags : [SymPy, Theano]
+tags : [SymPy, Theano, scipy]
 ---
 {% include JB/setup %}
 
