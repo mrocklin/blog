@@ -131,3 +131,7 @@ Today I wouldn't use this solution in production code mainly because my usual co
 *   Composition - Mechanisms for function composition and encapsulation (like `thread_first`) promote rapid development of novel and robust solutions.
 
 In general I think that while for loops and low-level code are globally accessible they also demand significant investment to understand their particular role in a certain application.  High-level/broad vocabulary solutions more directly present their intent but are limited to those programmers who understand them.  
+
+### References
+
+*   [`functoolz`](http://github.com/mrocklin/functoolz/): The functional solution uses `thread_first`, a function from the non-standard `functoolz` library. 
