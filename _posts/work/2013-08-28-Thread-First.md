@@ -4,7 +4,6 @@ title:  Thread First Pattern
 tagline: 
 category : work 
 tags : [Functional, Python]
-draft: true
 ---
 {% include JB/setup %}
 
