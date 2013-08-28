@@ -53,13 +53,13 @@ float_columns = []
 for line in lines[2:5]:
     tokens = line.split()
     int_columns.append(int(tokens[0]))
-    float_columns.append([float(tok) for tok in tokens[0]])
+    float_columns.append([float(tok) for tok in tokens[1:]])
 
 # Second table
 ....
 {% endhighlight %}
 
-This solution is standard but, in my colleague's words, not particularity "cute".  He wanted to know if there was a "cute" language idiom to handle tasks like these.  I've been programming in a functional style for a while now.  After some back and forth with him I stabilized on the following solution.
+This solution is standard but, in my colleague's words, not particularity "cute".  He wanted to know if there was a "cute" language idiom to handle tasks like these.  I've been programming in a functional style for a while now and decided to see if that paradigm could offer a better option.  After some back and forth with him I stabilized on the following solution.
 
 
 {% highlight python %}
@@ -80,21 +80,26 @@ int_column, float_columns = \
 
 This solution is very different from my colleague's.  Rather than provide explicit instructions on how to manipulate the data at a low-level (for loop with list appends) it describes a sequence of high-level transformations.  The `thread_first` function takes the first argument (the data) and runs it through the following functions sequentially.  I'll describe those functions below:
 
+<hr>
 
-| Transformation                                    | Explanation                                         |
-|:--------------------------------------------------|:----------------------------------------------------|
-| filename,                                         | Our original input, a filename like 'file.txt'      |
-| open,                                             | Open the file for reading                           |
-| (islice, 2, 5),                                   | Take lines 2:5                                      |
-| ''.join,                                          | Join them together into a single string             |
-| StringIO.StringIO,                                | Turn that string into a file-like object            |
-| numpy.genfromtxt,                                 | Parse into an array                                 |
-| lambda X: (X[:,0].astype(int), X[:, 1:])))        | Separate array into first and all other columns     |
+| Transformation                                      | Explanation                                         |
+|:----------------------------------------------------|:----------------------------------------------------|
+| `filename`                                          | Our original input, a filename like 'file.txt'      |
+| `open`                                              | Open the file for reading                           |
+| `(islice, 2, 5)`                                    | Take lines 2:5                                      |
+| `''.join`                                           | Join them together into a single string             |
+| `StringIO.StringIO`                                 | Turn that string into a file-like object            |
+| `numpy.genfromtxt`                                  | Parse into an array                                 |
+| `lambda X: (X[:,0].astype(int), X[:, 1:]))`         | Separate array into first and all other columns     |
+
+<hr>
 
 If we write this normally with all of the calling parentheses it looks something like the following:
 
-    X = numpy.genfromtxt(''.join(StringIO.StringIO(islice(open('file.txt'), 2, 5))))
-    X[:,0].astype(int), X[:, 1:]
+{% highlight python %}
+X = numpy.genfromtxt(''.join(StringIO.StringIO(islice(open('file.txt'), 2, 5))))
+X[:,0].astype(int), X[:, 1:]
+{% endhighlight %}
 
 
 ### Why this Solution is Worse
@@ -103,7 +108,7 @@ Here are my thoughts on why the functional solution is worse.  If you have other
 
 1.  It's weird and the current base of programmers will be put off
 2.  It uses functions that are not commonly known like `StringIO`, `islice`, and `numpy.genfromtxt`.  It demands a richer vocabulary.
-3.  It is inefficient because it will have to open the file once for each section.  It does not manage state well.
+3.  It is inefficient because it opens and reads the file for each section.  It does not optimally manage state.
 
 
 ### Why this Solution is Better
