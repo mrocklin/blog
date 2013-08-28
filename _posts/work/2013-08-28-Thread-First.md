@@ -39,7 +39,7 @@ Normally for tabular data I would just point him towards `numpy.loadtxt` or the 
 
 Neither the `csv` module nor the `numpy.loadtxt/genfromtext` functions are capable of wrapping this complexity.  This is commonplace, we often have data that doesn't quite fit our module's expectations.  At this point we often fall back to traditional programming.  
 
-My colleagues solution was a sequence of for loops, appending data onto a set of lists.
+My colleague's solution was a sequence of for loops, appending data onto a set of lists.
 
 
 
@@ -116,7 +116,7 @@ Here are my thoughts on why the functional solution is better.  Again, if you ha
 
 ### Thoughts
 
-Today I wouldn't use this solution in production code mainly because my colleagues aren't familiar with it.  However I do think that the ideas behind the solution do have substantial merit.  In particular
+Today I wouldn't use this solution in production code mainly because my usual colleagues aren't familiar with it.  However I do think that the ideas behind the solution do have substantial merit.  In particular
 
 *   Function reuse - reinventing wheels is both wasteful and harmful to the longevity of your code.
 *   Standard library - Use of functions within the standard library supports more rapid understanding of your code
