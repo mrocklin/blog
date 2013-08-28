@@ -68,6 +68,7 @@ from itertools import islice
 import StringIO
 import numpy
 
+# First table
 int_column, float_columns = \
     thread_first(filename,
                  open,
@@ -76,6 +77,8 @@ int_column, float_columns = \
                  StringIO.StringIO,
                  numpy.genfromtxt,
                  lambda X: (X[:,0].astype(int), X[:, 1:])))
+# Second table
+....
 {% endhighlight %}
 
 This solution is very different from my colleague's.  Rather than provide explicit instructions on how to manipulate the data at a low-level (for loop with list appends) it describes a sequence of high-level transformations.  The `thread_first` function takes the first argument (the data) and runs it through the following functions sequentially.  I'll describe those functions below:
@@ -94,7 +97,7 @@ This solution is very different from my colleague's.  Rather than provide explic
 
 <hr>
 
-If we write this normally with all of the calling parentheses it looks something like the following:
+It is equivalent to the following lines:
 
 {% highlight python %}
 X = numpy.genfromtxt(''.join(StringIO.StringIO(islice(open('file.txt'), 2, 5))))
@@ -116,15 +119,16 @@ Here are my thoughts on why the functional solution is worse.  If you have other
 Here are my thoughts on why the functional solution is better.  Again, if you have other thoughts please do list them in the comments:
 
 1.  The intent of the operation is more explicit.
-2.  The component functions used are well tested.  There are fewer opportunities for bugs.  This solution reinvents the minimum amount of technology.
+2.  The component functions used are well tested.  There are fewer opportunities for bugs.  
+3.  The information content of each term is high.  This solution reinvents the minimum amount of technology.
 
 
 ### Thoughts
 
 Today I wouldn't use this solution in production code mainly because my usual colleagues aren't familiar with it.  However I do think that the ideas behind the solution do have substantial merit.  In particular
 
-*   Function reuse - reinventing wheels is both wasteful and harmful to the longevity of your code.
-*   Standard library - Use of functions within the standard library supports more rapid understanding of your code
+*   Function reuse:  Reinventing wheels is both wasteful to the programmer and harmful to the longevity the code.
+*   Standard library - The use of standard library functions supports more rapid understanding of your code.
 *   Composition - Mechanisms for function composition and encapsulation (like `thread_first`) promote rapid development of novel and robust solutions.
 
-In general I think that while for loops and low-level code are globally accessible they also demand significant investment to understand their particular role in a certain application.  High-level/broad vocabulary solutions more directly present their intent but are limited to those programmers who understand them.
+In general I think that while for loops and low-level code are globally accessible they also demand significant investment to understand their particular role in a certain application.  High-level/broad vocabulary solutions more directly present their intent but are limited to those programmers who understand them.  
