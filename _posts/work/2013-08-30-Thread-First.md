@@ -3,7 +3,7 @@ layout: post
 title:  Thread First Pattern
 tagline: 
 category : work 
-tags : [Functional, Python]
+tags : [Functional, Python, scipy]
 ---
 {% include JB/setup %}
 
