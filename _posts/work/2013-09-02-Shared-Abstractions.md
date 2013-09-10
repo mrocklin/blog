@@ -4,7 +4,6 @@ title:  Dictionaries v. Objects
 tagline:  a story of shared abstractions
 category : work 
 tags : [Functional]
-draft: true
 ---
 {% include JB/setup %}
 
