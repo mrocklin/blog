@@ -60,7 +60,7 @@ The attribute syntax note is convenient but not a game-changer.  The ability to 
 And culturally many of us (myself included) are pretty bad at this.
 
 
-### Advantages if Dicts
+### Advantages of Dicts
 
 There are some small advantages to using dicts like the following
 
