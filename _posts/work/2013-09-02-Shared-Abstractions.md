@@ -24,7 +24,7 @@ class Book(object):
         self.title = title
         self.isbn = isbn
                                                 book = {
-book = Book(["Neil Gaiman"],                        "authors": ["Neil Gaiman"],                    
+book = Book(["Neil Gaiman"],                        "authors": ["Neil Gaiman"], 
             "American Gods",                        "title": "American Gods",
             "9780062113450")                        "isbn": "9780062113450"
                                                 }
