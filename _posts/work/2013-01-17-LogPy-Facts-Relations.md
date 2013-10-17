@@ -2,7 +2,7 @@
 layout: post
 title:  LogPy - Facts and Relations
 tagline: a quick and dirty in-memory database
-category : work 
+category : work
 tags : [LogPy, SymPy, scipy]
 ---
 {% include JB/setup %}
@@ -13,10 +13,10 @@ In [my last post]({{ BASE_PATH }}/work/2013/01/14/LogPy-Introduction/) I introdu
 Data
 ----
 
-As an example we'll look at the 50 states in the US.  We know two things about each state. 
+As an example we'll look at the 50 states in the US.  We know two things about each state.
 
 1.  Is it coastal? For example California (CA) is coastal because it is next to the Pacific Ocean, Arizona (AZ) is not.
-2.  To which other states is it adjacent?  For example California (CA) is adjacent to Oregon (OR), Arizona (AZ) and Nevada (NV). 
+2.  To which other states is it adjacent?  For example California (CA) is adjacent to Oregon (OR), Arizona (AZ) and Nevada (NV).
 
 We express data in LogPy using relations and facts
 
@@ -52,7 +52,7 @@ Now we need a list of all adjacent pairs of states.  Fortunately [someone else](
     CO,WY,NE,KS,OK,NM,AZ,UT
     ...
 
-Each line says that the first element is adjacent to the following ones.  So for example Alaska (AK) is adjacent to no states and California (CA) is adjacent to Oregon (OR), Nevada (NV) and Arizona (AZ).  We can parse this file and assert the relevant facts with fairly standard Python code 
+Each line says that the first element is adjacent to the following ones.  So for example Alaska (AK) is adjacent to no states and California (CA) is adjacent to Oregon (OR), Nevada (NV) and Arizona (AZ).  We can parse this file and assert the relevant facts with fairly standard Python code
 
 {% highlight python %}
 f = open('examples/data/adjacent-states.txt')  # lines like 'CA,OR,NV,AZ'
@@ -69,7 +69,7 @@ for L in adjlist:                   # ['CA', 'OR', 'NV', 'AZ']
 Queries
 ------
 
-Once have asserted the relevant facts we can run queries with the logical expressions of LogPy.  Recall from the [last post]({{ BASE_PATH }}/work/2013/01/14/LogPy-Introduction/) that we can use relations to express logical goals and use `run` to search for cases that satisfy those goals.  Here are two simple queries 
+Once have asserted the relevant facts we can run queries with the logical expressions of LogPy.  Recall from the [last post]({{ BASE_PATH }}/work/2013/01/14/LogPy-Introduction/) that we can use relations to express logical goals and use `run` to search for cases that satisfy those goals.  Here are two simple queries
 
 {% highlight python %}
 >>> from logpy import var, run
