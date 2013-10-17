@@ -10,33 +10,43 @@ tags : [Python, SciPy]
 The PyToolz project extends `itertools` and `functools` to provide a set of
 standard functions for iterators, functions, and dictionaries.
 
-A year or two ago I, like many programming enthusiasts, started playing with
-functional programming.  One common feature of functional languages stuck out
-as having very little to do with FP in general.  Modern functional languages
-tend to have really killer standard libraries, particularly for iterators,
-functions, and dictionaries.  This feature doesn't depend on macros, monads, or
-any other mind bending language feature exclusive to LISP or Haskell.  This
-feature only requires higher order functions and lazy iterators, both of which
-Python does quite well.
+**tl;dr** -- Toolz provides good functions for core data structures.  These functions work together well.  Here is a partial API:
 
-This is well known.  The libraries `itertools` and `functools` are supposed to fill
-this niche.  Personally I've found these libraries to be very useful but often
-incomplete (although the Python 3 versions are showing signs of improvement.)
-To fill these gaps the libraries `itertoolz` and `functoolz` (note the `z`)
-were formed.  They were eventually merged into a single codebase, named
-`toolz` which is available for your hacking pleasure at
+    groupby, unique, isiterable, intersection, frequencies,
+    get, concat, isdistinct, interleave, accumulate
+    first, second, nth, take, drop, rest, last,
+    memoize, curry, compose, merge, assoc
+
+Two years ago I started playing with functional programming.  One powerful
+feature of functional languages oddly stuck out as having very little to do
+with FP in general.  In particular modern functional languages often have
+really killer standard libraries for dealing with operating on iterators,
+functions, and dictionaries.  This standard function set doesn't depend on
+macros, monads, or any other mind bending language feature understandable only
+to LISP-ers or Haskell-ites.  This feature only requires higher order
+functions and lazy iterators, both of which Python does quite well.
+
+This is well known.  The libraries `itertools` and `functools` are supposed to
+fill this niche in the Python ecosystem.  Personally I've found these libraries
+to be useful but often incomplete (although the Python 3 versions are
+showing signs of improvement.)  To fill these gaps we started hacking together
+the libraries `itertoolz` and `functoolz` which were modeled largely after the
+[Clojure standard library](http://clojure.org/cheatsheet).  These projects were
+eventually merged into a single codebase, named `toolz` which is available for
+your hacking pleasure at
 [http://github.com/pytoolz/toolz/](http://github.com/pytoolz/toolz/).
+
 
 Official
 --------
 
-The official description follows:
+The official description of Toolz is as follows:
 
 The Toolz project provides a set of utility functions for iterators, functions,
 and dictionaries.  These functions are designed to interoperate well, forming
 the building blocks of common data analytic operations.  They extend the
 standard libraries `itertools` and `functools` and borrow heavily from the
-standard     libraries of contemporary functional languages.
+standard libraries of contemporary functional languages.
 
 Toolz provides a suite of functions which have the following virtues:
 
@@ -69,17 +79,20 @@ deconstructed into splitting, stemming, and frequency counting:
 ... """ Stem word to primitive form """
 ...     return word.lower().rstrip(",.!:;'-\"").lstrip("'\"")
 
->>> wordcount = compose(frequencies, partial(map, stem), str.split)
+>>> wordcount = compose(frequencies, partial(map, stem), str.split)  # Function
+>>> sentence = "This cat jumped over this other cat!")               # Data
 
->>> wordcount("This cat jumped over this other cat!"))
+>>> wordcount(sentence)
 {'this': 2, 'cat': 2, 'jumped': 1, 'over': 1, 'other': 1}
 {% endhighlight %}
 
-Wordcounting is the composition of three basic operations
+There are many solutions to the wordcounting problem.  What I like
+about this solution is that it exposes that wordcounting is the composition of
+three basic operations
 
-1.  Splitting a text into words  (`str.split`)
-2.  Stemming those words to a base form (e.g. `'Hello!'` is the same as `'hello'`)  (`partial(map, stem)`)
-3.  Counting occurrences of each base word (`frequencies`)
+1.  Splitting a text into words  --  (`str.split`)
+2.  Stemming those words to a base form so that `'Hello!'` is the same as `'hello'`  --  (`partial(map, stem)`)
+3.  Counting occurrences of each base word  -- (`frequencies`)
 
 `Toolz` provides both common operations for iterators (like `frequencies` for
 counting occurrences) and common operations for functions (like `compose` for
