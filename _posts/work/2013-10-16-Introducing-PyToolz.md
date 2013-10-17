@@ -10,12 +10,15 @@ tags : [Python, SciPy]
 The PyToolz project extends `itertools` and `functools` to provide a set of
 standard functions for iterators, functions, and dictionaries.
 
-**tl;dr** -- Toolz provides good functions for core data structures.  These functions work together well.  Here is a partial API:
+**tl;dr** -- PyToolz provides good functions for core data structures.  These functions work together well.  Here is a partial API:
 
     groupby, unique, isiterable, intersection, frequencies,
     get, concat, isdistinct, interleave, accumulate
     first, second, nth, take, drop, rest, last,
     memoize, curry, compose, merge, assoc
+
+Why?
+----
 
 Two years ago I started playing with functional programming.  One powerful
 feature of functional languages oddly stuck out as having very little to do
@@ -40,7 +43,8 @@ your hacking pleasure at
 Official
 --------
 
-The official description of Toolz is as follows:
+The official description of Toolz from [the
+docs](http://toolz.readthedocs.org/) is as follows:
 
 The Toolz project provides a set of utility functions for iterators, functions,
 and dictionaries.  These functions are designed to interoperate well, forming
@@ -61,16 +65,17 @@ sacrificing *performance*.  Toolz enables this approach, commonly associated
 with functional programming, within a natural Pythonic style suitable for most
 developers.
 
-This follows in the footsteps of the popular projects `Underscore.js` for
-JavaScript and and `Enumerable` for Ruby.
+This project follows in the footsteps of the popular projects `Underscore.js`
+for JavaScript and and `Enumerable` for Ruby.
 
 
-Example
--------
+Examples
+--------
 
 Word counting is a common example used to show off data processing libraries.
 The Python version that leverages `toolz` demonstrates how the algorithm can be
-deconstructed into splitting, stemming, and frequency counting:
+deconstructed into the three operations of splitting, stemming, and frequency
+counting:
 
 {% highlight python %}
 >>> from toolz import *
@@ -87,8 +92,8 @@ deconstructed into splitting, stemming, and frequency counting:
 {% endhighlight %}
 
 There are many solutions to the wordcounting problem.  What I like
-about this solution is that it exposes that wordcounting is the composition of
-three basic operations
+about this solution is that it breaks down the wordcounting problem into a
+composition of three fundamental operations.
 
 1.  Splitting a text into words  --  (`str.split`)
 2.  Stemming those words to a base form so that `'Hello!'` is the same as `'hello'`  --  (`partial(map, stem)`)
@@ -112,7 +117,8 @@ Here is another example performing analytics on the following directed graph
 >>> edges = [(a, b), (b, a), (a, c), (a, d), (d, a), (d, e),
 ...          (e, f), (d, f), (f, d), (d, g), (e, g)]
 
->>> nodes = set(concat(edges))
+>>> # Nodes
+>>> set(concat(edges))
 {'a', 'b', 'c', 'd', 'e', 'f', 'g'}
 
 >>> # Out degree
