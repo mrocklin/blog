@@ -23,7 +23,7 @@ Why?
 Two years ago I started playing with functional programming.  One powerful
 feature of functional languages oddly stuck out as having very little to do
 with FP in general.  In particular modern functional languages often have
-really killer standard libraries for dealing with operating on iterators,
+really killer standard libraries for dealing with iterators,
 functions, and dictionaries.  This standard function set doesn't depend on
 macros, monads, or any other mind bending language feature understandable only
 to LISP-ers or Haskell-ites.  This feature only requires higher order
@@ -85,7 +85,7 @@ counting:
 ...     return word.lower().rstrip(",.!:;'-\"").lstrip("'\"")
 
 >>> wordcount = compose(frequencies, partial(map, stem), str.split)  # Function
->>> sentence = "This cat jumped over this other cat!")               # Data
+>>> sentence = "This cat jumped over this other cat!"                # Data
 
 >>> wordcount(sentence)
 {'this': 2, 'cat': 2, 'jumped': 1, 'over': 1, 'other': 1}
