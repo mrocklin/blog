@@ -129,8 +129,9 @@ following form
 {% endhighlight %}
 
 To me this code reads very clearly from left to right.  We take a sentence,
-split it, stem each word, and then count frequencies.  This is sufficiently
-simple so that I am confident in the result after a brief review of the code.
+split it into words, stem each word, and then count frequencies.  This is
+sufficiently simple so that I am confident in the correctness of the result
+after a brief review of the code.
 
 
 ### Discussion
