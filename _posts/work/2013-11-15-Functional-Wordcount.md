@@ -3,7 +3,6 @@ layout: post
 title:  Wordcounting with PyToolz
 tagline:  a discussion of functional vocabulary
 category : work
-draft: true
 tags : [Python, scipy]
 ---
 {% include JB/setup %}
