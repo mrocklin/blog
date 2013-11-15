@@ -15,9 +15,9 @@ wordcounting example in more depth, highlighting differences between
 simple/verbose and complex/concise code.
 
 **tl;dr:** Library code reduces code-length at the cost of universal
-comprehensin.  Libraries simplify code for a subset of programmers while
+comprehension.  Libraries simplify code for a subset of programmers while
 alienating others.  This is behind the common complaint that functional
-programming is hard to read.
+programming is hard to read.  We use word-counting as a case study.
 
 
 ### Verbose solution with simple terms
@@ -82,14 +82,12 @@ pre-existing functionality.
 The functional solution above with `frequencies(map(stem, sentence.split()))` is
 concise but difficult for many human readers to parse.  The reader needs to
 traverse a tree of parentheses to find the innermost element (`sentence`) and
-then work outwards to discover the flow of computation.  The readability of
-this solution can be markedly improved by introducing the `pipe` function to
-apply a sequence of functions onto data.
+then work outwards to discover the flow of computation.  We improve the readability of
+this solution with the `pipe` function from `toolz`.
 
-To introduce `pipe` consider the process of doing laundry:
+To introduce `pipe` we consider the abstract process of doing laundry:
 
 {% highlight python %}
->>> # Do Laundry
 >>> wet_clothes = wash(clothes)
 >>> dry_clothes = dry(wet_clothes)
 >>> result = fold(dry_clothes)
@@ -97,9 +95,11 @@ To introduce `pipe` consider the process of doing laundry:
 
 This pushes the data, `clothes` through a pipeline of functions, `wash`, `dry`,
 and `fold`.  This pushing of data through a pipeline of functions is a common
-pattern.  Using `pipe` we push the clothes through three transformations in sequence:
+pattern.  We encode this pattern into `toolz.pipe`.
 
 {% highlight python %}
+>>> from toolz import pipe
+
 >>> result = pipe(clothes, wash, dry, fold)
 {% endhighlight %}
 
@@ -128,10 +128,13 @@ following form
 {'cat': 2, 'jumped': 1, 'other': 1, 'over': 1, 'this': 2}
 {% endhighlight %}
 
-To me this code reads very clearly from left to right.  We take a sentence,
+This code reads like a story from left to right.  We take a sentence,
 split it into words, stem each word, and then count frequencies.  This is
 sufficiently simple so that I am confident in the correctness of the result
-after a brief review of the code.
+after a brief review of the code.  There is little room for error.
+
+*note: here we used a curried version of `map`.  See the [toolz
+docs](http://toolz.readthedocs.org/en/latest/curry.html) for more info.*
 
 
 ### Discussion
@@ -144,8 +147,8 @@ depends on the audience.
 Long solutions of simple words are universally understandable but require
 reader effort to construct meaning.  Most Python programmers can understand the
 first solution without additional training but will need to expend effort to
-deduce its meaning.  This is like [Simple English
-Wikipedia](http://http://simple.wikipedia.org/wiki/Main_Page).
+deduce its meaning.  This is like the approach taken by [Simple English
+Wikipedia](http://simple.wikipedia.org/wiki/Main_Page).
 
 Concise solutions of complex words are not universally understandable but
 do convey meaning more quickly if the terms are already known by the reader.
