@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  Wordcounting with PyToolz
+title:  Wordcounting and Verbosity
 tagline:  a discussion of functional vocabulary
 category : work
 tags : [Python, scipy]
