@@ -15,10 +15,15 @@ implementation of the functional standard library.  Today I want to discuss the
 wordcounting example in more depth, highlighting differences between
 simple/verbose and complex/concise code.
 
+**tl;dr:** Library code reduces code-length at the cost of universal
+comprehensin.  Libraries simplify code for a subset of programmers while
+alienating others.  This is behind the common complaint that functional
+programming is hard to read.
+
 
 ### Verbose solution with simple terms
 
-My standard wordcount function looks like the following
+My standard wordcounting function looks like the following:
 
 {% highlight python %}
 def stem(word):
@@ -31,6 +36,12 @@ def stem(word):
 
 
 def wordcount(string):
+    """ Count the number of occurences of each word in a string
+
+    >>> sentence = "This cat jumped over this other cat!"
+    >>> wordcount(sentence)
+    {'cat': 2, 'jumped': 1, 'other': 1, 'over': 1, 'this': 2}
+    """
     words = string.split()
 
     stemmed_words = []
@@ -45,10 +56,6 @@ def wordcount(string):
             counts[word] += 1
 
     return counts
-
->>> sentence = "This cat jumped over this other cat!"
->>> wordcount(sentence)
-{'cat': 2, 'jumped': 1, 'other': 1, 'over': 1, 'this': 2}
 {% endhighlight %}
 
 While long/verbose, this solution is straightforward and comprehensible to all
@@ -58,7 +65,7 @@ moderately experienced Python programmers.
 ### Concise solution with complex terms
 
 Using the definition for `stem` above and the `frequencies` function from
-`toolz` we can condense `wordcount` into the following line.
+`toolz` we can condense `wordcount` into the following single line.
 
 {% highlight python %}
 >>> from toolz import frequencies
@@ -117,6 +124,7 @@ following form
 {% highlight python %}
 >>> from toolz.curried import map
 
+>>> # frequencies(map(stem, sentence.split()))
 >>> pipe(sentence, str.split, map(stem), frequencies)
 {'cat': 2, 'jumped': 1, 'other': 1, 'over': 1, 'this': 2}
 {% endhighlight %}
