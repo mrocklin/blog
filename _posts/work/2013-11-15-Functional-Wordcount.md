@@ -138,13 +138,14 @@ after a brief review of the code.
 
 The first solution uses lots of simple words.  The second solution uses a few
 complex words.  Just as in natural language there are benefits and
-drawbacks to both approaches.  The choice of suitable vocabulary largely
-depends on your audience.
+drawbacks to a rich vocabulary.  The choice of suitable vocabulary largely
+depends on the audience.
 
 Long solutions of simple words are universally understandable but require
 reader effort to construct meaning.  Most Python programmers can understand the
 first solution without additional training but will need to expend effort to
-deduce its meaning.
+deduce its meaning.  This is like [Simple English
+Wikipedia](http://http://simple.wikipedia.org/wiki/Main_Page).
 
 Concise solutions of complex words are not universally understandable but
 do convey meaning more quickly if the terms are already known by the reader.
@@ -153,7 +154,7 @@ less prone to error.
 
 A good vocabulary can concisely express most relevant problems with a small
 number of terms.  The functional standard library (e.g. `map`, `groupby`,
-`frequencies`, ...) is such a set.  It has been developed and honed over
-decades of language development.  Understanding a relatively few number of
+`frequencies`, ...) is such a set.  Understanding a relatively few number of
 terms (around 10-20) enables the concise expression of most common programming
-tasks.
+tasks.  This set arose was developed and refined across the decades of language
+evolution.
