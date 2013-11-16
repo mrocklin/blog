@@ -159,5 +159,5 @@ A good vocabulary can concisely express most relevant problems with a small
 number of terms.  The functional standard library (e.g. `map`, `groupby`,
 `frequencies`, ...) is such a set.  Understanding a relatively few number of
 terms (around 10-20) enables the concise expression of most common programming
-tasks.  This set arose was developed and refined across the decades of language
+tasks.  This set was developed and refined across decades of language
 evolution.
