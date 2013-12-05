@@ -210,7 +210,7 @@ Mckerns](http://www.cacr.caltech.edu/~mmckerns/my).  Several people have
 pointed it out to me.  These include
 [@asmeurer](https://github.com/asmeurer),
 [@themodernscientist](https://twitter.com/themodernscientist),
-[@tweicki](https://twitter.com/TWiecki),
+[@twiecki](https://twitter.com/TWiecki),
 and [@lidavidm](https://github.com/lidavidm).
 
 Issues
