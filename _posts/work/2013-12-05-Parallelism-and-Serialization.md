@@ -207,11 +207,19 @@ talk by [Ian Langmore](http://ianlangmore.com/about).
 
 The `dill` project is developed by [Mike
 Mckerns](http://www.cacr.caltech.edu/~mmckerns/my).  Several people have
-pointed it out to me.  These include @asmeurer, @themodernscientist, @tweicki,
-and @davidli.
+pointed it out to me.  These include
+[@asmeurer](https://github.com/asmeurer),
+[@themodernscientist](https://twitter.com/themodernscientist),
+[@tweicki](https://twitter.com/TWiecki),
+and [@lidavidm](https://github.com/lidavidm).
 
-Special thanks to @mmckerns and @minrk for their recent interactions to resolve
+Issues
+------
+
+Thanks to [@mmckerns](http://www.cacr.caltech.edu/~mmckerns/my) and
+[@minrk](https://github.com/minrk/) for their recent interactions to resolve
 issues related to this topic.
 
-Once we get past the serialization issue embarrassingly parallel processing in
-Python should be trivial.
+*   [https://github.com/uqfoundation/dill/issues/15](https://github.com/uqfoundation/dill/issues/15)
+*   [https://github.com/uqfoundation/pathos/issues/2](https://github.com/uqfoundation/pathos/issues/2)
+*   [https://github.com/ipython/ipython/issues/4551](https://github.com/ipython/ipython/issues/4551)
