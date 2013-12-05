@@ -1,7 +1,7 @@
 ---
 layout: post
 title:  Parallelism and Serialization
-tagline:  functional performance and pickles
+tagline:  how poor pickling breaks multiprocessing
 category : work
 draft:
 tags : [Python, scipy]
