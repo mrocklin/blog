@@ -3,13 +3,10 @@ layout: post
 title:  Parallelism and Serialization
 tagline:  functional performance and pickles
 category : work
-draft: true
+draft:
 tags : [Python, scipy]
 ---
 {% include JB/setup %}
-
-*This is a draft and should not be publicized.  If you find it in a public
-place please e-mail Matthew Rocklin.*
 
 **tl;dr:** Multiprocessing in Python is crippled by `pickle`s poor function
 serialization.  The more robust serialization package `dill` improves the
