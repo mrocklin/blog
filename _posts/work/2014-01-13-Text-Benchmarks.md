@@ -8,6 +8,8 @@ draft: true
 ---
 {% include JB/setup %}
 
+## Situation
+
 I have a decent grasp on performance when it comes to numerics; I am ignorant
 when it comes to text-based data wrangling.  Actually, that's an understatement
 
@@ -29,6 +31,9 @@ all) just because it's easy.  number 2, "invent better algorithms" is hard and
 so I avoid it if I'm not interested in the problem (I'm not.)  I actually don't
 know how much value is in number 3, switching to a lower level language, when it comes
 to text.  That's what this blogpost is partially about.
+
+
+## A Small Language Shootout
 
 I'm curious to see if my 30-core shared memory or large distributed system
 could be replaced with a few cores running tight compiled code.  To test this
@@ -129,8 +134,8 @@ Cities*
 ## Solutions
 
 Note that these are all done using the pure language.  Both Python and Julia
-have a DataFrame project with, I suspect, heavily optimized `groupby`
-operations.  Today we're sticking with the core language.
+have a DataFrame project (like `pandas`) with, I suspect, heavily optimized
+`groupby` operations.  Today we're sticking with the core language.
 
 ### Python
 
@@ -138,6 +143,7 @@ I'm using `toolz` for the `groupby` operation
 
 {% gist 8365524 %}
 
+    python benchmark.py word-pairs.txt
 
 ### Julia
 
@@ -149,6 +155,7 @@ Once you have it our code closely matches the Python Solution
 
 {% gist 8365510 %}
 
+    julia benchmark.jl word-pairs.txt
 
 ### Clojure
 
@@ -156,6 +163,8 @@ The Clojure standard library has everything we need
 
 {% gist 8365551 %}
 
+    lein uberjar
+    java -jar location-of-standalone.jar word-pairs.txt
 
 
 ## Numeric Results
@@ -172,7 +181,7 @@ times (not included in totals)).
 
 Perhaps this is because neither my Clojure nor Julia solutions have sufficient
 type information.  If any Clojurians or Julians (is that what we call you?) are
-around I welcome additions (or replacements) of my solutions.
+around I welcome additions (or replacements) to my solutions.
 
 In particular, I was sad to learn that Julia's `readlines` function is of type
 `file -> Array{Any}` rather than `file -> Array{String}`.  This propagates down
@@ -182,7 +191,7 @@ many meaningful optimizations.
 
 ## Thoughts on the Code
 
-### Macros
+### Timing Macros
 
 Writing code to time other code is tricky.  It always requires some sort of
 super-code.  In Clojure and Julia this is the `time` macro
@@ -201,7 +210,7 @@ the closest thing that Python has to macros within the standard library.
     with duration():
         ...
 
-But normally people use IPython's `timeit` magic
+But normally people use IPython's `timeit` magic (also macro-like).
 
 
 ### Lambdas
@@ -213,14 +222,16 @@ multi-line anonymous functions.  Julia even has pretty ones:
     Clojure : #(+ 1 %)
     Julia   : x -> x + 1
 
+As much as I love Clojure I have to say, that's an ugly `lambda`.  It looks
+like a four year old mashing the top row of the keyboard.
 
-### Declared Types
+### No Obligatory Types
 
 As has become the style, there is no necessary explicit type information in any
 of the languages.
 
 
-### Performance from Types?
+### Performance from Optional Types?
 
 Clojure and Julia both support adding optional type information to increase
 performance.  Python3 supports static type annotations but doesn't use them
@@ -240,3 +251,11 @@ simplicity of context managers than anything else:
 Also, if you want the data then you should run this script:
 
 {% gist 8365482 %}
+
+It depends on `toolz` which you can get from PyPI with
+
+    pip install toolz
+
+or
+
+    easy_install toolz
