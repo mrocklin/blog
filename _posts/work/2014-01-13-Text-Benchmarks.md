@@ -20,19 +20,19 @@ and basic data wrangling.  Actually, that's an understatement
 text!*
 
 I think that many of us are in the same position.  At work I analyze
-non-numeric data and run-times now slow down my work cycle.  I've already
-benchmarked and tuned my code within Python so now have the following three options to
+non-numeric data and run-times now slow down my work cycle.  After benchmarking
+and tuning code within Python we have the following three options to
 further increase performance:
 
 1.  Use more machines
 2.  Invent a better algorithm
 3.  Switch to a lower level language
 
-Recently I've done number 1, "use more machines" (haven't we all).  I made this
+Often we choose number 1, "use more machines".  We made this
 choice because it's easy.  Option 2, "invent better algorithms" is hard and
-so I avoid it if I'm not intellectually interested in the problem.
+so we avoid it if we're not intellectually interested in the problem.
 
-In numeric work I support option 3, "switch to a lower level language".  In
+In numeric work we often pursue option 3, "switch to a lower level language".  In
 text-based work I don't have a strong intuition on how valuable this is.  This
 blogpost helps to answer that question.
 
@@ -44,13 +44,13 @@ with a few cores running tight compiled code?  To test this we run a very
 simple parse-and-group operation in three languages of current interest:
 
 *   Python -- our favorite low-performance language
-*   Clojure -- A compiled lisp on the JVM
+*   Clojure -- A compiled lisp on the JVM with a vibrant community
 *   Julia -- The language all of Scientific Python is talking about but no one
     seems to have used.
 
-Each is a modern high-productivity language optimized to development time as
-well as performance.  I would feel comfortable marrying myself to any of
-them long-term.
+Each is a modern high-productivity language optimized for development time as
+well as performance.  I would feel comfortable marrying myself to any of them
+long-term.
 
 Later on in the blogpost I introduce Java as a baseline language:
 
@@ -99,14 +99,16 @@ Well that was simple!  There is no longer an excuse not to try Julia.
 
 ## Problem
 
-I wanted to test
+I want to test
 
 *   File I/O
 *   Basic string operations
 *   Grouping operations (mostly dictionary lookups and collection appends).
 
 To do this we take all of the word-pairs in "Tale of Two Cities"
-and group them by the first word.  E.g. given data that looks like this
+and group them by the first word.
+
+Given data that looks like the the following:
 
     $ cat data.txt
     a,b
@@ -117,13 +119,13 @@ and group them by the first word.  E.g. given data that looks like this
     d,c
     d,a
 
-We want to produce data that looks like this
+We produce data that looks like the following:
 
     {'a': ['b', 'c', 'd'],
      'b': ['a', 'd'],
      'd': ['c', 'a']}
 
-But instead of `a, b, c` we'll have words from a long book, *The Tale of Two
+But instead of `a, b, c` we use words from a long book, *The Tale of Two
 Cities*
 
     it, was
@@ -139,7 +141,7 @@ Cities*
     of, times
     ...
 
-We'll read in a file, split each line by commas, then perform a groupby
+We read in a file, split each line by commas, and then perform a groupby
 operation.
 
 
@@ -159,11 +161,11 @@ We use `toolz` for the `groupby` operation
 
 ### Julia
 
-We have to make a `groupby` operation in Julia.
+We first make a `groupby` operation in Julia.
 
 {% gist 8365495 %}
 
-Once you have it our code closely matches the Python Solution
+Afterwards out code closely matches the Python Solution
 
 {% gist 8365510 %}
 
@@ -252,11 +254,11 @@ solutions by adding type information.  If any experts are out there on
 supplying type hints I'd be grateful for the suggestions.
 
 
-## Adding Java
+## Lets Consider Java
 
-To see how much runtimes could improve I tried out the problem in Java, a
-language without fanciness, where all types are explicit, and whose compiler
-optimizations I mostly understand.
+To see how much runtimes could improve we test Java, a language without
+fanciness, where all types are explicit, and whose compiler optimizations we
+mostly understand.
 
 The results?
 
@@ -264,13 +266,18 @@ The results?
     Julia:      200 to 800 ms  # I don't know what's going on here
     Clojure:    550 ms
 
-    Java        190 ms
+    Java:       190 ms
 
-Java is not significantly faster.  This also surprised me.  In particular it
-probably answers the question *"Can more type information accelerate
-the Clojure/Julia solutions?"* with the answer *"No"*.
+Surprisingly, Java is not significantly faster.
 
-Evidently this problem is bound by data structure implementations.
+This probably answers the question:
+
+*"Can more type information accelerate the Clojure/Julia solutions to this
+problem?"*
+
+with the answer:
+
+*"No"*.
 
 ### Code
 
@@ -285,7 +292,7 @@ like `groupby` are absent and difficult to create.
 ## Conclusions
 
 I no longer feel guilty about using Python for this specific kind of data
-analytic operation and I'm more optimistic about its use in data analytics in
+analytic operation and I'm more optimistic about its role in data analytics in
 general.
 
 
