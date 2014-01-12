@@ -27,18 +27,18 @@ my code within Python.  I now have three options to increase performance
 3.  Switch to a lower level language
 
 I've been doing a lot of number 1, "use more machines", recently (haven't we
-all) just because it's easy.  number 2, "invent better algorithms" is hard and
+all) just because it's easy.  Number 2, "invent better algorithms" is hard and
 so I avoid it if I'm not interested in the problem (I'm not.)  I actually don't
 know how much value is in number 3, switching to a lower level language, when it comes
-to text.  That's what this blogpost is partially about.
+to text.  That's what this blogpost is about.
 
 
 ## A Small Language Shootout
 
-I'm curious to see if my 30-core shared memory or large distributed system
-could be replaced with a few cores running tight compiled code.  To test this
-I'm running a very simple parse and group operation in three languages that
-interest me right now
+I'm curious to see if my 30-core shared memory machine or large distributed
+system could be replaced with a few cores running tight compiled code.  To test
+this I'm running a very simple parse and group operation in three languages
+that interest me right now
 
 *   Python -- our favorite hands-in-the-dirt low-performance language
 *   Clojure -- A compiled lisp on the JVM
@@ -48,6 +48,10 @@ interest me right now
 Each is a modern "high productivity" language designed to think hard about
 how programmers program.  I would feel comfortable marrying myself to any of
 them long-term.
+
+Later on in the blogpost as a baseline language I introduce
+
+*   Java -- the oddly effective language that everyone loves to hate
 
 
 ## Installing Julia
@@ -238,6 +242,41 @@ performance.  Python3 supports static type annotations but doesn't use them
 meaningfully.  I suspect that one can get more performance on both the Clojure and Julia
 solutions by adding type information.  If any experts are out there on
 supplying type hints I'd be grateful for the suggestions.
+
+
+## Adding Java
+
+To see how much runtimes could improve I tried out the problem in Java, a
+language without fanciness, where all types are explicit, and whose compiler
+optimizations I mostly understand.
+
+The results?
+
+    Python:     200 ms
+    Julia:      200 to 800 ms  # I don't know what's going on here
+    Clojure:    550 ms
+
+    Java        190 ms
+
+Java is not significantly faster.  This also surprised me.  In particular it
+probably answers the question *"Can more type information accelerate
+the Clojure/Julia solutions?"* with the answer *No*.
+
+Evidently this problem is bound by data structure implementations.
+
+### Code
+
+The Java standard library has the data structures we need but fancy operations
+like `groupby` are absent and difficult to create.
+
+{% gist 8387373 %}
+
+
+## Conclusions
+
+I no longer feel guilty about using Python for this kind of data analytic
+operation and I'm more optimistic about its use in data analytics in general.
+
 
 
 ## Appendix
