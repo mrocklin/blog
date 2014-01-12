@@ -8,64 +8,71 @@ draft: true
 ---
 {% include JB/setup %}
 
+**tl;dr: We compare Python performance against Clojure, Julia, and Java in
+text-processing and dynamic collections.  Remarkably, Python does well.**
+
 ## Situation
 
-I have a decent grasp on performance when it comes to numerics; I am ignorant
-when it comes to text-based data wrangling.  Actually, that's an understatement
-
+I mostly understand numeric performance; I am ignorant when it comes to text
+and basic data wrangling.  Actually, that's an understatement
 
 *The SciPy community has optimized the heck out of numerics; lets think about
 text!*
 
-I think that many of us are in
-the same position.  At work I do some heavy analysis on non-numeric data and
-run times now slow down my work cycle.  I've already benchmarked and tuned
-my code within Python.  I now have three options to increase performance
+I think that many of us are in the same position.  At work I analyze
+non-numeric data and run-times now slow down my work cycle.  I've already
+benchmarked and tuned my code within Python so now have the following three options to
+further increase performance:
 
 1.  Use more machines
 2.  Invent a better algorithm
 3.  Switch to a lower level language
 
-I've been doing a lot of number 1, "use more machines", recently (haven't we
-all) just because it's easy.  Number 2, "invent better algorithms" is hard and
-so I avoid it if I'm not interested in the problem (I'm not.)  I actually don't
-know how much value is in number 3, switching to a lower level language, when it comes
-to text.  That's what this blogpost is about.
+Recently I've done number 1, "use more machines" (haven't we all).  I made this
+choice because it's easy.  Option 2, "invent better algorithms" is hard and
+so I avoid it if I'm not intellectually interested in the problem.
+
+In numeric work I support option 3, "switch to a lower level language".  In
+text-based work I don't have a strong intuition on how valuable this is.  This
+blogpost helps to answer that question.
 
 
 ## A Small Language Shootout
 
-I'm curious to see if my 30-core shared memory machine or large distributed
-system could be replaced with a few cores running tight compiled code.  To test
-this I'm running a very simple parse and group operation in three languages
-that interest me right now
+Can my 30-core shared memory machine or large distributed system be replaced
+with a few cores running tight compiled code?  To test this we run a very
+simple parse-and-group operation in three languages of current interest:
 
-*   Python -- our favorite hands-in-the-dirt low-performance language
+*   Python -- our favorite low-performance language
 *   Clojure -- A compiled lisp on the JVM
 *   Julia -- The language all of Scientific Python is talking about but no one
     seems to have used.
 
-Each is a modern "high productivity" language designed to think hard about
-how programmers program.  I would feel comfortable marrying myself to any of
+Each is a modern high-productivity language optimized to development time as
+well as performance.  I would feel comfortable marrying myself to any of
 them long-term.
 
-Later on in the blogpost as a baseline language I introduce
+Later on in the blogpost I introduce Java as a baseline language:
 
 *   Java -- the oddly effective language that everyone loves to hate
 
 
 ## Installing Julia
 
-For those who don't know, Julia is a compiled language that targets imperative
-array code (like C/Fortran) with a lightweight syntax (like Python) but with
-a real type system (like Haskell).  Along with Rust and Go it is one of the few
-recent advances in imperative languages.  It caters more to the Matlab/Fortran
-crowd than the Systems/C crowd (like Go).
+Julia is a compiled language that targets
 
-I've been curious about Julia but have never actually played with it.  I had
-been warned about Julia's installation process.  I was told that it depended on
-a custom LLVM and took up a Gig+ of storage.  I was pleasantly surprised when
-the following worked (Ubuntu 13.04)
+*   imperative array code (like C/Fortran)
+*   with a lightweight syntax (like Python)
+*   but with a real type system (like Haskell).
+
+Along with Rust and Go it is one of the recent advances in imperative
+languages.  It caters more to the Matlab/Fortran crowd than the Systems/C crowd
+(like Go).
+
+While curious about Julia I've never played with it.  I had been warned about
+Julia's installation process.  I was told that it depended on a custom LLVM and
+took up a Gig+ of storage.  I was pleasantly surprised when the following
+worked (Ubuntu 13.04)
 
     mrocklin@notebook:~$ sudo add-apt-repository ppa:staticfloat/juliareleases
     mrocklin@notebook:~$ sudo apt-get update
@@ -87,10 +94,7 @@ the following worked (Ubuntu 13.04)
     julia> 1 + 2
     3
 
-Well that was simple!  Maybe things have gotten better in the last few months
-or maybe my bloated development system already had all of the bloated
-dependencies, or maybe the development pains were just built up.  In any event,
-there is no longer an excuse not to try Julia.
+Well that was simple!  There is no longer an excuse not to try Julia.
 
 
 ## Problem
@@ -101,7 +105,7 @@ I wanted to test
 *   Basic string operations
 *   Grouping operations (mostly dictionary lookups and collection appends).
 
-To do this we're going to take all of the word-pairs in "Tale of Two Cities"
+To do this we take all of the word-pairs in "Tale of Two Cities"
 and group them by the first word.  E.g. given data that looks like this
 
     $ cat data.txt
@@ -133,17 +137,21 @@ Cities*
     the, worst
     worst, of
     of, times
+    ...
+
+We'll read in a file, split each line by commas, then perform a groupby
+operation.
 
 
 ## Solutions
 
 Note that these are all done using the pure language.  Both Python and Julia
-have a DataFrame project (like `pandas`) with, I suspect, heavily optimized
-`groupby` operations.  Today we're sticking with the core language.
+have a DataFrame project (like `pandas`) with heavily optimized
+`groupby` operations.  Today we stick with the core language.
 
 ### Python
 
-I'm using `toolz` for the `groupby` operation
+We use `toolz` for the `groupby` operation
 
 {% gist 8365524 %}
 
@@ -151,7 +159,7 @@ I'm using `toolz` for the `groupby` operation
 
 ### Julia
 
-I had to make a `group_by` operation in Julia.
+We have to make a `groupby` operation in Julia.
 
 {% gist 8365495 %}
 
@@ -173,7 +181,7 @@ The Clojure standard library has everything we need
 
 ## Numeric Results
 
-The results really surprised me.
+The results surprised me.
 
     Python:     200 ms
     Julia:      200 to 800 ms  # I don't know what's going on here
@@ -183,9 +191,9 @@ I expected Python to be dead last.  Instead it comfortably hums along in first.
 It also has the shortest latency (both Julia and Clojure have painful compile
 times (not included in totals)).
 
-Perhaps this is because neither my Clojure nor Julia solutions have sufficient
+Perhaps this is because neither the Clojure nor Julia solutions have sufficient
 type information.  If any Clojurians or Julians (is that what we call you?) are
-around I welcome additions (or replacements) to my solutions.
+around I welcome better solutions.
 
 In particular, I was sad to learn that Julia's `readlines` function is of type
 `file -> Array{Any}` rather than `file -> Array{String}`.  This propagates down
@@ -208,8 +216,8 @@ super-code.  In Clojure and Julia this is the `time` macro
         ...
     end
 
-In Python I used the `duration` context manager.  Context managers really are
-the closest thing that Python has to macros within the standard library.
+In Python I used the `duration` context manager.  Context managers commonly
+serve well where macros are desired.
 
     with duration():
         ...
@@ -219,7 +227,7 @@ But normally people use IPython's `timeit` magic (also macro-like).
 
 ### Lambdas
 
-Oh how I miss nice lambda syntax.  Both Clojure and Julia have concise
+I miss nice lambda syntax.  Both Clojure and Julia have concise
 multi-line anonymous functions.  Julia even has pretty ones:
 
     Python  : lambda x: x + 1
@@ -227,12 +235,12 @@ multi-line anonymous functions.  Julia even has pretty ones:
     Julia   : x -> x + 1
 
 As much as I love Clojure I have to say, that's an ugly `lambda`.  It looks
-like a four year old mashing the top row of the keyboard.
+like a child mashing the top row of the keyboard.
 
 ### No Obligatory Types
 
-As has become the style, there is no necessary explicit type information in any
-of the languages.
+There is no necessary explicit type information in any of the languages.  This
+seems to be a common trait among high productivity languages.
 
 
 ### Performance from Optional Types?
@@ -260,7 +268,7 @@ The results?
 
 Java is not significantly faster.  This also surprised me.  In particular it
 probably answers the question *"Can more type information accelerate
-the Clojure/Julia solutions?"* with the answer *No*.
+the Clojure/Julia solutions?"* with the answer *"No"*.
 
 Evidently this problem is bound by data structure implementations.
 
@@ -271,12 +279,14 @@ like `groupby` are absent and difficult to create.
 
 {% gist 8387373 %}
 
+    javac Benchmark.java
+    java Benchmark word-pairs.txt
 
 ## Conclusions
 
-I no longer feel guilty about using Python for this kind of data analytic
-operation and I'm more optimistic about its use in data analytics in general.
-
+I no longer feel guilty about using Python for this specific kind of data
+analytic operation and I'm more optimistic about its use in data analytics in
+general.
 
 
 ## Appendix
