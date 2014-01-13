@@ -3,8 +3,7 @@ layout: post
 title: Python v. Clojure v. Julia
 tagline: a contest of text and grouping!
 category : work
-tags : [Programming]
-draft: true
+tags : [SciPy, Python, Programming]
 ---
 {% include JB/setup %}
 
