@@ -297,6 +297,12 @@ like `groupby` are absent and difficult to create.
 
 ## Conclusion
 
+It turns out that this problem is largely dominated by data structures for
+which Python is pretty well optimized.  How common in this computational focus
+among text-analytics problems?  If anyone has insight here I'd love to hear
+about it.  Remember that our goal here is to generate intuition about
+computational performance in text-analytic operations.
+
 I used to feel guilty about using Python for data processing.  But this test
 gives me confidence in the performance of Python data structures and makes me
 more optimistic about Python's role in data analytics in general.
