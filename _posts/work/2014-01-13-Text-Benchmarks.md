@@ -303,6 +303,11 @@ among text-analytics problems?  If anyone has insight here I'd love to hear
 about it.  Remember that our goal here is to generate intuition about
 computational performance in text-analytic operations.
 
+Numerical computation intuition tells us that types are important.  Switching 
+from a Python `int` to a C `int` often results in a significant performance 
+gain.  This intuition didn't carry over well to text and grouping; instead we
+mostly benchmarked the dictionary/HashMap of each language.
+
 I used to feel guilty about using Python for data processing.  But this test
 gives me confidence in the performance of Python data structures and makes me
 more optimistic about Python's role in data analytics in general.
