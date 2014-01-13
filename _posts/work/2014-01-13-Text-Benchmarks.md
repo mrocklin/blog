@@ -142,7 +142,9 @@ Cities*
     ...
 
 We read in a file, split each line by commas, and then perform a groupby
-operation.
+operation.  Comma spliting and grouping are both commonly used operations.
+For example these steps might be used to create a Markov chain to power
+word prediction in your smartphone keyboard.
 
 
 ## Solutions
@@ -224,7 +226,9 @@ serve well where macros are desired.
     with duration():
         ...
 
-But normally people use IPython's `timeit` magic (also macro-like).
+But normally people use IPython's `timeit` magic (also macro-like).  I used
+`duration` here because it was pure Python and because it doesn't benefit from
+the caching of repeated iterations.
 
 
 ### Lambdas
@@ -268,9 +272,11 @@ The results?
 
     Java:       190 ms
 
-Surprisingly, Java is not significantly faster.
+Surprisingly, Java is not significantly faster.  This provides us with a pretty
+stable lower bound for this problem.  We're unlikely to get much faster with
+standard data structures.
 
-This probably answers the question:
+As a corollary this probably answers the question:
 
 *"Can more type information accelerate the Clojure/Julia solutions to this
 problem?"*
@@ -278,6 +284,7 @@ problem?"*
 with the answer:
 
 *"No"*.
+
 
 ### Code
 
@@ -289,11 +296,11 @@ like `groupby` are absent and difficult to create.
     javac Benchmark.java
     java Benchmark word-pairs.txt
 
-## Conclusions
+## Conclusion
 
-I no longer feel guilty about using Python for this specific kind of data
-analytic operation and I'm more optimistic about its role in data analytics in
-general.
+I used to feel guilty about using Python for data processing.  But this test
+gives me confidence in the performance of Python data structures and makes me
+more optimistic about Python's role in data analytics in general.
 
 
 ## Appendix
