@@ -4,7 +4,7 @@ title:  Parallelism and Serialization
 tagline:  how poor pickling breaks multiprocessing
 category : work
 draft:
-tags : [Python, scipy]
+tags : [Python, SciPy]
 ---
 {% include JB/setup %}
 
