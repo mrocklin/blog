@@ -10,6 +10,10 @@ tags : [SciPy, Python, Programming]
 **tl;dr: We compare Python performance against Clojure, Julia, and Java in
 text-processing and dynamic collections.  Remarkably, Python does well.**
 
+*Note - this post embeds gists for code.  These do not render well on Planet 
+pages or on RSS readers like feedly.  It may be better to view on the [original 
+site](http://matthewrocklin.com/blog/work/2014/01/13/Text-Benchmarks/)*
+
 ## Situation
 
 I mostly understand numeric performance; I am ignorant when it comes to text
