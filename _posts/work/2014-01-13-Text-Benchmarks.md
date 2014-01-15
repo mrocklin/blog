@@ -18,22 +18,28 @@ and basic data wrangling.  Actually, that's an understatement
 *The SciPy community has optimized the heck out of numerics; lets think about
 text!*
 
-I think that many of us are in the same position.  At work I analyze
+I think that many of us are in the same position.  At work we analyze
 non-numeric data and run-times now slow down my work cycle.  After benchmarking
-and tuning code within Python we have the following three options to
+and tuning code within Python I have the following three options to
 further increase performance:
 
 1.  Use more machines
 2.  Invent a better algorithm
 3.  Switch to a lower level language
 
-Often we choose number 1, "use more machines".  We made this
+Often we choose number 1, "use more machines".  We make this
 choice because it's easy.  Option 2, "invent better algorithms" is hard and
 so we avoid it if we're not intellectually interested in the problem.
 
-In numeric work we often pursue option 3, "switch to a lower level language".  In
-text-based work I don't have a strong intuition on how valuable this is.  This
-blogpost helps to answer that question.
+In numeric work we often pursue option 3, "switch to a lower level language"
+and with good reason.  The Python -> numpy -> fancy-numeric-package -> tuned
+C/Fortran -> CUDA progression often comes along with somewhat predictable
+order-of-magnitude gains at each step.  We know we can improve computation and
+we know roughly by how much.
+
+In text-based work I lack the same strong intuition on performance that I have
+in numeric work.  I don't know how valuable lower level languages really are.
+This blogpost helps to answer that question.
 
 
 ## A Small Language Shootout
@@ -297,15 +303,16 @@ like `groupby` are absent and difficult to create.
 
 ## Conclusion
 
-It turns out that this problem is largely dominated by data structures for
-which Python is pretty well optimized.  How common in this computational focus
+It turns out that runtimes for this problem are dominated by data structures for
+which Python is well optimized.  But how common in this computational focus
 among text-analytics problems?  If anyone has insight here I'd love to hear
-about it.  Remember that our goal here is to generate intuition about
-computational performance in text-analytic operations.
+about it.  Remember that my goal is to generate intuition about computational
+performance in text-analytic operations.
 
 I used to feel guilty about using Python for data processing.  But this test
-gives me confidence in the performance of Python data structures and makes me
-more optimistic about Python's role in data analytics in general.
+gives me confidence in the performance of Python data structures relative to
+other languages and makes me more optimistic about Python's role in data
+analytics in general.
 
 
 ## Appendix
