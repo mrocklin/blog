@@ -3,12 +3,16 @@ layout: post
 title: Python v. Clojure v. Julia
 tagline: a contest of text and grouping!
 category : work
-tags : [SciPy, Python, Programming]
+tags : [SciPy, scipy, Python, Programming]
 ---
 {% include JB/setup %}
 
 **tl;dr: We compare Python performance against Clojure, Julia, and Java in
 text-processing and dynamic collections.  Remarkably, Python does well.**
+
+*Note - this post embeds gists for code.  These do not render well on Planet
+pages or on RSS readers like feedly.  It may be better to view on the [original
+site](http://matthewrocklin.com/blog/work/2014/01/13/Text-Benchmarks/)*
 
 ## Situation
 
@@ -308,6 +312,11 @@ which Python is well optimized.  But how common in this computational focus
 among text-analytics problems?  If anyone has insight here I'd love to hear
 about it.  Remember that my goal is to generate intuition about computational
 performance in text-analytic operations.
+
+Numerical computation intuition tells us that types are important.  Switching
+from a Python `int` to a C `int` often results in a significant performance
+gain.  This intuition didn't carry over well to text and grouping; instead we
+mostly benchmarked the dictionary/HashMap of each language.
 
 I used to feel guilty about using Python for data processing.  But this test
 gives me confidence in the performance of Python data structures relative to
