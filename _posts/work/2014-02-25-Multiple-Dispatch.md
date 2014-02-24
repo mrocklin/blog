@@ -9,7 +9,7 @@ tags : [SciPy, Python, Programming]
 {% include JB/setup %}
 
 **tl;dr: We present a multiple dispatch system for Python.  We discuss issues
-that arise from multiple dispatch.  We try to allay fears associated to these
+that arise from multiple dispatch.  We try to allay fears related to these
 issues.**
 
 ## Dispatch
@@ -76,7 +76,7 @@ functions with type signatures:
 As we define new implementations of `add` decorated with new types we add to a
 collection of `{type-signature: function}` associations.  When we call `add` on
 some arguments the dispatch system performs dynamic type checking and then
-executes the right function definiion on those arguments.  This is exactly what
+executes the right function definition on those arguments.  This is exactly what
 happens in the object oriented solution, but now we dispatch on all of the
 arguments rather than only the first.
 
@@ -204,7 +204,7 @@ languages.  I'll list a few below:
 
 *   [Five-minute Multimethods in Python by Guido](http://www.artima.com/weblogs/viewpost.jsp?thread=101605):
     A quick explanation of multimethods and a simple implementation.  He leaves
-    the hard parts as "an excercise for the reader".
+    the hard parts as "an exercise for the reader".
 *   The [`multimethods` package on PyPI](https://pypi.python.org/pypi/multimethods) is a fine implementation that, among other things, supports methods within classes.  Sadly it doesn't support a number of the more complex cases.
 *  The [Julia methods docs](http://julia.readthedocs.org/en/latest/manual/methods/) are a great place to read about Julia's approach to multiple dispatch.  Julia handles this problem remarkably well and was a strong inspiration for my attempt here.
 *   [Karpinksi's notebook: *The Design Impact of Multiple Dispatch*](http://nbviewer.ipython.org/gist/StefanKarpinski/b8fe9dbb36c1427b9f22) is a good read on the motivations behind multiple dispatch in a language built for it.
