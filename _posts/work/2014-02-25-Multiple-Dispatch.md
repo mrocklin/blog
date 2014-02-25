@@ -17,11 +17,11 @@ issues.**
 Abstract operations like addition, `+`, have several different implementations.
 We choose which implementation to use based on the type of the inputs.  For example:
 
-*   Adding two numbers results in arithmetic addition
-*   Adding two strings means concatenation
-*   Adding user defined objects results in `__add__` or `__radd__` calls
+*   The addition of two numbers results in arithmetic addition
+*   The addition of two strings results in concatenation
+*   The addition of two user defined objects results in `__add__` or `__radd__` calls
 
-This selection of function implementation (e.g. arithmetic add) based on input types (e.g. integers) is called dispatch.
+The selection of implementation (e.g. arithmetic add) based on input types (e.g. integers) is called dispatch.
 
 As an object oriented language, Python dispatches on the type of the first
 argument, `self`.  We call this single dispatch because it makes a selection
@@ -40,7 +40,7 @@ def __add__(self, other):
     elif isinstance(other, Bar):
         ...
     else:
-        ...
+        raise NotImplementedError()
 {% endhighlight %}
 
 Or to raise a `NotImplementedError`, which then tells Python to try
@@ -75,14 +75,14 @@ functions with type signatures:
 
 As we define new implementations of `add` decorated with new types we add to a
 collection of `{type-signature: function}` associations.  When we call `add` on
-some arguments the dispatch system performs dynamic type checking and then
-executes the right function definition on those arguments.  This is exactly what
-happens in the object oriented solution, but now we dispatch on all of the
-arguments rather than only the first.
+a set of arguments the dispatch system performs dynamic type checking to find
+the right function and then executes that function on those arguments.  This is
+exactly what happens in the object oriented solution, but now we dispatch on
+all of the arguments rather than only the first.
 
 The example above uses the `multipledispatch` library found
-[here](https://github.com/mrocklin/multipledispatch/).  It's also available on
-PyPI with
+[here](https://github.com/mrocklin/multipledispatch/).  It's also installable
+from PyPI with the following command:
 
     pip install multipledispatch
 
@@ -92,17 +92,17 @@ Programmers experienced with multiple dispatch know that it introduces the
 following problems:
 
 1.  Dynamic multiple dispatch costs performance
-2.  It is possible to generate two type signatures that are equally valid to a
+2.  It is possible to generate two type signatures that are equally valid for a
     given set of inputs.
 3.  Because we collect functions around their name we ignore namespaces.
     Different projects that reuse the same names may conflict.
 
 Lets handle these in order
 
-### Performance
+### 1. Performance
 
 Each call to a dispatched function requires a dynamic check of the types of the
-inputs against the type signatures of the known implementations at runtime.
+inputs against the type signatures of the known implementations at runtime.  This takes time.
 
 Using dictionaries, some static analysis, and caching we can push this cost
 down to a couple of microseconds.  While this is slower than straight Python
@@ -110,7 +110,7 @@ it's not *that* much slower.  Don't forget that objects do this dynamic
 checking too.
 
 
-### Conflicting type signatures cause ambiguities
+### 2. Conflicting type signatures raise ambiguities
 
 Consider the following two functions
 
@@ -128,16 +128,17 @@ Consider the following two functions
 {% endhighlight %}
 
 What output do we expect, `1` or `2`?  In this case we have defined a set of
-implementations that contain an *ambiguity*.  Arguments of the type (`float`,
-`float`) don't know exactly which version of `f` they should use.  In large
-projects that depend on multiple dispatch, this behavior can create bugs that
-are difficult to track down.
+implementations that contain an *ambiguity*.  Due to inheritance both type
+signatures `(object, float)` and `(float, object)` satisfy our argument types,
+`(float, float)` equally well.  It's ambiguous which implementation of `f` we
+is most valid.  In large projects that depend on multiple dispatch, this
+behavior can create bugs that are difficult to track down.
 
 Fortunately, we detect this problem statically at function definition time.
 Inheritance of each of the type inputs induces a graph on all of the
 signatures.  By looking for uncovered cycles within this graph we can identify
-ambiguous collections of signatures and report them *before the code is ever
-run*.  We can even suggest new signatures that the user should implement:
+ambiguous collections of signatures and report them *before the code is run*.
+We can suggest new signatures to cover the ambiguity:
 
     >>> @dispatch(float, object)
     ... def f(x, y):
@@ -157,30 +158,31 @@ run*.  We can even suggest new signatures that the user should implement:
         def f(...)
 
 
-### Collecting functions by name ignores namespaces
+### 3. Collecting functions by name ignores namespaces
 
 Different projects implement functions with the same name all the time.  This
 can cause some confusion.  Normally Python handles this problem with
 namespaces.  Namespaces help to distinguish between `your_library.foo` and
-`my_library.foo`.  They're generally thought of as a heck of a good idea.
+`my_library.foo`.  Namespaces are one heck of a good idea.
 
 Unfortunately multiple dispatch systems often group functions by their name and
-generally ignore namespaces completely.  Can an ecosystem exist when several
-projects use multiple dispatch?  Coordinating `(name, type-signature)` pairs to
-avoid conflicts between projects would inhibit the growth of the ecosystem.  Do
-multiple dispatch systems like what is described above make this necessary?
+ignore namespaces completely.  Can an ecosystem exist when several projects use
+multiple dispatch without coordination?  Coordinating `(name, type-signature)`
+pairs to avoid conflicts between projects would inhibit the growth of the
+ecosystem.  Do multiple dispatch systems like what is described above make this
+necessary?
 
 My opinion: *Yes, they do, but this coordination is easy - we do it already.*
 
-Python already has globally dispatched operations.  Consider `+`.  Everyone adds
-implementations to `+`.  The `+` operation isn't in a namespace, it doesn't need
-to be imported, it just dispatches based on the data given to it.  And yet no
-problems arise *as long as no one monkey patches*.  That is, as long as people
-only define methods for types that they manage then globally distributed
-dispatching systems are safe.
+Python already has globally dispatched operations.  Consider `+`.  People add
+implementations to `+` every day.  The `+` operation isn't in a namespace, it
+doesn't need to be imported, it just dispatches based on the data given to it.
+And yet no problems arise *as long as no one monkey patches*.  That is, as long
+as people only define methods for types that they manage then globally
+distributed dispatching systems are safe.
 
 Of course, dispatch systems like what we show above make monkey-patching of
-types easier.  For example in writing this I defined `add` on
+types easier.  For example in writing this post I defined `add` on
 `(object, object)` to mean string concatenation, clearly a pretty bold
 decision.
 
@@ -190,10 +192,9 @@ decision.
 ...     return "%s + %s" % (x, y)
 {% endhighlight %}
 
-This was bad, as bad as is monkey patching.  Don't do it.  My opinion is that
-globally distributed dispatch is safe if we do not make broad claims like the
-example above.  This is in line with our current ability and aversion to monkey
-patching.
+This was bad, as bad as is monkey patching.  My opinion is that globally
+distributed dispatch is safe if we do not make broad claims like the example
+above.
 
 
 ## Background
