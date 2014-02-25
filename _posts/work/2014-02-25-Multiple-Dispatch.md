@@ -198,19 +198,20 @@ patching.
 
 ## Background
 
-There have been several attempts at multiple dispatch in Python and in other
-languages.  I'll list a few below:
+There have been several attempts at multiple dispatch in Python.  I'll list a few below:
 
 
 *   [Five-minute Multimethods in Python by Guido](http://www.artima.com/weblogs/viewpost.jsp?thread=101605):
     A quick explanation of multimethods and a simple implementation.  He leaves
     the hard parts as "an exercise for the reader".
-*   The [`multimethods` package on PyPI](https://pypi.python.org/pypi/multimethods) is a fine implementation that, among other things, supports methods within classes.  Sadly it doesn't support a number of the more complex cases.
-*  The [Julia methods docs](http://julia.readthedocs.org/en/latest/manual/methods/) are a great place to read about Julia's approach to multiple dispatch.  Julia handles this problem remarkably well and was a strong inspiration for my attempt here.
-*   [Karpinksi's notebook: *The Design Impact of Multiple Dispatch*](http://nbviewer.ipython.org/gist/StefanKarpinski/b8fe9dbb36c1427b9f22) is a good read on the motivations behind multiple dispatch in a language built for it.
-*   A single dispatch decorator is in Python 3's functools.  See [PEP-443](http://legacy.python.org/dev/peps/pep-0443/) and [Python 3.4's `functools` docs](http://docs.python.org/3.4/library/functools.html)
-*   [PEP 3124 - *Overloading, Generic Functions, Interfaces, and Adaptation*](http://legacy.python.org/dev/peps/pep-3124/) is a good read.  It's significantly more ambitious than what is presented here.
-*   [The `generic` library](https://github.com/andreypopp/generic) and [the `magic` module of `Gnosis`](https://github.com/smokedice/Gnosis/blob/master/gnosis/magic/multimethods.py) are other alternative implementations.
-*   The [Wikipedia article](http://en.wikipedia.org/wiki/Multiple_dispatch)
+*   Most links today point to the [`multimethods` package on PyPI](https://pypi.python.org/pypi/multimethods).
+*   The single dispatch decorator is in Python 3.4's `functools`.  See [PEP-443](http://legacy.python.org/dev/peps/pep-0443/) and the [`functools` docs](http://docs.python.org/3.4/library/functools.html)
+*   PEP-443 also calls out [The `generic` library](https://github.com/andreypopp/generic) and [the `magic` module of `Gnosis`](https://github.com/smokedice/Gnosis/blob/master/gnosis/magic/multimethods.py) as additional implementations.
+*   [PEP 3124 - *Overloading, Generic Functions, Interfaces, and Adaptation*](http://legacy.python.org/dev/peps/pep-3124/) is a good read.  It was an ambitious proposal that didn't stick.  Still contains lots of good thoughts.
 
-*Special thanks to [Erik Welch](https://github.com/eriknw) for pointing me to a number of excellent references.*
+*Special thanks to [Erik Welch](https://github.com/eriknw) for pointing me to a number of excellent Python references.*
+
+The quickly growing Julia language handles multiple dispatch wonderfully.  Julia's solution was what inspired me to play with this idea.
+
+*  See the [Julia methods docs](http://julia.readthedocs.org/en/latest/manual/methods/).
+*   [Karpinksi's notebook: *The Design Impact of Multiple Dispatch*](http://nbviewer.ipython.org/gist/StefanKarpinski/b8fe9dbb36c1427b9f22) provides motivation.
