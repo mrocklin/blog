@@ -48,7 +48,6 @@ Or to raise a `NotImplementedError`, which then tells Python to try
 Both of these solutions are complex.  It gets worse when you consider
 operations with more than two inputs.
 
-
 ## Dispatching on all types with decorators
 
 The non-standard approach to multiple dispatch in Python is to decorate
@@ -84,6 +83,37 @@ The example above uses the `multipledispatch` library found
 from PyPI with the following command:
 
     pip install multipledispatch
+
+## Dispatch Supports Interactions Between Projects
+
+Multiple dispatch allows distinct types to interact over a shared abstract
+interface.  For example, there currently exist several array programming
+solutions in Python, each vying for the title "`numpy` of the future".
+Multiple dispatch supports efforts to interact between these disparate
+solutions.
+
+For example most array programming solutions implement a dot-product operation,
+`dot`.  Using multiple dispatch we could implement interactions like the
+following:
+
+
+{% highlight Python %}
+@dispatch(numpy.ndarray, scipy.sparse.csr_matrix)
+def dot(x, y):
+    ....
+
+@dispatch(numpy.ndarray, theano.tensor)
+def dot(x, y):
+    ...
+
+@dispatch(numpy.ndarray, blaze.array)
+def dot(x, y):
+    ...
+{% endhighlight %}
+
+These interactions don't need to reside in each project.  Multiple dispatch
+separates interaction code from core code.
+
 
 ## Issues
 
@@ -215,3 +245,8 @@ The quickly growing Julia language handles multiple dispatch wonderfully.  Julia
 
 *  See the [Julia methods docs](http://julia.readthedocs.org/en/latest/manual/methods/).
 *   [Karpinksi's notebook: *The Design Impact of Multiple Dispatch*](http://nbviewer.ipython.org/gist/StefanKarpinski/b8fe9dbb36c1427b9f22) provides motivation.
+
+And finally here is a link to the source code for my
+implementation of `multipledispatch`
+
+*   [https://github.com/mrocklin/multipledispatch/](https://github.com/mrocklin/multipledispatch/).
