@@ -112,7 +112,8 @@ def dot(x, y):
 {% endhighlight %}
 
 These interactions don't need to reside in each project.  Multiple dispatch
-separates interaction code from core code.
+separates interaction code from core code.  This opens and democratizes
+interaction, for better or for worse.
 
 
 ## Issues
