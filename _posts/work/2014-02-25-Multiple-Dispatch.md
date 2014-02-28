@@ -3,7 +3,7 @@ layout: post
 title: Multiple Dispatch
 tagline: not a terrible idea
 category : work
-tags : [SciPy, Python, Programming]
+tags : [SciPy, scipy, Python, Programming]
 ---
 {% include JB/setup %}
 
