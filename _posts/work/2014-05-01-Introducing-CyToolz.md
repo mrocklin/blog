@@ -203,9 +203,7 @@ Links
 -----
 
 * [Cython documentation](http://docs.cython.org/)
-
 * [Cython FAQ](https://github.com/cython/cython/wiki/FAQ)
-
 * [Cython tutorial from 2013 SciPy Conference](http://conference.scipy.org/scipy2013/tutorial_detail.php?id=105)
 (resources [here](http://public.enthought.com/~ksmith/scipy2013_cython/))
 
