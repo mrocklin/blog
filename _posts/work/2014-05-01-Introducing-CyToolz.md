@@ -65,12 +65,33 @@ Erik just released CyToolz yesterday.  Get it while it's hot
 How?
 ----
 
-Q: Hey Erik, why is CyToolz able to increase performance on Pure Python data
-structures?  I thought that Cython was mostly about leveraging C type
-information such as you find on numpy arrays.  How are you able to speed up
-generic Python code?
+Cython is most effective when leveraging C type information for tight inner
+loops or C data structures like numpy arrays, and speed improvements of 10-100x
+are common for these cases.  We have found that by utilizing Cython and Python's
+C API, significant improvements (typically 2-5x and sometimes much more) can be
+achieved when using pure Python data structures.
 
-A: ...
+We actually don't know precisely where most of the performance increases come
+from.  Developing for performance was primarily done through trial and error
+and was driven by curiosity.  Cython employs many optimizations, and the code
+compiles to a native C extension, which is generally faster than the Python
+interpreter.  Still, we were able to improve upon the original Python code for
+nearly all functions.  Here are some of our best guesses for how this was
+achieved:
+
+1. Python's C API exposes functionality unavailable in the Python interpreter.
+2. Directly using the C API is faster in some cases even when Python has an equivalent
+   function.
+3. The C API allows pointers to be used.  In many cases this is a "borrowed reference",
+   and it avoids reference counting and the garbage collector.
+4. Some C API functions don't check types or raise exceptions; these must be used with
+   caution, but can be much faster.
+5. Checking types with `isinstance` in Cython is really fast.  So is checking whether a
+   pointer is `NULL`.
+6. The overhead of calling C extension types developed in Cython is low.  This, for
+   instance, makes iterables really fast.
+7. Early binding--that is, pre-declaring variables with `cdef`--usually improves
+   performance.
 
 
 Example: `merge`
@@ -181,7 +202,10 @@ Most functions improve by 2x-5x with some fantastic exceptions.
 Links
 -----
 
-Q: Hey Erik, what resources did you find helpful use when writing CyToolz?
+* [Cython documentation](http://docs.cython.org/)
+* [Cython FAQ](https://github.com/cython/cython/wiki/FAQ)
+* [Cython tutorial from 2013 SciPy Conference](http://conference.scipy.org/scipy2013/tutorial_detail.php?id=105)
+(resources [here](http://public.enthought.com/~ksmith/scipy2013_cython/))
 
 
 Related Blogposts
