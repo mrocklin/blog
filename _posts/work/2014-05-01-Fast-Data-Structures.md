@@ -8,9 +8,7 @@ tags : [SciPy, scipy, Python, Programming]
 ---
 {% include JB/setup %}
 
-**tl;dr: Our intuition that Python is slow is often incorrect.
-We reimplement PyToolz, a functional standard library, in Cython.
-It's fast.**
+**tl;dr: Our intuition that Python is slow is often incorrect.**
 
 
 ## We think that Python is slow
@@ -31,7 +29,8 @@ timeit np.s100 loops, best of 3: 7.79 ms per loop
 ~~~
 
 Generally speaking anything involving loops and lots of arithmetic operations
-is much slower than the equivalent C or Java code.
+is much slower than the equivalent C or Java code.  For this we use one of
+the numeric projects like NumPy, Cython, Theano, or Numba.
 
 
 ## But that only applies to normally cheap operations
@@ -52,7 +51,7 @@ assignment.
 10000000 loops, best of 3: 65.7 ns per loop
 ~~~~~~~~~~
 
-*A Python dictionary assignment is about as fast as a Python add.*
+A Python dictionary assignment is about as fast as a Python add.
 
 *Disclaimer: this benchmark gets a point across but is is very artificial,
 micro-benchmarks like this are hard to do well.*

@@ -44,11 +44,13 @@ Personally, I'm fine with fast Python speeds.  Erik on the other hand, wanted
 unreasonably fast C speeds so he rewrote `toolz` in Cython;  he calls it
 [CyToolz](http://github.com/pytoolz/cytoolz/).
 
+~~~~~~~~~~~~Python
 >>> import toolz
 >>> import cytoolz
 
 >>> timeit toolz.groupby(len, names)            3.19 µs
 >>> timeit cytoolz.groupby(len, names)           721 ns
+~~~~~~~~~~~~
 
 For data structure bound computations this competes with Java.  It does so
 using pure, native Python data structures.  This differs from the NumPy/Pandas
@@ -74,12 +76,14 @@ A: ...
 Example: `merge`
 ----------------
 
+~~~~~~~~~~~~Python
 >>> dicts = {'one': 1, 'two': 2}, {'three': 3}, {'two': 2, 'four': 4}
 >>> toolz.merge(dicts)
 {'one': 1, 'two': 2, 'three': 3, 'four': 4}
 
 >>> timeit toolz.merge(dicts)                   1.76 µs
 >>> timeit cytoolz.merge(dicts)                  264 ns
+~~~~~~~~~~~~
 
 
 Why?
@@ -110,23 +114,29 @@ Pluck
 Many Toolz operations provide functional ways of doing plain old Python
 operations.  The `pluck` operation gets out items from a collection.
 
+~~~~~~~~~~~~Python
 >>> data = [{'id': 1, 'name': 'Cheese'}, {'id': 2, 'name': 'Pies'}]
 >>> list(pluck('name', data))
 ['Cheese', 'Pies']
+~~~~~~~~~~~~
 
 In PyToolz we work hard to ensure that we're not much slower than straight
 Python.
 
+~~~~~~~~~~~~Python
 >>> timeit [item[0] for item in data]
 10000 loops, best of 3: 54.2 µs per loop
 
 >>> timeit list(toolz.pluck(0, data))
 10000 loops, best of 3: 62.9 µs per loop
+~~~~~~~~~~~~
 
 CyToolz just beats straight Python.
 
+~~~~~~~~~~~~Python
 >>> timeit list(cytoolz.pluck(0, data))
 10000 loops, best of 3: 26.7 µs per loop
+~~~~~~~~~~~~
 
 
 
