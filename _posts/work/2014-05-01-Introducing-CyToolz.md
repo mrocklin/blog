@@ -11,7 +11,7 @@ tags : [SciPy, scipy, Python, Programming]
 **tl;dr: We reimplement PyToolz, a functional standard library, in Cython.
 It's fast.**
 
-**This post highlights work done, and was partially written by [Erik N.
+**This post highlights work done, and was partially written by, [Erik N.
 Welch](http://github.com/eriknw/).  When I say "we" below, I really mean "Erik"**
 
 [Last year](http://matthewrocklin.com/blog/work/2013/10/17/Introducing-PyToolz/)
@@ -34,7 +34,8 @@ contributors](https://github.com/pytoolz/toolz/blob/master/AUTHORS.md) have
 benchmarked and tuned these functions to the point where they often beat the
 standard library.  When you couple these tuned functions with the power of pure
 Python data structures you get a nice analytics platform.  In my experience
-`toolz` is often fast enough even for large streaming data projects.
+`toolz` is often [fast enough](http://matthewrocklin.com/blog/work/2014/05/01/Fast-Data-Structures/)
+for large streaming data projects.
 
 
 CyToolz
@@ -50,12 +51,12 @@ wanted unreasonably fast C speeds so he rewrote `toolz` in Cython;  he calls it
 
 >>> timeit toolz.groupby(len, names)            3.19 µs
 >>> timeit cytoolz.groupby(len, names)           721 ns
-~~~~~~~~~~~~
 {% endhighlight %}
 
-For data structure bound computations this competes with Java.  CyToolz compete
-with Java even on standard Python data structures.  This differs from the NumPy/Pandas
-approach which uses C data structures.
+For data structure bound computations this approach competes with Java.
+Note that CyToolz accomplishes these speeds even on standard Python data
+structures.  This differs from the traditional NumPy/Pandas approach of
+applying Cython code onto non-Pythonic C data structures.
 
 
 | Project               | Computation           |   Data Structures        |
@@ -118,7 +119,7 @@ Example: `merge`
 Why?
 ----
 
-I love NumPy and Pandas, so why do I use toolz?  Two reasons
+We love NumPy and Pandas, so why do we use toolz?  Two reasons
 
 1.  Streaming analytics - Python's iterators and Toolz support for lazy operations allows me to crunch over Pretty-Big-Data without the hassle of setting up a distributed machine.
 2.  Trivial parallelism - The functional constructs in PyToolz, coupled with the promise of [serialization](http://matthewrocklin.com/blog/work/2013/12/05/Parallelism-and-Serialization/), make parallelizing PyToolz applications to multicore or cluster computing trivial.  See the [toolz docs page](http://toolz.readthedocs.org/en/latest/parallelism.html) on the subject.
@@ -139,12 +140,12 @@ Example: `pluck`
 ----------------
 
 Many Toolz operations provide functional ways of doing plain old Python
-operations.  The `pluck` operation gets out items from a collection.
+operations.  The `pluck` operation gets out elements from items in a collection.
 
 {% highlight Python %}
->>> data = [{'id': 1, 'name': 'Cheese'}, {'id': 2, 'name': 'Pies'}]
+>>> data = [{'name': 'Alice', 'amount': 100}, {'name': 'Bob', 'amount': 200}]
 >>> list(pluck('name', data))
-['Cheese', 'Pies']
+['Alice', 'Bob']
 {% endhighlight %}
 
 In PyToolz we work hard to ensure that we're not much slower than straight
@@ -188,13 +189,13 @@ programming that I do every day.
 Conclusion
 ----------
 
-The `toolz` functions are simple, fast, and a great way to compose clear and
+The toolz functions are simple, fast, and a great way to compose clear and
 performant code.  Check out [the docs](http://toolz.readthedocs.org/) and find
 a function that you didn't know you needed, or a function that you needed,
 wrote, but didn't benchmark quite as heavily as we did.
 
-If you're already a savvy `toolz` user and want Cython speed then you'll be
-happy to know that the cytoolz library is a drop in replacement.
+If you're already a savvy toolz user and want Cython speed then you'll be
+happy to know that the cytoolz library is a drop in replacement for toolz.
 
     $ pip install cytoolz
 
@@ -214,8 +215,9 @@ Links
 (resources [here](http://public.enthought.com/~ksmith/scipy2013_cython/))
 
 
-Related Blogposts
+**Related Blogposts**
 
 *   [Introducing PyToolz](http://matthewrocklin.com/blog/work/2013/10/17/Introducing-PyToolz/)
 *   [Verbosity](http://matthewrocklin.com/blog/work/2013/11/15/Functional-Wordcount/)
 *   [Text Benchmarks](http://matthewrocklin.com/blog/work/2014/01/13/Text-Benchmarks/)
+*   [Fast Data Structures](http://matthewrocklin.com/blog/work/2014/05/01/Fast-Data-Structures/)
