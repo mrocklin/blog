@@ -3,8 +3,7 @@ layout: post
 title: Python Data Structures are Fast
 tagline:
 category : work
-draft: true
-tags : [SciPy, scipy, Python, Programming]
+tags : [scipy, Python, Programming]
 ---
 {% include JB/setup %}
 
