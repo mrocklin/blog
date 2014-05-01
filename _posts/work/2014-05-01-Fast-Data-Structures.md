@@ -121,8 +121,8 @@ Lets observe the following:
 *   The standard library `collections.Counter` performs surprisingly poorly.
     This is unfair because the `Counter` object is more complex,
     providing more exotic functionality that we don't use here.
-*   The Pandas solution uses C code and C data structures to beat the Python,
-    solution but not by a huge amount.  This isn't the 10x-100x speedup that
+*   The Pandas solution uses C code and C data structures to beat the Python
+    solution, but not by a huge amount.  This isn't the 10x-100x speedup that
     we expect from numerical applications.
 *   The `toolz.frequencies` function improves on the standard Python solution
     and gets to within a factor of 2x of Pandas.   The PyToolz development team
@@ -155,7 +155,7 @@ wanted unreasonably fast C speeds so he rewrote `toolz` in Cython;  he calls it
 $ java Frequencies                           207 ms
 ~~~~~~~~~~
 
-CyToolz actually beats the Pandas solution.  Lets appreciate this for a moment.
+CyToolz actually beats the Pandas solution (in this one particular benchmark.)  Lets appreciate this for a moment.
 
 Cython on raw Python data structures runs at Java speeds.  We discuss CyToolz
 further in [our next blog
@@ -165,8 +165,8 @@ post](http://matthewrocklin.com/blog/work/2014/05/01/Introducing-CyToolz/)
 Conclusion
 ----------
 
-We learn that data structure bound computations aren't as slow as we might
-think.  Although we incur a small slowdown (2x-5x), probably due to Python method
-dispatching, this can be avoided through Cython. When using Cython, the use of
-Python data structures can match perofrmance we expect from compiled languages
-like Java data structures.
+We learn that data structure bound computations aren't as slow in Python as we
+might think.  Although we incur a small slowdown (2x-5x), probably due to
+Python method dispatching, this can be avoided through Cython. When using
+Cython, the use of Python data structures can match perofrmance we expect from
+compiled languages like Java.
