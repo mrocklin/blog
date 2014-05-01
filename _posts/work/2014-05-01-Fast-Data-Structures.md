@@ -10,6 +10,9 @@ tags : [scipy, Python, Programming]
 **tl;dr: Our intuition that Python is slow is often incorrect.  Data structure
 bound Python computations are fast.**
 
+You may also want to see the companion post, [Introducing
+CyToolz](http://matthewrocklin.com/blog/work/2014/05/01/Introducing-CyToolz/).
+
 
 ## We think that Python is slow
 
