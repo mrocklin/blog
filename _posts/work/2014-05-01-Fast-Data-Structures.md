@@ -8,7 +8,8 @@ tags : [SciPy, scipy, Python, Programming]
 ---
 {% include JB/setup %}
 
-**tl;dr: Our intuition that Python is slow is often incorrect.**
+**tl;dr: Our intuition that Python is slow is often incorrect.  Data structure
+bound Python computations are fast.**
 
 
 ## We think that Python is slow
@@ -91,17 +92,17 @@ def frequencies(seq):
  'Frank': 1000000}
 ~~~~~~~~~~~~~
 
-This fairly simple operation tests grouping reductions on non-numerical data.
+This simple operation tests grouping reductions on non-numerical data.
 This represents an emerging class of problems that doesn't fit into our
 numerical intuition on performance.
 
-We compare the following implementations
+We compare the following equivalent implementations
 
 *   Our naive Python implementation of `frequencies`
-*   A naive implementation in Java, found [here](https://gist.github.com/mrocklin/3a774401288a5aad12c6)
 *   The standard library's `collections.Counter`
 *   PyToolz' benchmarked and tuned `frequencies` operation
 *   Pandas' `Series.value_counts` method
+*   A naive implementation in Java, found [here](https://gist.github.com/mrocklin/3a774401288a5aad12c6)
 
 We present the results from worst to best:
 
@@ -123,7 +124,8 @@ Lets observe the following:
     worst.  This is a bit unfair as the `Counter` object is a bit more complex,
     providing slightly more exotic functionality that we don't use here.
 *   The Pandas solution, which uses C code and C data structures is definitely
-    better than the Python solution, but not by a huge amount.
+    better than the Python solution, but not by a huge amount.  It's not the
+    10x-100x speedup that we expect in numerical applications.
 *   The `toolz.frequencies` function improves on the standard Python solution
     and gets to within a factor of 2x of Pandas.   The PyToolz development team
     has benchmarked and tuned several implementatations.  I believe that this is
@@ -141,8 +143,8 @@ access to Pure Python's streaming data structures and low entry cost.
 CyToolz
 -------
 
-Personally, I'm fine with fast Python speeds.  Erik on the other hand, wanted
-unreasonably fast C speeds so he rewrote `toolz` in Cython;  he calls it
+Personally, I'm fine with fast Python speeds.  Erik Welch on the other hand,
+wanted unreasonably fast C speeds so he rewrote `toolz` in Cython;  he calls it
 [CyToolz](http://github.com/pytoolz/cytoolz/).  His results are pretty amazing.
 
 ~~~~~~~~~~Python
@@ -164,6 +166,10 @@ Cython on raw Python data structures runs at Java speeds.
 
 Conclusion
 ----------
+
+We learn that Python data structures are just as fast as Java data structures.
+Although we incur a small slowdown (2x-5x), probably due to Python method
+dispatching, this can be avoided through Cython.
 
 The `toolz` functions are simple, fast, and a great way to compose clear and
 performant code.  Check out [the docs](http://toolz.readthedocs.org/) and find

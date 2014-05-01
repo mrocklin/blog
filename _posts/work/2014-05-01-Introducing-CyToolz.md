@@ -11,8 +11,8 @@ tags : [SciPy, scipy, Python, Programming]
 **tl;dr: We reimplement PyToolz, a functional standard library, in Cython.
 It's fast.**
 
-**This post highlights work done by [Erik N. Welch](http://github.com/eriknw/).
-When I say "we" below, I really mean "Erik"**
+**This post highlights work done, and was partially written by [Erik N.
+Welch](http://github.com/eriknw/).  When I say "we" below, I really mean "Erik"**
 
 [Last year](http://matthewrocklin.com/blog/work/2013/10/17/Introducing-PyToolz/)
 I introduced [PyToolz](http://toolz.readthedocs.org/en/latest/), a library that
@@ -40,8 +40,8 @@ Python data structures you get a nice analytics platform.  In my experience
 CyToolz
 -------
 
-Personally, I'm fine with fast Python speeds.  Erik on the other hand, wanted
-unreasonably fast C speeds so he rewrote `toolz` in Cython;  he calls it
+Personally, I'm fine with fast Python speeds.  Erik Welch on the other hand,
+wanted unreasonably fast C speeds so he rewrote `toolz` in Cython;  he calls it
 [CyToolz](http://github.com/pytoolz/cytoolz/).
 
 ~~~~~~~~~~~~Python
@@ -52,10 +52,17 @@ unreasonably fast C speeds so he rewrote `toolz` in Cython;  he calls it
 >>> timeit cytoolz.groupby(len, names)           721 ns
 ~~~~~~~~~~~~
 
-For data structure bound computations this competes with Java.  It does so
-using pure, native Python data structures.  This differs from the NumPy/Pandas
-approach which runs Cython code on new C data structures.  CyToolz uses Cython,
-but on your basic Python data structures.
+For data structure bound computations this competes with Java.  CyToolz compete
+with Java even on standard Python data structures.  This differs from the NumPy/Pandas
+approach which uses C data structures.
+
+
+| Project               | Computation           |   Data Structures        |
+|:----------------------|:----------------------|:-------------------------|
+| PyToolz               | Python                | Python                   |
+| CyToolz               | C                     | Python                   |
+| Pandas/NumPy          | C                     | C                        |
+
 
 Erik just released CyToolz yesterday.  Get it while it's hot
 
@@ -113,10 +120,7 @@ Why?
 I love NumPy and Pandas, so why do I use toolz?  Two reasons
 
 1.  Streaming analytics - Python's iterators and Toolz support for lazy operations allows me to crunch over Pretty-Big-Data without the hassle of setting up a distributed machine.
-2.  Trivial parallelism - The functional constructs in PyToolz, coupled with the promise of [total serialization](http://matthewrocklin.com/blog/work/2013/12/05/Parallelism-and-Serialization/), make parallelizing PyToolz applications to multicore or cluster computing trivial.  See the [toolz docs page](http://toolz.readthedocs.org/en/latest/parallelism.html) on the subject.
-
-
-
+2.  Trivial parallelism - The functional constructs in PyToolz, coupled with the promise of [serialization](http://matthewrocklin.com/blog/work/2013/12/05/Parallelism-and-Serialization/), make parallelizing PyToolz applications to multicore or cluster computing trivial.  See the [toolz docs page](http://toolz.readthedocs.org/en/latest/parallelism.html) on the subject.
 
 
 Testing
@@ -126,11 +130,12 @@ CyToolz perfectly satisfies the PyToolz test suite.  This is especially notable
 given that PyToolz has 100% coverage.
 
 PyToolz is stable enough that we were able to just copy over the tests en
-masse.  We'd like to find a cleaner way to share test suites between codebases.
+masse.  We'd like to find a cleaner way to share test suites between codebases
+though.  Ideas and experiences welcome.
 
 
-Pluck
------
+Example: `pluck`
+----------------
 
 Many Toolz operations provide functional ways of doing plain old Python
 operations.  The `pluck` operation gets out items from a collection.
@@ -142,9 +147,11 @@ operations.  The `pluck` operation gets out items from a collection.
 ~~~~~~~~~~~~
 
 In PyToolz we work hard to ensure that we're not much slower than straight
-Python.
+Python (this definitely requires work.)
 
 ~~~~~~~~~~~~Python
+>>> data = [[i, i**2] for i in range(1000)]
+
 >>> timeit [item[0] for item in data]
 10000 loops, best of 3: 54.2 µs per loop
 
@@ -152,14 +159,12 @@ Python.
 10000 loops, best of 3: 62.9 µs per loop
 ~~~~~~~~~~~~
 
-CyToolz just beats straight Python.
+But CyToolz just beats Python hands down.
 
 ~~~~~~~~~~~~Python
 >>> timeit list(cytoolz.pluck(0, data))
 10000 loops, best of 3: 26.7 µs per loop
 ~~~~~~~~~~~~
-
-
 
 
 
@@ -175,8 +180,8 @@ on the JVM (I needed to interact with native code).  Originally I thought of
 Python and PyToolz as a hack providing functional programming abstractions in
 an imperative language.  I've now come to think of Python as a performant and
 serious functional language in its own right.  While it lacks macros, monads,
-or any sort of type system, it is amazing for 99% of the pedestrian programming
-that I do day to day.
+or any sort of type system, it is just fine for 99% of the pedestrian
+programming that I do every day.
 
 
 Conclusion
