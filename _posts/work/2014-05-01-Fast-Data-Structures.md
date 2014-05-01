@@ -16,7 +16,7 @@ bound Python computations are fast.**
 
 Our intuition says that Python is slow:
 
-~~~ python
+{% highlight Python %}
 >>> # Python speeds
 >>> L = range(1000000)
 >>> timeit sum(L)
@@ -27,7 +27,7 @@ timeit np.s100 loops, best of 3: 7.79 ms per loop
 >>> A = np.arange(1000000)
 >>> timeit np.sum(A)
 1000 loops, best of 3: 725 µs per loop
-~~~
+{% endhighlight %}
 
 Generally speaking anything involving loops and lots of arithmetic operations
 is much slower than the equivalent C or Java code.  For this we use one of
@@ -42,7 +42,7 @@ operations, like data structure random access, this overhead is less important.
 Consider the relative difference between integer addition and dictionary
 assignment.
 
-~~~~~~~~~~Python
+{% highlight Python %}
 >>> x, y = 3, 3
 >>> timeit x + y
 10000000 loops, best of 3: 43.7 ns per loop
@@ -50,7 +50,7 @@ assignment.
 >>> d = {1: 1, 2: 2}
 >>> timeit d[x] = y
 10000000 loops, best of 3: 65.7 ns per loop
-~~~~~~~~~~
+{% endhighlight %}
 
 A Python dictionary assignment is about as fast as a Python add.
 
@@ -65,14 +65,14 @@ micro-benchmarks like this are hard to do well.*
 To really show off the speed of Python data structures lets count frequencies
 of strings.  I.e. given a long list of repeated strings like the following:
 
-~~~~~~~~~~Python
+{% highlight Python %}
 >>> data = ['Alice', 'Bob', 'Charlie', 'Dan', 'Edith', 'Frank'] * 1000000
-~~~~~~~~~~
+{% endhighlight %}
 
 We want to count the occurence of each name.  In principle we would write a
 little function like `frequencies`
 
-~~~~~~~~~~~~Python
+{% highlight Python %}
 def frequencies(seq):
     """ Count the number of occurences of each element in seq """
     d = dict()
@@ -90,7 +90,7 @@ def frequencies(seq):
  'Dan': 1000000,
  'Edith': 1000000,
  'Frank': 1000000}
-~~~~~~~~~~~~~
+{% endhighlight %}
 
 This simple operation tests grouping reductions on non-numerical data.
 This represents an emerging class of problems that doesn't fit into our
@@ -107,13 +107,13 @@ We compare the following equivalent implementations
 We present the results from worst to best:
 
 
-~~~~~~~~~~Python
+{% highlight Python %}
 >>> timeit collections.Counter(data)        1.59  s     # Standard Lib
 >>> timeit frequencies(data)                 805 ms     # Naive Python
 >>> timeit toolz.frequencies(data)           522 ms     # Tuned Python
 >>> series = Series(data)
 >>> timeit series.value_counts()             286 ms     # Pandas
-~~~~~~~~~~
+{% endhighlight %}
 ~~~~~~~~~~
 $ java Frequencies                           207 ms     # Straight Java
 ~~~~~~~~~~
@@ -147,14 +147,14 @@ Personally, I'm fine with fast Python speeds.  Erik Welch on the other hand,
 wanted unreasonably fast C speeds so he rewrote `toolz` in Cython;  he calls it
 [CyToolz](http://github.com/pytoolz/cytoolz/).  His results are pretty amazing.
 
-~~~~~~~~~~Python
+{% highlight Python %}
 >>> # import toolz
 >>> import cytoolz
 
 >>> timeit toolz.frequencies(data)           522 ms
 >>> timeit series.value_counts()             286 ms
 >>> timeit cytoolz.frequencies(data)         214 ms
-~~~~~~~~~~
+{% endhighlight %}
 ~~~~~~~~~~
 $ java Frequencies                           207 ms
 ~~~~~~~~~~
@@ -181,9 +181,9 @@ happy to know that the cytoolz library is a drop in replacement.
 
     $ pip install cytoolz
 
-~~~~~~~~~~Python
+{% highlight Python %}
 # from toolz import *
 from cytoolz import *
-~~~~~~~~~~
+{% endhighlight %}
 
 Most functions improve by 2x-5x with some fantastic exceptions.

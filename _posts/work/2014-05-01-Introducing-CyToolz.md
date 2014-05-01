@@ -19,7 +19,7 @@ I introduced [PyToolz](http://toolz.readthedocs.org/en/latest/), a library that
 provides a suite of utility functions for data processing commonly found in
 functional languages.
 
-~~~ Python
+{% highlight Python %}
 >>> from toolz import groupby
 
 >>> names = ['Alice', 'Bob', 'Charlie', 'Dan', 'Edith', 'Frank']
@@ -27,7 +27,7 @@ functional languages.
 {3: ['Bob', 'Dan'],
  5: ['Alice', 'Edith', 'Frank'],
  7: ['Charlie']}
-~~~
+{% endhighlight %}
 
 Over the last year a number of [excellent
 contributors](https://github.com/pytoolz/toolz/blob/master/AUTHORS.md) have
@@ -44,13 +44,14 @@ Personally, I'm fine with fast Python speeds.  Erik Welch on the other hand,
 wanted unreasonably fast C speeds so he rewrote `toolz` in Cython;  he calls it
 [CyToolz](http://github.com/pytoolz/cytoolz/).
 
-~~~~~~~~~~~~Python
+{% highlight Python %}
 >>> import toolz
 >>> import cytoolz
 
 >>> timeit toolz.groupby(len, names)            3.19 µs
 >>> timeit cytoolz.groupby(len, names)           721 ns
 ~~~~~~~~~~~~
+{% endhighlight %}
 
 For data structure bound computations this competes with Java.  CyToolz compete
 with Java even on standard Python data structures.  This differs from the NumPy/Pandas
@@ -104,14 +105,14 @@ achieved:
 Example: `merge`
 ----------------
 
-~~~~~~~~~~~~Python
+{% highlight Python %}
 >>> dicts = {'one': 1, 'two': 2}, {'three': 3}, {'two': 2, 'four': 4}
 >>> toolz.merge(dicts)
 {'one': 1, 'two': 2, 'three': 3, 'four': 4}
 
 >>> timeit toolz.merge(dicts)                   1.76 µs
 >>> timeit cytoolz.merge(dicts)                  264 ns
-~~~~~~~~~~~~
+{% endhighlight %}
 
 
 Why?
@@ -140,16 +141,16 @@ Example: `pluck`
 Many Toolz operations provide functional ways of doing plain old Python
 operations.  The `pluck` operation gets out items from a collection.
 
-~~~~~~~~~~~~Python
+{% highlight Python %}
 >>> data = [{'id': 1, 'name': 'Cheese'}, {'id': 2, 'name': 'Pies'}]
 >>> list(pluck('name', data))
 ['Cheese', 'Pies']
-~~~~~~~~~~~~
+{% endhighlight %}
 
 In PyToolz we work hard to ensure that we're not much slower than straight
 Python (this definitely requires work.)
 
-~~~~~~~~~~~~Python
+{% highlight Python %}
 >>> data = [[i, i**2] for i in range(1000)]
 
 >>> timeit [item[0] for item in data]
@@ -157,14 +158,14 @@ Python (this definitely requires work.)
 
 >>> timeit list(toolz.pluck(0, data))
 10000 loops, best of 3: 62.9 µs per loop
-~~~~~~~~~~~~
+{% endhighlight %}
 
 But CyToolz just beats Python hands down.
 
-~~~~~~~~~~~~Python
+{% highlight Python %}
 >>> timeit list(cytoolz.pluck(0, data))
 10000 loops, best of 3: 26.7 µs per loop
-~~~~~~~~~~~~
+{% endhighlight %}
 
 
 
@@ -197,10 +198,10 @@ happy to know that the cytoolz library is a drop in replacement.
 
     $ pip install cytoolz
 
-~~~~~~~~~~Python
+{% highlight Python %}
 # from toolz import *
 from cytoolz import *
-~~~~~~~~~~
+{% endhighlight %}
 
 Most functions improve by 2x-5x with some fantastic exceptions.
 
