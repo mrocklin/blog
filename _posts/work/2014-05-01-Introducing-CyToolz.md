@@ -59,7 +59,7 @@ applying Cython code onto non-Pythonic C data structures.
 
 
 | Project               | Computation           |   Data Structures        |
-|:----------------------|:----------------------|:-------------------------|
+| --------------------- | --------------------- | ------------------------ |
 | PyToolz               | Python                | Python                   |
 | CyToolz               | C                     | Python                   |
 | Pandas/NumPy          | C                     | C                        |
