@@ -127,7 +127,6 @@ table tr:first-child th:last-child {
 	border-top-right-radius:3px;
 }
 table tr {
-	text-align: center;
 	padding-left:10px;
 }
 table td:first-child {
