@@ -348,7 +348,8 @@ SQLAlchemy.
 
 This post is also part of the
 [`toolz` docs](http://toolz.readthedocs.org/en/latest/).
-Thanks to [John Jacobsen](http://johnj.com) and
-[Clark Fitzgerald](https://github.com/clarkfitzg) for their help with this
-post.  Thanks to [Erik Welch](https://github.com/eriknw/) for help with the
-recently added `join` operation.
+Thanks to
+[John Jacobsen](http://johnj.com),
+[Clark Fitzgerald](https://github.com/clarkfitzg), and
+[Erik Welch](https://github.com/eriknw/)
+for their help with this post.
