@@ -89,6 +89,9 @@ These functions correspond to the SQL commands `SELECT` and `WHERE`.
 ...                list)
 {% endhighlight %}
 
+*note: this uses the [curried](http://toolz.readthedocs.org/en/latest/curry.html) versions of `map` and `reduce`.*
+
+
 Of course, these operations are also well supported with standard
 list/generator comprehension syntax. This syntax is more often used and
 generally considered to be more Pythonic.
@@ -107,7 +110,7 @@ concepts
 1.  Split the dataset into groups by some property
 2.  Reduce each of the groups with some aggregation function
 
-Toolz supports this common work-flow with
+Toolz supports this common workflow with
 
 1.  a simple in-memory solution
 2.  a more sophisticated streaming solution.
@@ -134,7 +137,8 @@ groups.
 {'F': [(1, 'Alice', 100, 'F'), (5, 'Edith', 300, 'F')],
  'M': [(2, 'Bob', 200, 'M'), (3, 'Charlie', 150, 'M'), (4, 'Dennis', 50, 'M')]}
 
->>> valmap(compose(sum, map(get(2))), _)
+>>> valmap(compose(sum, pluck(2)),
+...        _)
 {'F': 400, 'M': 400}
 {% endhighlight %}
 
@@ -177,6 +181,10 @@ group at once. Here is a simple example:
 >>> reduceby(iseven, add, [1, 2, 3, 4])
 {True: 6, False: 4}
 {% endhighlight %}
+
+The even numbers are added together `(2 + 4 = 6)` into group `True`, and
+the odd numbers are added together `(1 + 3 = 4)` into group `False`.
+
 
 Note that we have to replace the reduction `sum` with the binary operator
 `add`.  The incremental nature of `add` allows us to do the summation work as
@@ -242,7 +250,7 @@ unpack this pair of tuples to get the fields that we want (`name` and
 
 ### Join on arbitrary functions / data
 
-Those familiar with SQL are accustomed to this sort of join on columns.
+Those familiar with SQL are accustomed to this kind of join on columns.
 However a functional join is more general than this; it doesn't need to
 operate on tuples, and key functions do not need to get particular
 columns. In the example below we match numbers from two collections so
@@ -273,20 +281,19 @@ Computationally it is linear in the size of the input + output. In terms
 of storage the left sequence must fit in memory but the right sequence
 is free to stream.
 
-The results are not normalized as in SQL, in that they permit repeated
+The results are not normalized, as in SQL, in that they permit repeated
 values. If normalization is desired, consider composing with the
 function `unique` (note that `unique` is not fully streaming.)
 
 ### More Complex Example
 
-The accounts example above composes two one-to-one relationships; there
-was exactly one name per ID and one address per ID. This need not be the
-case. The join abstraction is sufficiently flexible to join one-to-many
-or even many-to-many relationships. The following example finds
-city/person pairs where that person has a friend who has a residence in
-that city. This is an example of joining two many-to-many relationships
-because a person may have many friends and because a friend may have
-many residences.
+The accounts example above connects two one-to-one relationships, `accounts`
+and `addresses`; there was exactly one name per ID and one address per ID. This
+need not be the case. The join abstraction is sufficiently flexible to join
+one-to-many or even many-to-many relationships. The following example finds
+city/person pairs where that person has a friend who has a residence in that
+city. This is an example of joining two many-to-many relationships because a
+person may have many friends and because a friend may have many residences.
 
 {% highlight Python %}
 >>> friends = [('Alice', 'Edith'),
@@ -333,10 +340,11 @@ Toolz gives a compact set of primitives for data analysis on plain Python data
 structures.  CyToolz accelerates those workflows through Cython.  This approach
 is both low-tech and supports uncomfortably big data through streaming.
 
-At the same time, Toolz is a general purpose functional standard library, not a
-library dedicated to data analysis. While there are obvious benefits
-(streaming, composition, etc.) users interested in data analysis might be
-better served by using projects dedicated projects like Pandas or SQLAlchemy.
+At the same time, Toolz is a general purpose functional standard library, and
+is not specifically dedicated to data analysis. While there are obvious
+benefits (streaming, composition, etc.) users interested in data analysis might
+be better served by using projects dedicated projects like Pandas or
+SQLAlchemy.
 
 This post is also part of the
 [`toolz` docs](http://toolz.readthedocs.org/en/latest/).
