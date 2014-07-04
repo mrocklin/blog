@@ -2,7 +2,6 @@
 layout: post
 title: Streaming Analytics
 tagline: Data analytics recipes for PyToolz
-draft: true
 category : work
 tags : [scipy, Python, Programming]
 ---
