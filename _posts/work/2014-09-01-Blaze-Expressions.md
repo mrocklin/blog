@@ -175,8 +175,9 @@ having to explicitly call `compute` is a step backward from that goal.
 
 To this end we create the `Table` abstraction, a `TableSymbol` that knows about
 a particular data resource.  Operations on this `Table` object produce abstract
-expressions just like normal, but calls to `repr` or `_repr_html_` initiate
-calls to `compute`, giving an interactive feel in a console or notebook
+expressions just like normal, but statements that would normally print results
+to the screen initiate calls to `compute` and then print those results, giving
+an interactive feel in a console or notebook
 
 {% highlight Python %}
 >>> t = Table(db.mycollection)  # give MongoDB resource to Table
