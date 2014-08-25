@@ -33,13 +33,13 @@ technologies often dominate biggish-data analytics.*
 
 Blaze strives to reduce this friction.  Blaze provides a uniform interface to
 a variety of database technologies and abstractions for migrating data to and
-fro.
+from.
 
 
 Expressions
 -----------
 
-At its core, Blaze is an way to express data and computations.
+At its core, Blaze is a way to express data and computations.
 
 In the following example we build an abstract table for accounts in a
 simple bank.  We then describe query, `deadbeats`, to find the names of the
