@@ -1423,6 +1423,7 @@ into(DataFrame, by(t2,
     CPU times: user 4.05 ms, sys: 701 µs, total: 4.76 ms
     Wall time: 7.61 s
 
+Almost exactly the same time as for SQLite.
 
 ### Create an index on state name
 
@@ -1448,12 +1449,15 @@ into(DataFrame, by(t2,
     CPU times: user 4.13 ms, sys: 844 µs, total: 4.97 ms
     Wall time: 954 ms
 
+Here the indexed MongoDB system seems about twice as fast as the comparably
+indexed SQLite system.
+
 Results
 -------
 
 *Disclaimer: These results come from a single run.  No attempt was made to
 optimize the backend configuration, nor was any consideration taken into
-account about databases being warmed up at all.  These numbers are far from
+account about databases being warmed up.  These numbers are far from
 conclusive, and are merely here to present the ease with which
 intuitive-building experiments are easy with Blaze and the value of choosing
 the right backend.*
@@ -1468,7 +1472,7 @@ the right backend.*
   <tbody>
     <tr>
       <td> NumPy/Pandas </td>
-      <td> ~~~ </td>
+      <td> <i>need bigger machine</i> </td>
     </tr>
     <tr>
       <td> Python/CSV </td>
@@ -1500,5 +1504,5 @@ Blaze enables you to investigate, transform, and migrate large data
 intuitively. You can choose the right technology for your application
 without having to worry about learning a new syntax.
 
-We hope that by lowering this barrier to entry more users will use the
-right tool for the job.
+We hope that by lowering this barrier more users will use the right tool for
+the job.
