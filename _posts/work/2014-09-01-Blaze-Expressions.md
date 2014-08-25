@@ -129,7 +129,8 @@ db.mycollection.insert([{'id': 1, 'name': 'Alice',   'amount':  100},
 {% endhighlight %}
 
 
-## Recap
+Recap
+-----
 
 To remind you we created a single Blaze query
 
@@ -163,3 +164,42 @@ At the time of this writing Blaze supports the following backends
 * PyTables
 * BColz
 
+
+Interactivity
+-------------
+
+The separation of expressions and computation is core to Blaze.  It's also
+confusing for new users.
+NumPy and Pandas have demonstrated the value of immediate data interaction and
+having to explicitly call `compute` is a step backward from that goal.
+
+To this end we create the `Table` abstraction, a `TableSymbol` that knows about
+a particular data resource.  Operations on this `Table` object produce abstract
+expressions just like normal, but calls to `repr` or `_repr_html_` initiate
+calls to `compute`, giving an interactive feel in a console or notebook
+
+{% highlight Python %}
+>>> t = Table(db.mycollection)  # give MongoDB resource to Table
+>>> t
+   amount  id     name
+0     100   1    Alice
+1    -200   2      Bob
+2     300   3  Charlie
+3     400   4   Dennis
+4    -500   5    Edith
+
+>>> t[t.amount < 0]
+   amount  id   name
+0    -200   2    Bob
+1    -500   5  Edith
+{% endhighlight %}
+
+These expressions generate the appropriate MongoDB queries, call `compute` only
+when we print a result to the screen, and then push the result into a
+`DataFrame` to use Pandas' excellent tabular printing.  For large datasets we
+always append a `.head(10)` call to the expression to only retrieve the sample
+of the output necessary to print to the screen;  this avoids large data
+transfers when not necessary.
+
+Using the interactive `Table` object we can interact with a variety of
+computational backends with the familiarity of a local DataFrame.
