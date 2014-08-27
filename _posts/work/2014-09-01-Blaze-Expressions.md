@@ -169,7 +169,7 @@ Interactivity
 -------------
 
 The separation of expressions and computation is core to Blaze.  It's also
-confusing for new users.
+confusing for new Blaze users.
 NumPy and Pandas have demonstrated the value of immediate data interaction and
 having to explicitly call `compute` is a step backward from that goal.
 
