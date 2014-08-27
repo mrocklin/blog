@@ -144,3 +144,12 @@ database.
 Blaze manages solutions where they don't exist, for example when migrating from
 a MongoDB to a BColz out-of-core array we stream the database through Python,
 translating types as necessary.
+
+More Information
+----------------
+
+*   Documentation: [blaze.pydata.org/](http://blaze.pydata.org/)
+*   Source: [github.com/ContinuumIO/blaze/](http://github.com/ContinuumIO/blaze/)
+*   Install with [Anaconda](https://store.continuum.io/cshop/anaconda/):
+
+        conda install blaze

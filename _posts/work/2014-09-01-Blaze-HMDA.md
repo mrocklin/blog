@@ -1016,7 +1016,7 @@ Reducing the Dataset
 --------------------
 
 That's a lot of columns, most of which are redundant or don't carry much
-information. Lets clean up our dataset a bit by selecting a smaller
+information. Let's clean up our dataset a bit by selecting a smaller
 subset of columns. Already this quick investigation improves our
 comprehension and reduces the size of the dataset.
 
@@ -1171,7 +1171,7 @@ t
 More Complex Computation
 ------------------------
 
-Now that we can more cleary see what's going on lets ask a simple
+Now that we can more cleary see what's going on let's ask a simple
 question:
 
 *How many times does each action occur in the state of New York?*
@@ -1255,7 +1255,7 @@ Moving to a Faster Backend
 By default computations on CSV files use the streaming Python backend.
 While robust for large files and decently fast, this backend parses the
 CSV file each time we do a full-data operation, and this parsing is very
-slow. Lets move our reduced dataset to a more efficient and widely
+slow. Let's move our reduced dataset to a more efficient and widely
 accessible backend, `sqlite`.
 
 {% highlight Python %}
@@ -1274,7 +1274,7 @@ into(sql, t)  # Migrate data
 Working with SQL
 ----------------
 
-That was easy, now lets redefine `t` to use the SQL backend and repeat
+That was easy, now let's redefine `t` to use the SQL backend and repeat
 our computation.
 
 {% highlight Python %}
@@ -1349,8 +1349,8 @@ into(DataFrame, by(t2,
 </table>
 </div>
 
-*We're about to repeat this same computation many times, we'll omit the table
-result from here on out, it'll always be the same.*
+*We're about to repeat this same computation many times.  We'll omit the table
+result from here on out.  It'll always be the same.*
 
 Create an index on state name
 -----------------------------
@@ -1387,11 +1387,10 @@ into(DataFrame, by(t2,
 Comparing against MongoDB
 =========================
 
-Because moving between computational backends is now easy we can quickly
+Because moving between computational backends is now easy, we can quickly
 compare performance between backends. SQLite and MongoDB are similarly
-available technologies, each being trivial to set up on a personal
-computer. However they're also fairly different technologies with
-varying communities.
+available technologies, each being trivial to set up on a personal computer.
+However they're also fairly different technologies with varying communities.
 
 Which performs faster for our sample computation?
 
@@ -1506,3 +1505,13 @@ without having to worry about learning a new syntax.
 
 We hope that by lowering this barrier more users will use the right tool for
 the job.
+
+
+More Information
+----------------
+
+*   Documentation: [blaze.pydata.org/](http://blaze.pydata.org/)
+*   Source: [github.com/ContinuumIO/blaze/](http://github.com/ContinuumIO/blaze/)
+*   Install with [Anaconda](https://store.continuum.io/cshop/anaconda/):
+
+        conda install blaze

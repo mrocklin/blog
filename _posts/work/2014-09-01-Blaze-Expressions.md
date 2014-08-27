@@ -204,3 +204,12 @@ transfers when not necessary.
 
 Using the interactive `Table` object we can interact with a variety of
 computational backends with the familiarity of a local DataFrame.
+
+More Information
+----------------
+
+*   Documentation: [blaze.pydata.org/](http://blaze.pydata.org/)
+*   Source: [github.com/ContinuumIO/blaze/](http://github.com/ContinuumIO/blaze/)
+*   Install with [Anaconda](https://store.continuum.io/cshop/anaconda/):
+
+        conda install blaze
