@@ -1183,6 +1183,7 @@ t2
 
 {% highlight Python %}
 %%time
+# Group on action_taken_name, count each group
 into(DataFrame, by(t2,
                    t2.action_taken_name,
                    t2.action_taken_name.count()).sort('action_taken_name_count',
@@ -1263,9 +1264,7 @@ sql = SQL('sqlite:///hmda.db', 'data', schema=t.schema) # A SQLite database
 into(sql, t)  # Migrate data
 {% endhighlight %}
 
-{% highlight Python %}
-!ls -lh hmda*
-{% endhighlight %}
+    $ ls -lh hmda*
 
     -rw-r--r-- 1 mrocklin mrocklin 2.7G Aug 25 13:38 hmda.db
     -rw-r--r-- 1 mrocklin mrocklin  12G Jul 10 12:15 hmda_lar-2012.csv
