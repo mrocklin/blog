@@ -32,8 +32,7 @@ takes most of the data scientist's time.
 technologies often dominate biggish-data analytics.*
 
 Blaze strives to reduce this friction.  Blaze provides a uniform interface to
-a variety of database technologies and abstractions for migrating data to and
-fro.
+a variety of database technologies and abstractions for migrating data.
 
 
 Expressions
@@ -46,7 +45,7 @@ simple bank.  We then describe query, `deadbeats`, to find the names of the
 account holders with a negative balance.
 
 {% highlight Python %}
-from blaze import *
+from blaze import TableSymbol, compute
 accounts = TableSymbol('accounts', '{id: int, name: string, amount: int}')
 
 # The names of account holders with negative balance
@@ -73,6 +72,9 @@ We can combine our expression, `deadbeats` with our data `L` to compute an
 actual result
 
 {% highlight Python %}
+>>> compute(deadbeats, L) # an iterator as a result
+<itertools.imap at 0x7fdd7fcde450>
+
 >>> list(compute(deadbeats, L))
 ['Bob', 'Edith']
 {% endhighlight %}
@@ -88,6 +90,7 @@ data.  We just computed `deadbeats` against Python lists, here we compute it
 against a Pandas DataFrame
 
 {% highlight Python %}
+from pandas import DataFrame
 df = DataFrame([[1, 'Alice',   100],
                 [2, 'Bob',    -200],
                 [3, 'Charlie', 300],
@@ -113,7 +116,6 @@ To demonstrate some breadth, let's show Blaze driving a Mongo Database.
     $ # We install and run MongoDB locally
     $ sudo apt-get install mongodb-server
     $ mongod &
-    $ pip install pymongo
 
 {% highlight Python %}
 import pymongo
@@ -180,6 +182,7 @@ to the screen initiate calls to `compute` and then print those results, giving
 an interactive feel in a console or notebook
 
 {% highlight Python %}
+>>> from blaze import Table
 >>> t = Table(db.mycollection)  # give MongoDB resource to Table
 >>> t
    amount  id     name
