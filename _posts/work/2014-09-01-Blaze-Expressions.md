@@ -41,7 +41,7 @@ Expressions
 At its core, Blaze is an way to express data and computations.
 
 In the following example we build an abstract table for accounts in a
-simple bank.  We then describe query, `deadbeats`, to find the names of the
+simple bank.  We then describe a query, `deadbeats`, to find the names of the
 account holders with a negative balance.
 
 {% highlight Python %}
