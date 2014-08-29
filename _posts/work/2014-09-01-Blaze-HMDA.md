@@ -1171,7 +1171,7 @@ t
 More Complex Computation
 ------------------------
 
-Now that we can more cleary see what's going on let's ask a simple
+Now that we can more clearly see what's going on let's ask a simple
 question:
 
 *How many times does each action occur in the state of New York?*
@@ -1264,6 +1264,8 @@ sql = SQL('sqlite:///hmda.db', 'data', schema=t.schema) # A SQLite database
 into(sql, t)  # Migrate data
 {% endhighlight %}
 
+Yup, a little `sqlite` database just arrived
+
     $ ls -lh hmda*
 
     -rw-r--r-- 1 mrocklin mrocklin 2.7G Aug 25 13:38 hmda.db
@@ -1273,8 +1275,8 @@ into(sql, t)  # Migrate data
 Working with SQL
 ----------------
 
-That was easy, now let's redefine `t` to use the SQL backend and repeat
-our computation.
+Now that we've migrated our csv file into a sqlite database let's redefine `t`
+to use the SQL backend and repeat our computation.
 
 {% highlight Python %}
 # t = Table(csv)
@@ -1349,12 +1351,12 @@ into(DataFrame, by(t2,
 </div>
 
 *We're about to repeat this same computation many times.  We'll omit the table
-result from here on out.  It'll always be the same.*
+result from here on out.  It will always be the same.*
 
 Create an index on state name
 -----------------------------
 
-This was much faster, largely because the data was stored in a non-text
+This was much faster, largely because the data was stored in a binary
 format. We can improve the query speed significantly by placing an index
 on the `state_abbr` field. This will cause the selection
 `t[t.state_abbr == 'NY']` to return more quickly, eliminating the need
@@ -1422,6 +1424,11 @@ into(DataFrame, by(t2,
     Wall time: 7.61 s
 
 Almost exactly the same time as for SQLite.
+
+Please note that we just did a relatively complex thing very easily.  If we
+weren't familiar with MongoDB we would need to learn how to set up a database,
+how to migrate data from SQL to MongoDB, and finally how to perform queries.
+Blaze eased that process *considerably*.
 
 ### Create an index on state name
 
