@@ -116,6 +116,7 @@ To demonstrate some breadth, let's show Blaze driving a Mongo Database.
     $ # We install and run MongoDB locally
     $ sudo apt-get install mongodb-server
     $ mongod &
+    $ pip install pymongo
 
 {% highlight Python %}
 import pymongo
