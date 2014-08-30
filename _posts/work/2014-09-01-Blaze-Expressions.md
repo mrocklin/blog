@@ -21,7 +21,8 @@ Occasionally we run across a dataset that is too big to fit in our computer's
 memory.  In this case NumPy and Pandas don't fit our needs and we look to
 other tools to manage and analyze our data.  Popular choices include databases
 like Postgres and MongoDB, out-of-disk storage systems like PyTables and BColz
-and the menagerie of HDFS tools building from Hadoop and Spark.
+and the menagerie of tools on top of the Hadoop File System (Hadoop, Spark,
+Impala and derivatives.)
 
 Each of these systems has their own strengths and weaknesses and an experienced
 data analyst will choose the right tool for the problem at hand.  Unfortunately
@@ -38,7 +39,7 @@ a variety of database technologies and abstractions for migrating data.
 Expressions
 -----------
 
-At its core, Blaze is an way to express data and computations.
+At its core, Blaze is a way to express data and computations.
 
 In the following example we build an abstract table for accounts in a
 simple bank.  We then describe a query, `deadbeats`, to find the names of the
@@ -173,7 +174,7 @@ Interactivity
 
 The separation of expressions and computation is core to Blaze.  It's also
 confusing for new Blaze users.
-NumPy and Pandas have demonstrated the value of immediate data interaction and
+NumPy and Pandas demonstrated the value of immediate data interaction and
 having to explicitly call `compute` is a step backward from that goal.
 
 To this end we create the `Table` abstraction, a `TableSymbol` that knows about
@@ -194,6 +195,14 @@ an interactive feel in a console or notebook
 4    -500   5    Edith
 
 >>> t[t.amount < 0]
+   amount  id   name
+0    -200   2    Bob
+1    -500   5  Edith
+
+>>> type(t[t.amount < 0])        # Still just an expression
+blaze.expr.table.Selection
+
+>>> print repr(t[t.amount < 0])  # repr triggers call to compute
    amount  id   name
 0    -200   2    Bob
 1    -500   5  Edith

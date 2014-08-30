@@ -1421,10 +1421,10 @@ into(DataFrame, by(t2.action_taken_name,
 
 Almost exactly the same time as for SQLite.
 
-Please note that we just did a relatively complex thing very easily.  If we
-weren't familiar with MongoDB we would need to learn how to set up a database,
-how to migrate data from SQL to MongoDB, and finally how to perform queries.
-Blaze eased that process *considerably*.
+We just did a complex thing easily.  If we weren't familiar
+with MongoDB we would need to learn how to set up a database, how to migrate
+data from SQL to MongoDB, and finally how to perform queries.  Blaze eased that
+process *considerably*.
 
 ### Create an index on state name
 
