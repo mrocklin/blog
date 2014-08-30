@@ -1184,8 +1184,7 @@ t2
 {% highlight Python %}
 %%time
 # Group on action_taken_name, count each group
-into(DataFrame, by(t2,
-                   t2.action_taken_name,
+into(DataFrame, by(t2.action_taken_name,
                    t2.action_taken_name.count()).sort('action_taken_name_count',
                                                       ascending=False))
 {% endhighlight %}
@@ -1286,8 +1285,7 @@ t2 = t[t.state_abbr == 'NY']
 
 {% highlight Python %}
 %%time
-into(DataFrame, by(t2,
-                   t2.action_taken_name,
+into(DataFrame, by(t2.action_taken_name,
                    t2.action_taken_name.count()).sort('action_taken_name_count',
                                                       ascending=False))
 {% endhighlight %}
@@ -1375,8 +1373,7 @@ t2 = t[t.state_abbr == 'NY']
 
 {% highlight Python %}
 %%time
-into(DataFrame, by(t2,
-                   t2.action_taken_name,
+into(DataFrame, by(t2.action_taken_name,
                    t2.action_taken_name.count()).sort('action_taken_name_count',
                                                       ascending=False))
 {% endhighlight %}
@@ -1414,8 +1411,7 @@ t2 = t[t.state_abbr == 'NY']
 
 {% highlight Python %}
 %%time
-into(DataFrame, by(t2,
-                   t2.action_taken_name,
+into(DataFrame, by(t2.action_taken_name,
                    t2.action_taken_name.count()).sort('action_taken_name_count',
                                                       ascending=False))
 {% endhighlight %}
@@ -1445,8 +1441,7 @@ t2 = t[t.state_abbr == 'NY']
 
 {% highlight Python %}
 %%time
-into(DataFrame, by(t2,
-                   t2.action_taken_name,
+into(DataFrame, by(t2.action_taken_name,
                    t2.action_taken_name.count()).sort('action_taken_name_count',
                                                       ascending=False))
 {% endhighlight %}
