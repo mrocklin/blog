@@ -48,6 +48,7 @@ in a CSV file (`iris.csv` includes measurements and species of various flowers)
 We can load this csv file into a Python list, a numpy array, and a Pandas
 DataFrame, all using the `into` function.
 
+#### List $\leftarrow$ CSV
 {% highlight Python %}
 csv = CSV('iris.csv')
 >>> L = into(list, csv)
@@ -56,7 +57,10 @@ csv = CSV('iris.csv')
  (4.9, 3.0, 1.4, 0.2, u'Iris-setosa'),
  (4.7, 3.2, 1.3, 0.2, u'Iris-setosa'),
  (4.6, 3.1, 1.5, 0.2, u'Iris-setosa')]
+{% endhighlight %}
 
+#### NumPy $\leftarrow$ CSV
+{% highlight Python %}
 >>> x = into(np.ndarray, csv)
 >>> x[:4]
 rec.array([(5.1, 3.5, 1.4, 0.2, 'Iris-setosa'),
@@ -65,7 +69,10 @@ rec.array([(5.1, 3.5, 1.4, 0.2, 'Iris-setosa'),
            (4.6, 3.1, 1.5, 0.2, 'Iris-setosa')],
            dtype=[('SepalLength', '<f8'), ('SepalWidth', '<f8'),
            ('PetalLength', '<f8'), ('PetalWidth', '<f8'), ('Species', 'O')])
+{% endhighlight %}
 
+#### Pandas $\leftarrow$ CSV
+{% highlight Python %}
 >>> df = into(DataFrame, csv)
 >>> df[:4]
      SepalLength  SepalWidth  PetalLength  PetalWidth         Species
@@ -90,6 +97,7 @@ We demonstrate breadth by moving data between more exotic backends
 >>> sql = SQL('sqlite:///iris.db', 'iris', schema=csv.schema)  # SQLite database
 
 >>> into(sql, csv)                  # CSV to SQL migration
+<blaze.data.sql.SQL at 0x7fb4305423d0>
 {% endhighlight %}
 
 
