@@ -27,7 +27,7 @@ printed to the screen. It retains the abstract delayed-evaluation nature
 of Blaze with the interactive feel of NumPy and Pandas.
 
 {% highlight Python %}
-from blaze import *
+from blaze import CSV, Table
 csv = CSV('hmda_lar-2012.csv')  # Open the CSV file
 t = Table(csv)                  # Interact with CSV file using interactive Table object
 t
@@ -1183,6 +1183,8 @@ t2
 
 {% highlight Python %}
 %%time
+from blaze import into, by
+from pandas import DataFrame
 # Group on action_taken_name, count each group
 into(DataFrame, by(t2.action_taken_name,
                    t2.action_taken_name.count()).sort('action_taken_name_count',
@@ -1259,6 +1261,7 @@ slow. Let's move our reduced dataset to a more efficient and widely
 accessible backend, `sqlite`.
 
 {% highlight Python %}
+from blaze import SQL
 sql = SQL('sqlite:///hmda.db', 'data', schema=t.schema) # A SQLite database
 into(sql, t)  # Migrate data
 {% endhighlight %}
@@ -1361,6 +1364,7 @@ on the `state_abbr` field. This will cause the selection
 for an expensive full table scan.
 
 {% highlight Python %}
+from blaze import create_index
 create_index(sql, 'state_abbr', name='state_abbr_index')
 {% endhighlight %}
 
