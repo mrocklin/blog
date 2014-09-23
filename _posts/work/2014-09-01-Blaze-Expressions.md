@@ -3,7 +3,6 @@ layout: post
 title: Introducing Blaze - Expressions
 tagline: interfaces for tabular data
 category : work
-draft : true
 tags : [scipy, Python, Programming]
 ---
 {% include JB/setup %}
