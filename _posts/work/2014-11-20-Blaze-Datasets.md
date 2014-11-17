@@ -19,7 +19,7 @@ the following conda command.
 Motivating problem - Intuitive HDF5 File Navigation
 ---------------------------------------------------
 
-We want to understanding the contents of a [set of HDF5
+We want to understand the contents of a [set of HDF5
 files](http://mirador.gsfc.nasa.gov/cgi-bin/mirador/granlist.pl?page=1&location=(-90,-180),(90,180)&dataSet=OMAERO&version=003&allversion=003&startTime=2014-11-05T00:00:01Z&endTime=2014-11-05T23:59:59Z&keyword=OMAERO&longname=OMI/Aura%20Multi-wavelength%20Aerosol%20Optical%20Depth%20and%20Single%20Scattering%20Albedo%201-orbit%20L2%20Swath%2013x24%20km&CGISESSID=958493efa9d8a96c5ba2d0b4d69c986d&prodpg=http://mirador.gsfc.nasa.gov/collections/OMAERO__003.shtml)
 encoding meteorological data.  As is common in HDF5 files, this data is a highly
 nested collection of arrays.
