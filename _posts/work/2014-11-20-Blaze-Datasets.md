@@ -630,7 +630,7 @@ Looks good, we compute and store to CSV file with `into`
 ...      by(j[['name', 'yearID']], total_salary=j.salary.mean()))
 {% endhighlight %}
 
-(Final result here: [salaries.csv](/storage/salaries.csv))
+(Final result here: [salaries.csv]({{ BASE_PATH }}/storage/salaries.csv))
 
 
 Beyond SQL
