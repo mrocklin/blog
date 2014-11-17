@@ -8,8 +8,8 @@ tags : [scipy, Python, Programming]
 ---
 {% include JB/setup %}
 
-**tl;dr** Blaze isn't just tables.  Full databases and collections of datasets
-are first class variables.
+**tl;dr** Blaze aids dataset exploration by supporting full databases and
+collections of datasets as variables just like any other.
 
 This post was composed using Blaze version 0.6.6.  You can follow along with
 the following conda command.
@@ -19,17 +19,18 @@ the following conda command.
 Motivating problem - Intuitive HDF5 File Navigation
 ---------------------------------------------------
 
-We want to understand the contents of a [set of HDF5
+When we encounter new data we explore broadly to find what exists.
+
+For example, if we want to understand the contents of a [this set of HDF5
 files](http://mirador.gsfc.nasa.gov/cgi-bin/mirador/granlist.pl?page=1&location=(-90,-180),(90,180)&dataSet=OMAERO&version=003&allversion=003&startTime=2014-11-05T00:00:01Z&endTime=2014-11-05T23:59:59Z&keyword=OMAERO&longname=OMI/Aura%20Multi-wavelength%20Aerosol%20Optical%20Depth%20and%20Single%20Scattering%20Albedo%201-orbit%20L2%20Swath%2013x24%20km&CGISESSID=958493efa9d8a96c5ba2d0b4d69c986d&prodpg=http://mirador.gsfc.nasa.gov/collections/OMAERO__003.shtml)
-encoding meteorological data.  As is common in HDF5 files, this data is a highly
-nested collection of arrays.
+encoding meteorological data then we might use `h5py`.  This data is a highly
+nested collection of arrays as is common for HDF5.
 
 Typically we navigate these files in Python with `h5py` or `pytables`.
 
 {% highlight Python %}
 >>> import h5py
 >>> f = h5py.File('OMI-Aura_L2-OMAERO_2014m1105t2304-o54838_v003-2014m1106t215558.he5')
-<HDF5 file "OMI-Aura_L2-OMAERO_2014m1105t2304-o54838_v003-2014m1106t215558.he5" (mode r+)>
 {% endhighlight %}
 
 HDF5 files organize datasets with an internal file system.  The `h5py` library
@@ -44,7 +45,21 @@ item access.
 ['ADDITIONAL', 'SWATHS']
 
 >>> f['/HDFEOS/SWATHS'].keys()
-...
+[u'ColumnAmountAerosol']
+
+>>> f['/HDFEOS/SWATHS/ColumnAmountAerosol'].keys()
+[u'Data Fields', u'Geolocation Fields']
+
+>>> f['/HDFEOS/SWATHS/ColumnAmountAerosol/Data Fields'].keys()
+['AerosolIndexUV',
+ 'AerosolIndexVIS',
+ 'AerosolModelMW',
+ 'AerosolModelsPassedThreshold',
+ 'AerosolOpticalThicknessMW',
+ ...
+
+>>> f['/HDFEOS/SWATHS/ColumnAmountAerosol/Data Fields/TerrainPressure']
+<HDF5 dataset "TerrainPressure": shape (1643, 60), type "<i2">
 
 >>> f['/HDFEOS/SWATHS/ColumnAmountAerosol/Data Fields/TerrainPressure'][:]
 array([[1013, 1013, 1013, ..., 1013, 1013, 1013],
@@ -57,14 +72,13 @@ array([[1013, 1013, 1013, ..., 1013, 1013, 1013],
 {% endhighlight %}
 
 
-This process requires a long and awkward conversation between programmer and
-interpreter.  This process can be improved.
+This is a long and awkward conversation between programmer and interpreter.
+This process can be improved.
 
-Blaze improves the discovery experience both in HDF5 files and in other collections
-of datasets like SQL Databases, Mongo Databases, etc..  These types are now
-first class citizens in Blaze.  By treating collections of arrays/tables as
-first class datasets we allow users to both explore and compute on these larger
-structures in the same workflow.
+Blaze improves the exploration user experience by treating the entire HDF5 file
+as a Blaze variable.  This allows users to both explore and compute on larger
+collections of data in the same workflow.  This isn't specific to HDF5 but
+works anywhere many datasets are bundled together as occurs in SQL databases.
 
 
 Historically Blaze only supported Tables
@@ -91,20 +105,28 @@ a URI.  This URI often included both
 {% endhighlight %}
 
 
-Expanding data types
---------------------
+Exploring a SQL Database
+------------------------
 
-Now Blaze expressions support tables, arrays, nested data structures, etc..
-Anything falling into the [datashape](http://datashape.pydata.org/) model.
-As a pleasant side effect Blaze navigates collections of datasets (like
-databases or HDF5 files) in the same manner as it navigates fields in a table
-or array.  There is no fundamental difference between a numpy array and a SQL
-database.
+Blaze makes it easy to to access a single table in a database using a string
+URI.
 
 {% highlight Python %}
->>> # iris = Table('sqlite:///my.db::iris')  # protocol://database::table-name
->>> db = Data('sqlite:///my.db')
+>>> iris = Data('sqlite:////my.db::iris')  # protocol://database::table-name
+>>> iris
+    sepal_length  sepal_width  petal_length  petal_width      species
+0            5.1          3.5           1.4          0.2  Iris-setosa
+1            4.9          3.0           1.4          0.2  Iris-setosa
+2            4.7          3.2           1.3          0.2  Iris-setosa
+3            4.6          3.1           1.5          0.2  Iris-setosa
+4            5.0          3.6           1.4          0.2  Iris-setosa
+...
+{% endhighlight %}
 
+We use the same interface to access the entire database.
+
+{% highlight Python %}
+>>> db = Data('sqlite:////my.db')  # protocol://database
 >>> db
 Data:
 Engine(sqlite:////home/mrocklin/workspace/blaze/blaze/examples/data/iris.db)
@@ -124,16 +146,11 @@ database.  Note that the datashape maps table names to datashapes of those
 tables, in this case a variable length collection of records with fields for
 measurements of flowers.
 
-As always Blaze leverages SQLAlchemy reflection to discover this metadata.
-Blaze isn't doing any of the work (SQLAlchemy is) instead it exposes this
-metadata in a pleasant way.  We leverage SQLAlchemy because it robustly
-supports a very wide array of databases ranging from `sqlite` up to `impala`
-and because it supports both inspection and general computation.
+Note that Blaze isn't doing any of the work here, SQLAlchemy is.  SQLAlchemy is
+a mature Python library that interacts with a very wide variety of SQL
+databases.  Blaze just provides a convenient front-end.
 
-We seamlessly transition from exploration to computation.  Blaze doesn't pull
-data into local memory, instead it generates SQLAlchemy which generates SQL,
-which executes on the foreign database; the (much smaller) result is pulled
-back and rendered nicely using Pandas.
+We seamlessly transition from exploration to computation.
 
 {% highlight Python %}
 >>> by(db.iris.species, smallest=db.iris.sepal_length.min(),
@@ -144,9 +161,13 @@ back and rendered nicely using Pandas.
 2   Iris-virginica      7.9       4.9
 {% endhighlight %}
 
+Blaze doesn't pull data into local memory, instead it generates SQLAlchemy
+which generates SQL, which executes on the foreign database; the (much smaller)
+result is then pulled back and rendered nicely using Pandas.
 
-This is more interesting on a larger database
----------------------------------------------
+
+A Larger Database
+-----------------
 
 Improved metadata discovery on SQL databases overlaps somewhat with the
 excellent work done by `yhat` on
@@ -156,8 +177,7 @@ database with a greater variety of tables.
 
 {% highlight Python %}
 >>> lahman = Data('sqlite:///baseball-archive-2012.sqlite')
->>> lahman.dshape # lets ask for the entire datashape
-
+>>> lahman.dshape  # ask for the entire datashape
 dshape("""{
   battingpost: var * {
     yearID: ?int32,
@@ -566,9 +586,17 @@ dshape("""{
   }""")
 {% endhighlight %}
 
-Seeing all at once the tables in the database, the columns in those tables, and
-the types of those columns provides a clear and comprehensive overview of our
-data.  We use standard Blaze expressions to navigate more deeply.  Things like
+Seeing at once all the tables in the database, all the columns in those tables,
+and all the types of those columns provides a clear and comprehensive overview
+of our data.
+
+We represent this information as a [datashape](http://datashape.pydata.org/),
+the type system that Blaze overlays on top of everything ranging from scalars
+to numpy/pandas arrays to databases to collections of databases.  Database is a
+single data-type system that covers and translates between the type systems of
+many projects within the Python ecosystem.
+
+We use standard Blaze expressions to navigate more deeply.  Things like
 auto-complete work fine.
 
 {% highlight Python %}
@@ -589,8 +617,9 @@ lahman.fieldingof           lahman.pitching             lahman.tmp_batting
 And we finish by a fun multi-table computation, computing the average salary by team name and year
 
 {% highlight Python %}
->>> j = join(lahman.teams, lahman.salaries, ['yearID', 'teamID', 'lgID'])
->>> by(j[['name', 'yearID']], average_salary=j.salary.mean())
+>>> joined = join(lahman.teams, lahman.salaries, ['yearID', 'teamID', 'lgID'])
+
+>>> by(joined[['name', 'yearID']], average_salary=joined.salary.mean())
                     name  yearID  average_salary
 0         Anaheim Angels    1997  1004370.064516
 1         Anaheim Angels    1998  1214147.058824
@@ -616,8 +645,8 @@ Looks good, we compute and store to CSV file with `into`
 Beyond SQL
 ----------
 
-SQL databases aren't alone, many systems hold collections of sets of datasets.
-Blaze provides this navigation over Mongo databases, [Blaze
+SQL isn't unique, many systems hold collections of datasets.  Blaze supports
+navigation over Mongo databases, [Blaze
 servers](http://blaze.pydata.org/docs/latest/server.html), HDF5 files, or even
 just dictionaries of pandas DataFrames or CSV files.
 
@@ -635,12 +664,15 @@ dshape("""{
 {% endhighlight %}
 
 
-Finish up `h5py` example
+Finish with HDF5 example
 ------------------------
 
 To conclude we revisit our motivating problem, HDF5 file navigation.
 
 ### Raw H5Py
+
+Recall that we previously had a long back-and-forth conversation with the
+Python interpreter.
 
 {% highlight Python %}
 >>> import h5py
@@ -656,6 +688,9 @@ To conclude we revisit our motivating problem, HDF5 file navigation.
 {% endhighlight %}
 
 ### H5Py with Blaze expressions
+
+With Blaze we get a quick high-level overview and an API that is shared with
+countless other systems.
 
 {% highlight Python %}
 >>> from blaze import Data
@@ -744,8 +779,12 @@ dshape("""{
   }""")
 {% endhighlight %}
 
-The full structure of this dataset becomes apparent.  Moreover we can quickly
-navigate this structure to obtain relevant information.
+The full structure of this dataset becomes apparent.  We have two
+collections of arrays, all shaped `(1643, 60)`; the collection in `Data Fields`
+holds what appear to be weather measurements while the collection in
+`Geolocation Fields` holds coordinate information.
+
+Moreover we can quickly navigate this structure to compute relevant information.
 
 {% highlight Python %}
 >>> d.HDFEOS.SWATHS.ColumnAmountAerosol.Geolocation_Fields.Latitude
