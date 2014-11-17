@@ -12,7 +12,7 @@ tags : [scipy, Python, Programming]
 collections of datasets.
 
 This post was composed using Blaze version 0.6.6.  You can follow along with
-the following conda command.
+the following [conda](http://conda.pydata.org/) command.
 
     conda install -c blaze blaze=0.6.6
 
@@ -20,10 +20,10 @@ When we encounter new data we need to explore broadly to find what exists
 before we can meaningfully perform analyses.  The tools for this task are often
 overlooked.
 
-This post outlines how Blaze explores collections of datasets; that is
-cases where one entity like a database or file or directory might hold many
-tables or arrays.  We use examples from HDF5 files and SQL databases.  Blaze
-understands how the underlying libraries work so that you don't have to.
+This post outlines how Blaze explores collections and hierarchies of datasets,
+cases where one entity like a database or file or directory might hold
+many tables or arrays.  We use examples from HDF5 files and SQL databases.
+Blaze understands how the underlying libraries work so that you don't have to.
 
 
 Motivating problem - Intuitive HDF5 File Navigation
@@ -31,8 +31,8 @@ Motivating problem - Intuitive HDF5 File Navigation
 
 For example, if we want to understand the contents of [this set of HDF5
 files](http://mirador.gsfc.nasa.gov/cgi-bin/mirador/granlist.pl?page=1&location=(-90,-180),(90,180)&dataSet=OMAERO&version=003&allversion=003&startTime=2014-11-05T00:00:01Z&endTime=2014-11-05T23:59:59Z&keyword=OMAERO&longname=OMI/Aura%20Multi-wavelength%20Aerosol%20Optical%20Depth%20and%20Single%20Scattering%20Albedo%201-orbit%20L2%20Swath%2013x24%20km&CGISESSID=958493efa9d8a96c5ba2d0b4d69c986d&prodpg=http://mirador.gsfc.nasa.gov/collections/OMAERO__003.shtml)
-encoding meteorological data then we need to navigate a highly nested
-collection of arrays.  This is common among HDF5 files.
+encoding meteorological data then we need to navigate a hierarchy of
+arrays.  This is common among HDF5 files.
 
 Typically we navigate these files in Python with `h5py` or `pytables`.
 
@@ -636,8 +636,8 @@ Looks good, we compute and store to CSV file with `into`
 Beyond SQL
 ----------
 
-SQL isn't unique, many systems hold collections of datasets.  Blaze supports
-navigation over Mongo databases, [Blaze
+SQL isn't unique, many systems hold collections or hierarchies of datasets.
+Blaze supports navigation over Mongo databases, [Blaze
 servers](http://blaze.pydata.org/docs/latest/server.html), HDF5 files, or even
 just dictionaries of pandas DataFrames or CSV files.
 
@@ -821,12 +821,12 @@ Final Thoughts
 *Often the greatest challenge is finding what you already have.*
 
 Discovery and exploration are just as important as computation.  By extending
-the Blaze's expression system to collections of datasets we create a smooth
+the Blaze's expression system to hierarchies of datasets we create a smooth
 user experience from first introductions to data all the way to analytic
 queries and saving results.
 
 This work was easy.  The pluggable architecture of Blaze made it surprisingly
 simple to extend the Blaze model from tables and arrays to collections of
-tables and arrays.  We wrote about [20 significant lines of
+tables and arrays.  We wrote about [40 significant lines of
 code](https://github.com/ContinuumIO/blaze/pull/825) for each supported
 backend.
