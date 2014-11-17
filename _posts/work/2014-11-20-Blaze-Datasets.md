@@ -134,8 +134,7 @@ database.  Note that the datashape maps table names to datashapes of those
 tables, in this case a variable length collection of records with fields for
 measurements of flowers.
 
-*Blaze isn't doing any work, SQLAlchemy is.*
-
+Blaze isn't doing any work of the grunt work here, SQLAlchemy is.
 [SQLAlchemy](http://www.sqlalchemy.org/) is a mature Python library that
 interacts with a wide variety of SQL databases.  It provides both database
 reflection (as we see above) along with general querying (as we see below).
