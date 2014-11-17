@@ -108,14 +108,16 @@ specifying both the database and the table name.
 ...
 {% endhighlight %}
 
-We use the same interface to access the entire database.  We omit the table
-name to see all of our options.
+This only works if we know what table we want ahead of time.  The approach
+above assumes that the user is *already familiar with their data*.  To resolve
+this problem we omit the table name and access the database as a variable
+instead.  We use the same interface to access the entire database as we would
+a specific table.
 
 {% highlight Python %}
 >>> db = Data('sqlite:////my.db')  # protocol://database
 >>> db
-Data:
-Engine(sqlite:////home/mrocklin/workspace/blaze/blaze/examples/data/iris.db)
+Data:       Engine(sqlite:////home/mrocklin/workspace/blaze/blaze/examples/data/iris.db)
 DataShape:  {
   iris: var * {
     sepal_length: ?float64,
@@ -136,10 +138,10 @@ measurements of flowers.
 
 [SQLAlchemy](http://www.sqlalchemy.org/) is a mature Python library that
 interacts with a wide variety of SQL databases.  It provides both database
-reflection (as we see here) along with general querying (as we see below).
+reflection (as we see above) along with general querying (as we see below).
 Blaze provides a convenient front-end.
 
-We seamlessly transition from exploration to computation querying for the
+We seamlessly transition from exploration to computation.  We query for the
 shortest and longest sepal per species.
 
 {% highlight Python %}
@@ -152,7 +154,7 @@ shortest and longest sepal per species.
 {% endhighlight %}
 
 Blaze doesn't pull data into local memory, instead it generates SQLAlchemy
-which generates SQL, which executes on the foreign database; the (much smaller)
+which generates SQL which executes on the foreign database.  The (much smaller)
 result is pulled back into memory and rendered nicely using Pandas.
 
 
@@ -578,13 +580,9 @@ dshape("""{
 
 Seeing at once all the tables in the database, all the columns in those tables,
 and all the types of those columns provides a clear and comprehensive overview
-of our data.
-
-We represent this information as a [datashape](http://datashape.pydata.org/),
-the type system that Blaze overlays on top of everything ranging from scalars
-to numpy arrays to databases to collections of databases.  Datashape is a
-single data-type system that covers and translates between the type systems of
-many projects within the Python ecosystem.
+of our data.  We represent this information as a
+[datashape](http://datashape.pydata.org/), a type system covers everything from
+numpy arrays to SQL databases and Spark collections.
 
 We use standard Blaze expressions to navigate more deeply.  Things like
 auto-complete work fine.
@@ -604,7 +602,8 @@ lahman.fielding             lahman.master               lahman.teamshalf
 lahman.fieldingof           lahman.pitching             lahman.tmp_batting
 {% endhighlight %}
 
-And we finish by a fun multi-table computation, computing the average salary by team name and year
+And we finish by a fun multi-table computation, joining two tables on year,
+team, and league and then computing the average salary by team name and year
 
 {% highlight Python %}
 >>> joined = join(lahman.teams, lahman.salaries, ['yearID', 'teamID', 'lgID'])
