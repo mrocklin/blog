@@ -121,7 +121,7 @@ framework to represent these things formally?
 Because people have to learn and buy in to that framework and that's hard to
 sell.  Dictionaries are easier to sell.  They're also easy to translate into
 other systems.   Additionally, I was able to write a reference implementation
-in [about a dozen lines](https://github.com/mrocklin/dask/blob/master/dask/core.py#L36-L68).
+in [a couple dozen lines](https://github.com/mrocklin/dask/blob/master/dask/core.py#L36-L68).
 
 It's easy to build functions that create `dict`s like this for various
 applications.  There is a decent chance that, if you've made it this far in
@@ -140,21 +140,29 @@ ideas lie above.
 ### Getting blocks from an array
 
 First, we need to break apart a large possibly out-of-core array into blocks.
+Although this all works with out-of-core arrays we'll use an in-memory numpy
+array with examples.  Jump to the end if you'd like to see an OOC dot product.
 
 We make a function `ndget` to pull out a single block
 
 {% highlight Python %}
 >>> x = np.arange(24).reshape((4, 6))
->>> ndget(x, (2, 3), 0, 0)  # array, blocksize, i, j indices (0, 0)th block
+array([[ 0,  1,  2,  3,  4,  5],
+       [ 6,  7,  8,  9, 10, 11],
+       [12, 13, 14, 15, 16, 17],
+       [18, 19, 20, 21, 22, 23]])
+
+>>> # Cutting into (2, 3) shaped blocks, get the (0, 0)th block
+>>> ndget(x, (2, 3), 0, 0)
 array([[0, 1, 2],
        [6, 7, 8]])
 
->>> ndget(x, (2, 3), 1, 0) #  Get the (1, 0) block
+>>> # Cutting into (2, 3) shaped blocks, get the (1, 0)th block
 array([[12, 13, 14],
        [18, 19, 20]])
 {% endhighlight %}
 
-We now want to make a `dict` that holds functions to pull out all of the blocks
+We now make a `dict` that uses this function to pull out all of the blocks
 
 *   `getem`: Given a large possibly out-of-core array and a blocksize, pull
      apart that array into many small blocks
@@ -168,7 +176,7 @@ We now want to make a `dict` that holds functions to pull out all of the blocks
  ('X', 1, 1): (ndget, 'X', (2, 3), 1, 1),
  ('X', 0, 1): (ndget, 'X', (2, 3), 0, 1)}
 
->>> d.update(getem('X', blocksize=(2, 3), shape=(4, 6)))  # dump in getem dict
+>>> d.update(_)  # dump in getem dict
 {% endhighlight %}
 
 So we have a single original array, `x` and using `getem` we describe how to
@@ -177,8 +185,8 @@ get many blocks out of `x` with the function `ndget`.
 * `ndget` actually does work on data
 * `getem` creates dask dict that describes on what ndget should operate
 
-We haven't actually done the work yet.  We only do work when we finally call
-`dask.get` on the appropriate key for one of the blocks.
+We haven't done work yet.  We only do work when we finally call `dask.get` on
+the appropriate key for one of the blocks.
 
 {% highlight Python %}
 >>> dask.get(d, ('X', 1, 0))  # Get block corresponding to key ('X' ,1, 0)
@@ -211,17 +219,19 @@ array([[1, 2, 3],
        [7, 8, 9]])
 {% endhighlight %}
 
-Our use of keys like ('name', i, j) to refer to the i,jth block of an array is
-an incidental convention and not anything built-in to `dask`.
+Our use of keys like `('name', i, j)` to refer to the `i,jth` block of an array is
+an incidental convention and not intrinsic to `dask` itself.  This use of
+tuples as keys should not be confused with the use of tuples in values to
+encode unevaluated functions.
 
 
 ### Index expressions
 
 A broad class of array computations can be written with index expressions
 
-$$ Z_{ij} = X_{ji} $$  Matrix transpose
+$$ Z_{ij} = X_{ji} \;\;$$  Matrix transpose
 
-$$ Z_{ik} = \sum_j X_{ij} Y_{jk} $$  Matrix-matrix multiply
+$$ Z_{ik} = \sum_j X_{ij} Y_{jk} \;\; $$  Matrix-matrix multiply
 
 Fortunately, the blocked versions of these algorithms look pretty much the
 same.  To leverage this structure we made the function `top` for `t`ensor
@@ -258,9 +268,9 @@ are repeated in the inputs and missing in the output like the following
 >>> top(..., Z, 'ik', X, 'ij', Y, 'jk', numblocks=...)
 {% endhighlight %}
 
-In this case the function receives a list of blocks of data that iterate over
-the dummy index, `j`.  We make such a function to take lists of square array
-blocks, dot product the pairs, and then sum the results.
+In this case the function receives an iterator of blocks of data that iterate
+over the dummy index, `j`.  We make such a function to take lists of square
+array blocks, dot product the pairs, and then sum the results.
 
 {% highlight Python %}
 def dotmany(A, B):
@@ -293,8 +303,8 @@ keys results in out-of-core execution.
 Full example
 ------------
 
-I wrote a tiny wrapper around dask arrays and hooked them up to the into
-project.  Here is a tiny proof of concept for an out-of-core dot product.
+Here is a tiny proof of concept for an out-of-core dot product.  I wouldn't
+expect users to write this.  I would expect libraries like Blaze to write this.
 
 ### Create random array on disk
 
@@ -302,7 +312,7 @@ project.  Here is a tiny proof of concept for an out-of-core dot product.
 import bcolz
 import numpy as np
 b = bcolz.carray(np.empty(shape=(0, 1000), dtype='f8'),
-                  rootdir='A.bcolz', chunklen=1000)
+                 rootdir='A.bcolz', chunklen=1000)
 for i in range(1000):
     b.append(np.random.rand(1000, 1000))
 b.flush()
@@ -346,7 +356,7 @@ array([[ 334071.93541158,  250297.16968262,  250404.87729587, ...,
 
 Three minutes for a 7GB dot product.  This runs at about half the FLOPS of a
 normal in-memory matmul.  I'm not sure yet why the discrepancy.  Also, this
-isn't using an optimized BLAS; I leverage a single core at the moment.
+isn't using an optimized BLAS; we have yet to leverage multiple cores.
 
 
 Complexity and Usability
