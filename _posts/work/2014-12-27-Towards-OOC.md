@@ -10,6 +10,8 @@ tags : [scipy, Python, Programming]
 **tl;dr** We propose a system for task-centered computation, show an example
 with out-of-core nd-arrays, and ask for comments.
 
+*Note: This post is not user-focused.  It is intended for library writers.*
+
 Motivation
 ----------
 
@@ -158,6 +160,7 @@ array([[0, 1, 2],
        [6, 7, 8]])
 
 >>> # Cutting into (2, 3) shaped blocks, get the (1, 0)th block
+>>> ndget(x, (2, 3), 1, 0)
 array([[12, 13, 14],
        [18, 19, 20]])
 {% endhighlight %}
@@ -180,7 +183,7 @@ We now make a `dict` that uses this function to pull out all of the blocks
 {% endhighlight %}
 
 So we have a single original array, `x` and using `getem` we describe how to
-get many blocks out of `x` with the function `ndget`.
+get many blocks out of `x` using the function `ndget` for on each block.
 
 * `ndget` actually does work on data
 * `getem` creates dask dict that describes on what ndget should operate
@@ -269,8 +272,9 @@ are repeated in the inputs and missing in the output like the following
 {% endhighlight %}
 
 In this case the function receives an iterator of blocks of data that iterate
-over the dummy index, `j`.  We make such a function to take lists of square
-array blocks, dot product the pairs, and then sum the results.
+over the dummy index, `j`.  We make such a function to take iterators of square
+array blocks, dot product the pairs, and then sum the results.  This is the
+inner-most loop of a conventional blocked-matrix-matrix multiply algorithm.
 
 {% highlight Python %}
 def dotmany(A, B):
