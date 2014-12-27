@@ -49,7 +49,7 @@ bipartite directed acyclic graph where nodes are computations and data and
 edges indicate which pieces of data a computation takes as input and delivers
 as output.
 
-Many solutions to this problem exist, both theoretical work/algorithms and
+Many solutions to this problem exist, both theoretical algorithms and
 implemented software.  Forgive me for describing yet-another system.
 
 
@@ -59,18 +59,18 @@ implemented software.  Forgive me for describing yet-another system.
 <img src="{{ BASE_PATH }}/images/dask-simple.png"
      align="right">
 
-I've tried to make a low-tech representation of a task dependency graph.
+We use a low-tech representation of a task dependency graph.
 We use a dictionary of key-value pairs where keys are any hashable identifier
 and values are one of the following:
 
 1.  A value, like `1`
 2.  A tuple containing a function and arguments, like `(inc, 1)`.  This is like
-an s-expression and should be interpretted as an unevaluated `inc(1)`
-2.  A tuple containing a function and arguments. These arguments may include other keys,
-like `(inc, my_key)`
+an s-expression and should be interpreted as an unevaluated `inc(1)`
+3.  A tuple containing a function and arguments. Arguments may include other
+keys, `(inc, 'my_key')`
 
 
-This is more clear with an example.
+This is more clear with an example.  We show this example on the right.
 
 {% highlight Python %}
 d = {'x': 1,
@@ -85,15 +85,14 @@ reference implementation to get values associated to keys in this task graph.
 >>> import dask
 >>> dask.get(d, 'x')
 1
->>> dask.get(d, 'y')
+>>> dask.get(d, 'y')  # Triggers computation
 2
->>> dask.get(d, 'z')
+>>> dask.get(d, 'z')  # Triggers computation
 12
 {% endhighlight %}
 
-Although in principle this could be executed by a variety of different
-implementations with various solutions for distributed computing, caching,
-etc..
+In principle this could be executed by a variety of different implementations
+each with different solutions for distributed computing, caching, etc..
 
 Dask also includes convenience functions to help build this graph.
 
@@ -106,23 +105,22 @@ parenthesis on the left side of a function call to avoid immediate execution
 
 {% highlight Python %}
 >>> # d['a'] =  add( 'x', 'y')  # intend this
->>> d['a']   = (add, 'x', 'y')  # but write this to avoid immediate execution
+>>>   d['a'] = (add, 'x', 'y')  # but write this to avoid immediate execution
 {% endhighlight %}
 
 
 Why low tech?
 -------------
 
-Note that we just build dictionaries with tuples.  We imported `dask` *after*
-we built our graph.
+These "graphs" are just dictionaries of tuples.  Notably, we imported `dask`
+*after* we built our graph.  The framework investment is very light.
 
-OK, so why don't we build `Task` and `Data` classes and construct a Python
+* **Q**: Why don't we build `Task` and `Data` classes and construct a Python
 framework to represent these things formally?
-
-Because people have to learn and buy in to that framework and that's hard to
-sell.  Dictionaries are easier to sell.  They're also easy to translate into
-other systems.   Additionally, I was able to write a reference implementation
-in [a couple dozen lines](https://github.com/mrocklin/dask/blob/master/dask/core.py#L36-L68).
+* **A**: Because people have to learn and buy in to that framework and that's
+hard to sell.  Dictionaries are easier to sell.  They're also easy to translate
+into other systems.   Additionally, I was able to write a reference
+implementation in [a couple dozen lines](https://github.com/mrocklin/dask/blob/master/dask/core.py#L36-L68).
 
 It's easy to build functions that create `dict`s like this for various
 applications.  There is a decent chance that, if you've made it this far in
@@ -132,17 +130,21 @@ this blogpost, you already understand the spec.
 ND-Arrays
 ---------
 
-I'm doing this because I want to encode out-of-core ND-Array algorithms.
+I want to encode out-of-core ND-Array algorithms as data.
 I've written a few functions that create dask-style dictionaries to help me
-describe a decently large class of computations.  What follows is a specific
-example of using dask graphs for the specific application of arrays.  All core
-ideas lie above.
+describe a decent class of blocked nd-array computations.
+
+The following section is a specific example applying these ideas to the domain
+of array computing.  This is just one application and not core to the idea
+of task scheduling.  The core ideas to task scheduling and the dask
+implementation have already been covered above.
 
 ### Getting blocks from an array
 
-First, we need to break apart a large possibly out-of-core array into blocks.
-Although this all works with out-of-core arrays we'll use an in-memory numpy
-array with examples.  Jump to the end if you'd like to see an OOC dot product.
+First, we break apart a large possibly out-of-core array into blocks.
+For convenience in these examples we work in in-memory numpy arrays rather than
+on-disk arrays.   Jump to the end if you'd like to see a real OOC dot product
+on on-disk data.
 
 We make a function `ndget` to pull out a single block
 
@@ -164,7 +166,10 @@ array([[12, 13, 14],
        [18, 19, 20]])
 {% endhighlight %}
 
-We now make a `dict` that uses this function to pull out all of the blocks
+We now make a function `getem` that makes a `dict` that uses this `ndget`
+function to pull out all of the blocks.  This creates more `keys` in our
+dictionary, one for each block.  We name each key by the key of the array
+followed by a block-index.
 
 *   `getem`: Given a large possibly out-of-core array and a blocksize, pull
      apart that array into many small blocks
@@ -198,10 +203,10 @@ array([[12, 13, 14],
 
 We use `numpy.ndarrays` for convenience.  This would have worked with anything
 that supports numpy-style indexing, including out-of-core structures like
-`h5py.Dataset`s, `tables.Array`, or `bcolz.carray`.
+`h5py.Dataset`, `tables.Array`, or `bcolz.carray`.
 
 
-### Example: Embarassingly Parallel Computation
+### Example: Embarrassingly Parallel Computation
 
 If we have a simple function
 
@@ -231,14 +236,14 @@ encode unevaluated functions.
 
 A broad class of array computations can be written with index expressions
 
-$$ Z_{ij} = X_{ji} \;\;$$  Matrix transpose
+$$ Z_{ij} = X_{ji} \;\;$$  -- Matrix transpose
 
-$$ Z_{ik} = \sum_j X_{ij} Y_{jk} \;\; $$  Matrix-matrix multiply
+$$ Z_{ik} = \sum_j X_{ij} Y_{jk} \;\; $$  -- Matrix-matrix multiply
 
 Fortunately, the blocked versions of these algorithms look pretty much the
 same.  To leverage this structure we made the function `top` for `t`ensor
-`op`erations (better name welcome).  This writes index operations like the
-following for blocked transpose:
+`op`erations (ideas for a better name welcome).  This writes index operations
+like the following for blocked transpose:
 
 {% highlight Python %}
 >>> top(np.transpose, 'Z', 'ji', 'X', 'ij', numblocks={'X': (2, 2)})
@@ -250,21 +255,18 @@ following for blocked transpose:
 
 The first argument `np.transpose` is the function to apply to each block.
 The second and third arguments are the name and index pattern of the output.
-The succeeding arguments are the key and index pattern of the inputs.
+The succeeding arguments are the key and index pattern of the inputs.  In this
+case the index pattern is the reverse.  We map the `ij`th block to the `ji`th
+block of the output after we call the function `np.transpose`.
 Finally we have the numblocks keyword arguments that give the block structure
-of the inputs.  Index structure can be any iterable.  We use strings for
-convenience and historical precedence but we could have used something like
-lists of integers instead.
-
-{% highlight Python %}
->>> top(np.transpose, 'Z', (0, 1), 'X', (1, 0), numblocks={'X': (2, 3)})
-{% endhighlight %}
+of the inputs.  Index structure can be any iterable.
 
 
 ### Matrix Multiply
 
 We represent tensor contractions like matrix-matrix multiply with indices that
-are repeated in the inputs and missing in the output like the following
+are repeated in the inputs and missing in the output like the following.  In
+the following example the index `'j'` is a contracted dummy index.
 
 {% highlight Python %}
 >>> top(..., Z, 'ik', X, 'ij', Y, 'jk', numblocks=...)
@@ -284,7 +286,8 @@ By combining this per-block function with `top` we get an out-of-core dot
 product.
 
 {% highlight Python %}
->>> top(dotmany, 'Z', 'ik', 'X', 'ij', 'Y', 'jk',  numblocks={'X': (2, 2), 'Y': (2, 2)})
+>>> top(dotmany, 'Z', 'ik', 'X', 'ij', 'Y', 'jk',  numblocks={'X': (2, 2),
+                                                              'Y': (2, 2)})
 {('Z', 0, 0): (dotmany, [('X', 0, 0), ('X', 0, 1)],
                         [('Y', 0, 0), ('Y', 1, 0)]),
  ('Z', 0, 1): (dotmany, [('X', 0, 0), ('X', 0, 1)],
@@ -360,6 +363,8 @@ array([[ 334071.93541158,  250297.16968262,  250404.87729587, ...,
 Three minutes for a 7GB dot product.  This runs at about half the FLOPS of a
 normal in-memory matmul.  I'm not sure yet why the discrepancy.  Also, this
 isn't using an optimized BLAS; we have yet to leverage multiple cores.
+
+This isn't trivial to write, but it's not bad either.
 
 
 Complexity and Usability
