@@ -3,7 +3,7 @@ layout: post
 title: Blaze Datasets
 tagline: Often the greatest challenge is finding what you already have
 category : work
-tags : [scipy, Python, Programming]
+tags : [scipy, Python, Programming, Blaze]
 ---
 {% include JB/setup %}
 

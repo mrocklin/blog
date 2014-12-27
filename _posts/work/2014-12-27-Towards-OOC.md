@@ -3,7 +3,7 @@ layout: post
 title: Towards Out-of-core ND-Arrays
 category : work
 draft : true
-tags : [scipy, Python, Programming]
+tags : [scipy, Python, Programming, Blaze]
 ---
 {% include JB/setup %}
 
