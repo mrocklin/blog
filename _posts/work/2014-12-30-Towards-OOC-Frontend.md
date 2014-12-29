@@ -58,7 +58,7 @@ d.update(top(dotmany, 'AtA', 'ik', 'At', 'ij', 'A', 'jk',
          numblocks={'A': (1000, 1), 'At': (1, 1000)}))
 {% endhighlight %}
 
-## New code
+## New pleasant feeling code
 
 ### Targetting users
 
@@ -115,7 +115,8 @@ I've doctored the result rendered here to include suggestive names.
  ('A', 0, 0): (ndget, 'A', (1000, 1000), 0, 0),
  ('A', 1, 0): (ndget, 'A', (1000, 1000), 1, 0),
  ...
- ('At', 0, 346): (np.transpose, ('A', 346, 0)),
+ ('At', 0, 0): (np.transpose, ('A', 0, 0)),
+ ('At', 0, 1): (np.transpose, ('A', 1, 0)),
  ...
  ('AtA', 0, 0): (dotmany, [('At', 0, 0), ('At', 0, 1), ('At', 0, 2), ...],
                           [('A', 0, 0),  ('A', 1, 0),  ('A', 2, 0), ...])
@@ -156,9 +157,9 @@ this and couldn't be happier with the switch.
 Source
 ------
 
-This code is highly experimental.  I don't expect it to stay around for forever
-in it's current form (it'll improve).  Still, if you're reading this now you
-might want to check out
+This code is experimental and buggy.  I don't expect it to stay around for
+forever in it's current form (it'll improve).  Still, if you're reading this
+when it comes out then you might want to check out the following:
 
 1.  [master branch on dask](https://github.com/mrocklin/dask)
 2.  [array-expr branch on my blaze fork](https://github.com/mrocklin/blaze/tree/array-expr)
