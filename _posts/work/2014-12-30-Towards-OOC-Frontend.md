@@ -27,10 +27,9 @@ This post sugars the programming experience with `blaze` and `into` to give a
 numpy-like experience out-of-core.
 
 
-Results
--------
+## Old low-level code
 
-Lets start right away with results.  Here is the code we wrote for an
+Here is the code we wrote for an
 out-of-core transpose/dot-product (actually a symmetric rank-k update).
 
 ### Create random array on disk
@@ -59,15 +58,16 @@ d.update(top(dotmany, 'AtA', 'ik', 'At', 'ij', 'A', 'jk',
          numblocks={'A': (1000, 1), 'At': (1, 1000)}))
 {% endhighlight %}
 
+## New code
 
 ### Targetting users
 
-The last section "Define computation" is written in a style is great for
-library writers and automated systems but is challenging to users that might be
+The last section "Define computation" is written in a style that is great for
+library writers and automated systems but is challenging to users
 accustomed to Matlab/NumPy or R/Pandas style.
 
-We've written a bit of code to wrap this process with Blaze, our extensible
-front-end for analytic computations
+We wrap this process with Blaze, an extensible front-end for analytic
+computations
 
 
 ### Redefine computation `A.T * A` with Blaze
@@ -78,11 +78,7 @@ from blaze import *
 
 # Load data into dask dictionaries
 dA = into(Array, bcolz.carray(rootdir='A.bcolz'), blockshape=(1000, 1000))
-dx = into(Array, bcolz.carray(rootdir='x.bcolz'), blockshape=(1000, 1))
-
-# Wrap proxy dask dicts with blaze.Data
-A = Data(dA)
-x = Data(dx)
+A = Data(dA)  # Wrap with blaze.Data
 
 # Describe computation in friendly numpy style
 expr = A.T.dot(A)
