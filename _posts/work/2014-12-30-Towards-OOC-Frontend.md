@@ -16,7 +16,7 @@ Setup
 -----
 
 This follows my [last
-post](matthewrocklin.com/blog/work/2014/12/27/Towards-OOC/) designing a simple
+post](http://matthewrocklin.com/blog/work/2014/12/27/Towards-OOC/) designing a simple
 task scheduler for use with out-of-core (or distributed) nd-arrays.  We
 encoded tasks-with-data-dependencies as simple dictionaries.  We then
 built functions to create dictionaries that describe blocked array operations.
