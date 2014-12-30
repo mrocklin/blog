@@ -77,7 +77,7 @@ from dask.obj import Array  # a proxy object holding on to a dask dict
 from blaze import *
 
 # Load data into dask dictionaries
-dA = into(Array, bcolz.carray(rootdir='A.bcolz'), blockshape=(1000, 1000))
+dA = into(Array, 'A.bcolz', blockshape=(1000, 1000))
 A = Data(dA)  # Wrap with blaze.Data
 
 # Describe computation in friendly numpy style
