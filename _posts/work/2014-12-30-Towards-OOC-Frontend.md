@@ -2,7 +2,6 @@
 layout: post
 title: Towards Out-of-core ND-Arrays -- Frontend
 category : work
-draft : true
 tags : [scipy, Python, Programming, Blaze]
 ---
 {% include JB/setup %}
@@ -58,7 +57,7 @@ d.update(top(dotmany, 'AtA', 'ik', 'At', 'ij', 'A', 'jk',
          numblocks={'A': (1000, 1), 'At': (1, 1000)}))
 {% endhighlight %}
 
-## New pleasant feeling code
+## New pleasant feeling code with Blaze
 
 ### Targetting users
 
