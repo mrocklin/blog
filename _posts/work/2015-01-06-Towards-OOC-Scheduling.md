@@ -26,7 +26,7 @@ These posts did the following:
 
 1.  Design a minimal task scheduling system
 2.  Describe out-of-core nd-array algorithms using that system and run them with a simple scheduler
-3.  Provide a numpy-like user experience on top of this system with Blaze.
+3.  Provide a NumPy-like user experience on top of this system with Blaze.
 
 In these posts we used a simple twenty-line scheduler to execute array
 computations out-of-core.  This scheduler, while simple, is inefficient for
@@ -34,7 +34,7 @@ complex computations (it suffers the same drawbacks as the naive recursive
 solution to Fibonacci).
 
 In this post we outline a less pretty but more effective scheduler that uses
-multiple threads and caching to acheive performance on an interesting class of
+multiple threads and caching to achieve performance on an interesting class of
 array operations.
 
 
@@ -98,7 +98,7 @@ The top row of circles is the actual dot products (note the many data
 dependence arrows coming out of them).  The bottom row of circles is getting
 out blocks from the the `A` dataset from the HDF5 file.  The second row is
 transposing the blocks from the first row and adding another smaller set of
-blocks rom `B`.
+blocks from `B`.
 
 This is bad; we replicate our data four times here, once in each of the rows.
 We pull out all of the chunks, transpose each of them, and then finally do a
@@ -119,7 +119,7 @@ The result looks like the following:
 <img src="{{ BASE_PATH }}/images/dask/inlined.png">
 
 Now our keys hold nested tasks.  All of these operations are run by a worker
-thread at once. (non-LISPers avert your eyes):
+thread at once. (non-LISP-ers avert your eyes):
 
 {% highlight Python %}
 ('x_6', 6, 0): (dotmany, [(np.transpose, (ndslice, 'A', (1000, 1000), 0, 6)),
@@ -128,8 +128,8 @@ thread at once. (non-LISPers avert your eyes):
                            (ndslice, 'B', (1000, 1000), 1, 0)]),
 {% endhighlight %}
 
-Where we used to have a simple tuple of `(function, *args)` we now
-have tuples of tuples, inlined functions.
+Where we used to have a simple tuple of `(func, *args)` we now have tuples of
+tuples `(func, (func2, *args), (func3, *args)`, inlined functions.
 
 This effectively shoves all of the storage back down the HDF5 store.  We'll
 end up pulling the same blocks out multiple times, but repeated disk access is
@@ -162,7 +162,7 @@ performs some critical optimizations, and uses many cores.
 If you weren't already aware, many NumPy operations release the GIL.  This is
 possible because they aren't running Python code most of the time.  As a result
 NumPy programs do not suffer the single-active-core-per-process limitations
-of most Python code.  We get to use all of our hardware, and keep benefitting
+of most Python code.  We get to use all of our hardware, and keep benefiting
 from Moore's law.
 
 
@@ -192,7 +192,7 @@ As just mentioned, we choose tasks that, when completed, will free up
 resources.  This detail drastically reduces the amount of intermediates.
 
 
-Example: Embarassingly parallel computation
+Example: Embarrassingly parallel computation
 -------------------------------------------
 
 <img src="{{ BASE_PATH }}/images/dask/embarrassing.gif"
@@ -200,7 +200,7 @@ Example: Embarassingly parallel computation
       width="50%">
 
 On the right is an animated GIF showing the progress of the following
-embarassingly parallel computation:
+embarrassingly parallel computation:
 
     expr = (((A + 1) * 2) ** 3)
 
@@ -212,7 +212,7 @@ released from memory because it is no longer necessary.  Once all functions
 that rely on a data resource terminate, that resource can be freed.
 
 This policy to execute tasks that free resources causes "vertical" execution
-when possible.  This approach is optimial because the number of red boxes is
+when possible.  This approach is optimal because the number of red boxes is
 minimal.
 
 Conversely one could imagine a horizontal progression in which we first do all
@@ -234,13 +234,13 @@ We now show a more complex expression
 
 This extends the class of expressions that we've seen so far to reductions and
 reductions along an axis.  The per-chunk reductions start at the bottom and
-depend only on the chunk from which they originated.  These perchunk results
+depend only on the chunk from which they originated.  These per-chunk results
 are then concatenated together and re-reduced with the large circles (zoom in
 to see the text `concatenate` in there.)  The next level takes these (small)
 results and the original data again (note the long edges back down the bottom
 data resources) which result in per-chunk subtractions and divisions.
 
-From there on out the work is embarassing, resembling the computation above.
+From there on out the work is embarrassing, resembling the computation above.
 In this case we have relatively little parallelism, so the frontier of red
 boxes covers the entire image; fortunately the dataset is small.
 
@@ -312,7 +312,7 @@ We also comply with the NumPy API on these operations..  At the time of writing
 notable missing elements include the following:
 
 1.  Slicing (though this should be easy to add)
-2.  Solve, svd, or any more complex linear algebra.  There are good solutions
+2.  Solve, SVD, or any more complex linear algebra.  There are good solutions
 to this implemented in other linear algebra software (Plasma,
 Flame, Elemental, ...) but I'm not planning to go down that path until
 lots of people start asking for it.
@@ -324,11 +324,23 @@ Bigger ideas
 
 My experience building dynamic schedulers is limited and my approach is likely
 suboptimal.  It would be great to see other approaches.  None of the logic in
-this post is Blaze or even NumPy specific.  To build a scheduler you only need
+this post is specific to Blaze or even NumPy.  To build a scheduler you only need
 to understand the model of a graph of computations with data dependencies.
 
-If we were ambitiuos we might consider a distributed scheduler to execute these
+If we were ambitious we might consider a distributed scheduler to execute these
 task graphs across many nodes in a distributed-memory situation (like a
 cluster).  This is a hard problem but it would open up a different class of
 computational solutions.  The Blaze code to generate the dasks would not change
 ; the graphs that we generate are orthogonal to our choice of scheduler.
+
+
+Help
+----
+
+I could use help with all of this, either as open source work (links below) or
+for money.  Continuum has grant funding and ample interesting problems.
+
+**Links:**
+
+* [Dask spec](http://dask.readthedocs.org/en/latest/)
+* [Scheduler implementation (with decent narrative documentation)](https://github.com/ContinuumIO/dask/blob/master/dask/threaded.py)
