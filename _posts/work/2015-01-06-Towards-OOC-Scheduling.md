@@ -346,7 +346,7 @@ Help
 ----
 
 I could use help with all of this, either as open source work (links below) or
-for money.  Continuum has grant funding and ample interesting problems.
+for money.  Continuum has funding for employees and ample interesting problems.
 
 **Links:**
 
