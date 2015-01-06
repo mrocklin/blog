@@ -202,12 +202,12 @@ embarrassingly parallel computation:
 
 Circles represent computations, boxes represent data.
 
-Red means actively taking up resources.  Red is bad
+Red means actively taking up resources.  Red is bad.
 
 * Red circles: tasks currently executing in a thread
 * Red boxes: data currently residing in the cache occupying precious memory
 
-Blue means finished or released
+Blue means finished or released.  Blue is good.
 
 * Blue circles: finished tasks
 * Blue boxes: data released from memory because we no longer need it for any
@@ -320,6 +320,11 @@ to this implemented in other linear algebra software (Plasma,
 Flame, Elemental, ...) but I'm not planning to go down that path until
 lots of people start asking for it.
 3.  Anything that NumPy can't do.
+
+I'd love to hear what's important to the community.  Re-implementing all of
+NumPy is hard, re-implementing a few choice pieces of NumPy is relatively
+straightforward.  Knowing what those few choices pieces are requires community
+involvement.
 
 
 Bigger ideas
