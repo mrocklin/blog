@@ -42,31 +42,48 @@ Example
 -------
 
 First, we demonstrate value by doing a hard thing well.  Given two large
-arrays stored in HDF5 we normalize one, and then do a transpose and dot product
-with the other.
+arrays stored in HDF5.
 
 {% highlight Python %}
-f = Data('myfile.hdf5')
-discover(f)  # inspect contents
-
-x = Data(into(dask.Array, f.x))  # Interact with dataset as a task graph
-y = Data(into(dask.Array, f.y))
-
-expr = x2.T.dot(y)
-
-%time into('myfile.hdf5::/output', expr)
+import h5py
+f = h5py.File('myfile.hdf5')
+A = f.create_dataset(name='A', shape=(4000, 2000000), dtype='f8',
+                     chunks=(250, 250), fillvalue=1.0)
+B = f.create_dataset(name='B', shape=(4000, 4000), dtype='f8',
+                     chunks=(250, 250), fillvalue=1.0)
+f.close()
 {% endhighlight %}
 
-None of this dataset, the intermediate results, nor the final result fit
-comfortably in my machine's memory and yet we're still able to compute it.
-Even better we leveraged all of our cores while doing so.
+
+We do a transpose and dot product.  We use all of our cores.
+
+{% highlight Python %}
+from blaze import Data, into
+from dask.obj import Array
+
+f = h5py.File('myfile.hdf5')
+
+a = into(Array, f['A'], blockshape=(1000, 1000), name='A')
+b = into(Array, f['B'], blockshape=(1000, 1000), name='B')
+
+A = Data(a)
+B = Data(b)
+
+expr = A.T.dot(B)
+
+result = into('myfile.hdf5::/C', expr)
+{% endhighlight %}
+
+Among the inputs, the intermediate results, and the output, none fit in memory
+and yet we're still able to compute comfortably.  Even better we leveraged all
+of our cores.
 
 In principle we could have computed this with only 100MB or so of RAM.  We
-failed to actually achieve this but still, *in theory* we're great!
+failed to actually achieve this but still, *in theory*, we're great!
 
 
-Avoiding Intermediates
-----------------------
+Avoid Intermediates
+-------------------
 
 To keep a small memory footprint we avoid holding on to unnecessary
 intermediate data.  The full computation graph of a smaller problem
