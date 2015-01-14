@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Towards Out-of-core ND-Arrays -- Multi-core Scheduling
+title: Towards Out-of-core ND-Arrays -- Benchmark MatMul
 category : work
 draft : true
 tags : [scipy, Python, Programming, Blaze]
@@ -44,30 +44,26 @@ motivate the use of an optimized BLAS.
 Introduction
 ------------
 
-This is the fourth in a sequence of posts constructing an on-disk (out-of-core)
-n-dimensional array using NumPy for in-memory computations, Blaze for
-high-level control, and dask for task scheduling.  You can view
-these posts here:
+This is the fourth in a sequence of posts constructing an out-of-core nd-array
+using NumPy, Blaze, and dask.  You can view these posts here:
 
 1. [Simple task scheduling](http://matthewrocklin.com/blog/work/2014/12/27/Towards-OOC/),
 2. [Frontend usability](http://matthewrocklin.com/blog/work/2014/12/30/Towards-OOC-Frontend/)
 3. [A multi-threaded scheduler](http://matthewrocklin.com/blog/work/2015/01/06/Towards-OOC-Scheduling/)
 
-In this post we give performance numbers on out-of-core matrix-matrix
-multiplication.
+We now give performance numbers on out-of-core matrix-matrix multiplication.
 
 
 Matrix-Matrix Multiplication
 ----------------------------
 
-Dense matrix-matrix multiplication is one of the few common operations that is
-compute-bound, not memory or disk bound.  We spend most of our time doing
-arithmetic and not shuffling data around.  As a result, the fact that our
-dataset is too big to fit in memory and that we need to read it in pieces might
-not matter.
+Dense matrix-matrix multiplication is compute-bound, not I/O bound.
+We spend most of our time doing arithmetic and relatively little time shuffling
+data around.  As a result we may be able to read *large* data from disk without
+performance loss.
 
 When multiplying two $n\times n$ matrices we read $n^2$ bytes but perform $n^3$
-computations.  There are roughly $n$ computations to do per byte so, relatively
+computations.  There are $n$ computations to do per byte so, relatively
 speaking, I/O is cheap.
 
 We normally measure speed for single CPUs in Giga Floating Point Operations
@@ -94,10 +90,11 @@ Matrix-Matrix Multiply From Disk
 --------------------------------
 
 For matrices too large to fit in memory we compute the solution one part at a
-time, loading blocks from disk when necessary.  Fortunately we can do this in
-parallel by using multiple threads.  As we saw last time NumPy+Blaze+Dask
-automates this for us.  We perform a simple experiment, using HDF5 as our
-on-disk store.
+time, loading blocks from disk when necessary.  We parallelize this with
+multiple threads.  Our last post demonstrates how NumPy+Blaze+Dask automates
+this for us.
+
+We perform a simple numerical experiment, using HDF5 as our on-disk store.
 
 We install stuff
 
@@ -140,10 +137,10 @@ We compute our desired result, storing back onto disk
 {% endhighlight %}
 
 
-18.9 GFLOPS, roughly 3 times faster than the in-memory solution.  At first glance
-this is confusing - shouldn't we be slower coming from disk?  This is because
-we use four cores in parallel.  This is good, we don't experience much slowdown
-coming from disk.
+18.9 GFLOPS, roughly 3 times faster than the in-memory solution.  At first
+glance this is confusing - shouldn't we be slower coming from disk?  Our
+speedup is due to our use of four cores in parallel.  This is good, we don't
+experience much slowdown coming from disk.
 
 It's as if all of our hard drive just became memory.
 
@@ -151,10 +148,10 @@ It's as if all of our hard drive just became memory.
 OpenBLAS
 --------
 
-We've been cheating by comparing against reference BLAS; it was written long
-ago.  OpenBLAS is a modern implementation.  I installed OpenBLAS with my system
-installer (`apt-get`) and then rebuilt numpy.  OpenBLAS supports many cores.
-We'll show timings with one and four threads.
+Reference BLAS is slow; it was written long ago.  OpenBLAS is a modern
+implementation.  I installed OpenBLAS with my system installer (`apt-get`) and
+then reconfigured and rebuilt numpy.  OpenBLAS supports many cores.  We'll show
+timings with one and with four threads.
 
 {% highlight bash %}
 $ export OPENBLAS_NUM_THREADS=1
@@ -194,9 +191,11 @@ OpenBLAS + dask
 Finally we run on-disk our experiment again, now with OpenBLAS.  We do this
 both with OpenBLAS running with one thread and with many threads.
 
-We'll skip the code (it's identical to what's above) and just give a table of
-results.  We find that we don't improve much by using OpenBLAS and that when we
-try to use both parallelism schemes together we *lose* performance.
+We'll skip the code (it's identical to what's above) and give a comprehensive
+table of results below.
+
+Sadly the out-of-core solution doesn't improve much by using OpenBLAS.
+Acutally when both OpenBLAS and dask try to parallelize we *lose* performance.
 
 
 Results

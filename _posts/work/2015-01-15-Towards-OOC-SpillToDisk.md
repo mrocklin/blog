@@ -13,18 +13,16 @@ memory.  We connect this to our scheduler.
 Introduction
 ------------
 
-This is the fifth in a sequence of posts constructing an on-disk (out-of-core)
-n-dimensional array using NumPy for in-memory computations, Blaze for
-high-level control, and dask for task scheduling.  You can view
-these posts here:
+This is the fifth in a sequence of posts constructing an out-of-core nd-array
+using NumPy, Blaze, and dask.  You can view these posts here:
 
 1. [Simple task scheduling](http://matthewrocklin.com/blog/work/2014/12/27/Towards-OOC/),
 2. [Frontend usability](http://matthewrocklin.com/blog/work/2014/12/30/Towards-OOC-Frontend/)
 3. [A multi-threaded scheduler](http://matthewrocklin.com/blog/work/2015/01/06/Towards-OOC-Scheduling/)
 4. [Matrix Multiply Benchmark](http://matthewrocklin.com/blog/work/2015/01/15/Towards-OOC-MatMul/)
 
-In this post we discuss `chest` a `dict` type that spills to disk and how it helps
-large computations from flooding memory.
+We now present `chest` a `dict` type that spills to disk.  We show how it
+prevents large computations from flooding memory.
 
 
 Intermediate Data
