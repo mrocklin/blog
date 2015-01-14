@@ -21,8 +21,8 @@ using NumPy, Blaze, and dask.  You can view these posts here:
 3. [A multi-threaded scheduler](http://matthewrocklin.com/blog/work/2015/01/06/Towards-OOC-Scheduling/)
 4. [Matrix Multiply Benchmark](http://matthewrocklin.com/blog/work/2015/01/15/Towards-OOC-MatMul/)
 
-We now present `chest` a `dict` type that spills to disk.  We show how it
-prevents large computations from flooding memory.
+We now present `chest` a `dict` type that spills to disk when we run out of
+memory.  We show how it prevents large computations from flooding memory.
 
 
 Intermediate Data
@@ -35,14 +35,14 @@ Intermediate Data
 
 If you read the
 [post on scheduling](http://matthewrocklin.com/blog/work/2015/01/06/Towards-OOC-Scheduling/)
-you may recall that our goal was to minimize intermediates during a
-multi-worker computation.  Images like the one on the right show traces of our
-scheduler as it traverses the task dependency graph.  Our goal was to compute
-the entire graph quickly while keeping only a small amount of data in memory.
+you may recall our goal to minimize intermediate storage during a multi-worker
+computation.  The image on the right shows a trace of our scheduler as it
+traverses a task dependency graph.  We want to compute the entire graph quickly
+while keeping only a small amount of data in memory at once.
 
-Sometimes we fail at this goal, our scheduler inadvertently needs to store
-many large intermediate results, and we risk crashing our machine.  In these
-cases we want to spill excess intermediate data to disk.
+Sometimes we fail and our scheduler stores many large intermediate results.  In
+these cases we want to spill excess intermediate data to disk rather than
+flooding local memory.
 
 
 Chest
@@ -57,7 +57,8 @@ memory.
 {% endhighlight %}
 
 It satisfies the `MutableMapping` interface so it looks and feels exactly like
-a `dict`
+a `dict`.  Below we show an example using a chest with only enough data to
+store one Python integer in memory.
 
 {% highlight Python %}
 >>> d = Chest(available_memory=24)  # enough space for one Python integer
@@ -71,14 +72,14 @@ a `dict`
 ['one', 'two', 'three']
 {% endhighlight %}
 
-But it only keeps some of its data in memory
+We keep some data in memory
 
 {% highlight Python %}
 >>> d.inmem
 {'three': 3}
 {% endhighlight %}
 
-While the rest lives somewhere on disk
+While the rest lives on disk
 
 {% highlight Python %}
 >>> d.path
@@ -87,13 +88,13 @@ While the rest lives somewhere on disk
 ['one', 'two']
 {% endhighlight %}
 
-This data is stored using pickle by default but `chest` supports any protocol
-with the `dump/load` interface.  The data is loaded on demand.
+By default we store data with pickle but `chest` supports any protocol
+with the `dump/load` interface (`pickle`, `json`, `cbor`, `joblib`, ....)
 
 A quick point about `pickle`.  Frequent readers of my blog may know of my
 sadness at how this library
 [serializes functions](http://matthewrocklin.com/blog/work/2013/12/05/Parallelism-and-Serialization/)
-and the effect on multiprocessing.
+and the crippling effect on multiprocessing.
 That sadness does not extend to normal data.  Pickle is fine for data if you
 use the `protocol=` keyword to `pickle.dump` correctly .  Pickle isn't a good
 cross-language solution, but that doesn't matter in our application of
@@ -129,7 +130,6 @@ quantities of intermediate data.
 Conclusion
 ----------
 
-Chest is only useful when we fail to schedule well.  I'm still thinking about
-cheap algorithms to schedule tasks well and avoid keeping data in memory but
-it's nice to have `chest` as a backup for when these algorithms fail.
-Resilience is reassuring.
+Chest is only useful when we fail to schedule well.  We can still improve
+scheduling algorithms to avoid keeping data in memory but it's nice to have
+`chest` as a backup for when these algorithms fail.  Resilience is reassuring.
