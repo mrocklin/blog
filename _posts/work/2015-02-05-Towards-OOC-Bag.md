@@ -37,16 +37,16 @@ Dask collections
 So we're taking a break from the structured world of `ndarrays` to investigate
 how `dask` can tackle this messy world.
 
-Remember, `dask` is a way to use Python dicts to define a computation
-as a network of tasks.  We recently built an *array* abstraction *around*
-dask; now we build another abstraction around dask, this time the plain Python `list`.
-Actually, we're not going to guarantee order, so instead of `list`, we're going
-to call this a `Bag`.
+Recall that `dask` is a way to use Python dicts to define a computation
+as a network of tasks.  We recently built an array abstraction *around* dask;
+now we build another abstraction around dask, this time the plain Python `list`
+rather than the `ndarray`.  Actually, we're not going to guarantee order, so
+instead of `list`, we're going to call this a `Bag`.
 
-In the same way that `dask.array` mimics NumPy operations (`tensordot`,
-slicing), `dask.bag` mimics functional operations like `map`, `filter`,
-`reduce` found in the standard library as well as many of the streaming
-functions found in `toolz`.
+In the same way that `dask.array` mimics NumPy operations (e.g. matrix
+multiply, slicing), `dask.bag` mimics functional operations like `map`,
+`filter`, `reduce` found in the standard library as well as many of the
+streaming functions found in `toolz`.
 
     numpy -> dask.array
     toolz -> dask.bag
@@ -62,10 +62,10 @@ Here's wordcount.
 ...     return word.lower().rstrip(",.!:;'-\"").lstrip("'\"")
 
 >>> dict(b.map(str.split).map(concat).map(stem).frequencies())
-TODO
+{...}
 {% endhighlight %}
 
-We used all of our cores and streamed through memory on each core.  We used
+We use all of our cores and stream through memory on each core.  We use
 `multiprocessing` but could get fancier with some work.
 
 
@@ -75,10 +75,11 @@ Design
 As before, a `Bag` is just a dict holding tasks, along with a little meta data.
 
 {% highlight Python %}
->>> from dask.bag import Bag
 >>> d = {('x', 0): (range, 5),
 ...      ('x', 1): (range, 5),
 ...      ('x', 2): (range, 5)}
+
+>>> from dask.bag import Bag
 >>> b = Bag(d, 'x', npartitions=3)
 {% endhighlight %}
 
@@ -92,13 +93,13 @@ into three independent pieces
     [0, 1, 2, 3, 4]
     [0, 1, 2, 3, 4]
 
-When we abstractly operate on the large collection
+When we abstractly operate on the large collection...
 
 {% highlight Python %}
 >>> b2 = b.map(lambda x: x * 10)
 {% endhighlight %}
 
-We generate new tasks to operate on each of the components
+... we generate new tasks to operate on each of the components.
 
 {% highlight Python %}
 >>> b2.dask
@@ -110,15 +111,16 @@ We generate new tasks to operate on each of the components
  ('bag-1', 2): (map, lambda x: x * 10, ('x', 2))}
 {% endhighlight %}
 
-And when we ask for concrete results we spin up a scheduler to execute this
-dependency graph of tasks.
+And when we ask for concrete results (the call to `list`) we spin up a
+scheduler to execute the resulting dependency graph of tasks.
 
 {% highlight Python %}
 >>> list(b2)
 [0, 10, 20, 30, 40, 0, 10, 20, 30, 40, 0, 10, 20, 30, 40]
 {% endhighlight %}
 
-More complex operations yield more complex dasks
+More complex operations yield more complex dasks.  Beware, dask code is pretty
+Lispy.  Fortunately these dasks are internal; users don't interact with them.
 
 {% highlight Python %}
 >>> iseven = lambda x: x % 2 == 0
@@ -142,20 +144,20 @@ The current interface for `Bag` has the following operations:
     fold            max                 topk
     foldby          mean                var
 
-Our manipulations of bags create task dependency graphs which we eventually
-execute in parallel.
+Manipulations of bags create task dependency graphs.  We eventually execute
+these graphs in parallel.
 
 
 Execution
 ---------
 
 We repurpose the threaded scheduler we used for arrays to support
-`multiprocessing` (or other libraries) to give us multiple cores even on pure
-Python code.  We're careful about not moving data around.  None of the
-operations listed above requires significant data transfer.
+`multiprocessing` to provide parallelism even on pure Python code.  We're
+careful to avoid unnecessary data transfer.  None of the operations listed above
+requires significant communication.
 
-We're careful about function serialization and error reporting, two issues that
-plague naive use of `multiprocessing`
+We take care to serialize functions properly and collect/report errors, two
+issues that plague naive use of `multiprocessing` in Python.
 
 {% highlight Python %}
 >>> list(b.map(lambda x: x * 10))  # This works!
@@ -179,30 +181,28 @@ Productive Sweet Spot
 I think that there is a productive sweet spot in the following configuration
 
 1.  Pure Python functions
-2.  Streaming workflows
+2.  Streaming/lazy data
 3.  Multiprocessing
 4.  A single large machine or a few machines in an informal cluster
 
 This setup is common; you're likely reading this blog from such a setup.  It's
-capable of handling TeraByte scale workflows.  Larger too, but not very much
+capable of handling terabyte scale workflows.  Larger too, but not very much
 larger.
 
 People rarely take this route.  They use single-threaded in-memory Python until
-it breaks, and then seek out *Big Data* infrastructure like Hadoop/Spark at
+it breaks, and then seek out *Big Data Infrastructure* like Hadoop/Spark at
 relatively high productivity overhead.
 
-*Your computer can scale higher than you think.*
+*Your workstation can scale bigger than you think.*
 
 
 Example
 -------
 
-A more real example.
-
-Here is some [network flow
-data](http://ita.ee.lbl.gov/html/contrib/UCB.home-IP-HTTP.html), recording
-which computers sent connection to which other computers on the UC-Berkeley
-campus in 1996.
+Here is about a gigabyte of
+[network flow data](http://ita.ee.lbl.gov/html/contrib/UCB.home-IP-HTTP.html),
+recording which computers made connections to which other computers on the
+UC-Berkeley campus in 1996.
 
     846890339:661920 846890339:755475 846890340:197141 168.237.7.10:1163 83.153.38.208:80 2 8 4294967295 4294967295 846615753 176 2462 39 GET 21068906053917068819..html HTTP/1.0
     846890340:989181 846890341:2147 846890341:2268 13.35.251.117:1269 207.83.232.163:80 10 0 842099997 4294967295 4294967295 64 1 38 GET 20271810743860818265..gif HTTP/1.0
@@ -303,6 +303,9 @@ Conclusion
 I think of `dask.bag` as a poorman's Spark.  It lacks a locality-aware scheduler
 but it is `pip` installable, pure Python, and doesn't depend on the JVM.  It
 was also cheap, most of the work was done last weekend.
+
+A skilled developer could extend this to work in a distributed memory context.
+The logic to create the task dependency graphs is separate from the scheduler.
 
 Special thanks to Erik Welch for finely crafting the dask optimization passes
 that keep our data flowly smoothly.
