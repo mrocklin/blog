@@ -62,9 +62,11 @@ SSH
 
 >>> into('ssh://hostname:myfile.csv', 'myfile.csv', **auth)   # Move local file
 >>> into('ssh://hostname:myfile.csv', 'myfile.json', **auth)  # Move local file
+{% endhighlight %}
 
-And, because we're connected to the network, lots of other things work too.
+Because we're connected to the network, lots of other things work too.
 
+{% highlight Python %}
 >>> df = into(pd.DataFrame, 'ssh://hostname:myfile.json', **auth)
 {% endhighlight %}
 
@@ -163,14 +165,14 @@ following route:
     SSH(CSV) -> CSV -> pd.DataFrame
 
 Each step of this path is quite easy given `paramiko` and `pandas`.  However we
-don't want the CSV file to hang around (users would hate us if we slowly filled
-up their `/tmp` folder.)
+don't want the intermediate CSV file to hang around (users would hate us if we
+slowly filled up their `/tmp` folder.)  We need to clean it up when we're done.
 
 To solve this problem, we introduce a new type modifier, `Temp`, that `drop`s
 itself on garbage collection (`drop` is another magic function in `into`, [see
 docs](http://into.readthedocs.org/en/latest/drop.html)).  This lets us tie the
 Python garbage collector to persistent data outside of the Python process.
-It's not fool-proof, but it's pretty effective.
+It's not fool-proof, but it is pretty effective.
 
     SSH(CSV) -> Temp(CSV) -> pd.DataFrame
 
@@ -190,6 +192,7 @@ class _Temp(object):
 def Temp(cls):
     return type('Temp(%s)' % cls.__name__, (_Temp, cls), {'persistent_type': cls})
 
+from toolz import memoize
 Temp.__doc__ = _Temp.__doc__
 Temp = memoize(Temp)
 {% endhighlight %}
@@ -201,9 +204,9 @@ be very effective in practice.
 ### Keyword Arguments
 
 The number of possible keyword arguments to a single `into` call is increasing.
-We don't have a good mechanism to help users discover what are valid options.
-Docstrings are hard because the options depend pretty heavily on the other
-inputs.  For the moment we're solving this with [online
+We don't have a good mechanism to help users discover the valid options for
+their situation.  Docstrings are hard here because the options depend on the
+source and target inputs.  For the moment we're solving this with [online
 documentation](http://into.readthedocs.org) for each complicated format but
 there is probably a better solution out there.
 
@@ -213,7 +216,9 @@ Help!
 
 The new behavior around `ssh://` and `hdfs://` and `hive://` is new, error
 prone, and could really use play-testing.  I strongly welcome feedback and
-error reporting here.
+error reporting here.  You could
+[file an issue](https://github.com/ContinuumIO/into/issues/new)
+or e-mail blaze-dev@continuum.io.
 
 
 Other
@@ -231,4 +236,5 @@ arguments to be more like `cp`.  An example is below:
     $ into source target --key value --key value --key value
     $ into myfile.csv ssh://hostname:myfile.json --delimter ','
 
-We also have docs!  http://into.readthedocs.org/en/latest/
+We also have docs!
+[http://into.readthedocs.org/en/latest/](http://into.readthedocs.org/en/latest/)
