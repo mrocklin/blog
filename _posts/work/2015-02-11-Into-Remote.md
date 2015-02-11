@@ -2,7 +2,6 @@
 layout: post
 title: Into and Remote Data
 tagline: Mucking about with `ssh` and `hdfs`
-draft: True
 category : work
 tags : [scipy, Python, Programming, Blaze]
 ---
@@ -149,7 +148,7 @@ subclasses, we call these *type modifiers*.  So `SSH(CSV)` is a new type that
 acts like a CSV file and like the hidden `_SSH` superclass.
 
 {% highlight Python %}
->>> SSH(CSV)('/path/to/data', delimiter=',', user='ubuntu')
+>>> SSH(CSV)('/path/to/data', delimiter=',', hostname='54.131.11.43', user='ubuntu')
 >>> Directory(JSON)('/path/to/data/')
 {% endhighlight %}
 
@@ -164,7 +163,7 @@ following route:
 
     SSH(CSV) -> CSV -> pd.DataFrame
 
-Each step of this path is quite easy given `paramiko` and `pandas`.  However we
+Both steps of this path are easy given `paramiko` and `pandas`.  However we
 don't want the intermediate CSV file to hang around (users would hate us if we
 slowly filled up their `/tmp` folder.)  We need to clean it up when we're done.
 
@@ -197,8 +196,8 @@ Temp.__doc__ = _Temp.__doc__
 Temp = memoize(Temp)
 {% endhighlight %}
 
-I won't be surprised if this approach concerns a few people.  I've found it to
-be very effective in practice.
+I won't be surprised if this approach concerns a few people but I've found it to
+be effective so far.
 
 
 ### Keyword Arguments

@@ -124,8 +124,7 @@ Lispy.  Fortunately these dasks are internal; users don't interact with them.
 
 {% highlight Python %}
 >>> iseven = lambda x: x % 2 == 0
->>> b3 = b.filter(iseven).count()
-
+>>> b3 = b.filter(iseven).count().dask
 {'bag-3': (sum, [('bag-2', 1), ('bag-2', 2), ('bag-2', 0)]),
  ('bag-2', 0): (count,
                 (filter, iseven, (range, 5))),
