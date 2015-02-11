@@ -113,7 +113,8 @@ And so we build these routes, enabling operations like the following:
 ...      'hdfs://hostname:mydata/*.csv' **auth)
 {% endhighlight %}
 
-But Hive is also a bit finicky.  Blaze uses the
+But Hive is also a bit finicky.
+[Blaze](http://continuum.io/open-source/blaze/) uses the
 [PyHive](https://github.com/dropbox/PyHive/) sqlalchemy dialect to query Hive
 tables; unfortunately the way Hive works we need to create them by hand.  Hive
 is different from most databases in that it doesn't have an internal format.
