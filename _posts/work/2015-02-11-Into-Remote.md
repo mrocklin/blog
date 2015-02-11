@@ -20,9 +20,9 @@ Motivation
 formats.  We saw that a network of pairwise data conversions can robustly
 migrate data, eliminating some of the frustration of data science.
 
-This frustration compounds when data lives on other computers or parallel file
-systems like HDFS.  Moving data from your local machine into something like the
-Hive metastore often requires several steps.
+This frustration compounds when data lives on other computers or distributed
+file systems like HDFS.  Moving data from your local machine into something
+like the Hive metastore often requires several steps.
 
 1.  `scp` data to cluster
 2.  `hadoop fs -cp` data to HDFS
@@ -44,8 +44,8 @@ So we took this as a case study and extended the `into` network appropriately.
 We integrate the following libraries and protocols
 
 *  `ssh://hostname:myfile.csv` accesses data on remote machines through `paramiko`
-*  `hdfs://hostname:myfile.csv` accesses data on the Hadoop parallel file system
-   through WebHDFS using the `pywebhdfs` library
+*  `hdfs://hostname:myfile.csv` accesses data on the Hadoop distributed file
+    system through WebHDFS using the `pywebhdfs` library
 *  `hive://hostname::tablename` accesses data on the Hive Metastore using a
     combination of SQLAlchemy and hand crafted `CREATE TABLE` / `LOAD`
     statements
@@ -54,7 +54,7 @@ We integrate the following libraries and protocols
 SSH
 ---
 
-`into` is now a poorman's `scp`.
+`into` is now a fancy `scp`.
 
 {% highlight Python %}
 >>> auth = {'username': 'alice',
@@ -83,7 +83,7 @@ HDFS
 
 WebHDFS is a web interface to the Hadoop File System.  It is surprisingly high
 performance (I often erroneously think of HTTP as slow) but isn't always turned
-on on every instance.  If it is then you should be able to transfer data in and
+on in every instance.  If it is then you should be able to transfer data in and
 out easily, just as we did for `SSH`
 
 {% highlight Python %}
