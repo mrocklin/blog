@@ -2,7 +2,6 @@
 layout: post
 title: Towards Out-of-core ND-Arrays -- Slicing and Stacking
 category : work
-draft: true
 tags : [scipy, Python, Programming, Blaze, dask]
 ---
 {% include JB/setup %}
