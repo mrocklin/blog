@@ -169,8 +169,10 @@ inputs, we can just feed our `da.Array` objects directly in to matplotlib
 
 <table>
 <tr>
-<td><img src="{{ BASE_PATH }}/images/avg.png" width="100%"></td>
-<td><img src="{{ BASE_PATH }}/images/diff.png" width="100%"></td>
+<td><a href="{{ BASE_PATH }}/images/avg.png">
+        <img src="{{ BASE_PATH }}/images/avg.png" width="100%"></a></td>
+<td><a href="{{ BASE_PATH }}/images/diff.png">
+        <img src="{{ BASE_PATH }}/images/diff.png" width="100%"></a></td>
 </tr>
 </table>
 
@@ -182,7 +184,8 @@ difference between the temperatures at 00:00 and at 12:00
 >>> imshow(x[::4].mean(axis=0) - x[2::4].mean(axis=0), cmap='RdBu_r')
 {% endhighlight %}
 
-<img src="{{ BASE_PATH }}/images/day-vs-night.png" width="60%">
+<a href="{{ BASE_PATH }}/images/day-vs-night.png">
+    <img src="{{ BASE_PATH }}/images/day-vs-night.png" width="100%"></a>
 
 Even though this looks and feels like NumPy were able to complete these
 operations in a very small amount of space.  If these operations were
