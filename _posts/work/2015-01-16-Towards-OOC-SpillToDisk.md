@@ -18,7 +18,7 @@ using NumPy, Blaze, and dask.  You can view these posts here:
 1. [Simple task scheduling](http://matthewrocklin.com/blog/work/2014/12/27/Towards-OOC/),
 2. [Frontend usability](http://matthewrocklin.com/blog/work/2014/12/30/Towards-OOC-Frontend/)
 3. [A multi-threaded scheduler](http://matthewrocklin.com/blog/work/2015/01/06/Towards-OOC-Scheduling/)
-4. [Matrix Multiply Benchmark](http://matthewrocklin.com/blog/work/2015/01/15/Towards-OOC-MatMul/)
+4. [Matrix Multiply Benchmark](http://matthewrocklin.com/blog/work/2015/01/14/Towards-OOC-MatMul/)
 
 We now present `chest` a `dict` type that spills to disk when we run out of
 memory.  We show how it prevents large computations from flooding memory.

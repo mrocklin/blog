@@ -18,8 +18,8 @@ using NumPy, and dask.  You can view these posts here:
 1. [Simple task scheduling](http://matthewrocklin.com/blog/work/2014/12/27/Towards-OOC/),
 2. [Frontend usability](http://matthewrocklin.com/blog/work/2014/12/30/Towards-OOC-Frontend/)
 3. [A multi-threaded scheduler](http://matthewrocklin.com/blog/work/2015/01/06/Towards-OOC-Scheduling/)
-4. [Matrix Multiply Benchmark](http://matthewrocklin.com/blog/work/2015/01/15/Towards-OOC-MatMul/)
-5. [Spilling to disk](http://matthewrocklin.com/blog/work/2015/01/16/SpillToDisk/)
+4. [Matrix Multiply Benchmark](http://matthewrocklin.com/blog/work/2015/01/14/Towards-OOC-MatMul/)
+5. [Spilling to disk](http://matthewrocklin.com/blog/work/2015/01/16/Towards-OOC-SpillToDisk/)
 
 Now we talk about slicing and stacking.  We use meteorological data as an
 example use case.
