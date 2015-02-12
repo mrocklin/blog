@@ -246,7 +246,7 @@ Second, this post shows off work from the following people:
 1.  [Erik Welch](https://github.com/eriknw) ([Continuum](http://continuum.io))
     wrote optimization passes to clean up dask graphs before execution.
 2.  [Wesley Emeneker](https://github.com/nevermindewe) ([Continuum](http://continuum.io)) wrote a good deal of the slicing code
-3.  [Stephan Hoyer](https://github.com/eriknw) ([Climate Corp](http://climate.com/))
+3.  [Stephan Hoyer](http://stephanhoyer.com/) ([Climate Corp](http://climate.com/))
     talked me through the application and pointed me to the data.  If you'd
     like to see dask integrated with
     [`xray`](http://xray.readthedocs.org/en/stable/)
