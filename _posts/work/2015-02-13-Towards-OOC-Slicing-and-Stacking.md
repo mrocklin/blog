@@ -14,7 +14,7 @@ Introduction
 ------------
 
 This is the sixth in a sequence of posts constructing an out-of-core nd-array
-using NumPy, Blaze, and dask.  You can view these posts here:
+using NumPy, and dask.  You can view these posts here:
 
 1. [Simple task scheduling](http://matthewrocklin.com/blog/work/2014/12/27/Towards-OOC/),
 2. [Frontend usability](http://matthewrocklin.com/blog/work/2014/12/30/Towards-OOC-Frontend/)
@@ -45,29 +45,29 @@ It does not currently support the following:
 Stack and Concatenate
 ---------------------
 
-People commonly store large arrays on disk in many different files.  They often
+We often store large arrays on disk in many different files.  We
 want to stack or concatenate these arrays together into one logical array.
 Dask solves this problem with the `stack` and `concatenate` functions, which
-follow NumPy style.
+stitch many arrays together into a single array, either creating a new
+dimension with `stack` or along an existing dimension with `concatenate`.
 
 ### Stack
 
-We stack many existing dask Arrays into a new array, creating a new dimension
+We stack many existing dask arrays into a new array, creating a new dimension
 as we go.
 
 {% highlight Python %}
 >>> import dask.array as da
->>> data = [from_array(np.ones((4, 4)), blockshape=(2, 2))
-...          for i in range(3)]  # A small stack of dask arrays
+>>> arrays = [from_array(np.ones((4, 4)), blockshape=(2, 2))
+...            for i in range(3)]  # A small stack of dask arrays
 
->>> x = da.stack(data, axis=0)
->>> x.shape
+>>> da.stack(arrays, axis=0).shape
 (3, 4, 4)
 
->>> da.stack(data, axis=1).shape
+>>> da.stack(arrays, axis=1).shape
 (4, 3, 4)
 
->>> da.stack(data, axis=-1).shape
+>>> da.stack(arrays, axis=2).shape
 (4, 4, 3)
 {% endhighlight %}
 
@@ -80,16 +80,13 @@ existing dimension
 
 {% highlight Python %}
 >>> import dask.array as da
->>> import numpy as np
+>>> arrays = [from_array(np.ones((4, 4)), blockshape=(2, 2))
+...            for i in range(3)]  # small stack of dask arrays
 
->>> data = [from_array(np.ones((4, 4)), blockshape=(2, 2))
-...          for i in range(3)]  # small stack of dask arrays
-
->>> x = da.concatenate(data, axis=0)
->>> x.shape
+>>> da.concatenate(arrays, axis=0).shape
 (12, 4)
 
->>> da.concatenate(data, axis=1).shape
+>>> da.concatenate(arrays, axis=1).shape
 (4, 12)
 {% endhighlight %}
 
@@ -97,11 +94,12 @@ existing dimension
 Case Study with Meteorological Data
 -----------------------------------
 
-To test this new functionality I've downloaded a bunch of weather data from the
+To test this new functionality we download [meteorological
+data](http://www.ecmwf.int/en/research/climate-reanalysis/era-interim) from the
 [European Centre for Medium-Range Weather
 Forecasts](http://www.ecmwf.int/#main-menu).  In particular we have the
 temperature for the Earth every six hours for all of 2014 with spatial
-resolution of a quarter degree.  I downloaded this data using [this
+resolution of a quarter degree.  We download this data using [this
 script](https://gist.github.com/mrocklin/26d8323f9a8a6a75fce0) (please don't
 hammer their servers unnecessarily) (Thanks due to [Stephan
 Hoyer](http://stephanhoyer.com/) for pointing me to this dataset).
@@ -122,12 +120,12 @@ As a result, I now have a bunch of netCDF files!
 (4, 721, 1440)
 {% endhighlight %}
 
-The shape there is four measurements per day (24h / 6h), 720 measurements
+The shape corresponds to four measurements per day (24h / 6h), 720 measurements
 North/South (180 / 0.25) and 1440 measurements East/West (360/0.25).  There are
 365 files.
 
-Great!  Lets collect these under one logical dask array, concatenating along
-the first time axis.
+Great!  We collect these under one logical dask array, concatenating along
+the time axis.
 
 {% highlight Python %}
 >>> from glob import glob
@@ -187,10 +185,10 @@ difference between the temperatures at 00:00 and at 12:00
 <a href="{{ BASE_PATH }}/images/day-vs-night.png">
     <img src="{{ BASE_PATH }}/images/day-vs-night.png" width="100%"></a>
 
-Even though this looks and feels like NumPy were able to complete these
-operations in a very small amount of space.  If these operations were
-computationally intense (they aren't) then we also would have benefitted from
-multiple cores.
+Even though this looks and feels like NumPy we're actually operating off of
+disk using blocked algorithms.  We execute these operations using only a small
+amount of memory.  If these operations were computationally intense (they
+aren't) then we also would also benefit from multiple cores.
 
 
 What just happened
