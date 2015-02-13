@@ -7,6 +7,10 @@ tags : [scipy, Python, Programming, Blaze]
 ---
 {% include JB/setup %}
 
+*This work is supported by [Continuum Analytics](http://continuum.io)
+and the [XDATA Grant](http://www.darpa.mil/our_work/i2o/programs/xdata.aspx)
+as part of the [Blaze Project](http://blaze.pydata.org/docs/dev/index.html)*
+
 **tl;dr Blaze migrates data efficiently between a variety of data stores.**
 
 In our [last post on Blaze expressions](./foo) we showed how Blaze can execute

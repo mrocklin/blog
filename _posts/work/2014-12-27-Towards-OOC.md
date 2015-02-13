@@ -6,6 +6,10 @@ tags : [scipy, Python, Programming, Blaze, dask]
 ---
 {% include JB/setup %}
 
+*This work is supported by [Continuum Analytics](http://continuum.io)
+and the [XDATA Grant](http://www.darpa.mil/our_work/i2o/programs/xdata.aspx)
+as part of the [Blaze Project](http://blaze.pydata.org/docs/dev/index.html)*
+
 **tl;dr** We propose a system for task-centered computation, show an example
 with out-of-core nd-arrays, and ask for comments.
 
