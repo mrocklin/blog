@@ -11,55 +11,65 @@ tags : [scipy, Python, Programming, Blaze, dask]
 and the [XDATA Grant](http://www.darpa.mil/our_work/i2o/programs/xdata.aspx)
 as part of the [Blaze Project](http://blaze.pydata.org/docs/dev/index.html)*
 
-**tl;dr** We use dask to build a parallel collection.
+**tl;dr** We use dask to build a parallel Python list.
 
-Motivation
-----------
+Introduction
+------------
 
-Unstructured data defies structured tools like Pandas, NumPy or SQL.  Our
-efficient tools break down on messy log files or bulk image data.  This messy
-data requires the full generality of our programming languages, not just the
-tuned subset.
+This is the seventh in a sequence of posts constructing an out-of-core nd-array
+using NumPy, and dask.  You can view these posts here:
 
-Unfortunately this early stage of raw data is also when our data is the largest
-and most unweidly.  Our computational tools break down just when we need them
-the most.
+1. [Simple task scheduling](http://matthewrocklin.com/blog/work/2014/12/27/Towards-OOC/),
+2. [Frontend usability](http://matthewrocklin.com/blog/work/2014/12/30/Towards-OOC-Frontend/)
+3. [A multi-threaded scheduler](http://matthewrocklin.com/blog/work/2015/01/06/Towards-OOC-Scheduling/)
+4. [Matrix Multiply Benchmark](http://matthewrocklin.com/blog/work/2015/01/14/Towards-OOC-MatMul/)
+5. [Spilling to disk](http://matthewrocklin.com/blog/work/2015/01/16/Towards-OOC-SpillToDisk/)
+6. [Slicing and Stacking](http://matthewrocklin.com/blog/work/2015/02/13/Towards-OOC-Slicing-and-Stacking/)
 
-Except for tools like Hadoop, Disco, Spark, or Storm.  These tools provide a
-different, general-purpose-ish, abstraction to users.  They don't optimize join
-and sort algorithms or provide high-level abstractions, they mostly try to get
-out of the way.  All of these tools have decent Python client libraries.
-
-Unfortunately the infrastructure behind these systems isn't appropriate for
-individuals or for small organizations; they're hard to set up.  *This is just
-my opinion; this point is debatable.*  Also, these systems are often overkill.
+Today we take a break from ND-Arrays and show how task scheduling can attack
+other collections like the simple `list` of Python objects.
 
 
-Dask collections
-----------------
+Unstructured Data
+-----------------
 
-So we're taking a break from the structured world of `ndarrays` to investigate
-how `dask` can tackle this messy world.
+Often before we have an `ndarray` or a `table/DataFrame` we have unstructured
+data like log files.  In this case tuned subsets of the language (e.g.
+`numpy`/`pandas`) aren't sufficient, we need the full Python language.
 
-Recall that `dask` is a way to use Python dicts to define a computation
-as a network of tasks.  We recently built an array abstraction *around* dask;
-now we build another abstraction around dask, this time the plain Python `list`
-rather than the `ndarray`.  Actually, we're not going to guarantee order, so
-instead of `list`, we're going to call this a `Bag`.
+My usual approach to the inconveniently large dump of log files is to use
+Python [streaming
+iterators](http://toolz.readthedocs.org/en/latest/streaming-analytics.html)
+along with [multiprocessing or IPython
+Parallel](http://toolz.readthedocs.org/en/latest/parallelism.html) on a single
+large machine.  I often write/speak about this workflow when discussing
+[`toolz`](http://toolz.readthedocs.org/).
+
+This workflow grows complex for most users when you introduce many processes.
+To resolve this we build our normal tricks into a new `dask.Bag` collection.
+
+
+Bag
+---
 
 In the same way that `dask.array` mimics NumPy operations (e.g. matrix
 multiply, slicing), `dask.bag` mimics functional operations like `map`,
 `filter`, `reduce` found in the standard library as well as many of the
 streaming functions found in `toolz`.
 
-    numpy -> dask.array
-    toolz -> dask.bag
+*  Dask array = NumPy + threads
+*  Dask bag = Python/Toolz + processes
 
-Here's wordcount.
+
+Example
+-------
+
+Here's the obligatory wordcount example
 
 {% highlight Python %}
->>> from dask.bag import Bag, filenames
->>> b = into(Bag, 'texts.*.txt')
+>>> from dask.bag import Bag
+
+>>> b = Bag.from_filenames('data/*.txt')
 
 >>> def stem(word):
 ...     """ Stem word to primitive form """
@@ -71,6 +81,23 @@ Here's wordcount.
 
 We use all of our cores and stream through memory on each core.  We use
 `multiprocessing` but could get fancier with some work.
+
+
+Related Work
+------------
+
+There are a lot of much larger much more powerful systems that have a similar
+API, notably [Spark](http://spark.apache.org/) and
+[DPark](https://github.com/douban/dpark).  If you have *Big Data* and need to
+use very many machines then you should stop reading this and go install them.
+
+I mostly made dask.bag because
+
+1.  It was very easy given the work already done on dask.array
+2.  I often only need multiprocessing + a heavy machine
+3.  I wanted something trivially pip installable that didn't use the JVM
+
+But again, if you have *Big Data*, then this isn't for you.
 
 
 Design
@@ -141,7 +168,7 @@ Lispy.  Fortunately these dasks are internal; users don't interact with them.
 The current interface for `Bag` has the following operations:
 
     all             frequencies         min
-    any             join                std
+    any             join                product
     count           map                 std
     filter          map_partitions      sum
     fold            max                 topk
@@ -157,10 +184,13 @@ Execution
 We repurpose the threaded scheduler we used for arrays to support
 `multiprocessing` to provide parallelism even on pure Python code.  We're
 careful to avoid unnecessary data transfer.  None of the operations listed above
-requires significant communication.
+requires significant communication.  Notably we don't have any concept of
+*shuffling* or scatter/gather.
 
-We take care to serialize functions properly and collect/report errors, two
-issues that plague naive use of `multiprocessing` in Python.
+We [use dill](http://trac.mystic.cacr.caltech.edu/project/pathos/wiki/dill) to
+take care to serialize functions properly and collect/report errors, two issues
+that [plague naive use of
+`multiprocessing`](http://matthewrocklin.com/blog/work/2013/12/05/Parallelism-and-Serialization/) in Python.
 
 {% highlight Python %}
 >>> list(b.map(lambda x: x * 10))  # This works!
@@ -188,13 +218,10 @@ I think that there is a productive sweet spot in the following configuration
 3.  Multiprocessing
 4.  A single large machine or a few machines in an informal cluster
 
-This setup is common; you're likely reading this blog from such a setup.  It's
-capable of handling terabyte scale workflows.  Larger too, but not very much
-larger.
-
-People rarely take this route.  They use single-threaded in-memory Python until
-it breaks, and then seek out *Big Data Infrastructure* like Hadoop/Spark at
-relatively high productivity overhead.
+This setup is common and it's capable of handling terabyte scale workflows.
+In my brief experience people rarely take this route.  They use single-threaded
+in-memory Python until it breaks, and then seek out *Big Data Infrastructure*
+like Hadoop/Spark at relatively high productivity overhead.
 
 *Your workstation can scale bigger than you think.*
 
@@ -208,7 +235,9 @@ recording which computers made connections to which other computers on the
 UC-Berkeley campus in 1996.
 
     846890339:661920 846890339:755475 846890340:197141 168.237.7.10:1163 83.153.38.208:80 2 8 4294967295 4294967295 846615753 176 2462 39 GET 21068906053917068819..html HTTP/1.0
+
     846890340:989181 846890341:2147 846890341:2268 13.35.251.117:1269 207.83.232.163:80 10 0 842099997 4294967295 4294967295 64 1 38 GET 20271810743860818265..gif HTTP/1.0
+
     846890341:80714 846890341:90331 846890341:90451 13.35.251.117:1270 207.83.232.163:80 10 0 842099995 4294967295 4294967295 64 1 38 GET 38127854093537985420..gif HTTP/1.0
 
 This is actually relatively clean.  Many of the fields are space delimited (not
@@ -220,7 +249,7 @@ Lets use Bag and regular expressions to parse this.
 {% highlight Python %}
 In [1]: from dask.bag import Bag, into
 
-In [2]: b = into(Bag, 'UCB-home-IP*.log')
+In [2]: b = Bag.from_filenames('UCB-home-IP*.log')
 
 In [3]: import re
 
@@ -300,15 +329,77 @@ Out[9]:
 {% endhighlight %}
 
 
+Comparison with Spark
+---------------------
+
+First, it is silly and unfair to compare with PySpark running locally.  PySpark
+offers much more in a distributed context.
+
+{% highlight Python %}
+In [1]: import pyspark
+
+In [2]: sc = pyspark.SparkContext('local')
+
+In [3]: from glob import glob
+In [4]: filenames = sorted(glob('UCB-home-*.log'))
+In [5]: rdd = sc.parallelize(filenames, numSlices=4)
+
+In [6]: import re
+In [7]: pattern = ...
+In [8]: prog = re.compile(pattern)
+
+In [9]: lines = rdd.flatMap(lambda fn: list(open(fn)))
+In [10]: records = lines.map(lambda line: prog.match(line).groupdict())
+In [11]: ips = records.map(lambda rec: (rec['client_ip'], rec['server_ip']))
+
+In [12]: from toolz import topk
+In [13]: %time dict(topk(10, ips.countByValue().items(), key=1))
+CPU times: user 1.32 s, sys: 52.2 ms, total: 1.37 s
+Wall time: 1min 21s
+Out[13]:
+{('146.214.34.69', '119.153.78.6'): 12554,
+ ('17.32.139.174', '179.135.20.36'): 10166,
+ ('172.219.28.251', '47.61.128.1'): 22333,
+ ('229.112.177.58', '47.61.128.1'): 12993,
+ ('240.97.200.0', '108.146.202.184'): 17492,
+ ('247.193.34.56', '243.182.247.102'): 35353,
+ ('55.156.159.21', '124.77.75.86'): 7506,
+ ('55.156.159.21', '157.229.248.255'): 7533,
+ ('55.156.159.21', '97.5.181.76'): 7501,
+ ('97.166.76.88', '65.81.49.125'): 8155}
+{% endhighlight %}
+
+So, given a compute-bound mostly embarrassingly parallel task (regexes are
+comparatively expensive) on a single machine they are comparable.
+
+Reasons you would want to use Spark
+
+*  You want to use many machines and interact with HDFS
+*  Shuffling operations
+
+Reasons you would want to use dask.bag
+
+*  Trivial installation
+*  No mucking about with JVM heap sizes or config files
+*  Nice error reporting.  Spark error reporting includes the typical giant
+   Java Stack trace that comes with any JVM solution.
+*  Easier/simpler for Python programmers to hack on.
+   The implementation is 350 lines including comments.
+
+Again, this is really just a toy experiment to show that the dask model isn't
+just about arrays.  I absolutely do not want to throw Dask in the ring with
+Spark.
+
+
 Conclusion
 ----------
 
-I think of `dask.bag` as a poorman's Spark.  It lacks a locality-aware scheduler
-but it is `pip` installable, pure Python, and doesn't depend on the JVM.  It
-was also cheap, most of the work was done last weekend.
+However I do want to stress the importance of single-machine parallelism.
+Dask.bag targets this application well and leverages common hardware in a
+simple way that is both natural and accessible to most Python programmers.
 
 A skilled developer could extend this to work in a distributed memory context.
 The logic to create the task dependency graphs is separate from the scheduler.
 
-Special thanks to Erik Welch for finely crafting the dask optimization passes
-that keep our data flowly smoothly.
+Special thanks to [Erik Welch](http://github.com/eriknw) for finely crafting
+the dask optimization passes that keep the data flowly smoothly.
