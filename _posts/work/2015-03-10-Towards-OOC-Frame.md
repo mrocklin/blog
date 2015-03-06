@@ -354,6 +354,9 @@ reach the stage of "just use a database"?
 *  Pandas doesn't yet release the GIL, so this is all single-core.  See post on
 [PyData and the GIL]({{BASE_PATH}}/work/03-10-2015/PyData-GIL/).
 
+*  My current solution lacks basic functionality.  I've skipped
+   the easy things to first ensure sure that the hard stuff is doable.
+
 
 Help!
 -----
