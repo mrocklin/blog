@@ -7,7 +7,7 @@ tags : [scipy, Python, Programming, Blaze, dask]
 {% include JB/setup %}
 
 *This work is supported by [Continuum Analytics](http://continuum.io)
-and the [XDATA Grant](http://www.darpa.mil/our_work/i2o/programs/xdata.aspx)
+and the [XDATA Program](http://www.darpa.mil/our_work/i2o/programs/xdata.aspx)
 as part of the [Blaze Project](http://blaze.pydata.org/docs/dev/index.html)*
 
 **tl;dr** We benchmark dask on an out-of-core dot product.  We also compare and
