@@ -40,7 +40,7 @@ stages:
 
 *  NumPy
 *  SciPy
-*  Numba in `nopython` mode
+*  Numba ([if requested](http://numba.pydata.org/numba-doc/0.17.0/user/jit.html#nogil))
 *  SciKit Learn
 *  Anything that mostly uses the above projects
 *  *if you add more in the comments then I will post them here*
