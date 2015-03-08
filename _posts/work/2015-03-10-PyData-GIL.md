@@ -20,34 +20,34 @@ Introduction
 Machines grow more cores every year.  My cheap laptop has four cores and a
 heavy workstation rivals a decent cluster without the hardware hassle.  When I
 bring this up in conversation people often ask about *the GIL* and whether or
-not this poses a problem to the PyData ecosystem.
+not this poses a problem to the PyData ecosystem and shared-memory parallelism.
 
 Q: *Given the growth of shared-memory parallelism, should the PyData ecosystem
     be concerned about the GIL?*
 
-A: *No, we should be very excited about this growth.  We're really well poised
-    to exploit it*
+A: *No, we should be very excited about this growth.  We're well poised to
+    exploit it.*
 
-For those who aren't familiar the Global Interpreter Lock (GIL) stops threads
-from manipulating Python objects in parallel in CPython.  This cripples Pure
-Python shared-memory parallelism.  This sounds like a big deal but it doesn't
-really affect the PyData stack (NumPy/Pandas/SciKit *)
+For those who aren't familiar, the Global Interpreter Lock (GIL) is a
+CPython feature/bug that stops threads from manipulating Python objects in
+parallel.  This cripples Pure Python shared-memory parallelism.
 
-Many PyData projects don't spend much time in Python code.  They spend
-99% of their time in C/Fortran/Cython code.  This code can release the GIL.
-
-The following projects release the GIL at various stages:
+This sounds like a big deal but it doesn't really affect the PyData stack
+(NumPy/Pandas/SciKits).  Most PyData projects don't spend much time in Python
+code.  They spend 99% of their time in C/Fortran/Cython code.  This code can
+often release the GIL.  The following projects release the GIL at various
+stages:
 
 *  NumPy
 *  SciPy
 *  Numba in `nopython` mode
 *  SciKit Learn
+*  Anything that mostly uses the above projects
 *  *if you add more in the comments then I will post them here*
 
-Additionally any project that depends on these gains the same benefit.
 
-Our software stack has roots in scientific computing which historically has an
-amazing relationship with using all-of-the-hardware.  I would like to see the
+Our software stack has roots in scientific computing which has an amazing
+relationship with using all-of-the-hardware.  I would like to see the
 development community lean in to the use of shared-memory parallelism.  This
 feels like a large low-hanging fruit.
 
@@ -76,7 +76,7 @@ parallelism in the underlying native code.*
 
 Note the 361.0% CPU utilization in the `ipython` process.
 
-Because the PyData stack is fundamentally based on native compiled code
+Because the PyData stack is fundamentally based on native compiled code,
 multiple Python threads can crunch data in parallel without worrying about the
 GIL.  The GIL does not have to affect us in a significant way.
 
@@ -108,5 +108,5 @@ PyData <3 Shared Memory Parallelism
 -----------------------------------
 
 If you're looking for more speed in compute-bound applications then consider
-threading or heavy workstation machines.  I personally find this approach to be
-more convenient than spinning up a cluster.
+threading and heavy workstation machines.  I personally find this approach to
+be more convenient than spinning up a cluster.
