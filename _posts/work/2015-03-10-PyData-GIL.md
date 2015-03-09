@@ -103,7 +103,8 @@ blogpost about
 Pandas does not yet release the GIL in computationally intensive code.
 It probably could though.  This requires momentum from the community and some
 grunt-work by some of the Pandas devs.  I have a small issue
-[here](https://github.com/pydata/pandas/issues/8882).
+[here](https://github.com/pydata/pandas/issues/8882) and I think that [Phil
+Cloud](https://github.com/cpcloud) is looking into it.
 
 
 PyData <3 Shared Memory Parallelism
