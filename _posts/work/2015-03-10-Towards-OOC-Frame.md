@@ -84,7 +84,9 @@ This approach supports the following operations:
 
 The reductions and split-apply-combine operations require some cleverness.
 This is how Blaze works now and how it does the does out-of-core operations in
-these notebooks (TODO link to notebooks).
+these notebooks:
+[Blaze and CSVs](http://nbviewer.ipython.org/github/ContinuumIO/blaze/blob/gh-pages/notebooks/timings-csv.ipynb),
+[Blaze and Binary Storage](http://nbviewer.ipython.org/github/ContinuumIO/blaze/blob/gh-pages/notebooks/timings-bcolz.ipynb).
 
 However this approach does not support the following operations:
 
@@ -115,7 +117,7 @@ value ranges of the index.
 This opens up a few more operations
 
 *  Joins are possible when both tables share the same index.  Because we have
-   information about index values we We know which blocks from one side need to
+   information about index values we we know which blocks from one side need to
    communicate to which blocks from the other.
 *  Split-apply-combine with transform/apply steps are possible when the grouper
    is the index.  In this case we're guaranteed that each group is in the same
