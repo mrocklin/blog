@@ -11,7 +11,7 @@ tags : [scipy, Python, Programming, Blaze, dask]
 and the [XDATA Program](http://www.darpa.mil/our_work/i2o/programs/xdata.aspx)
 as part of the [Blaze Project](http://blaze.pydata.org/docs/dev/index.html)*
 
-*This post primarily targets developres.  It is on experimental code that is
+*This post primarily targets developers.  It is on experimental code that is
 not ready for users.*
 
 **tl;dr** Can we build `dask.frame`?  One approach involves indexes and a lot
@@ -352,7 +352,7 @@ serialization of DataFrames and sorting being hard.
 reach the stage of "just use a database"?
 
 *  Pandas doesn't yet release the GIL, so this is all single-core.  See post on
-[PyData and the GIL]({{BASE_PATH}}/work/03-10-2015/PyData-GIL/).
+[PyData and the GIL]({{BASE_PATH}}/work/03/10/2015/PyData-GIL/).
 
 *  My current solution lacks basic functionality.  I've skipped
    the easy things to first ensure sure that the hard stuff is doable.
