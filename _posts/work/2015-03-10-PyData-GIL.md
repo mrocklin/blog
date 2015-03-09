@@ -54,8 +54,10 @@ feels like a large low-hanging fruit.
 Quick Example with dask.array
 -----------------------------
 
-As a quick example, we compute a large random dot product with `dask.array` and
-look at `top`.
+As a quick example, we compute a large random dot product with
+[`dask.array`](http://dask.pydata.org/) and look at `top`.  Dask.array computes
+large array operations by breaking arrays up in to many small NumPy arrays and
+then executing those array operations in multiple threads.
 
 {% highlight Python %}
 In [1]: import dask.array as da
