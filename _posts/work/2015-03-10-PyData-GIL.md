@@ -2,7 +2,6 @@
 layout: post
 title: PyData and the GIL
 category : work
-draft: true
 tags : [scipy, Python, Programming]
 ---
 {% include JB/setup %}
