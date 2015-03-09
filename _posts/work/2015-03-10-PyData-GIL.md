@@ -40,6 +40,7 @@ stages:
 *  NumPy
 *  SciPy
 *  Numba ([if requested](http://numba.pydata.org/numba-doc/0.17.0/user/jit.html#nogil))
+   ([example docs](http://numba.pydata.org/numba-doc/dev/user/examples.html#multi-threading))
 *  SciKit Learn
 *  Anything that mostly uses the above projects
 *  *if you add more in the comments then I will post them here*
@@ -55,7 +56,7 @@ Quick Example with dask.array
 -----------------------------
 
 As a quick example, we compute a large random dot product with
-[`dask.array`](http://dask.pydata.org/) and look at `top`.  Dask.array computes
+[dask.array](http://dask.pydata.org/) and look at `top`.  Dask.array computes
 large array operations by breaking arrays up in to many small NumPy arrays and
 then executing those array operations in multiple threads.
 
