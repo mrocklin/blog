@@ -353,7 +353,7 @@ serialization of DataFrames and sorting being hard.
 reach the stage of "just use a database"?
 
 *  Pandas doesn't yet release the GIL, so this is all single-core.  See post on
-[PyData and the GIL]({{BASE_PATH}}/work/2015/03/11/PyData-GIL/).
+[PyData and the GIL]({{BASE_PATH}}/work/2015/03/10/PyData-GIL/).
 
 *  My current solution lacks basic functionality.  I've skipped
    the easy things to first ensure sure that the hard stuff is doable.
