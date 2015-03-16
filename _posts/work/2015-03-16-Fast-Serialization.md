@@ -41,12 +41,13 @@ Contenders
 *   `pickle` - The standard library pure Python solution
 *   `cPickle` - The standard library C solution
 *   `pickle.dumps(data, protocol=2)` - pickle and cPickle support multiple
-    protocols.  Protocol 2 is good for numeric data support.
+    protocols.  Protocol 2 is good for numeric data.
 *   `json` - using the standardlib `json` library, we encode the values and
     index as lists of ints/strings
-*   `json-no-index` - We don't encode the index of the DataFrame, `0, 1, ...`
-    We'll find that JSON does surprisingly well on pure text data
-*   `msgpack` - A binary JSON alternative
+*   `json-no-index` - Same as above except that we don't encode the index of the
+    DataFrame, e.g. `0, 1, ...`
+    We'll find that JSON does surprisingly well on pure text data.
+*   [msgpack](http://msgpack.org/) - A binary JSON alternative
 *   `CSV` - The venerable `pandas.read_csv` and `DataFrame.to_csv`
 *   `hdfstore` - Pandas' custom HDF5 storage format
 
