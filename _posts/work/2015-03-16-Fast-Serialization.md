@@ -96,6 +96,9 @@ charts](http://nbviewer.ipython.org/gist/mwaskom/886b4e5cb55fed35213d))*
 *Gist to recreate plots here:
 [https://gist.github.com/mrocklin/4f6d06a2ccc03731dd5f](https://gist.github.com/mrocklin/4f6d06a2ccc03731dd5f)*
 
+*Further Disclaimer:  These numbers average from multiple repeated calls to
+`loads/dumps`.  Actual performance in the wild is likely worse.*
+
 
 Observations
 ------------
