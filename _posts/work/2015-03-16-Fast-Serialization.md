@@ -110,6 +110,10 @@ metadata and then dump the raw bytes.  The main takeaway from this is that you
 should use the `protocol=2` keyword argument to pickle.  This option isn't
 well known but strongly impacts preformance.
 
+*Note: Aaron Meurer notes in the comments that for Python 3 users `protocol=3`
+is already default.  Python 3 users can trust the default `protocol=` setting
+to be efficient and should not specify `protocol=2`.*
+
 <img src="{{ BASE_PATH }}/images/serialize-subset.png"
      alt="Time costs to serialize numeric data"
      width="50%" align="right">
