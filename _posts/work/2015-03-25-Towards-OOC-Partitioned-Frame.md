@@ -67,18 +67,18 @@ then we run into problems.
     = 18 minutes
 
 Previously I stored the partition-shards individually on the filesystem using
-cPickle.  This was slow.  Now we collect and organize partition shards headed
-for the same out-block and write out many at a time, bundling overhead.
-We balance this practice against memory constraints.  This stresses both Python
-latencies and memory use.
+cPickle.  This was a mistake.  It was very slow.  Now we collect and organize
+partition shards headed for the same out-block and write out many at a time,
+bundling overhead.  We balance this practice against memory constraints.  This
+stresses both Python latencies and memory use.
 
 
 BColz, now for very small data
 ------------------------------
 
 Fortunately we have a nice on-disk chunked array container that
-supports append in Cython.  [BColz](http://bcolz.blosc.org/) (formerly BLZ
-(formerly CArray)) does this for us.  It wasn't originally designed for this
+supports append in Cython.  [BColz](http://bcolz.blosc.org/) (formerly BLZ,
+formerly CArray) does this for us.  It wasn't originally designed for this
 use case but performs admirably.
 
 Briefly, BColz is...
