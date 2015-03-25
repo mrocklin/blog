@@ -77,7 +77,7 @@ latencies and memory use.
 BColz, now for very small data
 ------------------------------
 
-Fortuantely we have a nice on-disk chunked array container that
+Fortunately we have a nice on-disk chunked array container that
 supports append in Cython.  [BColz](http://bcolz.blosc.org/) (formerly BLZ
 (formerly CArray)) does this for us.  It wasn't originally designed for this
 use case but performs admirably.
@@ -101,7 +101,7 @@ Partitioned Frame
 We use `carray` to make a new data structure `pframe` with the following
 operations:
 
-*  Append pandas DataFrame to collection, and partition it along the index on
+*  Append Pandas DataFrame to collection, and partition it along the index on
    known block divisions `blockdivs`
 *  Pull out the DataFrame corresponding to any particular partition
 
