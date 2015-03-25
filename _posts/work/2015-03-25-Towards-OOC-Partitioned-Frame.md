@@ -67,10 +67,11 @@ then we run into problems.
     = 18 minutes
 
 Previously I stored the partition-shards individually on the filesystem using
-cPickle.  This was a mistake.  It was very slow.  Now we collect and organize
-partition shards headed for the same out-block and write out many at a time,
-bundling overhead.  We balance this practice against memory constraints.  This
-stresses both Python latencies and memory use.
+cPickle.  This was a mistake.  It was very slow because it treated each of the
+million shards independently.  Now we aggregate shards headed for the same
+out-block and write out many at a time, bundling overhead.  We balance this
+against memory constraints.  This stresses both Python latencies and memory
+use.
 
 
 BColz, now for very small data
