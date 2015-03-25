@@ -263,17 +263,14 @@ I thought I'd quickly give some reasons why I think the current approach is
 theoretically better than an out-of-core sort; hopefully someone smarter can
 come by and tell me why I'm wrong.
 
-We don't need a full sort, we need something far weaker.  The approach outlined
-above has the following behavior.  External sort requires at least two passes
-over the data while the method above requires one full pass through the data as
-well as one additional pass through index column.
-
-Sorting is sufficient but not necessary; we actually need partitioning, a far
-weaker form of sorting, into block sizes that are of *approximately* equal
-size.  Furthermore, the *approximate size* can be pretty rough.  I don't think
-we would notice a variation of a factor of five in block sizes.  Task
-scheduling lets us be pretty sloppy with load imbalance as long as we have many
-tasks.
+We don't need a full sort, we need something far weaker.   External sort
+requires at least two passes over the data while the method above requires one
+full pass through the data as well as one additional pass through the index
+column to determine good block divisions.  These divisions should be of
+*approximately* equal size.  The *approximate size* can be pretty rough.  I
+don't think we would notice a variation of a factor of five in block sizes.
+Task scheduling lets us be pretty sloppy with load imbalance as long as we have
+many tasks.
 
 I haven't implemented a good external sort though so I'm only able to argue
 theory here.  I'm likely missing important implementation details.
