@@ -21,8 +21,8 @@ Partition Data
 
 Many efficient parallel algorithms require intelligently partitioned data.
 
-For example data indexed by time might partition into month-long
-blocks.  Data indexed by text might have all of the "A"s in one group and
+For time-series data we might partition into month-long blocks.
+For text-indexed data we might have all of the "A"s in one group and
 all of the "B"s in another.  These divisions let us arrange work with
 foresight.
 
@@ -33,14 +33,13 @@ algorithms are critical.  This is tricky when data doesn't fit in memory.
 Partitioning is fundamentally hard
 ----------------------------------
 
-*Data locality is the root of all performance
+    Data locality is the root of all performance
+        -- A Good Programmer
 
-    -- A Good Programmer*
-
-Partitioning/shuffling is inherently non-local.  For any subset
-of our input data we will need to separate and send bits to all of our output
-partitions.  If we have a thousand partitions then that's a million little
-partition shards to communicate.  Ouch.
+Partitioning/shuffling is inherently non-local.  Every block of input data
+needs to separate and send bits to every block of output data.  If we have a
+thousand partitions then that's a million little partition shards to
+communicate.  Ouch.
 
 <img src="{{ BASE_PATH }}/images/partition-transfer.png"
      alt="Shuffling data between partitions"
@@ -101,9 +100,9 @@ Partitioned Frame
 We use `carray` to make a new data structure `pframe` with the following
 operations:
 
-*  Append Pandas DataFrame to collection, and partition it along the index on
+*  *Append* DataFrame to collection, and partition it along the index on
    known block divisions `blockdivs`
-*  Pull out the DataFrame corresponding to any particular partition
+*  *Extract* DataFrame corresponding to a particular partition
 
 Internally we invent two new data structures:
 
@@ -116,10 +115,8 @@ Internally we invent two new data structures:
      width="100%"
      alt="Partitioned Frame design">
 
-CFrame and `bcolz.carray` manage efficient incremental storage of DataFrames on
-disk as well as their eventual retrieval.
-
-PFrame partitions incoming data and feeds it to the appropriate CFrame.
+Through `bcolz.carray`, `cframe` manages efficient incremental storage to disk.
+PFrame partitions incoming data and feeds it to the appropriate `cframe`.
 
 
 Example
@@ -184,25 +181,24 @@ Out[12]:
 4  20  20
 {% endhighlight %}
 
-We can continue this until our disk fills up.  This runs near peak I/O speeds.
+We can continue this until our disk fills up.  This runs near peak I/O speeds
+(on my low-power laptop with admittedly poor I/O.)
 
 
 Performance
 -----------
 
-I've partitioned the NYCTaxi dataset a lot this week and posting my
+I've partitioned the NYCTaxi trip dataset a lot this week and posting my
 results to the Continuum chat with messages like the following
 
-    I think I've got it to work, though it took all night and my hard drive
-    filled up.
+    I think I've got it to work, though it took all night and my hard drive filled up.
     Down to six hours and it actually works.
     Three hours!
     By removing object dtypes we're down to 30 minutes
     20!  This is actually usable.
     OK, I've got this to six minutes.  Thank goodness for Pandas categoricals.
     Five.
-    Down to about three and a half with multithreading, but only if we stop
-    blosc from segfaulting.
+    Down to about three and a half with multithreading, but only if we stop blosc from segfaulting.
 
 And thats where I am now.  It's been a fun week.  Here is a tiny benchmark.
 
@@ -247,7 +243,7 @@ Wall time: 40.6 s
 {% endhighlight %}
 
 
-We partition and store on disk random-ish data at 68MB/s (using
+We partition and store on disk random-ish data at 68MB/s (cheating with
 compression).  This is on my old small notebook computer with a weak processor
 and hard drive I/O bandwidth at around 100 MB/s.
 
