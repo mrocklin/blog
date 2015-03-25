@@ -1,8 +1,7 @@
 ---
 layout: post
-title: Towards Out-of-core DataFrames
+title: Partition and Shuffle
 category : work
-draft: true
 tags : [scipy, Python, Programming, Blaze, dask]
 ---
 {% include JB/setup %}
