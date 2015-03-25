@@ -270,3 +270,9 @@ many tasks.
 
 I haven't implemented a good external sort though so I'm only able to argue
 theory here.  I'm likely missing important implementation details.
+
+
+Links
+-----
+
+*  [PFrame code](https://github.com/mrocklin/dask/tree/pframe/pframe) lives in a dask branch at the moment.  It depends on a couple of BColz PRs ([#163](https://github.com/Blosc/bcolz/pull/163), [#164](https://github.com/Blosc/bcolz/pull/166))
