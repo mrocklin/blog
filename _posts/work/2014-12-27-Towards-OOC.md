@@ -19,8 +19,8 @@ Motivation
 ----------
 
 Recent notebooks (links
-[1](http://nbviewer.ipython.org/url/blaze.pydata.org/notebooks/timings-csv.ipynb),
-[2](http://nbviewer.ipython.org/url/blaze.pydata.org/notebooks/timings-bcolz.ipynb))
+[1](http://nbviewer.ipython.org/url/blaze.pydata.org/en/latest/_static/notebooks/timings-csv.ipynb),
+[2](http://nbviewer.ipython.org/url/blaze.pydata.org/en/latest/_static/notebooks/timings-bcolz.ipynb))
 describe how Blaze handles out-of-core single-dataset tabular computations in
 the following stages.
 
