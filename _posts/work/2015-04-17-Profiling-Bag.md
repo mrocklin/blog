@@ -34,6 +34,22 @@ parallel computation.
 Volume
 ------
 
+<table align="right">
+  <thead>
+  <tr>
+    <th></th>
+    <th>Data Bandwidth (MB/s)</th>
+  </tr>
+  </thead>
+  <tbody>
+    <tr><th>Disk I/O</th><td>500</td></tr>
+    <tr><th>Decompression</th><td>100</td></tr>
+    <tr><th>Deserialization</th><td>50</td></tr>
+    <tr><th>In-memory computation</th><td>2000</td></tr>
+    <tr><th>Shuffle</th><td>30</td></tr>
+  </tbody>
+</table>
+
 Semi-structured data is often at the beginning of our data pipeline and so
 often has the greatest size.  We may start with 100GB of raw data, reduce to
 10GB to load into a database, and finally aggregate down to 1GB for analysis,
@@ -51,11 +67,6 @@ We measure performance with data bandwidth, usually in megabytes per
 second (MB/s).  We'll build intuition for why dealing with this data is costly.
 We focus on the following concerns
 
-*  Disk I/O  -- 500 MB/s
-*  Decompression  -- 100 MB/s
-*  Deserialization  -- 50 MB/s
-*  In-memory computation  -- 1000 MB/s
-*  Serialization / deserialization for on-disk shuffling -- 30 MB/s
 
 Dataset
 -------
@@ -108,6 +119,20 @@ Items in our data look like this:
 
 Disk I/O and Decompression -- 100-500 MB/s
 -------------------------------------------
+
+<table align="right">
+  <thead>
+  <tr>
+    <th></th>
+    <th>Data Bandwidth (MB/s)</th>
+  </tr>
+  </thead>
+  <tbody>
+    <tr><th>Read from disk with open</th><td>500</td></tr>
+    <tr><th>Read from disk with gzip.open</th><td>100</td></tr>
+    <tr><th>Parallel Read from disk with gzip.open</th><td>500</td></tr>
+  </tbody>
+</table>
 
 A modern laptop hard drive can theoertically read data from disk to memory at
 800 MB/s.  So we could burn through a 10GB dataset in fifteen seconds on our
@@ -176,6 +201,20 @@ multiprocessing, straight Python, and a little elbow-grease.
 
 Deserialization -- 30 MB/s
 --------------------------
+
+<table align="right">
+  <thead>
+  <tr>
+    <th></th>
+    <th>Data Bandwidth (MB/s)</th>
+  </tr>
+  </thead>
+  <tbody>
+    <tr><th>json.loads</th><td>30</td></tr>
+    <tr><th>ujson.loads</th><td>50</td></tr>
+    <tr><th>Parallel ujson.loads</th><td>150</td></tr>
+  </tbody>
+</table>
 
 Once we decompress our data we still need to turn bytes into meaningful data
 structures (dicts, lists, etc..)  Our github data comes to us as JSON.  This
@@ -252,10 +291,23 @@ Out[39]: 25.420633214285715
 Mapping and Grouping - 2000 MB/s
 --------------------------------
 
+<table align="right">
+  <thead>
+  <tr>
+    <th></th>
+    <th>Data Bandwidth (MB/s)</th>
+  </tr>
+  </thead>
+  <tbody>
+    <tr><th>Simple Python operations</th><td>1400</td></tr>
+    <tr><th>Complex CyToolz operations</th><td>2600</td></tr>
+  </tbody>
+</table>
+
 Once we have data in memory, Pure Python is relatively fast.  Cytoolz moreso.
 
 {% highlight Python %}
-In [55]: %time set(d['type'] for d in blobs)  # Simple operation
+In [55]: %time set(d['type'] for d in blobs)
 CPU times: user 162 ms, sys: 123 ms, total: 285 ms
 Wall time: 268 ms
 Out[55]:
@@ -298,13 +350,27 @@ this post isn't relevant for you.
 Shuffling - 5-50 MB/s
 ---------------------
 
+<table align="right">
+  <thead>
+  <tr>
+    <th></th>
+    <th>Data Bandwidth (MB/s)</th>
+  </tr>
+  </thead>
+  <tbody>
+    <tr><th>Naive groupby with on-disk Shuffle</th><td>25</td></tr>
+    <tr><th>Clever foldby without Shuffle</th><td>250</td></tr>
+  </tbody>
+</table>
+
+
 For complex logic, like full groupbys and joins, we need to communicate large
 amounts of data between workers.  This communication forces us to go through
 another full serialization/write/deserialization/read cycle.  This hurts.  And
 so, the single most important message from this post:
 
-*Avoid communication-heavy operations on semi-structured data.  Structure your
-data and load into a database instead.*
+**Avoid communication-heavy operations on semi-structured data.  Structure your
+data and load into a database instead.**
 
 That being said, people will inevitably ignore this advice so we need to have a
 not-terrible fallback.
@@ -338,14 +404,14 @@ In [63]: len(total) / 134 / 1e6  # MB/s
 Out[63]: 23.559091
 {% endhighlight %}
 
-This groupby operation goes through the following steps
+This groupby operation goes through the following steps:
 
 1.  Read from disk
 2.  Decompress GZip
 3.  Deserialize with `ujson`
 4.  Do in-memory groupbys on chunks of the data
 5.  Reserialize with `msgpack` (a bit faster)
-6.  Write groups to disk
+6.  Append group parts to disk
 7.  Read in new full groups from disk
 8.  Deserialize `msgpack` back to Python objects
 9.  Apply length function per group
@@ -367,7 +433,7 @@ We get about 25 MB/s total.  This is about what pyspark gets (although today
 {% endhighlight %}
 
 I would be interested in hearing from people who use full groupby on BigData.
-I'm quite curious to hear how this is used and how it performs in practice.
+I'm quite curious to hear how this is used in practice and how it performs.
 
 
 Creative Groupbys - 400 MB/s
