@@ -65,7 +65,6 @@ space.
 
 We measure performance with data bandwidth, usually in megabytes per
 second (MB/s).  We'll build intuition for why dealing with this data is costly.
-We focus on the following concerns
 
 
 Dataset
@@ -134,7 +133,7 @@ Disk I/O and Decompression -- 100-500 MB/s
   </tbody>
 </table>
 
-A modern laptop hard drive can theoertically read data from disk to memory at
+A modern laptop hard drive can theoretically read data from disk to memory at
 800 MB/s.  So we could burn through a 10GB dataset in fifteen seconds on our
 laptop.  Workstations with RAID arrays can do a couple GB/s.  In practice I
 get around 500 MB/s on my personal laptop.
