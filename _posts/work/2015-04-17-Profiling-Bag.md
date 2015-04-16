@@ -565,13 +565,29 @@ I'm sure that Mark and Irwin would love the help
 Comparison with PySpark
 -----------------------
 
-Dask.bag reinvents a wheel; why bother?  Some reasons:
+Dask.bag pros:
 
-1.  Given the machinery inherited from `dask.array` and `toolz`, dask.bag is
-actually very cheap.  It's around 500 significant lines of code.
+1.  Doesn't engage the JVM, no heap errors or fiddly flags to set
+2.  Conda/pip installable.  You could have it less than twenty seconds from now.
+3.  Slightly faster in-memory implementations thanks to `cytoolz`; this isn't
+    important though
+4.  Good handling of lazy results per-partition
+5.  Faster / lighter weight start-up times
+6.  (Subjective) I find the API marginally cleaner
+
+PySpark pros:
+
+1.  Supports distributed computation (this is obviously huge)
+2.  More mature, more filled out API
+3.  HDFS integration
+
+Dask.bag reinvents a wheel; why bother?
+
+1.  Given the machinery inherited from `dask.array` and `toolz`, `dask.bag` is
+very cheap to build and maintain.  It's around 500 significant lines of code.
 2.  PySpark throws Python processes inside a JVM ecosystem which can cause some
-confusion among users and a performance hit.  A distributed task scheduling
+confusion among users and a performance hit.  A task scheduling
 system in the native code ecosystem would be valuable.
 3.  Comparison and competition is healthy
 4.  I've been asked to make a distributed array.  I suspect that distributed
-bag is a good first step.
+    bag is a good first step.
