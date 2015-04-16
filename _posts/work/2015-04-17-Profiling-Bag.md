@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Profiling Throughput
+title: Profiling Data Throughput
 category : work
 draft: true
 tags : [scipy, Python, Programming, Blaze, dask]
@@ -11,364 +11,501 @@ tags : [scipy, Python, Programming, Blaze, dask]
 and the [XDATA Program](http://www.darpa.mil/our_work/i2o/programs/xdata.aspx)
 as part of the [Blaze Project](http://blaze.pydata.org/docs/dev/index.html)*
 
-*This post primarily targets developers.*
+**tl;dr** We measure the costs of processing semi-structured data like JSON
+blobs.
 
-**tl;dr**
 
+Semi-structured Data
+--------------------
 
-JSON Blobs
-----------
+Semi-structured data like JSON blobs is ubiquitous and computationally painful.
 
-Semi-structured nested data is ubiquitous, but a pain.
-
-    {'name': 'Alice', 'payments': [1, 2, 3]}
-    {'name': 'Bob', 'payments': [4, 5]}
+    {'name': 'Alice',   'payments': [1, 2, 3]}
+    {'name': 'Bob',     'payments': [4, 5]}
     {'name': 'Charlie', 'payments': None}
 
 This data doesn't fit nicely into NumPy or Pandas and so we fall back to
-dynamic pure-Python data structures.  Python's core data structures are
-surprisingly good, about as good as more traditional compiled languages,
-but dynamic data structures present some challenges for efficient parallel
-computation.
+dynamic pure-Python data structures like dicts and lists.  Python's core data
+structures are surprisingly good, about as good as compiled languages like
+Java, but dynamic data structures present some challenges for efficient
+parallel computation.
 
 
 Volume
 ------
 
-Semi-structured data is often at the beginning of our data pipeline and so has
-often the greatest size.  We may start with 100GB of raw data, reduce to 10GB
-loaded into a database, and finally aggregate down to 1GB for analysis, machine
-learning, etc..
+Semi-structured data is often at the beginning of our data pipeline and so
+often has the greatest size.  We may start with 100GB of raw data, reduce to
+10GB to load into a database, and finally aggregate down to 1GB for analysis,
+machine learning, etc., 1kB of which becomes a plot or table.
 
-Common solutions for large semi-structured data include streaming Python,
-multiprocessing, Hadoop, and Spark.  Two months ago I built `dask.bag`, a toy
-dask experiment for semi-structured data.  Today we'll strengthen the
-`dask.bag` project and look more deeply at performance in this space.
+Common solutions for large semi-structured data include Python iterators,
+multiprocessing, Hadoop, and Spark as well as proper databases like MongoDB and
+ElasticSearch.  [Two months
+ago](http://matthewrocklin.com/blog/work/2015/02/17/Towards-OOC-Bag/) we built
+`dask.bag`, a toy dask experiment for semi-structured data.  Today we'll
+strengthen the `dask.bag` project and look more deeply at performance in this
+space.
 
-We measure performance with data bandwidth, usually in Megabytes per
+We measure performance with data bandwidth, usually in megabytes per
 second (MB/s).  We'll build intuition for why dealing with this data is costly.
 We focus on the following concerns
 
-*  Disk I/O
-*  Decompression
-*  Deserialization
-*  In-memory computation
-*  Serialization / deserialization for on-disk shuffling
+*  Disk I/O  -- 500 MB/s
+*  Decompression  -- 100 MB/s
+*  Deserialization  -- 50 MB/s
+*  In-memory computation  -- 1000 MB/s
+*  Serialization / deserialization for on-disk shuffling -- 30 MB/s
 
-As a test dataset we play with a dump of github data from githubarchive.com .
-We'll use `dask.bag` and `toolz` to show benchmark numbers.
+Dataset
+-------
+
+As a test dataset we play with a dump of github data from
+[https://www.githubarchive.org/](https://www.githubarchive.org/).
+We'll use `dask.bag` and `toolz` to show benchmark numbers.  We'll often use
+`dask.bag` also just to give a set of examples
+
+Items in our data look like this:
+
+{% highlight Python %}
+>>> import json
+>>> import dask.bag as db
+>>> path = '/home/mrocklin/data/github/2013-05-0*.json.gz'
+>>> db.from_filenames(path).map(json.loads).take(1)
+({u'actor': u'mjcramer',
+  u'actor_attributes': {u'gravatar_id': u'603762b7a39807503a2ee7fe4966acd1',
+   u'login': u'mjcramer',
+   u'type': u'User'},
+  u'created_at': u'2013-05-01T00:01:28-07:00',
+  u'payload': {u'description': u'',
+   u'master_branch': u'master',
+   u'ref': None,
+   u'ref_type': u'repository'},
+  u'public': True,
+  u'repository': {u'created_at': u'2013-05-01T00:01:28-07:00',
+   u'description': u'',
+   u'fork': False,
+   u'forks': 0,
+   u'has_downloads': True,
+   u'has_issues': True,
+   u'has_wiki': True,
+   u'id': 9787210,
+   u'master_branch': u'master',
+   u'name': u'settings',
+   u'open_issues': 0,
+   u'owner': u'mjcramer',
+   u'private': False,
+   u'pushed_at': u'2013-05-01T00:01:28-07:00',
+   u'size': 0,
+   u'stargazers': 0,
+   u'url': u'https://github.com/mjcramer/settings',
+   u'watchers': 0},
+  u'type': u'CreateEvent',
+  u'url': u'https://github.com/mjcramer/settings'},)
+
+{% endhighlight %}
 
 
-Disk I/O and Decompression - 100 - 800 MB/s
+Disk I/O and Decompression -- 100-500 MB/s
 -------------------------------------------
 
 A modern laptop hard drive can theoertically read data from disk to memory at
-800 MB/s.  So we could hypothetically burn through a 10GB dataset in fifteen
-seconds on our laptop.  Workstations with RAID arrays 2 GB/s.
+800 MB/s.  So we could burn through a 10GB dataset in fifteen seconds on our
+laptop.  Workstations with RAID arrays can do a couple GB/s.  In practice I
+get around 500 MB/s on my personal laptop.
+
+{% highlight Python %}
+In [1]: import json
+In [2]: import dask.bag as db
+In [3]: from glob import glob
+In [4]: path = '/home/mrocklin/data/github/2013-05-0*.json.gz'
+
+In [5]: %time compressed = '\n'.join(open(fn).read() for fn in glob(path))
+CPU times: user 75.1 ms, sys: 1.07 s, total: 1.14 s
+Wall time: 1.14 s
+
+In [6]: len(compressed) / 0.194 / 1e6  # MB/s
+508.5912175438597
+{% endhighlight %}
+
+To reduce storage and transfer costs we often compress data.  This requires CPU
+effort whenever we want to operate on the stored values.  This can limit
+data bandwidth.
+
+{% highlight Python %}
+In [7]: import gzip
+In [8]: %time total = '\n'.join(gzip.open(fn).read() for fn in glob(path))
+CPU times: user 12.2 s, sys: 18.7 s, total: 30.9 s
+Wall time: 30.9 s
+
+In [9]: len(total) / 30.9 / 1e6         # MB/s  total bandwidth
+Out[9]: 102.16563844660195
+
+In [10]: len(compressed) / 30.9 / 1e6   # MB/s  compressed bandwidth
+Out[10]: 18.763559482200648
+{% endhighlight %}
+
+So we lose some data bandwidth through compression.  Where we could previously
+process 500 MB/s we're now down to only 100 MB/s.  If we count bytes in terms
+of the amount stored on disk then we're only hitting 18 MB/s.  We'll get around
+this with multiprocessing.
 
 
-To reduce storage costs and ease transfer over the internet, we often
-compress data.  This reduces storage size and transmission costs but requires
-CPU effort whenever we want to operate on the stored values.  GZIP compresses
-at around X and decompresses at around Y
+Decompression and Parallel processing -- 500 MB/s
+-------------------------------------------------
+
+Fortunately we often have more cores than we know what to do with.
+Parallelizing reads can hide much of the decompression cost.
+
+{% highlight Python %}
+In [12]: import dask.bag as db
+
+In [13]: %time nbytes = db.from_filenames(path).map(len).sum().compute()
+CPU times: user 130 ms, sys: 402 ms, total: 532 ms
+Wall time: 5.5 s
+
+In [14]: nbytes / 5.5 / 1e6
+Out[14]: 573.9850932727272
+{% endhighlight %}
+
+Dask.bag infers that we need to use gzip from the filename.  Dask.bag currently
+uses `multiprocessing` to distribute work, allowing us to reclaim our 500 MB/s
+throughput on compressed data.  We also could have done this with
+multiprocessing, straight Python, and a little elbow-grease.
 
 
-Note that there are other options.  Consider BZip2 and Snappy.
+Deserialization -- 30 MB/s
+--------------------------
+
+Once we decompress our data we still need to turn bytes into meaningful data
+structures (dicts, lists, etc..)  Our github data comes to us as JSON.  This
+JSON contains various encodings and bad characters so, just for today, we're
+going to punt on bad lines.  Converting JSON text to Python objects
+explodes out in memory a bit, so we'll consider a smaller subset for this part,
+a single day.
+
+{% highlight Python %}
+In [20]: def loads(line):
+...          try: return json.loads(line)
+...          except: return None
+
+In [21]: path = '/home/mrocklin/data/github/2013-05-01-*.json.gz'
+In [22]: lines = list(db.from_filenames(path))
+
+In [23]: %time blobs = list(map(loads, lines))
+CPU times: user 10.7 s, sys: 760 ms, total: 11.5 s
+Wall time: 11.3 s
+
+In [24]: len(total) / 11.3 / 1e6
+Out[24]: 33.9486321238938
+
+In [25]: len(compressed) / 11.3 / 1e6
+Out[25]: 6.2989179646017694
+{% endhighlight %}
+
+So in terms of actual bytes of JSON we can only convert about 30MB per second.
+If we count in terms of the compressed data we store on disk then this looks
+more bleak at only 6 MB/s.
+
+### This can be improved by using faster libraries -- 50 MB/s
+
+The [ultrajson](https://github.com/esnme/ultrajson) library, `ujson`, is pretty
+slick and can improve our performance a bit.  This is what Pandas uses under
+the hood.
+
+{% highlight Python %}
+In [28]: import ujson
+In [29]: def loads(line):
+...          try: return ujson.loads(line)
+...          except: return None
+
+In [30]: %time blobs = list(map(loads, lines))
+CPU times: user 6.37 s, sys: 1.17 s, total: 7.53 s
+Wall time: 7.37 s
+
+In [31]: len(total) / 7.37 / 1e6
+Out[31]: 52.05149837177748
+
+In [32]: len(compressed) / 7.37 / 1e6
+Out[32]: 9.657771099050203
+{% endhighlight %}
+
+### Or through Parallelism  -- 150 MB/s
+
+This can also be accelerated through parallelism, just like decompression.
+It's a bit cumbersome to separate the loading, decompression, and
+deserialization so we'll show all of them together.
+
+{% highlight Python %}
+In [33]: %time db.from_filenames(path).map(loads).count().compute()
+CPU times: user 32.3 ms, sys: 822 ms, total: 854 ms
+Wall time: 2.8 s
+
+In [38]: len(total) / 2.8 / 1e6
+Out[38]: 137.00697964285717
+
+In [39]: len(compressed) / 2.8 / 1e6
+Out[39]: 25.420633214285715
+{% endhighlight %}
 
 
-Depending on how often you use your data you might choose one over the other.
-In practice though we often don't have a choice.  Someone dumps data on us
-in a format not of our choosing.
-
-
-Fortunately, compression is compute bound and, these days, we often have more
-cores than we know what to do with.  Parallelizing reads can hide much of the
-decompression cost.
-
-
-Deserialization and Parallelism - 30 - 150 MB/s
------------------------------------------------
-
-We represent semi-structured data as bytes on disk.
-
-
-Mapping and Grouping - 1000 MB/s
+Mapping and Grouping - 2000 MB/s
 --------------------------------
+
+Once we have data in memory, Pure Python is relatively fast.  Cytoolz moreso.
+
+{% highlight Python %}
+In [55]: %time set(d['type'] for d in blobs)  # Simple operation
+CPU times: user 162 ms, sys: 123 ms, total: 285 ms
+Wall time: 268 ms
+Out[55]:
+{u'CommitCommentEvent',
+ u'CreateEvent',
+ u'DeleteEvent',
+ u'DownloadEvent',
+ u'FollowEvent',
+ u'ForkEvent',
+ u'GistEvent',
+ u'GollumEvent',
+ u'IssueCommentEvent',
+ u'IssuesEvent',
+ u'MemberEvent',
+ u'PublicEvent',
+ u'PullRequestEvent',
+ u'PullRequestReviewCommentEvent',
+ u'PushEvent',
+ u'WatchEvent'}
+
+In [56]: len(total) / 0.268 / 1e6
+Out[56]: 1431.4162052238805
+
+In [57]: import cytoolz
+In [58]: %time _ = cytoolz.groupby('type', blobs)  # CyToolz FTW
+CPU times: user 144 ms, sys: 0 ns, total: 144 ms
+Wall time: 144 ms
+
+In [59]: len(total) / 0.144 / 1e6
+Out[59]: 2664.024604166667
+{% endhighlight %}
+
+So slicing and logic are essentially free.  The cost of compression and
+deserialization dominates actual computation time.  Don't bother optimizing
+fast per-record code, especially if CyToolz has already done so for you.  Of
+course, you might be doing something expensive per record.  If so then most of
+this post isn't relevant for you.
 
 
 Shuffling - 5-50 MB/s
 ---------------------
 
+For complex logic, like full groupbys and joins, we need to communicate large
+amounts of data between workers.  This communication forces us to go through
+another full serialization/write/deserialization/read cycle.  This hurts.  And
+so, the single most important message from this post:
 
+*Avoid communication-heavy operations on semi-structured data.  Structure your
+data and load into a database instead.*
 
-
-
-
-
-often our often comprises the inconvenient bulk of our data.  As the pain point.  It often occurs at the
-
-The PyData ecosystem beautifully handles arrays with NumPy and tables with
-Pandas.  These libraries compactly store and efficiently compute on regular
-data.
-
-NumPy and Pandas
-
-
-Many efficient parallel algorithms require intelligently partitioned data.
-
-For time-series data we might partition into month-long blocks.
-For text-indexed data we might have all of the "A"s in one group and
-all of the "B"s in another.  These divisions let us arrange work with
-foresight.
-
-To extend Pandas operations to larger-than-memory data efficient partition
-algorithms are critical.  This is tricky when data doesn't fit in memory.
-
-
-Partitioning is fundamentally hard
-----------------------------------
-
-    Data locality is the root of all performance
-        -- A Good Programmer
-
-Partitioning/shuffling is inherently non-local.  Every block of input data
-needs to separate and send bits to every block of output data.  If we have a
-thousand partitions then that's a million little partition shards to
-communicate.  Ouch.
-
-<img src="{{ BASE_PATH }}/images/partition-transfer.png"
-     alt="Shuffling data between partitions"
-     width="30%"
-     align="right">
-
-Consider the following setup
-
-      100GB dataset
-    / 100MB partitions
-    = 1,000 input partitions
-
-To partition we need shuffle data in the input partitions to a similar number of
-output partitions
-
-      1,000 input partitions
-    * 1,000 output partitions
-    = 1,000,000 partition shards
-
-If our communication/storage of those shards has even a millisecond of latency
-then we run into problems.
-
-      1,000,000 partition shards
-    x 1ms
-    = 18 minutes
-
-Previously I stored the partition-shards individually on the filesystem using
-cPickle.  This was a mistake.  It was very slow because it treated each of the
-million shards independently.  Now we aggregate shards headed for the same
-out-block and write out many at a time, bundling overhead.  We balance this
-against memory constraints.  This stresses both Python latencies and memory
-use.
-
-
-BColz, now for very small data
-------------------------------
-
-Fortunately we have a nice on-disk chunked array container that
-supports append in Cython.  [BColz](http://bcolz.blosc.org/) (formerly BLZ,
-formerly CArray) does this for us.  It wasn't originally designed for this
-use case but performs admirably.
-
-Briefly, BColz is...
-
-*  A binary store (like HDF5)
-*  With columnar access (useful for tabular computations)
-*  That stores data in cache-friendly sized blocks
-*  With a focus on compression
-*  Written mostly by Francesc Alted (PyTables) and Valentin Haenel
-
-It includes two main objects:
-
-*  `carray`: An on-disk numpy array
-*  `ctable`: A named collection of `carrays` to represent a table/dataframe
-
-Partitioned Frame
------------------
-
-We use `carray` to make a new data structure `pframe` with the following
-operations:
-
-*  *Append* DataFrame to collection, and partition it along the index on
-   known block divisions `blockdivs`
-*  *Extract* DataFrame corresponding to a particular partition
-
-Internally we invent two new data structures:
-
-*  `cframe`: Like `ctable` this stores column information in a collection of
-   `carrays`.  Unlike `ctable` this maps perfectly onto the custom
-   block structure used internally by Pandas.  For internal use only.
-*  `pframe`: A collection of `cframes`, one for each partition.
-
-<img src="{{ BASE_PATH }}/images/pframe-design.png"
-     width="100%"
-     alt="Partitioned Frame design">
-
-Through `bcolz.carray`, `cframe` manages efficient incremental storage to disk.
-PFrame partitions incoming data and feeds it to the appropriate `cframe`.
-
-
-Example
--------
-
-Create test dataset
+That being said, people will inevitably ignore this advice so we need to have a
+not-terrible fallback.
 
 {% highlight Python %}
-In [1]: import pandas as pd
-In [2]: df = pd.DataFrame({'a': [1, 2, 3, 4],
-...                        'b': [1., 2., 3., 4.]},
-...                       index=[1, 4, 10, 20])
+In [62]: %time dict(db.from_filenames(path)
+...                   .map(loads)
+...                   .groupby('type')
+...                   .map(lambda (k, v): (k, len(v))))
+CPU times: user 46.3 s, sys: 6.57 s, total: 52.8 s
+Wall time: 2min 14s
+Out[62]:
+{'CommitCommentEvent': 17889,
+ 'CreateEvent': 210516,
+ 'DeleteEvent': 14534,
+ 'DownloadEvent': 440,
+ 'FollowEvent': 35910,
+ 'ForkEvent': 67939,
+ 'GistEvent': 7344,
+ 'GollumEvent': 31688,
+ 'IssueCommentEvent': 163798,
+ 'IssuesEvent': 102680,
+ 'MemberEvent': 11664,
+ 'PublicEvent': 1867,
+ 'PullRequestEvent': 69080,
+ 'PullRequestReviewCommentEvent': 17056,
+ 'PushEvent': 960137,
+ 'WatchEvent': 173631}
+
+In [63]: len(total) / 134 / 1e6  # MB/s
+Out[63]: 23.559091
 {% endhighlight %}
 
-Create `pframe` like our test dataset, partitioning on divisions 5, 15.  Append
-the single test dataframe.
+This groupby operation goes through the following steps
+
+1.  Read from disk
+2.  Decompress GZip
+3.  Deserialize with `ujson`
+4.  Do in-memory groupbys on chunks of the data
+5.  Reserialize with `msgpack` (a bit faster)
+6.  Write groups to disk
+7.  Read in new full groups from disk
+8.  Deserialize `msgpack` back to Python objects
+9.  Apply length function per group
+
+Some of these steps have great data bandwidths, some less-so.
+When we compound many steps together our bandwidth suffers.
+We get about 25 MB/s total.  This is about what pyspark gets (although today
+`pyspark` can parallelize while `dask.bag` can not.)
 
 {% highlight Python %}
-In [3]: from pframe import pframe
-In [4]: pf = pframe(like=df, blockdivs=[5, 15])
-In [5]: pf.append(df)
+>>> import pyspark
+>>> sc = pyspark.SparkContext('local[8]')
+>>> rdd = sc.textFile(path)
+>>> dict(rdd.map(loads)
+...         .keyBy(lambda d: d['type'])
+...         .groupByKey()
+...         .map(lambda (k, v): (k, len(v)))
+...         .collect())
 {% endhighlight %}
 
-Pull out partitions
+I would be interested in hearing from people who use full groupby on BigData.
+I'm quite curious to hear how this is used and how it performs in practice.
+
+
+Creative Groupbys - 400 MB/s
+----------------------------
+
+Don't use groupby.  You can often work around it with cleverness.  Our example
+above can be handled with streaming grouping reductions (see [toolz
+docs.](http://toolz.readthedocs.org/en/latest/streaming-analytics.html#split-apply-combine-with-groupby-and-reduceby))
+This requires more thinking from the programmer but avoids the costly shuffle
+process.
 
 {% highlight Python %}
-In [6]: pf.get_partition(0)
-Out[6]:
-   a  b
-1  1  1
-4  2  2
+In [66]: %time dict(db.from_filenames(path)
+...                   .map(loads)
+...                   .foldby('type', lambda total, d: total + 1, 0, lambda a, b: a + b))
+Out[66]:
+{'CommitCommentEvent': 17889,
+ 'CreateEvent': 210516,
+ 'DeleteEvent': 14534,
+ 'DownloadEvent': 440,
+ 'FollowEvent': 35910,
+ 'ForkEvent': 67939,
+ 'GistEvent': 7344,
+ 'GollumEvent': 31688,
+ 'IssueCommentEvent': 163798,
+ 'IssuesEvent': 102680,
+ 'MemberEvent': 11664,
+ 'PublicEvent': 1867,
+ 'PullRequestEvent': 69080,
+ 'PullRequestReviewCommentEvent': 17056,
+ 'PushEvent': 960137,
+ 'WatchEvent': 173631}
+CPU times: user 322 ms, sys: 604 ms, total: 926 ms
+Wall time: 13.2 s
 
-In [7]: pf.get_partition(1)
-Out[7]:
-    a  b
-10  3  3
-
-In [8]: pf.get_partition(2)
-Out[8]:
-    a  b
-20  4  4
+In [67]: len(total) / 13.2 / 1e6  # MB/s
+Out[67]: 239.16047181818183
 {% endhighlight %}
 
-Continue to append data...
+We can also spell this with PySpark which performs about the same.
 
 {% highlight Python %}
-In [9]: df2 = pd.DataFrame({'a': [10, 20, 30, 40],
-...                         'b': [10., 20., 30., 40.]},
-...                        index=[1, 4, 10, 20])
-In [10]: pf.append(df2)
-{% endhighlight %}
-
-... and partitions grow accordingly.
-
-{% highlight Python %}
-In [12]: pf.get_partition(0)
-Out[12]:
-    a   b
-1   1   1
-4   2   2
-1  10  10
-4  20  20
-{% endhighlight %}
-
-We can continue this until our disk fills up.  This runs near peak I/O speeds
-(on my low-power laptop with admittedly poor I/O.)
-
-
-Performance
------------
-
-I've partitioned the NYCTaxi trip dataset a lot this week and posting my
-results to the Continuum chat with messages like the following
-
-    I think I've got it to work, though it took all night and my hard drive filled up.
-    Down to six hours and it actually works.
-    Three hours!
-    By removing object dtypes we're down to 30 minutes
-    20!  This is actually usable.
-    OK, I've got this to six minutes.  Thank goodness for Pandas categoricals.
-    Five.
-    Down to about three and a half with multithreading, but only if we stop blosc from segfaulting.
-
-And thats where I am now.  It's been a fun week.  Here is a tiny benchmark.
-
-{% highlight Python %}
->>> import pandas as pd
->>> import numpy as np
->>> from pframe import pframe
-
->>> df = pd.DataFrame({'a': np.random.random(1000000),
-                       'b': np.random.poisson(100, size=1000000),
-                       'c': np.random.random(1000000),
-                       'd': np.random.random(1000000).astype('f4')}).set_index('a')
-{% endhighlight %}
-
-Set up a pframe to match the structure of this DataFrame
-Partition index into divisions of size 0.1
-
-{% highlight Python %}
->>> pf = pframe(like=df,
-...             blockdivs=[.1, .2, .3, .4, .5, .6, .7, .8, .9],
-...             chunklen=2**15)
-{% endhighlight %}
-
-Dump the random data into the Partition Frame one hundred times and compute
-effective bandwidths.
-
-{% highlight Python %}
->>> for i in range(100):
-...     pf.append(df)
-
-CPU times: user 39.4 s, sys: 3.01 s, total: 42.4 s
-Wall time: 40.6 s
-
->>> pf.nbytes
-2800000000
-
->>> pf.nbytes / 40.6 / 1e6  # MB/s
-68.9655172413793
-
->>> pf.cbytes / 40.6 / 1e6  # Actual compressed bytes on disk
-41.5172952955665
+>>> dict(rdd.map(loads)  # PySpark equivalent
+...         .keyBy(lambda d: d['type'])
+...         .combineByKey(lambda d: 1, lambda total, d: total + 1, lambda a, b: a + b)
+...         .collect())
 {% endhighlight %}
 
 
-We partition and store on disk random-ish data at 68MB/s (cheating with
-compression).  This is on my old small notebook computer with a weak processor
-and hard drive I/O bandwidth at around 100 MB/s.
+Use a Database
+--------------
+
+By the time you're grouping or joining datasets you probably have structured
+data that could fit into a DataFrame or database.  You should transition from
+dynamic data structures (dicts/lists) to dataframes or databases as early as
+possible.  DataFrames and databases compactly represent data in formats that
+don't require serialization; this improves performance.  Databases are also
+very clever about reducing communication.
+
+Tools like `pyspark`, `toolz`, and `dask.bag` are great for initial cleanings
+of semi-structured data into a structured format but they're relatively
+inefficient at complex analytics.  For inconveniently large data you should
+consider a database as soon as possible.  That could be some big-data-solution
+or often just Postgres.
 
 
-Theoretical Comparison to External Sort
----------------------------------------
+Better data structures for semi-structured data?
+------------------------------------------------
 
-There isn't much literature to back up my approach.  That concerns me.
-There is a lot of literature however on external sorting and they often site
-our partitioning problem as a use case.  Perhaps we should do an external sort?
+Dynamic data structures (dicts, lists) are overkill for semi-structured data.
+We don't need or use their power but we inherit all of their limitations (E.g.
+serialization costs.)  Could we build something NumPy/Pandas-like that could
+handle the blob-of-JSON use-case?  Probably.
 
-I thought I'd quickly give some reasons why I think the current approach is
-theoretically better than an out-of-core sort; hopefully someone smarter can
-come by and tell me why I'm wrong.
+DyND was one such attempt.  It is a C++ project by Mark Wiebe and Irwin Zaid
+with Python bindings that could possibly handle this case if given a bit of
+love.  It handles variable length arrays, text data, and missing values all
+with numpy-like semantics:
 
-We don't need a full sort, we need something far weaker.   External sort
-requires at least two passes over the data while the method above requires one
-full pass through the data as well as one additional pass through the index
-column to determine good block divisions.  These divisions should be of
-*approximately* equal size.  The *approximate size* can be pretty rough.  I
-don't think we would notice a variation of a factor of five in block sizes.
-Task scheduling lets us be pretty sloppy with load imbalance as long as we have
-many tasks.
+{% highlight Python %}
+>>> from dynd import nd
+>>> data = [{'name': 'Alice',                       # Semi-structure data
+...          'location': {'city': 'LA', 'state': 'CA'},
+...          'credits': [1, 2, 3]},
+...         {'name': 'Bob',
+...          'credits': [4, 5],
+...          'location': {'city': 'NYC', 'state': 'NY'}}]
 
-I haven't implemented a good external sort though so I'm only able to argue
-theory here.  I'm likely missing important implementation details.
+>>> dtype = '''var * {name: string,
+...                   location: {city: string, state: string[2]},
+...                   credits: var * int}'''        # Shape of our data
+
+>>> x = nd.array(data, type=dtype)                  # Create DyND array
+
+>>> x                                               # Stored compactly in memory
+nd.array([["Alice", ["LA", "CA"], [1, 2, 3]],
+          ["Bob", ["NYC", "NY"], [4, 5]]])
+
+>>> x.location.city                                 # Nested indexing
+nd.array([ "LA", "NYC"],
+         type="strided * string")
+
+>>> x.credits                                       # Variable length data
+nd.array([[1, 2, 3],    [4, 5]],
+         type="strided * var * int32")
+
+>>> x.credits * 10                                  # And computation
+nd.array([[10, 20, 30],     [40, 50]],
+         type="strided * var * int32")
+{% endhighlight %}
+
+Sadly DyND lacks a lot of basic functionality, like unary minus.
+
+{% highlight Python %}
+>>> -x.credits                                      # Sadly incomplete :(
+TypeError: bad operand type for unary -
+{% endhighlight %}
+
+I would like to see DyND mature to the point where it could robustly handle
+semi-structured data.  I think that this would be a big win for productivity
+that would make projects like `dask.bag` and `pyspark` obsolete for a large
+class of use-cases.  If you know Python, C++, and would like to help DyND grow
+I'm sure that Mark and Irwin would love the help
+
+*  [DyND Mailing list](https://groups.google.com/forum/#!forum/libdynd-dev)
+*  [DyND Github repository](https://github.com/libdynd/dynd-python)
 
 
-Links
------
+Comparison with PySpark
+-----------------------
 
-*  [PFrame code](https://github.com/mrocklin/dask/tree/pframe/pframe) lives in a dask branch at the moment.  It depends on a couple of BColz PRs ([#163](https://github.com/Blosc/bcolz/pull/163), [#164](https://github.com/Blosc/bcolz/pull/166))
+Dask.bag reinvents a wheel; why bother?  Some reasons:
+
+1.  Given the machinery inherited from `dask.array` and `toolz`, dask.bag is
+actually very cheap.  It's around 500 significant lines of code.
+2.  PySpark throws Python processes inside a JVM ecosystem which can cause some
+confusion among users and a performance hit.  A distributed task scheduling
+system in the native code ecosystem would be valuable.
+3.  Comparison and competition is healthy
+4.  I've been asked to make a distributed array.  I suspect that distributed
+bag is a good first step.
