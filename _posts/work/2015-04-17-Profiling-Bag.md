@@ -71,7 +71,7 @@ second (MB/s).  We'll build intuition for why dealing with this data is costly.
 Dataset
 -------
 
-As a test dataset we play with a dump of github data from
+As a test dataset we play with a dump of GitHub data from
 [https://www.githubarchive.org/](https://www.githubarchive.org/).
 We'll use `dask.bag` and `toolz` to show benchmark numbers.  We'll often use
 `dask.bag` also just to give a set of examples
@@ -217,7 +217,7 @@ Deserialization -- 30 MB/s
 </table>
 
 Once we decompress our data we still need to turn bytes into meaningful data
-structures (dicts, lists, etc..)  Our github data comes to us as JSON.  This
+structures (dicts, lists, etc..)  Our GitHub data comes to us as JSON.  This
 JSON contains various encodings and bad characters so, just for today, we're
 going to punt on bad lines.  Converting JSON text to Python objects
 explodes out in memory a bit, so we'll consider a smaller subset for this part,
@@ -560,7 +560,7 @@ class of use-cases.  If you know Python, C++, and would like to help DyND grow
 I'm sure that Mark and Irwin would love the help
 
 *  [DyND Mailing list](https://groups.google.com/forum/#!forum/libdynd-dev)
-*  [DyND Github repository](https://github.com/libdynd/dynd-python)
+*  [DyND GitHub repository](https://github.com/libdynd/dynd-python)
 
 
 Comparison with PySpark
