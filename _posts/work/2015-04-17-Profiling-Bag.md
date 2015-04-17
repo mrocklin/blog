@@ -35,26 +35,27 @@ parallel computation.
 Volume
 ------
 
+Semi-structured data is often at the beginning of our data pipeline and so
+often has the greatest size.  We may start with 100GB of raw data, reduce to
+10GB to load into a database, and finally aggregate down to 1GB for analysis,
+machine learning, etc., 1kB of which becomes a plot or table.
+
 <table align="right">
   <thead>
   <tr>
     <th></th>
     <th>Data Bandwidth (MB/s)</th>
+    <th>In Parallel (MB/s)</th>
   </tr>
   </thead>
   <tbody>
-    <tr><th>Disk I/O</th><td>500</td></tr>
-    <tr><th>Decompression</th><td>100</td></tr>
-    <tr><th>Deserialization</th><td>50</td></tr>
-    <tr><th>In-memory computation</th><td>2000</td></tr>
-    <tr><th>Shuffle</th><td>30</td></tr>
+    <tr><th>Disk I/O</th><td>500</td><td>500</td></tr>
+    <tr><th>Decompression</th><td>100</td><td>500</td></tr>
+    <tr><th>Deserialization</th><td>50</td><td>250</td></tr>
+    <tr><th>In-memory computation</th><td>2000</td><td>oo</td></tr>
+    <tr><th>Shuffle</th><td>9</td><td>30</td></tr>
   </tbody>
 </table>
-
-Semi-structured data is often at the beginning of our data pipeline and so
-often has the greatest size.  We may start with 100GB of raw data, reduce to
-10GB to load into a database, and finally aggregate down to 1GB for analysis,
-machine learning, etc., 1kB of which becomes a plot or table.
 
 Common solutions for large semi-structured data include Python iterators,
 multiprocessing, Hadoop, and Spark as well as proper databases like MongoDB and
