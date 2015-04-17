@@ -75,9 +75,17 @@ Dataset
 -------
 
 As a test dataset we play with a dump of GitHub data from
-[https://www.githubarchive.org/](https://www.githubarchive.org/).
-We'll use `dask.bag` and `toolz` to show benchmark numbers.  We'll often use
-`dask.bag` also just to give a set of examples
+[https://www.githubarchive.org/](https://www.githubarchive.org/).  This data
+records every public github event (commit, comment, pull request, etc.) in the
+form of a JSON blob.  This data is representative fairly representative of a
+broader class of problems.  Often people want to do fairly simple analytics,
+like find the top ten committers to a particular repository, or clean the
+data before they load it into a database.
+
+We'll play around with this data using `dask.bag`.  This is both to get a feel
+for what is expensive and to provide a cohesive set of examples.  In truth we
+won't do any real analytics on the github dataset, we'll find that the
+expensive parts come well before analytic computation.
 
 Items in our data look like this:
 
@@ -116,7 +124,6 @@ Items in our data look like this:
    u'watchers': 0},
   u'type': u'CreateEvent',
   u'url': u'https://github.com/mjcramer/settings'},)
-
 {% endhighlight %}
 
 
@@ -272,11 +279,13 @@ In [32]: len(compressed) / 7.37 / 1e6
 Out[32]: 9.657771099050203
 {% endhighlight %}
 
+
 ### Or through Parallelism  -- 150 MB/s
 
 This can also be accelerated through parallelism, just like decompression.
-It's a bit cumbersome to separate the loading, decompression, and
-deserialization so we'll show all of them together.
+It's a bit cumbersome to show parallel deserializaiton in isolation.
+Instead we'll show all of them together.  This will under-estimate
+performance but is much easier to code up.
 
 {% highlight Python %}
 In [33]: %time db.from_filenames(path).map(loads).count().compute()
