@@ -18,7 +18,8 @@ blobs.
 Semi-structured Data
 --------------------
 
-Semi-structured data like JSON blobs is ubiquitous and computationally painful.
+Semi-structured data is ubiquitous and computationally painful.  Consider
+the following JSON blobs:
 
     {'name': 'Alice',   'payments': [1, 2, 3]}
     {'name': 'Bob',     'payments': [4, 5]}
