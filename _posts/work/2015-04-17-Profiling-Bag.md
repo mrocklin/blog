@@ -507,10 +507,11 @@ We don't need or use their power but we inherit all of their limitations (E.g.
 serialization costs.)  Could we build something NumPy/Pandas-like that could
 handle the blob-of-JSON use-case?  Probably.
 
-DyND was one such attempt.  It is a C++ project by Mark Wiebe and Irwin Zaid
-with Python bindings that could possibly handle this case if given a bit of
-love.  It handles variable length arrays, text data, and missing values all
-with numpy-like semantics:
+DyND is one such project.  DyND is a C++ project with Python bindings written
+by Mark Wiebe and Irwin Zaid and historically funded largely by Continuum and
+XData under the same banner as Blaze/Dask.  It could probably handle the
+semi-structured data problem case if given a bit of love.  It handles variable
+length arrays, text data, and missing values all with numpy-like semantics:
 
 {% highlight Python %}
 >>> from dynd import nd
@@ -544,7 +545,7 @@ nd.array([[10, 20, 30],     [40, 50]],
          type="strided * var * int32")
 {% endhighlight %}
 
-Sadly DyND lacks a lot of basic functionality, like unary minus.
+Sadly DyND has functionality gaps which limit usability.
 
 {% highlight Python %}
 >>> -x.credits                                      # Sadly incomplete :(
