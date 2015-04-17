@@ -11,6 +11,8 @@ tags : [scipy, Python, Programming, Blaze, dask]
 and the [XDATA Program](http://www.darpa.mil/our_work/i2o/programs/xdata.aspx)
 as part of the [Blaze Project](http://blaze.pydata.org/docs/dev/index.html)*
 
+*Disclaimer: This post is on experimental/buggy code.*
+
 **tl;dr** We measure the costs of processing semi-structured data like JSON
 blobs.
 
@@ -436,7 +438,7 @@ I would be interested in hearing from people who use full groupby on BigData.
 I'm quite curious to hear how this is used in practice and how it performs.
 
 
-Creative Groupbys - 400 MB/s
+Creative Groupbys - 250 MB/s
 ----------------------------
 
 Don't use groupby.  You can often work around it with cleverness.  Our example
@@ -487,7 +489,7 @@ Use a Database
 --------------
 
 By the time you're grouping or joining datasets you probably have structured
-data that could fit into a DataFrame or database.  You should transition from
+data that could fit into a dataframe or database.  You should transition from
 dynamic data structures (dicts/lists) to dataframes or databases as early as
 possible.  DataFrames and databases compactly represent data in formats that
 don't require serialization; this improves performance.  Databases are also
@@ -504,9 +506,9 @@ Better data structures for semi-structured data?
 ------------------------------------------------
 
 Dynamic data structures (dicts, lists) are overkill for semi-structured data.
-We don't need or use their power but we inherit all of their limitations (E.g.
-serialization costs.)  Could we build something NumPy/Pandas-like that could
-handle the blob-of-JSON use-case?  Probably.
+We don't need or use their full power but we inherit all of their limitations
+(e.g.  serialization costs.)  Could we build something NumPy/Pandas-like that
+could handle the blob-of-JSON use-case?  Probably.
 
 DyND is one such project.  DyND is a C++ project with Python bindings written
 by Mark Wiebe and Irwin Zaid and historically funded largely by Continuum and
@@ -516,7 +518,7 @@ length arrays, text data, and missing values all with numpy-like semantics:
 
 {% highlight Python %}
 >>> from dynd import nd
->>> data = [{'name': 'Alice',                       # Semi-structure data
+>>> data = [{'name': 'Alice',                       # Semi-structured data
 ...          'location': {'city': 'LA', 'state': 'CA'},
 ...          'credits': [1, 2, 3]},
 ...         {'name': 'Bob',
@@ -524,12 +526,13 @@ length arrays, text data, and missing values all with numpy-like semantics:
 ...          'location': {'city': 'NYC', 'state': 'NY'}}]
 
 >>> dtype = '''var * {name: string,
-...                   location: {city: string, state: string[2]},
+...                   location: {city: string,
+...                              state: string[2]},
 ...                   credits: var * int}'''        # Shape of our data
 
 >>> x = nd.array(data, type=dtype)                  # Create DyND array
 
->>> x                                               # Stored compactly in memory
+>>> x                                               # Store compactly in memory
 nd.array([["Alice", ["LA", "CA"], [1, 2, 3]],
           ["Bob", ["NYC", "NY"], [4, 5]]])
 
@@ -569,7 +572,7 @@ Comparison with PySpark
 Dask.bag pros:
 
 1.  Doesn't engage the JVM, no heap errors or fiddly flags to set
-2.  Conda/pip installable.  You could have it less than twenty seconds from now.
+2.  Conda/pip installable.  You could have it in less than twenty seconds from now.
 3.  Slightly faster in-memory implementations thanks to `cytoolz`; this isn't
     important though
 4.  Good handling of lazy results per-partition
