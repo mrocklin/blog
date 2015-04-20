@@ -2,7 +2,6 @@
 layout: post
 title: Profiling Data Throughput
 category : work
-draft: true
 tags : [scipy, Python, Programming, Blaze, dask]
 ---
 {% include JB/setup %}
