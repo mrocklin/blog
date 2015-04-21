@@ -430,7 +430,10 @@ This groupby operation goes through the following steps:
 Some of these steps have great data bandwidths, some less-so.
 When we compound many steps together our bandwidth suffers.
 We get about 25 MB/s total.  This is about what pyspark gets (although today
-`pyspark` can parallelize while `dask.bag` can not.)
+`pyspark` can parallelize across multiple machines while `dask.bag` can not.)
+
+Disclaimer, the numbers above are for `dask.bag` and could very easily be
+due to implementation flaws, rather than due to inherent challenges.
 
 {% highlight Python %}
 >>> import pyspark
