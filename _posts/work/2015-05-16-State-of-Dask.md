@@ -30,7 +30,10 @@ Collections, graphs, and schedulers
 
 Dask modules can be separated as follows:
 
-**Image of collections, graph, schedulers**
+<img src="{{ BASE_PATH }}/images/collections-schedulers.png"
+     width="70%"
+     align="right"
+     alt="Partitioned Frame design">
 
 On the left there are collections like arrays, bags, and dataframes.  These
 copy APIs for NumPy, PyToolz, and Pandas respectively and are aimed towards
@@ -48,11 +51,11 @@ scheduler](http://dask.pydata.org/en/latest/distributed.html).
 
 In the center is the directed acyclic graph.  This graph serves as glue between
 collections and schedulers.  The dask graph format is simple and doesn't
-include any dask classes; it's just [dicts and
+include any dask classes; it's just [functions, dicts, and
 tuples](http://dask.readthedocs.org/en/latest/spec.html) and so is easy to
 build and low-tech enough to understand immediately.  This separation is very
 useful to dask during development; improvements to one side immediately affect
-the other.
+the other and new developers have had surprisingly little trouble.
 
 This separation is useful to other projects too.  Directed acyclic graphs are
 popular today in many domains.  By exposing dask's schedulers publicly, other
@@ -63,51 +66,55 @@ issue](https://github.com/ContinuumIO/dask/issues/153#issuecomment-92520216):
 
 *dask has been very helpful so far, as it allowed me to skip implementing
 all of the usual graph operations. Especially doing the asynchronous
-execution properly would have been a lot of work.
+execution properly would have been a lot of work.*
 
 
 Who uses dask?
 --------------
 
-I work closely with a few groups that use dask.  Presumably there are others.
+I work closely with a few groups that use dask.
 
 1.  [Stephan Hoyer](http://stephanhoyer.com/) at Climate Corp has integrated
 `dask.array` into [`xray`](xray.readthedocs.org) a library to manage large
 volumes of meteorlogical data (and other labeled arrays.)
 
-2.  [Scikit image](http://scikit-image.org) now includes an
-[`apply_parallel`](https://github.com/scikit-image/scikit-image/pull/1493)
-operation that uses dask.array to parallelize a wide set of image processing
-routines. (work by [Blake Griffiths](https://github.com/cowlicks))
+2.  [Scikit image](http://scikit-image.org) now includes an apply_parallel
+operation ([github PR](https://github.com/scikit-image/scikit-image/pull/1493))
+that uses dask.array to parallelize a wide set of image processing routines.
+(work by [Blake Griffiths](https://github.com/cowlicks))
 
 3.  [Mariano Tepper](http://www.marianotepper.com.ar/) a postdoc at Duke, uses
-dask in his research on matrix factorizations.  Mariano is also the sole
-contributor to the `dask.array.linalg` module, which includes some very nice QR
-and SVD algorithms.
+dask in his research on matrix factorizations.  Mariano is also the primary
+author of the `dask.array.linalg` module, which includes efficient and stable
+QR and SVD for tall and skinny matrices.
 
-4.  Finally I personally use dask daily on work related to the [XData
+4.  Finally I personally use dask on daily work related to the [XData
 project](http://www.darpa.mil/our_work/i2o/programs/xdata.aspx).  This tends to
 drive some of the newer features.
 
+A few other groups pop up on github from time to time; I'd love to
+know more detail about how people use dask.
 
 What works and what doesn't
 ---------------------------
 
 Dask is modular.  Each of the collections and each of the schedulers are
 effectively separate projects.  These subprojects exist at different states of
-development.  Knowing how stable or unstable each is can help you to determine
-how you depend on it.
+development.  Knowing the stability of each subproject can help you to
+determine how you use and depend on dask.
 
-**TODO**
-
-
-*Notably, neither dask.dataframe nor dask.distributed are ready for public use.*
+`Dask.array` and `dask.threaded` work well, are stable, and see constant use.
+They receive relatively minor bug reports which are dealt with swiftly.
+`Dask.bag` and `dask.multiprocessing` undergo more API churn but are mostly
+ready for public use with a couple of caveats.  Neither `dask.dataframe` nor
+`dask.distributed` are ready for public use; they undergo significant API churn
+and have known errors.
 
 
 Current work
 ------------
 
-There are some exciting things happening with dask today.
+The current state of development as I see it is as follows:
 
 1.  Dask.bag and dask.dataframe are progressing nicely.  My personal work
     depends on these modules, so they see a lot of attention.
@@ -118,10 +125,10 @@ There are some exciting things happening with dask today.
        This would be a great place for community contributions.
 2.  Dask.distributed is new.  It needs it tires kicked but it's an exciting
     development.
-    *  For easy deployment we're planning to bootstrap off of
+    *  For deployment we're planning to bootstrap off of
        [IPython parallel](http://ipython.org/ipython-doc/dev/parallel/) which
        already has decent coverage of many parallel job systems,
-       see [#208](https://github.com/ContinuumIO/dask/pull/208)
+       (see [#208](https://github.com/ContinuumIO/dask/pull/208) by Blake)
     *  [MinRK](https://github.com/minrk), the main developer of IPython
        parallel, is looking into deploying with Yarn, which would give both
        IPython and dask access to existing Hadoop clusters.
@@ -129,16 +136,20 @@ There are some exciting things happening with dask today.
     application domains where dask is very useful; we'd like to find more.
 
 
-No Road Map
------------
+Install
+-------
 
-Someone asked on the mailing list for a road map.  Other than the above current
-work we don't have a road map.  We've managed well so far only doing work that
-was directly asked of us.  This focuses the project on meaningful features.  If
-you'd like to see your domain better supported then please contribute.  If you
-don't have the technical expertise or time to contribute with code then [please
-contribute an issue](https://github.com/ContinuumIO/dask/issues/new), I'd love
-to hear from you.
+Dask 0.5.0 can be installed with `conda`
 
-I've enjoyed the ZermMQ guide lately.  Here is their discussion on road maps:
-[How ZeroMQ Lost its Road Map](http://zguide.zeromq.org/page:all#How-ZeroMQ-Lost-Its-Road-Map).
+    conda install dask
+
+Or with `pip`
+
+    pip install dask
+    or
+    pip install dask[array]
+    or
+    pip install dask[bag]
+
+You can read more at [the docs](https://dask.pydata.org/en/latest/) or
+[github](https://github.com/ContinuumIO/dask).
