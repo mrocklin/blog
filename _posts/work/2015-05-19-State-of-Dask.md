@@ -16,10 +16,9 @@ as part of the [Blaze Project](http://blaze.pydata.org/docs/dev/index.html)*
 Introduction
 ------------
 
-Dask began five months ago.  It started as a parallel on-disk array but has
+Dask started five months ago as a parallel on-disk array; it has
 since broadened out.  I've enjoyed [writing about its
 development](http://matthewrocklin.com/blog/tags.html#dask-ref) tremendously.
-
 With the [recent 0.5.0 release]() **TODO link** I decided to take a moment to
 give an overview of dask's various pieces, their state, and current
 development.
@@ -72,7 +71,7 @@ execution properly would have been a lot of work.*
 Who uses dask?
 --------------
 
-I work closely with a few groups that use dask.
+Dask developers work closely with a few really amazing users:
 
 1.  [Stephan Hoyer](http://stephanhoyer.com/) at Climate Corp has integrated
 `dask.array` into [`xray`](xray.readthedocs.org) a library to manage large
@@ -80,13 +79,13 @@ volumes of meteorlogical data (and other labeled arrays.)
 
 2.  [Scikit image](http://scikit-image.org) now includes an apply_parallel
 operation ([github PR](https://github.com/scikit-image/scikit-image/pull/1493))
-that uses dask.array to parallelize a wide set of image processing routines.
+that uses dask.array to parallelize image processing routines.
 (work by [Blake Griffiths](https://github.com/cowlicks))
 
 3.  [Mariano Tepper](http://www.marianotepper.com.ar/) a postdoc at Duke, uses
 dask in his research on matrix factorizations.  Mariano is also the primary
 author of the `dask.array.linalg` module, which includes efficient and stable
-QR and SVD for tall and skinny matrices.
+QR and SVD for tall and skinny matrices. **TODO: can I link to Mariano's work?**
 
 4.  Finally I personally use dask on daily work related to the [XData
 project](http://www.darpa.mil/our_work/i2o/programs/xdata.aspx).  This tends to
@@ -99,14 +98,16 @@ What works and what doesn't
 ---------------------------
 
 Dask is modular.  Each of the collections and each of the schedulers are
-effectively separate projects.  These subprojects exist at different states of
+effectively separate projects.  These subprojects are at different states of
 development.  Knowing the stability of each subproject can help you to
 determine how you use and depend on dask.
 
 `Dask.array` and `dask.threaded` work well, are stable, and see constant use.
 They receive relatively minor bug reports which are dealt with swiftly.
+
 `Dask.bag` and `dask.multiprocessing` undergo more API churn but are mostly
 ready for public use with a couple of caveats.  Neither `dask.dataframe` nor
+
 `dask.distributed` are ready for public use; they undergo significant API churn
 and have known errors.
 
@@ -136,14 +137,14 @@ The current state of development as I see it is as follows:
     application domains where dask is very useful; we'd like to find more.
 
 
-Install
--------
+More information
+----------------
 
-Dask 0.5.0 can be installed with `conda`
+You can install dask with `conda`
 
     conda install dask
 
-Or with `pip`
+or with `pip`
 
     pip install dask
     or
@@ -151,5 +152,5 @@ Or with `pip`
     or
     pip install dask[bag]
 
-You can read more at [the docs](https://dask.pydata.org/en/latest/) or
-[github](https://github.com/ContinuumIO/dask).
+You can read more about dask at [the docs](https://dask.pydata.org/en/latest/)
+or [github](https://github.com/ContinuumIO/dask).
