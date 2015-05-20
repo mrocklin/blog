@@ -82,7 +82,7 @@ volumes of meteorlogical data (and other labeled arrays.)
 2.  [Scikit image](http://scikit-image.org) now includes an apply_parallel
 operation ([github PR](https://github.com/scikit-image/scikit-image/pull/1493))
 that uses dask.array to parallelize image processing routines.
-(work by [Blake Griffiths](https://github.com/cowlicks))
+(work by [Blake Griffith](https://github.com/cowlicks))
 
 3.  [Mariano Tepper](http://www.marianotepper.com.ar/) a postdoc at Duke, uses
 dask in his research on matrix factorizations.  Mariano is also the primary
