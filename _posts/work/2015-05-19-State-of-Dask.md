@@ -2,7 +2,6 @@
 layout: post
 title: State of Dask
 category : work
-draft: true
 tags : [scipy, Programming, Blaze, dask]
 ---
 {% include JB/setup %}
@@ -19,9 +18,10 @@ Introduction
 Dask started five months ago as a parallel on-disk array; it has
 since broadened out.  I've enjoyed [writing about its
 development](http://matthewrocklin.com/blog/tags.html#dask-ref) tremendously.
-With the [recent 0.5.0 release]() **TODO link** I decided to take a moment to
-give an overview of dask's various pieces, their state, and current
-development.
+With the [recent 0.5.0
+release](https://groups.google.com/a/continuum.io/d/topic/blaze-dev/HAoLbk2F0PI/discussion)
+I decided to take a moment to give an overview of dask's various pieces, their
+state, and current development.
 
 
 Collections, graphs, and schedulers
@@ -52,9 +52,11 @@ In the center is the directed acyclic graph.  This graph serves as glue between
 collections and schedulers.  The dask graph format is simple and doesn't
 include any dask classes; it's just [functions, dicts, and
 tuples](http://dask.readthedocs.org/en/latest/spec.html) and so is easy to
-build and low-tech enough to understand immediately.  This separation is very
+build on and low-tech enough to understand immediately.  This separation is very
 useful to dask during development; improvements to one side immediately affect
-the other and new developers have had surprisingly little trouble.
+the other and new developers have had surprisingly little trouble.  Also
+developers from a variety of backgrounds have been able to come up to speed in
+about an hour.
 
 This separation is useful to other projects too.  Directed acyclic graphs are
 popular today in many domains.  By exposing dask's schedulers publicly, other
@@ -80,12 +82,13 @@ volumes of meteorlogical data (and other labeled arrays.)
 2.  [Scikit image](http://scikit-image.org) now includes an apply_parallel
 operation ([github PR](https://github.com/scikit-image/scikit-image/pull/1493))
 that uses dask.array to parallelize image processing routines.
-(work by [Blake Griffiths](https://github.com/cowlicks))
+(work by [Blake Griffith](https://github.com/cowlicks))
 
 3.  [Mariano Tepper](http://www.marianotepper.com.ar/) a postdoc at Duke, uses
 dask in his research on matrix factorizations.  Mariano is also the primary
 author of the `dask.array.linalg` module, which includes efficient and stable
-QR and SVD for tall and skinny matrices. **TODO: can I link to Mariano's work?**
+QR and SVD for tall and skinny matrices. See Mariano's [paper on
+arXiv](http://arxiv.org/abs/1505.04650).
 
 4.  Finally I personally use dask on daily work related to the [XData
 project](http://www.darpa.mil/our_work/i2o/programs/xdata.aspx).  This tends to
@@ -93,6 +96,7 @@ drive some of the newer features.
 
 A few other groups pop up on github from time to time; I'd love to
 know more detail about how people use dask.
+
 
 What works and what doesn't
 ---------------------------
@@ -130,11 +134,11 @@ The current state of development as I see it is as follows:
        [IPython parallel](http://ipython.org/ipython-doc/dev/parallel/) which
        already has decent coverage of many parallel job systems,
        (see [#208](https://github.com/ContinuumIO/dask/pull/208) by Blake)
-    *  [MinRK](https://github.com/minrk), the main developer of IPython
-       parallel, is looking into deploying with Yarn, which would give both
-       IPython and dask access to existing Hadoop clusters.
 3.  Dask.array development these days focuses on outreach.  We've found
     application domains where dask is very useful; we'd like to find more.
+4.  The collections (Array, Bag, DataFrame) don't cover all cases.  I would
+    like to start finding uses for the task schedulers in isolation.  They
+    serve as a release valve in complex situations.
 
 
 More information
