@@ -3,7 +3,7 @@ layout: post
 title: State of Dask
 category : work
 draft: true
-tags : [scipy, Python, Programming, Blaze, dask]
+tags : [scipy, Programming, Blaze, dask]
 ---
 {% include JB/setup %}
 
