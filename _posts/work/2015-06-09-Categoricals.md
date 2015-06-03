@@ -53,6 +53,7 @@ data numerically so that we can leverage Pandas' fast C code on this kind of
 text data.
 
 {% highlight Python %}
+>>> # Example dataframe with names, balances, and genders as object dtypes
 >>> df = pd.DataFrame({'name': ['Alice', 'Bob', 'Charlie', 'Danielle'],
 ...                    'balance': [100.0, 200.0, 300.0, 400.0],
 ...                    'gender': ['Female', 'Male', 'Male', 'Female']},
@@ -144,7 +145,7 @@ find the taxi drivers who drove the longest distance during a certain period.
 
 {% highlight Python %}
 In [1]: import pandas as pd
-In [2]: df = pd.read_csv('/home/mrocklin/data/trip_data_1_00.csv')
+In [2]: df = pd.read_csv('trip_data_1_00.csv')
 
 In [3]: %time df.groupby(df.medallion).trip_distance.sum().sort(ascending=False,
 inplace=False).head()
@@ -161,7 +162,7 @@ B83044D63E9421B76011917CE280C137    782.78
 Name: trip_distance, dtype: float64
 {% endhighlight %}
 
-We categorize in about the same time it took to do the groupby.
+That took around 170ms.  We categorize in about the same time.
 
 {% highlight Python %}
 In [4]: %time df['medallion'] = df['medallion'].astype('category')
@@ -169,8 +170,8 @@ CPU times: user 168 ms, sys: 12.1 ms, total: 180 ms
 Wall time: 197 ms
 {% endhighlight %}
 
-And compute the same result much more quickly.  Our computation is backed by a
-cateogorical rather than object grouper.
+And compute the same result in 20ms, improving by about an order of magnitude.
+Our computation is backed by a cateogorical rather than object grouper.
 
 {% highlight Python %}
 In [5]: %time df.groupby(df.medallion).trip_distance.sum().sort(ascending=False,
@@ -189,19 +190,21 @@ Name: trip_distance, dtype: float64
 {% endhighlight %}
 
 We see almost an order of magnitude speedup after we do the one-time-cost of
-replacing object dtypes with categories.  All other computations on this column
-will be faster.  Our memory use has dropped dramatically as well.
+replacing object dtypes with categories.  Most other computations on this
+column will be similarly fast.  Our memory use drops dramatically as well.
 
 
 Conclusion
 ----------
 
-Pandas Categoricals are an efficient way to encode repetitive text data.  It is
-commonly used for data like stock symbols, gender, experiment outcomes, cities,
-states, etc..  Categoricals are easy to use and greatly improve performance.
+Pandas Categoricals efficiently encode repetitive text data.  Categoricals are
+useful for data like stock symbols, gender, experiment outcomes, cities,
+states, etc..  Categoricals are easy to use and greatly improve performance on
+this data.
 
-We have several options to increase performance or handle larger scales.  Good
-choices in storage format, compression, column layout, and data representation
-can all dramatically improve query times and memory use. Each of these is as
-important as parallelism but aren't surrounded with the same hype and so are
-often overlooked.
+We have several options to increase performance when dealing with
+inconveniently large or slow data.  Good choices in storage format,
+compression, column layout, and data representation can dramatically improve
+query times and memory use. Each of these choices is as important as
+parallelism but aren't surrounded with the same hype and so are often
+overlooked.
