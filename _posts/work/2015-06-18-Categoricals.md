@@ -2,7 +2,6 @@
 layout: post
 title: Pandas Categoricals
 category : work
-draft: true
 tags : [scipy, Python, Programming]
 ---
 {% include JB/setup %}
