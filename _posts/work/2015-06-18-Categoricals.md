@@ -209,3 +209,7 @@ inconveniently large or slow data.  Good choices in storage format,
 compression, column layout, and data representation can dramatically improve
 query times and memory use. Each of these choices is as important as
 parallelism but isn't overly hyped and so is often overlooked.
+
+Jeff Reback gave a nice talk on categoricals (and other featuress in Pandas) at
+[PyData NYC 2014](https://www.youtube.com/watch?v=PUsntnCp65c) and is giving
+another this weekend at PyData London.
