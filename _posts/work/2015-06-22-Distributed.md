@@ -103,6 +103,13 @@ centralizes metadata and control all intermediate data transfer happens
 peer-to-peer among the workers.  Once the graph completes the workers send data
 to the scheduler which passes it through to the Client.
 
+Example
+-------
+
+<iframe width="560" height="315"
+src="https://www.youtube.com/embed/nx5z3rsxJi4?rel=0" frameborder="0"
+allowfullscreen></iframe>
+
 And so now we can execute our dask graphs in parallel across multiple machines.
 
 {% highlight Python %}
