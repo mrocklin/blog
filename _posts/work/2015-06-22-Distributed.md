@@ -203,3 +203,6 @@ Special thanks to [Min Regan-Kelley](https://github.com/minrk),
 [Ben Zaitlen](https://twitter.com/quasiben),
 and [Hugo Shi](https://www.linkedin.com/pub/hugo-shi/10/579/442)
 for their advice on building distributed systems.
+
+Also thanks to [Blake Griffith](https://github.com/cowlicks) for serving as
+original user/developer and for smoothing over the user experience.
