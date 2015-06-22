@@ -107,7 +107,7 @@ Example
 -------
 
 <iframe width="560" height="315"
-src="https://www.youtube.com/embed/nx5z3rsxJi4?rel=0" frameborder="0"
+src="https://www.youtube.com/embed/uQro_CaP9Fo?rel=0" frameborder="0"
 allowfullscreen></iframe>
 
 And so now we can execute our dask graphs in parallel across multiple machines.
