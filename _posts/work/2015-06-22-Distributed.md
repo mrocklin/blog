@@ -116,7 +116,7 @@ And so now we can execute our dask graphs in parallel across multiple machines.
 $ ipython  # On your laptop                 $ ipython  # Remote Process #1:  Scheduler
 >>> def add(a, b):                          >>> from dask.distributed import Scheduler
 ...     return a + b                        >>> s = Scheduler(port_to_workers='4444',
-                                            ...               port_to_clients='5000',
+                                            ...               port_to_clients='5555',
 >>> dsk = {'x': 1,                          ...               hostname='notebook')
 ...        'y': 2,
 ...        'z': (add, 'x', 'y')}            $ ipython  # Remote Process #2:  Worker
