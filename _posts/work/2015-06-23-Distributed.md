@@ -98,9 +98,9 @@ potentially several clients.
 
 Clients send graphs to the central scheduler which farms out those tasks to
 workers and coordinates the execution of the graph.  While the scheduler
-centralizes metadata and control all intermediate data transfer happens
-peer-to-peer among the workers.  Once the graph completes the workers send data
-to the scheduler which passes it through to the Client.
+centralizes metadata, the workers themselves handle transfer of intermediate
+data in a peer-to-peer fashion.  Once the graph completes the workers send data
+to the scheduler which passes it through to the appropriate user/client.
 
 Example
 -------
@@ -133,8 +133,8 @@ $ ipython  # On your laptop                 $ ipython  # Remote Process #1:  Sch
 3
 {% endhighlight %}
 
-Set Scheduler
--------------
+Choose Your Scheduler
+---------------------
 
 This graph is small.  We didn't need a distributed network of machines
 to compute it (a single thread would have been much faster)
@@ -178,6 +178,17 @@ unnecessary network communication.  We've found that it's great when paired
 with S3.
 3.  This scheduler is new and hasn't yet had its tires kicked.  Vocal beta
 users are most welcome.
+4.  We haven't thought much about deployment.  E.g. somehow you need to ssh
+into a bunch of machines and start up workers, then tear them down when you're
+done.  Dask.distributed can bootstrap off of an
+[IPython Parallel cluster](http://dask.readthedocs.org/en/latest/distributed.html#ipython-parallel),
+and we've integrated it into
+[anaconda-cluster](http://continuum.io/anaconda-cluster) but deployment remains
+a tough problem.
+
+The ``dask.distributed`` module is available in the last release but I suggest
+using the development master branch.  There will be another release in early
+July.
 
 
 Further Information
@@ -185,12 +196,11 @@ Further Information
 
 [Blake Griffith](https://github.com/cowlicks) has been playing with
 ``dask.distributed`` and ``dask.bag`` together on data from
-[http://githubarchive.com](http://githubarchive.com).  I think that he is
-planning to write a blogpost to give a better demonstration of the use of
-dask.distributed on real world problems.  Look for that post in the next week
-or so.
+[http://githubarchive.com](http://githubarchive.com).  He plans to write a
+blogpost to give a better demonstration of the use of ``dask.distributed`` on
+real world problems.  Look for that post in the next week or two.
 
-You can read more about the internal design of dask.distributed at the
+You can read more about the internal design of ``dask.distributed`` at the
 [dask docs](http://dask.pydata.org/en/latest/distributed.html).
 
 
