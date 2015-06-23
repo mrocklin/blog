@@ -196,7 +196,7 @@ Further Information
 
 [Blake Griffith](https://github.com/cowlicks) has been playing with
 ``dask.distributed`` and ``dask.bag`` together on data from
-[http://githubarchive.com](http://githubarchive.com).  He plans to write a
+[http://githubarchive.org](http://githubarchive.org).  He plans to write a
 blogpost to give a better demonstration of the use of ``dask.distributed`` on
 real world problems.  Look for that post in the next week or two.
 
