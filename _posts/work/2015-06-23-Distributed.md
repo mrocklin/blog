@@ -2,7 +2,6 @@
 layout: post
 title: Distributed Scheduling
 category : work
-draft: true
 tags : [scipy, Python, Programming, dask, blaze]
 ---
 {% include JB/setup %}
