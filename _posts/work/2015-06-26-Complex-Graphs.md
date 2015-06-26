@@ -67,8 +67,12 @@ Really I just want to show off this pretty graph.
 {% endhighlight %}
 
 <img src="{{ BASE_PATH }}/images/dask-svd.png"
-     width="100%"
+     width="60%"
      alt="Parallel SVD dask graph">
+
+This algorithm computes the exact SVD (up to numerical precision) of a large
+tall-and-skinny matrix in parallel in many small chunks.  This allows it to
+operate out-of-core (from disk) and use multiple cores in parallel.
 
 The [dask dict](http://dask.pydata.org/en/latest/spec.html) for one of these
 arrays, `s`, looks like the following:
@@ -102,6 +106,9 @@ arrays, `s`, looks like the following:
  ('tsqr_2_S', 0): (operator.getitem, ('tsqr_2_SVD_st2', 0, 0), 1)}
 {% endhighlight %}
 
+So to write complex parallel algorithms we write down dictionaries of tuples of
+functions.
+
 
 Low Barrier to Entry
 --------------------
@@ -116,11 +123,10 @@ up to the dask schedulers.
 You can see the source code that generates the above graphs
 [on github](https://github.com/ContinuumIO/dask/blob/master/dask/array/linalg.py).
 
-
 <img src="{{ BASE_PATH }}/images/dask-svd-random.png"
      align="right"
      alt="Approximate SVD dask graph"
-     width="50%">
+     width="40%">
 
 Randomized Parallel Out-of-Core SVD
 -----------------------------------
