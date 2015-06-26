@@ -118,6 +118,13 @@ arrays, `s`, looks like the following:
 So to write complex parallel algorithms we write down dictionaries of tuples of
 functions.
 
+The dask schedulers take care of executing this graph in parallel using
+multiple threads.  Here is a profile result of a larger computation on a
+30000x1000 array:
+
+<iframe src="{{ BASE_PATH }}/images/svd.profile.html"
+        marginwidth="0" marginheight="0" scrolling="no"
+        width="800" height="300"></iframe>
 
 Low Barrier to Entry
 --------------------
@@ -164,3 +171,4 @@ complexity.  There are no special objects or frameworks to learn, just
 [dictionaries of tuples of functions](http://dask.pydata.org/en/latest/spec.html).
 This allows domain experts to write sophisticated algorithms without fancy code
 getting in their way.
+
