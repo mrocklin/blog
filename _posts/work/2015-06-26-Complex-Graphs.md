@@ -31,11 +31,12 @@ Most parallel workloads today are fairly trivial:
 
 Graphs for these computations look like the following:
 
+<a href="{{ BASE_PATH }}/images/dask-bag-embarassing.png">
 <img src="{{ BASE_PATH }}/images/dask-bag-embarassing.png"
      width="70%"
-     alt="Embarrassingly parallel dask graph">
+     alt="Embarrassingly parallel dask graph"></a>
 
-This is great; these are simple problems to solve and make to efficient.
+This is great; these are simple problems to solve efficiently in parallel.
 Generally these simple computations occur at the *beginning* of our analyses.
 
 Sophisticated Algorithms can be Complex
@@ -57,7 +58,9 @@ Example: Parallel, Stable, Out-of-Core SVD
 
 I'd like to show off work by [Mariano Tepper](http://www.marianotepper.com.ar/),
 who is responsible for ``dask.array.linalg``.  In particular he has a couple of
-wonderful algorithms for SVD (also called PCA in some application circles).
+wonderful algorithms for the
+[Singular Value Decomposition (SVD)](https://en.wikipedia.org/wiki/Singular_value_decomposition)
+(also strongly related to [Principal Components Analysis (PCA)](https://en.wikipedia.org/wiki/Principal_component_analysis).)
 Really I just want to show off this pretty graph.
 
 {% highlight Python %}
@@ -66,13 +69,19 @@ Really I just want to show off this pretty graph.
 >>> u, s, v = da.linalg.svd(x)
 {% endhighlight %}
 
+<a href="{{ BASE_PATH }}/images/dask-svd.png">
 <img src="{{ BASE_PATH }}/images/dask-svd.png"
      width="60%"
-     alt="Parallel SVD dask graph">
+     alt="Parallel SVD dask graph"></a>
 
 This algorithm computes the exact SVD (up to numerical precision) of a large
 tall-and-skinny matrix in parallel in many small chunks.  This allows it to
-operate out-of-core (from disk) and use multiple cores in parallel.
+operate out-of-core (from disk) and use multiple cores in parallel.  At the
+bottom we see the construction of our trivial array of ones, followed by many
+calls to `np.linalg.qr` on each of the blocks.  Then there is a lot of
+rearranging of various pieces as they are stacked, multiplied, and undergo more
+rounds of `np.linalg.qr` and `np.linalg.svd`.  The resulting arrays are
+available in many chunks at the top and second-from-top rows.
 
 The [dask dict](http://dask.pydata.org/en/latest/spec.html) for one of these
 arrays, `s`, looks like the following:
@@ -121,12 +130,13 @@ algorithms associated to his domain, leaving the execution of those algorithms
 up to the dask schedulers.
 
 You can see the source code that generates the above graphs
-[on github](https://github.com/ContinuumIO/dask/blob/master/dask/array/linalg.py).
+[on GitHub](https://github.com/ContinuumIO/dask/blob/master/dask/array/linalg.py).
 
+<a href="{{ BASE_PATH }}/images/dask-svd-random.png">
 <img src="{{ BASE_PATH }}/images/dask-svd-random.png"
      align="right"
      alt="Approximate SVD dask graph"
-     width="40%">
+     width="40%"></a>
 
 Randomized Parallel Out-of-Core SVD
 -----------------------------------
