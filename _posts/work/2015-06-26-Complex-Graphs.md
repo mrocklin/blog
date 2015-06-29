@@ -3,7 +3,6 @@ layout: post
 title: Complex Algorithms - SVD
 tagline: A story of fancy graphs and mathematicians
 category : work
-draft: true
 tags : [scipy, Python, Programming, dask, blaze]
 ---
 {% include JB/setup %}
