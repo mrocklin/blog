@@ -1,7 +1,7 @@
 ---
 layout: post
-title: Complex Algorithms - SVD
-tagline: A story of fancy graphs and mathematicians
+title: Write Complex Parallel Algorithms
+tagline: Fancy graphs, Mathematicians, and SVD
 category : work
 tags : [scipy, Python, Programming, dask, blaze]
 ---
