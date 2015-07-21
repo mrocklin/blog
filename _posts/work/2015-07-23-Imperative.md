@@ -13,17 +13,18 @@ and the [XDATA Program](http://www.darpa.mil/our_work/i2o/programs/xdata.aspx)
 as part of the [Blaze Project](http://blaze.pydata.org/docs/dev/index.html)*
 
 **tl;dr: We motivate the expansion of parallel programming beyond big
-collections.  We discuss programmability of dask graph.**
+collections.  We discuss the usability custom of dask graphs.**
 
 
 Recent Parallel Work Focuses on Big Collections
 -----------------------------------------------
 
-Parallel databases, Spark, and the Dask collections all provide some large
-distributed collection and handle parallelism for you.  You put your data into
-this collection, restrict yourself to a small set of operations like `map` or
-`groupby` and they handle the parallel processing.  There are now a dozen
-projects promising big and friendly Pandas clones.
+Parallel databases, Spark, and the Dask collections all provide large
+distributed collections and handle parallel algorithms for you.  You put your
+data into the collection, restrict yourself to a small set of operations like
+`map` or `groupby`, and they handle the parallel processing.  This idea has
+become so popular that there are now a dozen projects promising big and
+friendly Pandas clones.
 
 This is good.  These collections provide usable, high-level interfaces for a
 large class of problems.
@@ -39,23 +40,21 @@ where problems tend to be messy.
 
 In these cases I tend to see people do two things
 
-1.  Fall back to `multiprocessing` or some other more explicit form of
-parallelism
-2.  Perform mental gymnastics trying to fit their problem into spark using
-clever choice of key values but often failing to acheive much speedup (if not a
-significant slowdown)
+1.  Fall back to `multiprocessing` or some other explicit form of parallelism
+2.  Perform mental gymnastics to fit their problem into Spark using a
+    clever choice of keys.  These cases often fail to acheive much speedup.
 
 
 Direct Dask Graphs
 ------------------
 
-Historically I've constructed dask graphs directly for these use cases.  Manual
-creation of dask graphs lets you specify fairly arbitrary workloads which can
-then use the dask schedulers to execute in parallel.
+Historically I've recommended the manual construction of dask graphs in these
+cases.  Manual construction of dask graphs lets you specify fairly arbitrary
+workloads that then use the dask schedulers to execute in parallel.
 The [dask docs](dask.pydata.org/en/latest/custom-graphs.html) hold the
 following example of a simple data processing pipeline:
 
-<img src="{{ BASE_PATH }}/images/pipeline.png" align="right">
+<img src="{{ BASE_PATH }}/images/pipeline.png" align="right" width="20%">
 
 {% highlight Python %}
 def load(filename):
@@ -76,8 +75,8 @@ dsk = {'load-1': (load, 'myfile.a.data'),
        'analyze': (analyze, ['clean-%d' % i for i in [1, 2, 3]]),
        'store': (store, 'analyze')}
 
->>> from dask.multiprocessing import get
->>> get(dsk, 'store')  # executes in parallel
+from dask.multiprocessing import get
+get(dsk, 'store')  # executes in parallel
 {% endhighlight %}
 
 Feedback from users is that this is interesting and powerful but that
@@ -88,11 +87,10 @@ with IDEs, and is prone to error.
 Introducing dask.do
 -------------------
 
-We want the same ability to write custom parallel workloads but using
-normal-ish Python code rather than raw dictionaries.  We solve this with the
-`dask.do` function which turns any normal Python function into a delayed
-version that adds to a dask graph.  The `do` function lets us rewrite the
-computation above as follows:
+To create the same custom parallel workloads using normal-ish Python code we
+use the `dask.do` function.  This `do` function turns any normal Python
+function into a delayed version that adds to a dask graph.  The `do` function
+lets us rewrite the computation above as follows:
 
 {% highlight Python %}
 from dask import do
@@ -108,7 +106,8 @@ result = do(store)(analysis)
 {% endhighlight %}
 
 The explicit function calls here don't perform work directly; instead they
-build up a dask graph lazily which we can then execute in parallel
+build up a dask graph which we can then execute in parallel with our choice of
+scheduler.
 
 {% highlight Python %}
 from dask.multiprocessing import get
@@ -118,7 +117,7 @@ result.compute(get=get)
 This interface was suggested by [Gael Varoquaux](http://gael-varoquaux.info/)
 based on his experience with [joblib](https://pythonhosted.org/joblib/).  It
 was implemented by [Jim Crist](http://jcrist.github.io/)
-[here](https://github.com/ContinuumIO/dask/pull/408).
+in [PR (#408)](https://github.com/ContinuumIO/dask/pull/408).
 
 
 Example: Nested Cross Validation
@@ -132,9 +131,10 @@ sequential implementation that has been parallelized using `dask.do`:
 You can safely skip reading this code in depth.  The take-away is that it's
 somewhat involved but that the addition of parallelism is light.
 
-<img src="{{BASE_PATH}}/images/do.gif">
+<img src="{{BASE_PATH}}/images/do.gif" alt="parallized cross validation code"
+     width="80%">
 
-The parallel version runs about four times faster on a personal laptop.  This
+The parallel version runs about four times faster on my notebook.  This
 example is artificially similar.  The sequential version is just a downgraded
 version of the parallel code.  The original sequential prototype was lost.  The
 parallel version is available
@@ -155,4 +155,4 @@ Help!
 -----
 
 Is this a useful interface?  It would be great if people could try this out
-and generate feedback on `dask.do`.
+and [generate feedback](github.com/ContinuumIO/dask/issues/new) on `dask.do`.
