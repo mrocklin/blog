@@ -9,7 +9,7 @@ tags : [scipy, Python, Programming, dask, blaze]
 
 *This work is supported by [Continuum Analytics](http://continuum.io)
 and the [XDATA Program](http://www.darpa.mil/our_work/i2o/programs/xdata.aspx)
-as part of the [Blaze Project](http://blaze.pydata.org/docs/dev/index.html)*
+as part of the [Blaze Project](http://blaze.pydata.org)*
 
 **tl;dr: We discuss the use of complex dask graphs for non-trivial algorithms.
 We show off an on-disk parallel SVD.**

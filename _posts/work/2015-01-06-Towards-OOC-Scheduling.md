@@ -8,7 +8,7 @@ tags : [scipy, Python, Programming, Blaze, dask]
 
 *This work is supported by [Continuum Analytics](http://continuum.io)
 and the [XDATA Program](http://www.darpa.mil/our_work/i2o/programs/xdata.aspx)
-as part of the [Blaze Project](http://blaze.pydata.org/docs/dev/index.html)*
+as part of the [Blaze Project](http://blaze.pydata.org)*
 
 **tl;dr** We show off a multi-threaded shared-memory task scheduler.  We share
 two techniques for space-constrained computing.  We end with pretty GIFs.
