@@ -155,4 +155,4 @@ Help!
 -----
 
 Is this a useful interface?  It would be great if people could try this out
-and [generate feedback](github.com/ContinuumIO/dask/issues/new) on `dask.do`.
+and [generate feedback](http://github.com/ContinuumIO/dask/issues/new) on `dask.do`.
