@@ -7,7 +7,7 @@ tags : [scipy, Programming, Blaze, dask]
 {% include JB/setup %}
 
 *This work is supported by [Continuum Analytics](http://continuum.io)
-and the [XDATA Program](http://www.darpa.mil/our_work/i2o/programs/xdata.aspx)
+and the [XDATA Program](http://www.darpa.mil/program/XDATA)
 as part of the [Blaze Project](http://blaze.pydata.org)*
 
 **tl;dr** We lay out the pieces of Dask, a system for parallel computing
@@ -91,7 +91,7 @@ QR and SVD for tall and skinny matrices. See Mariano's [paper on
 arXiv](http://arxiv.org/abs/1505.04650).
 
 4.  Finally I personally use dask on daily work related to the [XData
-project](http://www.darpa.mil/our_work/i2o/programs/xdata.aspx).  This tends to
+project](http://www.darpa.mil/program/XDATA).  This tends to
 drive some of the newer features.
 
 A few other groups pop up on github from time to time; I'd love to

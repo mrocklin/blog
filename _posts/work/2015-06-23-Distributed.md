@@ -7,7 +7,7 @@ tags : [scipy, Python, Programming, dask, blaze]
 {% include JB/setup %}
 
 *This work is supported by [Continuum Analytics](http://continuum.io)
-and the [XDATA Program](http://www.darpa.mil/our_work/i2o/programs/xdata.aspx)
+and the [XDATA Program](http://www.darpa.mil/program/XDATA)
 as part of the [Blaze Project](http://blaze.pydata.org)*
 
 **tl;dr: We evaluate dask graphs with a variety of schedulers and introduce a
