@@ -19,15 +19,15 @@ collections.  We discuss the usability custom of dask graphs.**
 Recent Parallel Work Focuses on Big Collections
 -----------------------------------------------
 
-Parallel databases, Spark, and the Dask collections all provide large
-distributed collections and handle parallel algorithms for you.  You put your
-data into the collection, restrict yourself to a small set of operations like
-`map` or `groupby`, and they handle the parallel processing.  This idea has
-become so popular that there are now a dozen projects promising big and
-friendly Pandas clones.
+Parallel databases, Spark, and Dask collections all provide large distributed
+collections that handle parallel computation for you.  You put data into the
+collection, program with a small set of operations like `map` or `groupby`, and
+the collections handle the parallel processing.  This idea has become so
+popular that there are now a dozen projects promising big and friendly Pandas
+clones.
 
 This is good.  These collections provide usable, high-level interfaces for a
-large class of problems.
+large class of common problems.
 
 
 Custom Workloads
@@ -40,7 +40,7 @@ where problems tend to be messy.
 
 In these cases I tend to see people do two things
 
-1.  Fall back to `multiprocessing` or some other explicit form of parallelism
+1.  Fall back to `multiprocessing`, `MPI` or some other explicit form of parallelism
 2.  Perform mental gymnastics to fit their problem into Spark using a
     clever choice of keys.  These cases often fail to acheive much speedup.
 
@@ -54,7 +54,7 @@ workloads that then use the dask schedulers to execute in parallel.
 The [dask docs](dask.pydata.org/en/latest/custom-graphs.html) hold the
 following example of a simple data processing pipeline:
 
-<img src="{{ BASE_PATH }}/images/pipeline.png" align="right" width="20%">
+<img src="{{ BASE_PATH }}/images/pipeline.png" align="right" width="15%">
 
 {% highlight Python %}
 def load(filename):
@@ -134,14 +134,13 @@ somewhat involved but that the addition of parallelism is light.
 <img src="{{BASE_PATH}}/images/do.gif" alt="parallized cross validation code"
      width="80%">
 
-The parallel version runs about four times faster on my notebook.  This
-example is artificially similar.  The sequential version is just a downgraded
-version of the parallel code.  The original sequential prototype was lost.  The
-parallel version is available
+The parallel version runs about four times faster on my notebook.
+Disclaimer: The sequential version presented here is just a downgraded version
+of the parallel code, hence why they look so similar.  This is available
 [on github](http://github.com/mrocklin/dask-crossval).
 
-So the result of our imperative-style for-loop code is a fully parallelizable
-dask graph.  We visualize that graph below.
+So the result of our normal imperative-style for-loop code is a fully
+parallelizable dask graph.  We visualize that graph below.
 
     test_score.visualize()
 
