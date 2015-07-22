@@ -131,7 +131,7 @@ sequential implementation that has been parallelized using `dask.do`:
 You can safely skip reading this code in depth.  The take-away is that it's
 somewhat involved but that the addition of parallelism is light.
 
-<a href="https://github.com/mrocklin/dask-crossval"
+<a href="https://github.com/mrocklin/dask-crossval">
 <img src="{{BASE_PATH}}/images/do.gif" alt="parallized cross validation code"
      width="80%">
 </a>
