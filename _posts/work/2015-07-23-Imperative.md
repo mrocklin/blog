@@ -88,9 +88,10 @@ Introducing dask.do
 -------------------
 
 To create the same custom parallel workloads using normal-ish Python code we
-use the `dask.do` function.  This `do` function turns any normal Python
-function into a delayed version that adds to a dask graph.  The `do` function
-lets us rewrite the computation above as follows:
+use the [dask.do](http://dask.pydata.org/en/latest/imperative.html) function.
+This `do` function turns any normal Python function into a delayed version that
+adds to a dask graph.  The `do` function lets us rewrite the computation above
+as follows:
 
 {% highlight Python %}
 from dask import do
@@ -157,3 +158,6 @@ Help!
 
 Is this a useful interface?  It would be great if people could try this out
 and [generate feedback](http://github.com/ContinuumIO/dask/issues/new) on `dask.do`.
+
+For more information on `dask.do` see the
+[dask imperative documentation](http://dask.pydata.org/en/latest/imperative.html).
