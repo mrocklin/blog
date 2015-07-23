@@ -3,7 +3,6 @@ layout: post
 title: Custom Parallel Workflows
 tagline: dask graphs <3 for loops
 category : work
-draft: true
 tags : [scipy, Python, Programming, dask, blaze]
 ---
 {% include JB/setup %}
