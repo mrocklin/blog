@@ -120,10 +120,11 @@ graph (beware, this can get gnarly, friendlier approaches exist below.)
 
 >>> from distributed.dask import get
 >>> get('node1', 8787, dsk, 'total')
+500004095.00759566
 {% endhighlight %}
 
-Apparently not everyone finds dask dictionaries and pleasant to write by hand.
-You could also use this with dask.imperative or dask.array.
+Apparently not everyone finds dask dictionaries to be pleasant to write by
+hand.  You could also use this with dask.imperative or dask.array.
 
 ### dask.imperative
 
@@ -200,8 +201,12 @@ have some mechanism to do that, even if its just ssh as I did above.  My hope
 is that `distributed` lowers the bar for non-trivial cluster computing in
 Python.
 
-Post-finally, everything here is experimental.  The library itself is broken
-and unstable.  Please
-[give critical feedback here](https://github.com/mrocklin/distributed/pull/3).
+Disclaimer
+----------
+
+Everything here is *very experimental*.  The library itself is broken
+and unstable.  It was made in the last few weeks and hasn't been used on
+anything serious.  Please adjust expectations accordingly and
+[provide critical feedback.](https://github.com/mrocklin/distributed/pull/3)
 
 * [Distributed Documentation](http://distributed.readthedocs.org/en/latest/)
