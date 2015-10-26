@@ -115,10 +115,11 @@ As an example we perform a binary tree reduction on a sequence of random
 arrays.
 
 This is the kind of algorithm you would find hard-coded into a library like
-Spark or dask.array/dataframe but that we can accomplish by hand with some for
-loops while still using parallel distributed computing.  The difference here is
-that we're not limited to the algorithms chosen for us and can screw around
-more freely.
+[Spark](http://spark.apache.org/) or
+[dask.array](http://dask.pydata.org/en/latest/array.html)/[dataframe](http://dask.pydata.org/en/latest/dataframe.html)
+but that we can accomplish by hand with some for loops while still using
+parallel distributed computing.  The difference here is that we're not limited
+to the algorithms chosen for us and can screw around more freely.
 
     finish           total             single array output
         ^          /        \
