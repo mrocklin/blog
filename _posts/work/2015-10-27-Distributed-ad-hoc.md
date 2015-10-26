@@ -59,8 +59,8 @@ Data Locality
 However we often don't want to move data.
 
 By default the result of the computation (`2`) stays on the remote computer
-where the computation occurred.  Data transfer often becomes the bottleneck; we
-avoid calling `.result()` whenever possible.
+where the computation occurred.  Data transfer often becomes the bottleneck so
+we avoid calling `.result()` whenever possible.
 
 We avoid data transfer by allowing `submit` calls to directly accept futures as
 arguments:
@@ -98,9 +98,9 @@ provided by MapReduce or Spark are often sufficient.
 
 However when our computations aren't straightforward and they don't fit nicely
 into a framework then we're stuck performing `groupby` and `join` gymnastics
-over strange key naming schemes to fit our problem into the MapReduce or Spark
-programming model.  If we're not operating at the peta-byte scale then these
-programming models might be overkill.
+over strange key naming schemes to coerce our problem into the MapReduce or
+Spark programming model.  If we're not operating at the peta-byte scale then
+these programming models might be overkill.
 
 The `.submit` function has an overhead of about a millisecond per call (not
 counting network latency).  This might be crippling at the petabyte scale, but
@@ -129,7 +129,7 @@ more freely.
         ^    / \   / \   / \   / \
     start   x1 x2 x3 x4 x5 x6 x7 x8    many array inputs
 
-*  Make sixteen million element random arrays on the cluster:
+*  Make sixteen, million element random arrays on the cluster:
 
 {% highlight Python %}
 import numpy as np
@@ -152,6 +152,11 @@ array([  2.069694  ,   9.01727599,   5.42682524, ...,   0.42372487,
          1.50364966,  13.48674896])
 {% endhighlight %}
 
+This entire computation, from writing the code to receiving the answer takes
+well under a second on a small cluster.  This isn't surprising, it's a very
+small computation.  What's notable though is the very small startup and
+overhead time.  It's rare to find distributed computing systems that can spin
+up and finish small computations this quickly.
 
 Notes
 -----
