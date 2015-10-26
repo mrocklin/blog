@@ -168,3 +168,9 @@ are listed [here](http://distributed.readthedocs.org/en/latest/related-work.html
 distributed `concurrent.futures` interface.
 
 The `distributed` project could use a more distinct name.  Any suggestions?
+
+For more information see the following links:
+
+*   [Documentation](http://distributed.readthedocs.org/en/latest/)
+*   [Source on Github](http://github.com/mrocklin/distributed/)
+*   [Gitter chat](https://gitter.im/mrocklin/distributed)
