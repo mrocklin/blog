@@ -43,7 +43,9 @@ def inc(x):
 {% endhighlight %}
 
 The submit call executes `inc(1)` on a remote machine and returns a future that
-serves as a proxy to that running computation and remote result.
+serves as a proxy to that running computation and remote result.  We *can*
+collect this result back to the local process if we want to with the
+`.result()` method.
 
 {% highlight Python %}
 >>> x.result()  # transfers data from remote to local process
@@ -54,14 +56,17 @@ serves as a proxy to that running computation and remote result.
 Data Locality
 -------------
 
-The result of the computation stays on the remote computer where the
-computation occurred.  We only transfer data when necessary.  Data transfer
-often becomes the bottleneck; we want to avoid calling `.result()` whenever
-possible.  We avoid data transfer by allowing `submit` calls to accept futures
-directly:
+However we often don't want to move data.
+
+By default the result of the computation (`2`) stays on the remote computer
+where the computation occurred.  Data transfer often becomes the bottleneck; we
+avoid calling `.result()` whenever possible.
+
+We avoid data transfer by allowing `submit` calls to directly accept futures as
+arguments:
 
 {% highlight Python %}
->>> y = executor.submit(inc, x)
+>>> y = executor.submit(inc, x)  # no need to call x.result()
 {% endhighlight %}
 
 This deviates from the `concurrent.futures` API where we would wait on `x`
@@ -73,7 +78,7 @@ before submiting `y`.  We no longer have to do the following:
 
 This is useful for two reasons:
 
-1.  **Avoid moving data to the local process**:  We keep data on the
+1.  **Avoids moving data to the local process**:  We keep data on the
 distributed network.  This avoids unnecessary data transfer.
 2.  **Fire and forget**: We don't have to reason about which jobs finish before
 which others.  The scheduler takes care of this for us.
@@ -83,7 +88,9 @@ Ad hoc computations
 -------------------
 
 For ad-hoc computations we often want the fine-grained control that a simple
-`.submit(func, *args)` function provides.
+`.submit(func, *args)` function provides.  Ad-hoc computations often have
+various function calls that depend on each other in various strange ways; they
+don't fit a particular model or framework.
 
 We don't need this fine-grained control if we're just parsing JSON and loading
 it into a database.  In this case bulk operations like `map` and `reduce`
@@ -97,8 +104,9 @@ programming models might be overkill.
 
 The `.submit` function has an overhead of about a millisecond per call (not
 counting network latency).  This might be crippling at the petabyte scale, but
-it's quite convenient and freeing at the medium-data scale.  It lets use use a
-cluster of machines without strongly mangling our code.
+it's quite convenient and freeing at the medium-data scale.  It lets us use a
+cluster of machines without strongly mangling our code or our conceptual model
+of what's going on.
 
 
 Example: Binary Tree Reduction
@@ -113,13 +121,13 @@ loops while still using parallel distributed computing.  The difference here is
 that we're not limited to the algorithms chosen for us and can screw around
 more freely.
 
-    ^            total             single array output
-    |          /        \
-    |        z1          z2
-    |       /  \        /  \
-    |     y1    y2    y3    y4     neighbors merge
-    |    / \   / \   / \   / \
-    _   x1 x2 x3 x4 x5 x6 x7 x8    many array inputs
+    finish           total             single array output
+        ^          /        \
+        |        z1          z2
+        |       /  \        /  \
+        |     y1    y2    y3    y4     neighbors merge
+        ^    / \   / \   / \   / \
+    start   x1 x2 x3 x4 x5 x6 x7 x8    many array inputs
 
 *  Make sixteen million element random arrays on the cluster:
 
