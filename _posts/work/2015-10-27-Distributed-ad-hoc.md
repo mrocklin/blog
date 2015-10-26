@@ -42,10 +42,9 @@ def inc(x):
 <Future: status: waiting, key: inc-8bca9db48807c7d8bf613135d01b875f>
 {% endhighlight %}
 
-The submit call executes `inc(1)` on a remote machine and returns a future that
-serves as a proxy to that running computation and remote result.  We *can*
-collect this result back to the local process if we want to with the
-`.result()` method.
+The submit call executes `inc(1)` on a remote machine.  The returned future
+serves as a proxy to the remote result.  We can collect this result back to the
+local process with the `.result()` method:
 
 {% highlight Python %}
 >>> x.result()  # transfers data from remote to local process
@@ -56,7 +55,7 @@ collect this result back to the local process if we want to with the
 Data Locality
 -------------
 
-However we often don't want to move data.
+However we don't want to move data with the `.result` method if we can avoid it.
 
 By default the result of the computation (`2`) stays on the remote computer
 where the computation occurred.  Data transfer often becomes the bottleneck so
