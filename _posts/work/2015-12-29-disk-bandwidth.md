@@ -33,9 +33,9 @@ of a commercial laptop SSD as we vary block size:
 Analysis
 --------
 
-We see that this particular hard drive really wants to write data in chunksizes
+We see that this particular hard drive wants to read/write data in chunksizes
 of 1-100 MB.  If we can arrange our data so that we consistently pull off
-larger blocks of data at a time then we can stream through data quite quickly
+larger blocks of data at a time then we can read through data quite quickly
 at 500 MB/s.  We can churn through a 30 GB dataset in one minute.
 Sophisticated file formats take advantage of this by storing similar data
 consecutively.  For example column stores store all data within a single column
@@ -55,6 +55,6 @@ and explicitly clear all buffers before entering the read section.
 
 Anecdotally I also learned that my operating system caps write speeds at 30
 MB/s when operating off of battery power.  This anecdote demonstrates how
-particular your hard drive may be when controled by a file system.  It is worth
+particular your hard drive may be when controlled by a file system.  It is worth
 remembering that your hard drive is a physical machine and not just a
 convenient abstraction.

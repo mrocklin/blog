@@ -76,8 +76,7 @@ $$\left(\frac{1}{500} + \frac{1}{125}\right)^{-1} = 100 $$
 
 This example demonstrates that we should focus on the weakest bandwidth first.
 Cheap changes like switching from JSON to msgpack can be more effective than
-expensive changes, like switching purchasing expensive hardware for fast
-storage.
+expensive changes, like purchasing expensive hardware for fast storage.
 
 
 ### Overlapping Bandwidths
