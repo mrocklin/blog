@@ -52,7 +52,7 @@ to add up the inverses of the bandwidths, then take the inverse again:
 
 $$ \textrm{total bandwidth} = \left(\sum_i \frac{1}{x_i}\right)^{-1} $$
 
-This is the same principle behind adding resistences in serial within
+This is the same principle behind adding conductances in serial within
 electrical circuits.   One quickly learns to optimize the slowest link in the
 chain first.
 
