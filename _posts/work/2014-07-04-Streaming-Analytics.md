@@ -3,6 +3,7 @@ layout: post
 title: Streaming Analytics
 tagline: Data analytics recipes for PyToolz
 category : work
+theme: twitter
 tags : [scipy, Python, Programming]
 ---
 {% include JB/setup %}

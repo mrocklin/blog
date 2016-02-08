@@ -3,6 +3,7 @@ layout: post
 title: PyData and the GIL
 category : work
 tags : [scipy, Python, Programming]
+theme: twitter
 ---
 {% include JB/setup %}
 

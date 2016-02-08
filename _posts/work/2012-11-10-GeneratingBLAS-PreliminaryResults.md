@@ -2,12 +2,13 @@
 layout: post
 title: Preliminary BLAS Results
 tagline: putting it all together
-category : work 
+category : work
 tags : [SymPy, Matrices]
+theme: twitter
 ---
 {% include JB/setup %}
 
-In the last few posts I've built up some independent technology. 
+In the last few posts I've built up some independent technology.
 
 1.  [BLAS and code generation]({{ BASE_PATH }}/work/2012/10/29/Matrix-Computations/) - a logical description
 2.  [Unification]({{ BASE_PATH }}/work/2012/11/01/Unification/) - advanced pattern matching
@@ -28,7 +29,7 @@ We set up a problem that we'd like to solve. We want to compute \\((4 X X^{T} + 
 
 {% endhighlight %}
 
-We have described a set of BLAS/LAPACK operations to perform certain transformations when the right conditions are met.  Each BLAS operation is a single rewrite rule.  
+We have described a set of BLAS/LAPACK operations to perform certain transformations when the right conditions are met.  Each BLAS operation is a single rewrite rule.
 
 {% highlight python %}
 >>> from sympy.matrices.expressions.gen import rr_from_blas
@@ -46,7 +47,7 @@ certain conditions. For example
 We need to combine them to turn the large target expression into a set of atomic inputs.  Some of the BLAS routines overlap so there are potentially many possibilities.
 
 {% highlight python %}
->>> from sympy.matrices.expressions.gen import top_down 
+>>> from sympy.matrices.expressions.gen import top_down
 >>> from sympy.rules.branch import multiplex
 
 >>> rule = top_down(multiplex(*rules))
@@ -90,7 +91,7 @@ This computation is in-place. `GEMM` stores its result in the argument `Z`. `POS
 
 This Fortran code is independent of Python or SymPy and can be used in any project. However, if we prefer the Python environment we can bring it back into the Python session with F2PY.
 
-    >>> f = computations[0].build(str, assumptions) 
+    >>> f = computations[0].build(str, assumptions)
     >>> f?
     f - Function signature:
       info = f(x,z,[n])
@@ -104,10 +105,10 @@ This Fortran code is independent of Python or SymPy and can be used in any proje
 
 This function accepts numpy arrays and so integrates well into the Python scientific computing stack.
 
-Multiple Matches 
+Multiple Matches
 ----------------
 
-There were two computations. What was the other? 
+There were two computations. What was the other?
 
 {% highlight python %}
 >>> len(computations)
@@ -131,16 +132,16 @@ RETURN
 END
 {% endhighlight %}
 
-This solution uses the `GESV` routine for general matrices in place of the specialized `POSV` for symmetric positive definite matrices.  Which is best?  In this case `POSV` is likely faster because it is able to use faster algorithms due to the symmetric positive definite assumption.  After looking at both possibilities we choose it. 
+This solution uses the `GESV` routine for general matrices in place of the specialized `POSV` for symmetric positive definite matrices.  Which is best?  In this case `POSV` is likely faster because it is able to use faster algorithms due to the symmetric positive definite assumption.  After looking at both possibilities we choose it.
 
 For large matrix expressions the number of possible computations may stop us from inspecting all possible solutions.  How can we ensure that the best solution is in the first few?
 
 Code Separation
 ---------------
 
-The definition of BLAS/LAPACK is separated from the pattern matching code and the branching control code. This allows me (or other people) to develop one without thinking about the other. It also allows for a declarative definition of BLAS and LAPACK routines. If anyone is interested I could use more routines than just the six used in this example. 
+The definition of BLAS/LAPACK is separated from the pattern matching code and the branching control code. This allows me (or other people) to develop one without thinking about the other. It also allows for a declarative definition of BLAS and LAPACK routines. If anyone is interested I could use more routines than just the six used in this example.
 
-This project requires the technology from the previous four posts. While all of that technology (strategies, unification, code generation) is necessary to this project none of it is specific to this project. All of the pieces are general, composable, and applicable to other ends. I hope that others are able to find some use for them. 
+This project requires the technology from the previous four posts. While all of that technology (strategies, unification, code generation) is necessary to this project none of it is specific to this project. All of the pieces are general, composable, and applicable to other ends. I hope that others are able to find some use for them.
 
 Caveats
 -------

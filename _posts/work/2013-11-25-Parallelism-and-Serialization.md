@@ -3,6 +3,7 @@ layout: post
 title:  Parallelism and Serialization
 tagline:  functional performance and pickles
 category : work
+theme: twitter
 draft: true
 ---
 {% include JB/setup %}

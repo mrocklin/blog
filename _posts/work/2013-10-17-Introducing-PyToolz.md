@@ -3,6 +3,7 @@ layout: post
 title:  Introducing PyToolz
 tagline:  a functional standard library
 category : work
+theme: twitter
 tags : [Python, scipy]
 ---
 {% include JB/setup %}

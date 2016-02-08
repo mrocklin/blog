@@ -4,6 +4,7 @@ title: Computations
 tagline: beyond expression trees
 category : work
 tags : [SymPy]
+theme: twitter
 ---
 {% include JB/setup %}
 
@@ -41,14 +42,14 @@ Internal Representation
 
 My current implementation of `CompositeComputation` is represented internally as an immutable set of computations.  Inter-computation interactions are inferred as needed by their variables.  We provide methods to form an alternative dict-based data structure with fast access and traversal should performance become necessary.
 
-All variables are assumed immutable and unique.  The intention is that variables should be entirely defined by their mathematical meaning.  The expectation is that the variables are SymPy expressions. 
+All variables are assumed immutable and unique.  The intention is that variables should be entirely defined by their mathematical meaning.  The expectation is that the variables are SymPy expressions.
 
 This approach has a focus on immutability and mathematical attributes rather than performance and computational attributes.  For example it is impossible to represent a `Copy` operation within this framework because mathematical meanings of the input and output variable would be identical.  Similarily inplace operations are not checkable in this framework.
 
 Inplace
 -------
 
-And yet copies and inplace operations are important parts of real computation.  We make an explicit separation between mathematics-based optimizations and infrastructure-based optimizations (like inplace).  We perform this transition by replacing each variable with a pair that contains a purely mathematical expression (left)  and a purely computational variable (right). 
+And yet copies and inplace operations are important parts of real computation.  We make an explicit separation between mathematics-based optimizations and infrastructure-based optimizations (like inplace).  We perform this transition by replacing each variable with a pair that contains a purely mathematical expression (left)  and a purely computational variable (right).
 
 ![]({{ BASE_PATH }}/images/min-max-dag-pure.png)
 
@@ -72,4 +73,4 @@ However the available operations (like `GEMM`) are inplace by default.  These tw
 Question
 --------
 
-Should this be a part of SymPy? 
+Should this be a part of SymPy?

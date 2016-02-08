@@ -3,6 +3,7 @@ layout: post
 title: Towards Out-of-core DataFrames
 category : work
 tags : [scipy, Python, Programming, Blaze, dask]
+theme: twitter
 ---
 {% include JB/setup %}
 

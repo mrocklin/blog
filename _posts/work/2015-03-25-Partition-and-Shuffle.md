@@ -3,6 +3,7 @@ layout: post
 title: Partition and Shuffle
 category : work
 tags : [scipy, Python, Programming, Blaze, dask]
+theme: twitter
 ---
 {% include JB/setup %}
 

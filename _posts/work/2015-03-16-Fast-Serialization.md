@@ -3,6 +3,7 @@ layout: post
 title: Efficiently Store Pandas DataFrames
 category : work
 tags : [scipy, Python, Programming]
+theme: twitter
 ---
 {% include JB/setup %}
 

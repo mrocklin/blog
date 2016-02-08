@@ -3,6 +3,7 @@ layout: post
 title: Introducing Blaze - Practice
 tagline: in which we solve a real problem
 category : work
+theme: twitter
 tags : [scipy, Python, Programming, Blaze]
 ---
 {% include JB/setup %}

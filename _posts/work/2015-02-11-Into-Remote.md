@@ -3,6 +3,7 @@ layout: post
 title: Into and Remote Data
 tagline: Mucking about with `ssh` and `hdfs`
 category : work
+theme: twitter
 tags : [scipy, Python, Programming, Blaze]
 ---
 {% include JB/setup %}

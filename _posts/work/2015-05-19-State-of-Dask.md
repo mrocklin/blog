@@ -3,6 +3,7 @@ layout: post
 title: State of Dask
 category : work
 tags : [scipy, Programming, Blaze, dask]
+theme: twitter
 ---
 {% include JB/setup %}
 

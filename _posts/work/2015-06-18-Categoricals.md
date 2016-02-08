@@ -3,6 +3,7 @@ layout: post
 title: Pandas Categoricals
 category : work
 tags : [scipy, Python, Programming]
+theme: twitter
 ---
 {% include JB/setup %}
 

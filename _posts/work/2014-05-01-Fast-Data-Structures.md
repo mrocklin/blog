@@ -3,6 +3,7 @@ layout: post
 title: Python Data Structures are Fast
 tagline:
 category : work
+theme: twitter
 tags : [scipy, Python, Programming]
 ---
 {% include JB/setup %}

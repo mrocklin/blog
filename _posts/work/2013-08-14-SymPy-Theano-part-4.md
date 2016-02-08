@@ -1,8 +1,9 @@
 ---
 layout: post
 title:  Using SymPy within Theano
-tagline:  
-category : work 
+tagline:
+category : work
+theme: twitter
 tags : [SymPy, Theano, scipy]
 ---
 {% include JB/setup %}
@@ -79,7 +80,7 @@ But you shouldn't use this mechanism if you don't have to.  Recall from the [fir
 
 ## Future Work
 
-We need to improve SymPy's code printers.  While they support all the standard operators they neglect to cover the really interesting cases like bessel functions or factorial.  These are cases where the numerical analysis community can concisely describe the "right way" to compute many of these operations in isolation.   For example the factorial of `n` can be computed as `gamma(n+1)`, a fact rarely known by mainstream programmers.  
+We need to improve SymPy's code printers.  While they support all the standard operators they neglect to cover the really interesting cases like bessel functions or factorial.  These are cases where the numerical analysis community can concisely describe the "right way" to compute many of these operations in isolation.   For example the factorial of `n` can be computed as `gamma(n+1)`, a fact rarely known by mainstream programmers.
 
 $$ n! = \Gamma(n+1) \;\; \forall n \in \mathbb{N} $$
 

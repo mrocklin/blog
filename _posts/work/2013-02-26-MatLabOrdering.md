@@ -1,8 +1,9 @@
 ---
 layout: post
 title:  Operation Ordering in MatLab
-tagline:  why you should demand an array compiler 
-category : work 
+tagline:  why you should demand an array compiler
+category : work
+theme: twitter
 tags : [Matrices]
 ---
 {% include JB/setup %}
@@ -24,7 +25,7 @@ Graphically the operation looks something like the following
 This is a common lesson that the order of matrix operations matters.  Do computers know this lesson?  It is difficult to implement this optimization in compiler for C or Fortran.  They would have to inspect sets of nested for loopsto realize the larger picture.  A hosted library like `numpy` is also unlikely to make this optimization; operation ordering is determined by the Python language.  With MatLab it is uncertain.  MatLab is interpreted and so generally doesn't compile.  However it inspect each line statement before execution.
 
 Does Matlab choose wisely?
-    
+
     >> tic; x*x'*x; toc
     Elapsed time is 0.317499 seconds.
 

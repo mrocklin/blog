@@ -3,6 +3,7 @@ layout: post
 title: Introducing Blaze - Migrations
 tagline: interfaces for migrating data
 category : work
+theme: twitter
 tags : [scipy, Python, Programming, Blaze]
 ---
 {% include JB/setup %}
