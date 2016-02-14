@@ -127,4 +127,15 @@ JB :
   #   ./_includes/custom/[HELPER]
   # where [HELPER] is the name of the helper you are overriding.
 
-markdown: kramdown
+incremental: true
+
+github: [metadata]
+kramdown:
+    input: GFM
+    hard_wrap: false
+gems:
+    - jekyll-coffeescript
+    - jekyll-paginate
+    - jekyll-gist
+gist:
+    noscript: false
