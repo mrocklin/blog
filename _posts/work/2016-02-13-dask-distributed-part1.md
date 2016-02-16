@@ -16,7 +16,9 @@ few weeks I and others will write about this system.  Please note that
 dask+distributed is developing quickly and so the API is likely to shift around
 a bit.
 
-Today we start simple.
+Today we start simple with the typical cluster computing problem, parsing JSON
+records, filtering, and counting events using dask.bag and the new distributed
+scheduler.  We'll dive into more advanced problems in future posts.
 
 *A video version of this blogpost is available
 [here](https://www.youtube.com/watch?v=W0Q0uwmYD6o).*
@@ -280,7 +282,7 @@ Wall time: 204 ms
  'jupyter/nbindex',
  'jupyter/nbviewer',
  'jupyter/oauthenticator']
- ```
+```
 
 And the top ten most active people on GitHub.
 
@@ -314,9 +316,9 @@ Full Dataset
 The full five months of data is too large to fit in memory, even for this
 cluster.  When we represent semi-structured data like this with dynamic data
 structures like lists and dictionaries there is quite a bit of memory bloat.
-Some care to efficient semi-structured storage here could save us from having
-to switch to such a large cluster, but alas, that will have to be the topic of
-another blogpost.
+Some in regards care to efficient semi-structured storage here could save us
+from having to switch to such a large cluster, but alas, that will have to be
+the topic of another blogpost.
 
 Instead, we operate efficiently on this dataset by flowing it through
 memory, persisting only the records we care about.  The distributed dask
@@ -475,12 +477,13 @@ done differently with more time.
    `s3` module is within the `distributed` library.  We'll have to merge things
    at some point in the near-to-moderate future.  Ditto for the API: there are
    compute methods both on the dask collections (`records.compute()`) and on
-   the distributed executor (`e.compute(records)`).
+   the distributed executor (`e.compute(records)`) that behave slightly
+   differently.
 
 *  We lack an efficient distributed shuffle algorithm.  This is very important
    if you want to use operations like `.groupby` (which you should avoid
    anyway).  The user API here doesn't even cleanly warn users that this is
-   missing in the distributed case which is kind of a mess. (it works fine on a
+   missing in the distributed case which is kind of a mess. (It works fine on a
    single machine.)  Efficient alternatives like `foldby` *are* available.
 
 *  I would have liked to run this experiment directly on the cluster to see
