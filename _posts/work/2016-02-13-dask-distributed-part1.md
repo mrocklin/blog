@@ -11,10 +11,10 @@ theme: twitter
 Dask, a Python library for parallel computing, now works on clusters.  During
 the past few months I've extended dask with a new distributed memory scheduler.
 This enables dask's existing parallel algorithms to scale across 10s to 100s of
-nodes, and extends an subset of PyData to distributed computing.  Over the next
+nodes, and extends a subset of PyData to distributed computing.  Over the next
 few weeks I and others will write about this system.  Please note that
-dask+distributed is developing quickly and so API is likely to shift around a
-bit.
+dask+distributed is developing quickly and so the API is likely to shift around
+a bit.
 
 Today we start simple.
 
@@ -35,13 +35,13 @@ cluster.
 
 ### Setup and Data
 
-We provision nine `m3.2xlarge` nodes on EC2.  These have eight cores and 30GB of
-RAM each.  On this cluster we one scheduler and nine workers
-(see [setup docs](http://distributed.readthedocs.org/en/latest/setup.html)).
-(more on launching in later posts.)  We have five months of data, from
-2015-01-01 to 2015-05-31 on the `githubarchive-data` bucket in S3.  This data
-is publicly avaialble if you want to play with it on EC2.  You can download the
-full dataset at https://www.githubarchive.org/ .
+We provision nine `m3.2xlarge` nodes on EC2.  These have eight cores and 30GB
+of RAM each.  On this cluster we provision one scheduler and nine workers (see
+[setup docs](http://distributed.readthedocs.org/en/latest/setup.html)).  (More
+on launching in later posts.)  We have five months of data, from 2015-01-01 to
+2015-05-31 on the `githubarchive-data` bucket in S3.  This data is publicly
+avaialble if you want to play with it on EC2.  You can download the full
+dataset at https://www.githubarchive.org/ .
 
 The first record looks like the following:
 
@@ -111,7 +111,7 @@ operations in a lazily built task graph.  When we ask the executor to `persist`
 this collection we ship those tasks off to the scheduler to run on all of the
 workers in parallel.  The `persist` function gives us back another `dask.bag`
 pointing to these remotely running results.  This persist function returns
-immediately, the computation happens on the cluster in the background
+immediately, and the computation happens on the cluster in the background
 asynchronously.  We gain control of our interpreter immediately while the
 cluster hums along.
 
@@ -149,7 +149,7 @@ that it feels instantaneous to a human.
   'type': 'PushEvent'},)
 ```
 
-This particular event is a `'PushEvent'`.  Lets quickly see all the kinds of
+This particular event is a `'PushEvent'`.  Let's quickly see all the kinds of
 events.  For fun, we'll also time the interaction:
 
 ```python
@@ -248,9 +248,9 @@ So the first event of the year was by `'marksteve'` who decided to watch the
 `'nbviewer'` repository on new year's day.
 
 Notice that these computations take around 200ms.  I can't get below this from
-my local machine, so we're like bound by communicating to such a remote
-location.  A 200ms latency is not great if you're playing a video game, but its
-decent for interactive computing.
+my local machine, so we're likely bound by communicating to such a remote
+location.  A 200ms latency is not great if you're playing a video game, but
+it's decent for interactive computing.
 
 Here are all of the Jupyter repositories touched in the month of January,
 
@@ -324,8 +324,8 @@ scheduler descends from the single-machine dask scheduler, which was quite good
 at flowing through a computation and intelligently removing intermediate
 results.
 
-From an user API perspective, we call `persist` only the `jupyter` dataset, and
-not the full `records` dataset.
+From a user API perspective, we call `persist` only on the `jupyter` dataset,
+and not the full `records` dataset.
 
 ```python
 >>> full = (s3.read_text('githubarchive-data', '2015', compression='gzip')
@@ -338,7 +338,7 @@ not the full `records` dataset.
 >>> jupyter = e.persist(jupyter)
 ```
 
-It takes 2m36s to download, decompress, parse, the five months of publicly
+It takes 2m36s to download, decompress, and parse the five months of publicly
 available GitHub events for all Jupyter events on nine `m3.2xlarges`.
 
 There were seven thousand such events.
@@ -387,7 +387,7 @@ while, surprisingly, `nbconvert` saw relatively little action.
 Local Data
 ----------
 
-The Jupyter data is quite small and easily fits in a single machine.  Lets
+The Jupyter data is quite small and easily fits in a single machine.  Let's
 bring the data to our local machine so that we can compare times:
 
 ```python
@@ -473,7 +473,7 @@ done differently with more time.
    immediately clear to the novice user where to go.  For example dask.bag, the
    collection we're using for `records`, `jupyter`, etc. is in `dask` but the
    `s3` module is within the `distributed` library.  We'll have to merge things
-   at some point in the near-to-moderate future.  Ditto for the API, there are
+   at some point in the near-to-moderate future.  Ditto for the API: there are
    compute methods both on the dask collections (`records.compute()`) and on
    the distributed executor (`e.compute(records)`).
 
