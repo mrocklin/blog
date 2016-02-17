@@ -315,9 +315,9 @@ Full Dataset
 The full five months of data is too large to fit in memory, even for this
 cluster.  When we represent semi-structured data like this with dynamic data
 structures like lists and dictionaries there is quite a bit of memory bloat.
-Some in regards care to efficient semi-structured storage here could save us
-from having to switch to such a large cluster, but alas, that will have to be
-the topic of another blogpost.
+Some careful attention to efficient semi-structured storage here could save us
+from having to switch to such a large cluster, but that will have to be
+the topic of another post.
 
 Instead, we operate efficiently on this dataset by flowing it through
 memory, persisting only the records we care about.  The distributed dask
@@ -332,8 +332,7 @@ and not the full `records` dataset.
 >>> full = (s3.read_text('githubarchive-data', '2015', compression='gzip')
               .map(json.loads)
 
->>> jupyter = (full.filter(lambda d: d['repo']['name']
-                   .startswith('jupyter/'))
+>>> jupyter = (full.filter(lambda d: d['repo']['name'].startswith('jupyter/'))
                    .repartition(10))
 
 >>> jupyter = e.persist(jupyter)
