@@ -8,12 +8,12 @@ theme: twitter
 {% include JB/setup %}
 
 Dask, a Python library for parallel computing, now works on clusters.  During
-the past few months I've extended dask with a new distributed memory scheduler.
-This enables dask's existing parallel algorithms to scale across 10s to 100s of
-nodes, and extends a subset of PyData to distributed computing.  Over the next
-few weeks I and others will write about this system.  Please note that
-dask+distributed is developing quickly and so the API is likely to shift around
-a bit.
+the past few months I and others have extended dask with a new distributed
+memory scheduler.  This enables dask's existing parallel algorithms to scale
+across 10s to 100s of nodes, and extends a subset of PyData to distributed
+computing.  Over the next few weeks I and others will write about this system.
+Please note that dask+distributed is developing quickly and so the API is
+likely to shift around a bit.
 
 Today we start simple with the typical cluster computing problem, parsing JSON
 records, filtering, and counting events using dask.bag and the new distributed
