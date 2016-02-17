@@ -58,7 +58,7 @@ The New York City Taxi and Limousine Commission [makes
 public](http://www.nyc.gov/html/tlc/html/about/trip_record_data.shtml) a record
 of all taxi trips taken by Yellow Cabs within the city.  This is a nice model
 dataset for computational tabular data because it's large enough to be annoying
-while also deep enough to be broadly appealling.  It's about 20GB on disk and
+while also deep enough to be broadly appealing.  It's about 20GB on disk and
 about 60GB in memory as a Pandas DataFrame.
 
 For interactive analytics it's convenient to load the entire dataset into
@@ -71,10 +71,9 @@ Each node is an `m3.2xlarge` with 8 cores and 30 GB of RAM.
 
 ### Load onto HDFS
 
-We downloaded and dumped the NYCTaxi data from the command line of the head
-node.
+We download and dump the NYCTaxi data from the head node.
 
-```
+```python
 $ wget https://storage.googleapis.com/tlc-trip-data/2015/yellow_tripdata_2015-{01..12}.csv
 $ hdfs dfs -mkdir /nyctaxi
 $ hdfs dfs -mkdir /nyctaxi/2015
@@ -91,6 +90,7 @@ Distributed DataFrames
 We connect to the scheduler and create a dask dataframe from the dataset on
 HDFS.
 
+```python
 >>> from distributed import Executor, hdfs, progress
 >>> e = Executor('127.0.0.1:8786')
 >>> e
@@ -98,9 +98,10 @@ HDFS.
 
 >>> df = hdfs.read_csv('/nyctaxi/2015/*.csv',
 ...            parse_dates=['tpep_pickup_datetime', 'tpep_dropoff_datetime'])
+```
 
 The `hdfs.read_csv` function takes a location on HDFS, any keyword arguments
-you woud pass to `pandas.read_csv` and creates a dask dataframe object.  Dask
+you would pass to `pandas.read_csv` and creates a dask dataframe object.  Dask
 dataframes faithfully implement a subset of the Pandas API, but operate in
 parallel either off disk or on a distributed cluster.
 
@@ -111,15 +112,19 @@ many small Pandas dataframes spread throughout the memory of our cluster.  The
 resulting dask dataframe keeps track of these many small Pandas dataframes and
 triggers computations on them when appropriate.
 
+```python
 >>> df = e.persist(df)
+```
 
 The full process takes about a minute to load and parse (more on performance
 later on).  Afterwards we can perform simple computations at interactive
 speeds.
 
+```python
 >>> %time df.head()
 CPU times: user 8 ms, sys: 0 ns, total: 8 ms
 Wall time: 29.7 ms
+```
 
 <table border="1" class="dataframe">
   <thead>
@@ -260,11 +265,13 @@ Wall time: 29.7 ms
   </tbody>
 </table>
 
+```python
 >>> %time len(df)
 CPU times: user 20 ms, sys: 0 ns, total: 20 ms
 Wall time: 207 ms
 
 146112989
+```
 
 So at the simple end of the scale we see that computations happen at a speed
 which, for a human, appears to be instantaneous.
@@ -273,6 +280,7 @@ Additionally, we get to rely on all of the Pandas magic to parse CSV files,
 sniff for names and dtypes, and handle all of the complexity that comes with
 real data.
 
+```python
 >>> df.dtypes
 VendorID                          int64
 tpep_pickup_datetime     datetime64[ns]
@@ -294,20 +302,22 @@ tolls_amount                    float64
 improvement_surcharge           float64
 total_amount\r                  float64
 dtype: object
+```
 
 
 
 Analyze Tip Fractions
 ---------------------
 
-In an effort to demonstrate the abilities of dask.dataframe we'll answer a
-simple question of our data.  Whenver I go to a new city I'm curious about
-tipping customs.  The 2015 NYCTaxi data is quite good about breaking down the
-total cost of each ride into the fare amount, tip amount, and various taxes and
-fees.  In particular this lets us measure the percentage that each rider
-decided to pay in tip.
+In an effort to demonstrate the abilities of dask.dataframe we answer a
+simple question of our data, *How do people tip?*.  The 2015 NYCTaxi data is
+quite good about breaking down the total cost of each ride into the fare
+amount, tip amount, and various taxes and fees.  In particular this lets us
+measure the percentage that each rider decided to pay in tip.
 
+```python
 >>> df[['fare_amount', 'tip_amount', 'payment_type']].head()
+```
 
 <table border="1" class="dataframe">
   <thead>
@@ -355,33 +365,39 @@ decided to pay in tip.
 In the first two lines we see evidence supporting the 15% standard common in
 many parts of the US.  The following three lines interestingly show zero tip.
 Judging only by these first five lines (a very small sample) we see a strong
-correlation here with the payment type.  This behavior could be explained if
-a payment type of `2` represented cash, and taxi drivers tended not to report
-cash tips.
+correlation here with the payment type.  I'll leave hypothesizing the reasons
+for that to the reader.  Instead, we'll focus on the tip fraction, the ratio of
+tip amount to fare amount.
 
-Regardless, we can easily divide the tip_amount column by the fare_amount and
-look at averages binned by various times.  When first doing this I found that
-there were a number of rides with a fare amount of zero, which confuses the
-results
+We can easily divide the `tip_amount` column by the `fare_amount` column and
+look at averages binned by various times.  When first doing we find that there
+are several rides with a fare amount of zero, which confuses the results.
 
+```python
 >>> (df.fare_amount == 0).sum().compute()
 43938
+```
 
-So we filter out these bad rows and then assign a new column:
+So we filter out these bad rows and then assign a new column, `tip_fraction`:
 
+```python
 >>> df2 = df[df.fare_amount > 0]
 >>> df2 = df2.assign(tip_fraction=(df2.tip_amount / df2.fare_amount))
+```
 
 Next we choose to groupby the pickup datetime column in order to see how the
 average tip fraction changes by day of week and by hour.  The groupby and
 datetime API of Pandas makes these operations trivial.
 
+```python
 >>> dayofweek = df2.groupby(df2.tpep_pickup_datetime.dt.dayofweek).tip_fraction.mean()
 >>> hour = df2.groupby(df2.tpep_pickup_datetime.dt.hour).tip_fraction.mean()
+```
 
 Finally we compute the results.  Grouping by day-of-week doesn't show anything
 too striking to my eye:
 
+```python
 >>> dayofweek.compute()
 tpep_pickup_datetime
 0    0.148737
@@ -392,10 +408,12 @@ tpep_pickup_datetime
 5    0.140647
 6    0.158863
 Name: tip_fraction, dtype: float64
+```
 
 But grouping by hour shows that late night and early morning riders are more
 likely to tip extravagantly:
 
+```python
 >>> hour.compute()
 tpep_pickup_datetime
 0     0.173191
@@ -423,9 +441,10 @@ tpep_pickup_datetime
 22    0.162253
 23    0.162159
 Name: tip_fraction, dtype: float64
+```
 
 These computations take around 20-30 seconds which, while not bad, can be
-improved (see below).  We plot this with matplotlib below and see a nice trough
+improved (see below).  We plot this with matplotlib and see a nice trough
 during business hours with a low around 13.3% at 12pm and a surge in the early
 morning with a peak of 19.4% at 4am:
 
@@ -435,9 +454,10 @@ morning with a peak of 19.4% at 4am:
 Performance
 -----------
 
-I wanted to dive into a few operations that run at different time scales.  This
-will give a good understanding of the strengths and limits of the scheduler.
+Lets dive into a few operations that run at different time scales.  This gives
+a good understanding of the strengths and limits of the scheduler.
 
+```python
 >>> %time df.head()
 CPU times: user 8 ms, sys: 0 ns, total: 8 ms
 Wall time: 29.7 ms
@@ -449,25 +469,27 @@ Wall time: 207 ms
 >>> %time df.passenger_count.sum().compute()
 CPU times: user 40 ms, sys: 4 ms, total: 44 ms
 Wall time: 2.01 s
+```
 
-
-The head computation is fast because we can compute it while only touching a
-single data element, the first partition.  From a human perspective, 30ms is
-very fast.  This is about the time between two frames in a video recording.
-Changes at this speed appear fluid to the human eye.
+The head computation is very fast.  The 30ms duration is about the time between
+two frames in a film; to a human eye this is completely fluid.  In our last
+post we talked about how low we could bring latency.  Last time we were bound
+by transcontinental latencies of 200ms.  This time, because we're on the
+network, we can get down to 30ms.  We're only able to be this fast because we
+touch only a single data element, the first partition.
 
 The length computation takes 200 ms.  This computation takes longer because we
-had to touch every individual partition of the data, of which there are 178.
-The scheduler incurs about 1ms of overhead per partition, hence the 200ms
-total.
+touch every individual partition of the data, of which there are 178.  The
+scheduler incurs about 1ms of overhead per partition, add a bit of latency
+and you get the 200ms total.
 
-The third computation, the sum, is actually quite surprising.  Computing the
-sum should be about the same as computing the length.  In-memory sums are fast.
-In the video version of this I ponder the reasons; I think I've narrowed down
-the performance bottleneck here to the fact that Pandas functions take a
+The third computation, the sum, is quite surprising.  Computing the sum should
+cost about the same as computing the length.  In-memory sums are fast.  In the
+video version of this post I ponder the reasons.  Now I think I've narrowed
+down the performance bottleneck here to the fact that Pandas functions take a
 surprisingly long time to serialize (see issue
 [#12021](https://github.com/pydata/pandas/issues/12021)) which is something I
-think I can work around in the near-to-moderate future.
+think I can work around in the near future.
 
 Finally, these numbers are only fast because we've already done all of the hard
 work of loading data from HDFS and parsing it from CSV into many Pandas
@@ -507,7 +529,7 @@ What doesn't work
     this writing, was still in release candidate stage.  This Pandas release
     fixes some important GIL related issues.
 
-*   The performance degredataion mentioned in the performance section is
+*   The performance degradation mentioned in the performance section is
     significant.  Summing a column of a 60GB dataset should complete in far
     less than 2s.  I have a good idea on how to resolve this though and am
     optimistic that this will accelerate several computations within this post,
