@@ -2,7 +2,6 @@
 layout: post
 title: Introducing Dask distributed
 category : work
-draft: true
 tags : [Programming, scipy, Python, dask]
 theme: twitter
 ---
