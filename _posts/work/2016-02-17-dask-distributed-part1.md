@@ -7,6 +7,8 @@ theme: twitter
 ---
 {% include JB/setup %}
 
+**tl;dr**: We analyze JSON data on a cluster using pure Python projects.
+
 Dask, a Python library for parallel computing, now works on clusters.  During
 the past few months I and others have extended dask with a new distributed
 memory scheduler.  This enables dask's existing parallel algorithms to scale
