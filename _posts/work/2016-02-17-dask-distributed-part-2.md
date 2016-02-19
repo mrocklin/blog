@@ -8,87 +8,13 @@ theme: twitter
 ---
 {% include JB/setup %}
 
-[Last post](http://matthewrocklin.com/blog/work/2016/02/17/dask-distributed-part1)
-we used Dask+distributed on a cluster to analyze GitHub data stored as JSON on
-S3.  Today we use Dask+distributed and dask.dataframe to analyze the NYC Taxi
-dataset stored as CSV on HDFS.
 
-<table>
-<thead>
-  <tr>
-    <th></th>
-    <th>Last post</th>
-    <th>This post</th>
-  </tr>
-</thead>
-<tbody>
-  <tr>
-    <th>Dataset</th>
-    <td>GitHub</td>
-    <td>NYC Taxi</td>
-  </tr>
-  <tr>
-    <th>Format</th>
-    <td>JSON</td>
-    <td>CSV</td>
-  </tr>
-  <tr>
-    <th>Location</th>
-    <td>S3</td>
-    <td>HDFS</td>
-  </tr>
-  <tr>
-    <th>Collection</th>
-    <td>dask.bag</td>
-    <td>dask.dataframe</td>
-  </tr>
-</tbody>
-</table>
+In this post we use Pandas in parallel across an HDFS cluster to read CSV data.
+We coordinate these computations with dask.dataframe.  A video version of this
+blogpost is available [here](https://www.youtube.com/watch?v=8Y5hyHU8kwU).
 
-*A video version of this blogpost is available
-[here](https://www.youtube.com/watch?v=8Y5hyHU8kwU).*
-
-
-
-
-NYCTaxi Data on HDFS
---------------------
-
-The New York City Taxi and Limousine Commission [makes
-public](http://www.nyc.gov/html/tlc/html/about/trip_record_data.shtml) a record
-of all taxi trips taken by Yellow Cabs within the city.  This is a nice model
-dataset for computational tabular data because it's large enough to be annoying
-while also deep enough to be broadly appealing.  It's about 20GB on disk and
-about 60GB in memory as a Pandas DataFrame.
-
-For interactive analytics it's convenient to load the entire dataset into
-memory.  One way to get this much memory is with a cluster on EC2.
-
-### Setup
-
-We set up a cluster with HDFS on EC2 with eight workers and one head node.
-Each node is an `m3.2xlarge` with 8 cores and 30 GB of RAM.
-
-### Load onto HDFS
-
-We download and dump the NYCTaxi data from the head node.
-
-```python
-$ wget https://storage.googleapis.com/tlc-trip-data/2015/yellow_tripdata_2015-{01..12}.csv
-$ hdfs dfs -mkdir /nyctaxi
-$ hdfs dfs -mkdir /nyctaxi/2015
-$ hdfs dfs -put yellow*.csv /nyctaxi/2015/
-```
-
-HDFS stores these CSV files as 128 MB blocks of bytes distributed throughout
-the cluster.
-
-
-Distributed DataFrames
-----------------------
-
-We connect to the scheduler and create a dask dataframe from the dataset on
-HDFS.
+To start, we connect to our scheduler, import the `hdfs` module from the
+`distributed` library, and read our CSV data from HDFS.
 
 ```python
 >>> from distributed import Executor, hdfs, progress
@@ -96,34 +22,45 @@ HDFS.
 >>> e
 <Executor: scheduler=127.0.0.1:8786 workers=8 threads=64>
 
->>> df = hdfs.read_csv('/nyctaxi/2015/*.csv',
-...            parse_dates=['tpep_pickup_datetime', 'tpep_dropoff_datetime'])
+>>> nyc2014 = hdfs.read_csv('/nyctaxi/2014/*.csv',
+...               parse_dates=['pickup_datetime', 'dropoff_datetime'],
+...               skipinitialspace=True)
+
+>>> nyc2015 = hdfs.read_csv('/nyctaxi/2015/*.csv',
+...               parse_dates=['tpep_pickup_datetime', 'tpep_dropoff_datetime'])
+
+>>> nyc2014, nyc2015 = e.persist([nyc2014, nyc2015])
+>>> progress(nyc2014, nyc2015)
 ```
 
-The `hdfs.read_csv` function takes a location on HDFS, any keyword arguments
-you would pass to `pandas.read_csv` and creates a dask dataframe object.  Dask
-dataframes faithfully implement a subset of the Pandas API, but operate in
-parallel either off disk or on a distributed cluster.
+<img src="{{ BASE_PATH }}/images/distributed-hdfs-read-csv.gif">
 
-We ask the scheduler to instantiate the dataset in memory with the `e.persist`
-method.  This causes each worker node to read blocks of data from HDFS and
-apply the `pandas.read_csv` function to each block accordingly.  This creates
-many small Pandas dataframes spread throughout the memory of our cluster.  The
-resulting dask dataframe keeps track of these many small Pandas dataframes and
-triggers computations on them when appropriate.
+Our data comes from the New York City Taxi and Limousine Commission which
+publishes [all yellow cab taxi rides in
+NYC](http://www.nyc.gov/html/tlc/html/about/trip_record_data.shtml) for various
+years.  This is a nice model dataset for computational tabular data because
+it's large enough to be annoying while also deep enough to be broadly
+appealing.  Each year is about 25GB on disk and about 60GB in memory as a
+Pandas DataFrame.
+
+HDFS breaks up our CSV files into 128MB chunks on various hard drives spread
+throughout the cluster.  The dask distributed workers each read the chunks of
+bytes local to them and call the `pandas.read_csv` function on these bytes,
+producing 391 separate Pandas DataFrame objects spread throughout the memory of
+our eight worker nodes.  The returned objects, `nyc2014` and `nyc2015`, are
+[dask.dataframe](http://dask.pydata.org/en/latest/dataframe.html) objects which
+present a subset of the Pandas API to the user, but farm out all of the work to
+the many Pandas dataframes they control.
+
+
+Play with Distributed Data
+--------------------------
+
+If we wait for the data to load fully into memory then we can perform
+pandas-style analysis at interactive speeds.
 
 ```python
->>> df = e.persist(df)
-```
-
-The full process takes about a minute to load and parse (more on performance
-later on).  Afterwards we can perform simple computations at interactive
-speeds.
-
-```python
->>> %time df.head()
-CPU times: user 8 ms, sys: 0 ns, total: 8 ms
-Wall time: 29.7 ms
+>>> nyc2015.head()
 ```
 
 <table border="1" class="dataframe">
@@ -266,22 +203,46 @@ Wall time: 29.7 ms
 </table>
 
 ```python
->>> %time len(df)
-CPU times: user 20 ms, sys: 0 ns, total: 20 ms
-Wall time: 207 ms
+>>> len(nyc2014)
+165114373
 
+>>> len(nyc2015)
 146112989
 ```
 
-So at the simple end of the scale we see that computations happen at a speed
-which, for a human, appears to be instantaneous.
+Interestingly it appears that the NYC cab industry has contracted a bit in the
+last year.  There are *fewer* cab rides in 2015 than in 2014.
 
-Additionally, we get to rely on all of the Pandas magic to parse CSV files,
-sniff for names and dtypes, and handle all of the complexity that comes with
-real data.
+When we ask for something like the length of the full dask.dataframe we
+actually ask for the length of all of the hundreds of Pandas dataframes and
+then sum them up.  This process of reaching out to all of the workers completes
+in around 200-300 ms, which is generally fast enough to feel snappy in an
+interactive session.
+
+The dask.dataframe API looks just like the Pandas API, except that we call
+`.compute()` when we want an actual result.
 
 ```python
->>> df.dtypes
+>>> nyc2014.passenger_count.sum().compute()
+279997507.0
+
+>>> nyc2015.passenger_count.sum().compute()
+245566747
+```
+
+Dask.dataframes builds a plan to get your result and the distributed scheduler
+coordinates that plan on all of the little Pandas dataframes on the workers
+that make up our dataset.
+
+
+Pandas for Metadata
+-------------------
+
+Lets appreciate for a moment all the work we didn't have to do around CSV
+handling because Pandas magically handled it for us.
+
+```python
+>>> nyc2015.dtypes
 VendorID                          int64
 tpep_pickup_datetime     datetime64[ns]
 tpep_dropoff_datetime    datetime64[ns]
@@ -304,19 +265,31 @@ total_amount\r                  float64
 dtype: object
 ```
 
+We didn't have to find columns or specify data-types.  We didn't have to parse
+each value with an `int` or `float` function as appropriate.  We didn't have to
+parse the datetimes, but instead just specified a `parse_datetimes=` keyword.
+The CSV parsing happened about as quickly as can be expected for this format,
+clocking in at a network total a bit under 1 GB/s.
+
+Pandas is well loved because it removes all of these little hurdles from the
+life of the analyst.  Dask.dataframe doesn't try to reinvent a new
+"Big-Data-Frame" it just coordinates and reuses the code within the Pandas
+library.  It is successful largely due to work from core Pandas developers,
+notably Masaaki Horikoshi ([@sinhrks](https://github.com/sinhrks/)) who has
+done tremendous work to align the API precisely with the Pandas core library.
 
 
-Analyze Tip Fractions
----------------------
+Analyze Tips and Payment Types
+------------------------------
 
 In an effort to demonstrate the abilities of dask.dataframe we answer a
-simple question of our data, *How do people tip?*.  The 2015 NYCTaxi data is
-quite good about breaking down the total cost of each ride into the fare
+simple question of our data, *How do New Yorkers tip?*.  The 2015 NYCTaxi data
+is quite good about breaking down the total cost of each ride into the fare
 amount, tip amount, and various taxes and fees.  In particular this lets us
 measure the percentage that each rider decided to pay in tip.
 
 ```python
->>> df[['fare_amount', 'tip_amount', 'payment_type']].head()
+>>> nyc2015[['fare_amount', 'tip_amount', 'payment_type']].head()
 ```
 
 <table border="1" class="dataframe">
@@ -362,51 +335,90 @@ measure the percentage that each rider decided to pay in tip.
   </tbody>
 </table>
 
-In the first two lines we see evidence supporting the 15% standard common in
-many parts of the US.  The following three lines interestingly show zero tip.
+In the first two lines we see evidence supporting the 15-20% tip standard
+common in the US.  The following three lines interestingly show zero tip.
 Judging only by these first five lines (a very small sample) we see a strong
-correlation here with the payment type.  I'll leave hypothesizing the reasons
-for that to the reader.  Instead, we'll focus on the tip fraction, the ratio of
-tip amount to fare amount.
-
-We can easily divide the `tip_amount` column by the `fare_amount` column and
-look at averages binned by various times.  When first doing we find that there
-are several rides with a fare amount of zero, which confuses the results.
+correlation here with the payment type.  We analyze this a bit more by counting
+occurrences in the payment_type column both for the full dataset, and filtered
+by zero tip:
 
 ```python
->>> (df.fare_amount == 0).sum().compute()
-43938
+>>> %time nyc2015.payment_type.value_counts().compute()
+CPU times: user 132 ms, sys: 0 ns, total: 132 ms
+Wall time: 558 ms
+
+1    91574644
+2    53864648
+3      503070
+4      170599
+5          28
+Name: payment_type, dtype: int64
+
+>>> %time nyc2015[nyc2015.tip_amount == 0].payment_type.value_counts().compute()
+CPU times: user 212 ms, sys: 4 ms, total: 216 ms
+Wall time: 1.69 s
+
+2    53862557
+1     3365668
+3      502025
+4      170234
+5          26
+Name: payment_type, dtype: int64
 ```
 
-So we filter out these bad rows and then assign a new column, `tip_fraction`:
+We find that almost all zero-tip rides correspond to payment type 2, and that
+almost all payment type 2 rides don't tip.  My completely un-scientific
+hypothesis here is that these are cash fares and that cab drivers generally
+don't record cash tips but we would need more domain knowledge to actually make
+that claim.
+
+
+
+Analyze Tips Fractions
+----------------------
+
+Lets make a new column, `tip_fraction`, and then look at the average of this
+column by day of week and by hour of day.
+
+First, we need to filter out bad rows, both rows with this odd payment type,
+and rows with zero fare (there are a surprising number of free cab rides in
+NYC.)  Second we create a new column equal to the ratio of `tip_amount /
+fare_amount`.
 
 ```python
->>> df2 = df[df.fare_amount > 0]
->>> df2 = df2.assign(tip_fraction=(df2.tip_amount / df2.fare_amount))
+>>> df = nyc2015[(nyc2015.fare_amount > 0) & (nyc2015.payment_type == 2)]
+>>> df = df.assign(tip_fraction=(df.tip_amount / df.fare_amount))
 ```
 
 Next we choose to groupby the pickup datetime column in order to see how the
 average tip fraction changes by day of week and by hour.  The groupby and
-datetime API of Pandas makes these operations trivial.
+datetime handling of Pandas makes these operations trivial.
 
 ```python
->>> dayofweek = df2.groupby(df2.tpep_pickup_datetime.dt.dayofweek).tip_fraction.mean()
->>> hour = df2.groupby(df2.tpep_pickup_datetime.dt.hour).tip_fraction.mean()
+>>> dayofweek = df.groupby(df.tpep_pickup_datetime.dt.dayofweek).tip_fraction.mean()
+>>> hour = df.groupby(df.tpep_pickup_datetime.dt.hour).tip_fraction.mean()
+
+>>> dayofweek, hour = e.persist([dayofweek, hour])
+>>> progress(dayofweek, hour)
 ```
 
-Finally we compute the results.  Grouping by day-of-week doesn't show anything
-too striking to my eye:
+<img src="{{ BASE_PATH }}/images/distributed-hdfs-groupby-tip-fraction.gif">
+
+
+Grouping by day-of-week doesn't show anything too striking to my eye.  However
+I would like to note at how generous NYC cab riders seem to be.  A 23-25% tip
+can be quite nice:
 
 ```python
 >>> dayofweek.compute()
 tpep_pickup_datetime
-0    0.148737
-1    0.152547
-2    0.153601
-3    0.159282
-4    0.153412
-5    0.140647
-6    0.158863
+0    0.237510
+1    0.236494
+2    0.236073
+3    0.246007
+4    0.242081
+5    0.232415
+6    0.259974
 Name: tip_fraction, dtype: float64
 ```
 
@@ -416,39 +428,38 @@ likely to tip extravagantly:
 ```python
 >>> hour.compute()
 tpep_pickup_datetime
-0     0.173191
-1     0.182161
-2     0.189611
-3     0.172473
-4     0.194004
-5     0.146677
-6     0.148386
-7     0.144444
-8     0.152115
-9     0.142903
-10    0.138142
-11    0.138234
-12    0.133805
-13    0.138647
-14    0.139104
-15    0.133041
-16    0.136687
-17    0.145544
-18    0.149922
-19    0.176985
-20    0.157329
-21    0.161524
-22    0.162253
-23    0.162159
+0     0.263602
+1     0.278828
+2     0.293536
+3     0.276784
+4     0.348649
+5     0.248618
+6     0.233257
+7     0.216003
+8     0.221508
+9     0.217018
+10    0.225618
+11    0.231396
+12    0.225186
+13    0.235662
+14    0.237636
+15    0.228832
+16    0.234086
+17    0.240635
+18    0.237488
+19    0.272792
+20    0.235866
+21    0.242157
+22    0.243244
+23    0.244586
 Name: tip_fraction, dtype: float64
+In [24]:
 ```
 
-These computations take around 20-30 seconds which, while not bad, can be
-improved (see below).  We plot this with matplotlib and see a nice trough
-during business hours with a low around 13.3% at 12pm and a surge in the early
-morning with a peak of 19.4% at 4am:
+We plot this with matplotlib and see a nice trough during business hours with a
+surge in the early morning with an astonishing peak of 34% at 4am:
 
-<img src="http://matthewrocklin.com/blog/images/nyctaxi-2015-hourly-tips.png">
+<img src="{{ BASE_PATH }}/images/nyctaxi-2015-hourly-tips.png">
 
 
 Performance
@@ -458,50 +469,39 @@ Lets dive into a few operations that run at different time scales.  This gives
 a good understanding of the strengths and limits of the scheduler.
 
 ```python
->>> %time df.head()
-CPU times: user 8 ms, sys: 0 ns, total: 8 ms
-Wall time: 29.7 ms
-
->>> %time len(df)
-CPU times: user 20 ms, sys: 0 ns, total: 20 ms
-Wall time: 207 ms
-
->>> %time df.passenger_count.sum().compute()
-CPU times: user 40 ms, sys: 4 ms, total: 44 ms
-Wall time: 2.01 s
+>>> %time nyc2015.head()
+CPU times: user 4 ms, sys: 0 ns, total: 4 ms
+Wall time: 20.9 ms
 ```
 
-The head computation is very fast.  The 30ms duration is about the time between
-two frames in a film; to a human eye this is completely fluid.  In our last
-post we talked about how low we could bring latency.  Last time we were bound
-by transcontinental latencies of 200ms.  This time, because we're on the
-network, we can get down to 30ms.  We're only able to be this fast because we
-touch only a single data element, the first partition.
+This head computation is about as fast as a film projector.  You could perform
+this roundtrip computation between every consecutive frame of a movie; to a
+human eye this appears fluid.  In the [last post](http://matthewrocklin.com/blog/work/2016/02/17/dask-distributed-part1)
+we asked about how low we could bring latency.  In that post we were running
+computations from my laptop in California and so were bound by transcontinental
+latencies of 200ms.  This time, because we're operating from the cluster, we
+can get down to 20ms.  We're only able to be this fast because we touch only a
+single data element, the first partition.  Things change when we need to touch
+the entire dataset.
 
-The length computation takes 200 ms.  This computation takes longer because we
+```python
+>>> %time len(nyc2015)
+CPU times: user 48 ms, sys: 0 ns, total: 48 ms
+Wall time: 271 ms
+```
+
+The length computation takes 200-300 ms.  This computation takes longer because we
 touch every individual partition of the data, of which there are 178.  The
-scheduler incurs about 1ms of overhead per partition, add a bit of latency
-and you get the 200ms total.
+scheduler incurs about 1ms of overhead per task, add a bit of latency
+and you get the ~200ms total.  This means that the scheduler will likely be the
+bottleneck whenever computations are very fast, such as is the case for
+computing `len`.  Really, this is good news; it means that by improving the
+scheduler we can reduce these durations even further.
 
-The third computation, the sum, is quite surprising.  Computing the sum should
-cost about the same as computing the length.  In-memory sums are fast.  In the
-video version of this post I ponder the reasons.  Now I think I've narrowed
-down the performance bottleneck here to the fact that Pandas functions take a
-surprisingly long time to serialize (see issue
-[#12021](https://github.com/pydata/pandas/issues/12021)) which is something I
-think I can work around in the near future.
-
-Finally, these numbers are only fast because we've already done all of the hard
-work of loading data from HDFS and parsing it from CSV into many Pandas
-DataFrames.  If you recall, this process took about a minute, which, if we do
-the math, comes out to about 350MB/s total bandwidth.
-
-    23GB / 60s ~= 350 MB/s
-
-This is about as fast as you could load data on a single nice hard drive if the
-data was encoded efficiently, rather than as CSV.  Pandas CSV runs at around
-50 MB/s when parsing datetimes, so we're getting around a 7x speedup, which
-makes sense given our number of nodes (read_csv does not release the GIL well.)
+If you look at the groupby computations above you can add the numbers in the
+progress bars to show that we computed around 3000 tasks in around 7s.  It
+looks like this computation is about half scheduler overhead and about half
+bound by actual computation.
 
 
 Conclusion
@@ -512,28 +512,29 @@ into a dask dataframe.  We then used dask.dataframe, which looks identical to
 the Pandas dataframe, to manipulate our distributed dataset intuitively and
 efficiently.
 
-We looked a bit at the performance characteristics of simple computations and
-noticed a performance flaw.
+We looked a bit at the performance characteristics of simple computations.
 
 
 What doesn't work
 -----------------
 
-*   Dask dataframe implements a *subset* of Pandas functionality, not all of it.
-    I have found it surprisingly difficult to specify a self-consistent set of
-    functionality that satisfies most problems and is clear to users.  It seems
-    that every Pandas user depends on a few odd corners of the library.  This
-    makes it difficult to set and meet expectations.
+As always I'll have a section like this that honestly says what doesn't work
+well and what I would have done with more time.
+
+*   Dask dataframe implements a commonly used *subset* of Pandas functionality,
+    not all of it.  It's surprisingly hard to communicate the exact bounds of
+    this subset to users.  Notably, in the distributed setting we don't have a
+    shuffle algorithm, so `groupby(...).apply(...)` and some joins are not
+    yet possible.
 
 *   If you want to use threads, you'll need Pandas 0.18.0 which, at the time of
     this writing, was still in release candidate stage.  This Pandas release
     fixes some important GIL related issues.
 
-*   The performance degradation mentioned in the performance section is
-    significant.  Summing a column of a 60GB dataset should complete in far
-    less than 2s.  I have a good idea on how to resolve this though and am
-    optimistic that this will accelerate several computations within this post,
-    including the final groupby on pickup datetime.
+*   The 1ms overhead per task limit is significant.  While we can still scale
+    out to clusters far larger than what we have here, we probably won't be
+    able to strongly accelerate very quick operations until we reduce this
+    number.
 
 *   We use the [hdfs3 library](http://hdfs3.readthedocs.org/en/latest/) to read
     data from HDFS.  This library seems to work great but is new and could use
@@ -548,3 +549,24 @@ Links
     distributed memory scheduler powering the cluster computing
 *   [dask.dataframe](http://dask.pydata.org/en/latest/dataframe.html), the user
     API we've used in this post.
+*   [NYC Taxi Data Downloads](http://www.nyc.gov/html/tlc/html/about/trip_record_data.shtml)
+
+
+Setup and Data
+--------------
+
+You can obtain public data from the New York City Taxi and Limousine Commission
+[here](http://www.nyc.gov/html/tlc/html/about/trip_record_data.shtml).  I
+downloaded this onto the head node and dumped it into HDFS with commands like
+the following:
+
+```
+$ wget https://storage.googleapis.com/tlc-trip-data/2015/yellow_tripdata_2015-{01..12}.csv
+$ hdfs dfs -mkdir /nyctaxi
+$ hdfs dfs -mkdir /nyctaxi/2015
+$ hdfs dfs -put yellow*.csv /nyctaxi/2015/
+```
+
+The cluster was hosted on EC2 and was comprised of nine `m3.2xlarges` with 8
+cores and 30GB of RAM each.  Eight of these nodes were used as workers; they
+used processes for parallelism, not threads.
