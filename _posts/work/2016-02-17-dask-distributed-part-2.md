@@ -10,8 +10,8 @@ theme: twitter
 
 
 In this post we use Pandas in parallel across an HDFS cluster to read CSV data.
-We coordinate these computations with dask.dataframe.  A video version of this
-blogpost is available [here](https://www.youtube.com/watch?v=8Y5hyHU8kwU).
+We coordinate these computations with dask.dataframe.  A screencast version of
+this blogpost is available [here](https://www.youtube.com/watch?v=LioaeHsZDBQ).
 
 To start, we connect to our scheduler, import the `hdfs` module from the
 `distributed` library, and read our CSV data from HDFS.
@@ -20,7 +20,7 @@ To start, we connect to our scheduler, import the `hdfs` module from the
 >>> from distributed import Executor, hdfs, progress
 >>> e = Executor('127.0.0.1:8786')
 >>> e
-<Executor: scheduler=127.0.0.1:8786 workers=8 threads=64>
+<Executor: scheduler=127.0.0.1:8786 workers=64 threads=64>
 
 >>> nyc2014 = hdfs.read_csv('/nyctaxi/2014/*.csv',
 ...               parse_dates=['pickup_datetime', 'dropoff_datetime'],
@@ -44,13 +44,13 @@ appealing.  Each year is about 25GB on disk and about 60GB in memory as a
 Pandas DataFrame.
 
 HDFS breaks up our CSV files into 128MB chunks on various hard drives spread
-throughout the cluster.  The dask distributed workers each read the chunks of
+throughout the cluster.  The dask.distributed workers each read the chunks of
 bytes local to them and call the `pandas.read_csv` function on these bytes,
 producing 391 separate Pandas DataFrame objects spread throughout the memory of
 our eight worker nodes.  The returned objects, `nyc2014` and `nyc2015`, are
 [dask.dataframe](http://dask.pydata.org/en/latest/dataframe.html) objects which
 present a subset of the Pandas API to the user, but farm out all of the work to
-the many Pandas dataframes they control.
+the many Pandas dataframes they control across the network.
 
 
 Play with Distributed Data
@@ -230,7 +230,7 @@ The dask.dataframe API looks just like the Pandas API, except that we call
 245566747
 ```
 
-Dask.dataframes builds a plan to get your result and the distributed scheduler
+Dask.dataframes build a plan to get your result and the distributed scheduler
 coordinates that plan on all of the little Pandas dataframes on the workers
 that make up our dataset.
 
@@ -269,24 +269,27 @@ We didn't have to find columns or specify data-types.  We didn't have to parse
 each value with an `int` or `float` function as appropriate.  We didn't have to
 parse the datetimes, but instead just specified a `parse_datetimes=` keyword.
 The CSV parsing happened about as quickly as can be expected for this format,
-clocking in at a network total a bit under 1 GB/s.
+clocking in at a network total of a bit under 1 GB/s.
 
 Pandas is well loved because it removes all of these little hurdles from the
-life of the analyst.  Dask.dataframe doesn't try to reinvent a new
-"Big-Data-Frame" it just coordinates and reuses the code within the Pandas
-library.  It is successful largely due to work from core Pandas developers,
-notably Masaaki Horikoshi ([@sinhrks](https://github.com/sinhrks/)) who has
-done tremendous work to align the API precisely with the Pandas core library.
+life of the analyst.  If we tried to reinvent a new
+"Big-Data-Frame" we would have to reimplement all of the work already well done
+inside of Pandas.  Instead, dask.dataframe just coordinates and reuses the code
+within the Pandas library.  It is successful largely due to work from core
+Pandas developers, notably Masaaki Horikoshi
+([@sinhrks](https://github.com/sinhrks/)), who have done tremendous work to
+align the API precisely with the Pandas core library.
 
 
 Analyze Tips and Payment Types
 ------------------------------
 
 In an effort to demonstrate the abilities of dask.dataframe we answer a
-simple question of our data, *How do New Yorkers tip?*.  The 2015 NYCTaxi data
+simple question of our data, *"how do New Yorkers tip?"*.  The 2015 NYCTaxi data
 is quite good about breaking down the total cost of each ride into the fare
 amount, tip amount, and various taxes and fees.  In particular this lets us
 measure the percentage that each rider decided to pay in tip.
+
 
 ```python
 >>> nyc2015[['fare_amount', 'tip_amount', 'payment_type']].head()
@@ -339,8 +342,8 @@ In the first two lines we see evidence supporting the 15-20% tip standard
 common in the US.  The following three lines interestingly show zero tip.
 Judging only by these first five lines (a very small sample) we see a strong
 correlation here with the payment type.  We analyze this a bit more by counting
-occurrences in the payment_type column both for the full dataset, and filtered
-by zero tip:
+occurrences in the `payment_type` column both for the full dataset, and
+filtered by zero tip:
 
 ```python
 >>> %time nyc2015.payment_type.value_counts().compute()
@@ -367,10 +370,9 @@ Name: payment_type, dtype: int64
 ```
 
 We find that almost all zero-tip rides correspond to payment type 2, and that
-almost all payment type 2 rides don't tip.  My completely un-scientific
-hypothesis here is that these are cash fares and that cab drivers generally
-don't record cash tips but we would need more domain knowledge to actually make
-that claim.
+almost all payment type 2 rides don't tip.  My un-scientific hypothesis here is
+that these are cash fares and that cab drivers generally don't record cash tips
+but we would need more domain knowledge to actually make that claim.
 
 
 
@@ -378,7 +380,7 @@ Analyze Tips Fractions
 ----------------------
 
 Lets make a new column, `tip_fraction`, and then look at the average of this
-column by day of week and by hour of day.
+column grouped by day of week and grouped by hour of day.
 
 First, we need to filter out bad rows, both rows with this odd payment type,
 and rows with zero fare (there are a surprising number of free cab rides in
