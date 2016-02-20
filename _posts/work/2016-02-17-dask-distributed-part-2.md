@@ -238,7 +238,7 @@ that make up our dataset.
 Pandas for Metadata
 -------------------
 
-Lets appreciate for a moment all the work we didn't have to do around CSV
+Let's appreciate for a moment all the work we didn't have to do around CSV
 handling because Pandas magically handled it for us.
 
 ```python
@@ -284,9 +284,9 @@ align the API precisely with the Pandas core library.
 Analyze Tips and Payment Types
 ------------------------------
 
-In an effort to demonstrate the abilities of dask.dataframe we answer a
-simple question of our data, *"how do New Yorkers tip?"*.  The 2015 NYCTaxi data
-is quite good about breaking down the total cost of each ride into the fare
+In an effort to demonstrate the abilities of dask.dataframe we ask a simple
+question of our data, *"how do New Yorkers tip?"*.  The 2015 NYCTaxi data is
+quite good about breaking down the total cost of each ride into the fare
 amount, tip amount, and various taxes and fees.  In particular this lets us
 measure the percentage that each rider decided to pay in tip.
 
@@ -371,8 +371,9 @@ Name: payment_type, dtype: int64
 
 We find that almost all zero-tip rides correspond to payment type 2, and that
 almost all payment type 2 rides don't tip.  My un-scientific hypothesis here is
-that these are cash fares and that cab drivers generally don't record cash tips
-but we would need more domain knowledge to actually make that claim.
+payment type 2 corresponds to cash fares and that we're observing a tendancy of
+drivers not to record cash tips.  However we would need more domain knowledge
+about our data to actually make this claim with any degree of authority.
 
 
 
@@ -388,7 +389,7 @@ NYC.)  Second we create a new column equal to the ratio of `tip_amount /
 fare_amount`.
 
 ```python
->>> df = nyc2015[(nyc2015.fare_amount > 0) & (nyc2015.payment_type == 2)]
+>>> df = nyc2015[(nyc2015.fare_amount > 0) & (nyc2015.payment_type != 2)]
 >>> df = df.assign(tip_fraction=(df.tip_amount / df.fare_amount))
 ```
 
