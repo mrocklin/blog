@@ -7,6 +7,10 @@ theme: twitter
 ---
 {% include JB/setup %}
 
+*This work is supported by [Continuum Analytics](http://continuum.io)
+and the [XDATA Program](http://www.darpa.mil/program/XDATA)
+as part of the [Blaze Project](http://blaze.pydata.org)*
+
 **tl;dr**: We analyze JSON data on a cluster using pure Python projects.
 
 Dask, a Python library for parallel computing, now works on clusters.  During

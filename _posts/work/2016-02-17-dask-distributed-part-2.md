@@ -8,6 +8,9 @@ theme: twitter
 ---
 {% include JB/setup %}
 
+*This work is supported by [Continuum Analytics](http://continuum.io)
+and the [XDATA Program](http://www.darpa.mil/program/XDATA)
+as part of the [Blaze Project](http://blaze.pydata.org)*
 
 In this post we use Pandas in parallel across an HDFS cluster to read CSV data.
 We coordinate these computations with dask.dataframe.  A screencast version of
