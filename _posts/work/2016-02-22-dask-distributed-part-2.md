@@ -555,6 +555,8 @@ Links
 *   [dask.dataframe](http://dask.pydata.org/en/latest/dataframe.html), the user
     API we've used in this post.
 *   [NYC Taxi Data Downloads](http://www.nyc.gov/html/tlc/html/about/trip_record_data.shtml)
+*   [hdfs3](https://hdfs3.readthedocs.org/en/latest): Python library we use for
+    HDFS interations.
 
 
 Setup and Data
