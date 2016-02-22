@@ -13,7 +13,9 @@ as part of the [Blaze Project](http://blaze.pydata.org)*
 
 In this post we use Pandas in parallel across an HDFS cluster to read CSV data.
 We coordinate these computations with dask.dataframe.  A screencast version of
-this blogpost is available [here](https://www.youtube.com/watch?v=LioaeHsZDBQ).
+this blogpost is available [here](https://www.youtube.com/watch?v=LioaeHsZDBQ)
+and the previous post in this series is available
+[here](http://matthewrocklin.com/blog/work/2016/02/17/dask-distributed-part1).
 
 To start, we connect to our scheduler, import the `hdfs` module from the
 `distributed` library, and read our CSV data from HDFS.
@@ -557,6 +559,7 @@ Links
 *   [NYC Taxi Data Downloads](http://www.nyc.gov/html/tlc/html/about/trip_record_data.shtml)
 *   [hdfs3](https://hdfs3.readthedocs.org/en/latest): Python library we use for
     HDFS interations.
+*   The [previous post](http://matthewrocklin.com/blog/work/2016/02/17/dask-distributed-part1) in this blog series.
 
 
 Setup and Data
