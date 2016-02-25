@@ -322,7 +322,8 @@ would have done with more time:
 
 *   No high-level `read_netcdf` function:  We had to use the mid-level API of
     `executor.map` to construct our dask array.  This is a bit of a pain for
-    novice users.
+    novice users.  We should probably adapt existing high-level functions in
+    dask.array to robustly handle the distributed data case.
 *   Need a larger problem:  Our dataset could have fit into a Macbook Pro.
     A larger dataset that could not have been effiiently investigated from a
     single machine would have really cemented the need for this technology.
@@ -334,7 +335,8 @@ would have done with more time:
     [XArray](http://xarray.pydata.org/en/stable/), an excellent library for the
     analysis of labeled nd-arrays especially common in climate science.  It
     would be good to integrate this new distributed work into the XArray
-    project.
+    project.  I suspect that doing this mostly involves handling the data
+    ingest problem described above.
 *   Reduction speed: The computation of normalized temperature, `z`, took a
     surprisingly long time.  I'd like to look into what is holding up that
     computation.
