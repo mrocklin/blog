@@ -12,7 +12,7 @@ theme: twitter
 and the [XDATA Program](http://www.darpa.mil/program/XDATA)
 as part of the [Blaze Project](http://blaze.pydata.org)*
 
-In this post we analyze weather data in across a cluster using NumPy in
+In this post we analyze weather data across a cluster using NumPy in
 parallel with dask.array.  We focus on the following:
 
 1.  How to set up the distributed scheduler with a job scheduler like Sun
@@ -37,7 +37,7 @@ in NetCDF files (similar to HDF5).
 
 To this end we used [Starcluster](http://star.mit.edu/cluster/), a quick way to
 set up such a cluster on EC2 with SGE and NFS, and we downloaded data from the
-[European Centre for Meterology and Weather
+[European Centre for Meteorology and Weather
 Forecasting](http://www.ecmwf.int/en/research/climate-reanalysis/era-interim)
 
 To deploy dask's distributed scheduler with SGE we made a scheduler on the
@@ -108,7 +108,7 @@ array([[[ 253.96238624,  253.96238624,  253.96238624, ...,  253.96238624,
 Our dataset has dimensions of `(time, latitude, longitude)`.  Note above that
 each day has four time entries (measurements every six hours).
 
-The NFS set up by Starcluter is unfortunately quite small.  We were only able
+The NFS set up by Starcluster is unfortunately quite small.  We were only able
 to fit around five months of data (136 days) in shared disk.
 
 
@@ -184,7 +184,7 @@ weaknesses of the distributed system.
 
 ### Single element
 
-This single element computation access a single number from a single NumPy
+This single element computation accesses a single number from a single NumPy
 array of our dataset.  It is bound by a network roundtrip from client to
 scheduler, to worker, and back.
 
@@ -238,7 +238,7 @@ def f(time):
 
 This second example is less fluid because we index across our NumPy chunks.
 Each computation touches all of our data.  It's still not bad though and quite
-acceptable by todays standards of interactive interactive distributed data
+acceptable by today's standards of interactive distributed data
 science.
 
 ```python
@@ -253,7 +253,7 @@ def f(lat):
 Normalize Data
 --------------
 
-Until now we've only peformed simple calculations on our data, usually grabbing
+Until now we've only performed simple calculations on our data, usually grabbing
 out means.  The image of the temperature above looks unsurprising.  The image
 is dominated by the facts that land is warmer than oceans and that the equator
 is warmer than the poles.  No surprises there.
@@ -325,7 +325,7 @@ would have done with more time:
     novice users.  We should probably adapt existing high-level functions in
     dask.array to robustly handle the distributed data case.
 *   Need a larger problem:  Our dataset could have fit into a Macbook Pro.
-    A larger dataset that could not have been effiiently investigated from a
+    A larger dataset that could not have been efficiently investigated from a
     single machine would have really cemented the need for this technology.
 *   Easier deployment:  The solution above with `qsub` was straightforward but
     not always accessible to novice users.  Additionally while SGE is common
