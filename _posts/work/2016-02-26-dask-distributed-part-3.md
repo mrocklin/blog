@@ -25,6 +25,11 @@ This blogpost has an accompanying
 [screencast](https://www.youtube.com/watch?v=ZpMXEVp-iaY) which might be a bit
 more fun than this text version.
 
+This is the third in a sequence of blogposts about dask.distributed:
+
+1.  [Dask Bags on GitHub Data](http://matthewrocklin.com/blog/work/2016/02/17/dask-distributed-part1)
+2.  [Dask DataFrames on HDFS](http://matthewrocklin.com/blog/work/2016/02/22/dask-distributed-part-2)
+3.  Dask Arrays on NetCDF data
 
 Setup
 -----
