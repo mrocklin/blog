@@ -2,7 +2,6 @@
 layout: post
 title: Distributed Dask Arrays
 category : work
-draft: true
 tags : [Programming, scipy, Python, dask]
 theme: twitter
 ---
