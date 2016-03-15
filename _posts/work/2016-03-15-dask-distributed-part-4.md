@@ -13,8 +13,11 @@ theme: twitter
 and the [XDATA Program](http://www.darpa.mil/program/XDATA)
 as part of the [Blaze Project](http://blaze.pydata.org)*
 
-tl;dr
------
+*A screencast version of this post is available here:
+[https://youtu.be/KGlhU9kSfVk](https://youtu.be/KGlhU9kSfVk)*
+
+Summary
+-------
 
 Copy-pasting the following commands gives you a Dask cluster on EC2.
 
@@ -32,7 +35,6 @@ ipython             # Start IPython console on head node
 ```python
 from distributed import Executor, s3, progress
 e = Executor('127.0.0.1:8786')
-e
 df = s3.read_csv('dask-data/nyc-taxi/2015', lazy=False)
 progress(df)
 df.head()
@@ -51,12 +53,11 @@ Curiosity drives us to play with new tools.  We love the idea that previously
 difficult tasks will suddenly become easy, expanding our abilities and opening
 up a range of newly solvable problems.
 
-However, as our problems grow more complex (e.g. large datasets) our tools grow
-more cumbersome (e.g. distributed systems) and setup costs increase.  This cost
-stops us from playing around, which is a shame, because playing is good both
-for the education of the user and for the development of the tool.  Tool
-makers who want feedback are strongly incentive zed to decrease setup costs,
-especially for the play case.
+However, as our problems grow more complex our tools grow more cumbersome and
+setup costs increase.  This cost stops us from playing around, which is a
+shame, because playing is good both for the education of the user and for the
+development of the tool.  Tool makers who want feedback are strongly
+incentiveized to decrease setup costs, especially for the play case.
 
 In February we introduced dask.distributed, a lightweight distributed computing
 framework for Python.  We focused on processing data with high level
@@ -64,7 +65,7 @@ abstractions like dataframes and arrays in the following blogposts:
 
 1.  [Analyze GitHub JSON record data in S3](http://matthewrocklin.com/blog/work/2016/02/17/dask-distributed-part1)
 2.  [Use Dask DataFrames on CSV data in HDFS](http://matthewrocklin.com/blog/work/2016/02/22/dask-distributed-part-2)
-3.  [Process NetCDF data with Dask arrays on a traditional cluster](http://matthewrocklin.com/blog/work/2016/02/22/dask-distributed-part-3)
+3.  [Process NetCDF data with Dask arrays on a traditional cluster](http://matthewrocklin.com/blog/work/2016/02/26/dask-distributed-part-3)
 
 Today we present a simple setup script to launch dask.distributed on EC2,
 enabling any user with AWS credentials to repeat these experiments easily.
@@ -83,30 +84,29 @@ dec2
     the rest of the nodes
 4.  Helps you to SSH into the head node or connect from your local machine
 
-    $ pip install dec2
-    $ dec2 up --help
-    Usage: dec2 up [OPTIONS]
+```
+$ pip install dec2
+$ dec2 up --help
+Usage: dec2 up [OPTIONS]
 
-    Options:
-      --keyname TEXT                Keyname on EC2 console  [required]
-      --keypair PATH                Path to the keypair that matches the keyname
-                                    [required]
-      --name TEXT                   Tag name on EC2
-      --region-name TEXT            AWS region  [default: us-east-1]
-      --ami TEXT                    EC2 AMI  [default: ami-d05e75b8]
-      --username TEXT               User to SSH to the AMI  [default: ubuntu]
-      --type TEXT                   EC2 Instance Type  [default: m3.2xlarge]
-      --count INTEGER               Number of nodes  [default: 4]
-      --security-group TEXT         Security Group Name  [default: dec2-default]
-      --volume-type TEXT            Root volume type  [default: gp2]
-      --volume-size INTEGER         Root volume size (GB)  [default: 500]
-      --file PATH                   File to save the metadata  [default:
-                                    cluster.yaml]
-      --provision / --no-provision  Provision salt on the nodes  [default: True]
-      --dask / --no-dask            Install Dask.Distributed in the cluster
-                                    [default: True]
-      --nprocs INTEGER              Number of processes per worker  [default: 1]
-      -h, --help                    Show this message and exit.
+Options:
+  --keyname TEXT                Keyname on EC2 console  [required]
+  --keypair PATH                Path to the keypair that matches the keyname [required]
+  --name TEXT                   Tag name on EC2
+  --region-name TEXT            AWS region  [default: us-east-1]
+  --ami TEXT                    EC2 AMI  [default: ami-d05e75b8]
+  --username TEXT               User to SSH to the AMI  [default: ubuntu]
+  --type TEXT                   EC2 Instance Type  [default: m3.2xlarge]
+  --count INTEGER               Number of nodes  [default: 4]
+  --security-group TEXT         Security Group Name  [default: dec2-default]
+  --volume-type TEXT            Root volume type  [default: gp2]
+  --volume-size INTEGER         Root volume size (GB)  [default: 500]
+  --file PATH                   File to save the metadata  [default: cluster.yaml]
+  --provision / --no-provision  Provision salt on the nodes  [default: True]
+  --dask / --no-dask            Install Dask.Distributed in the cluster [default: True]
+  --nprocs INTEGER              Number of processes per worker  [default: 1]
+  -h, --help                    Show this message and exit.
+```
 
 *Note: dec2 was largely built by [Daniel Rodriguez](https://github.com/danielfrg)*
 
@@ -147,7 +147,9 @@ Alternatively we set up a globally visible Jupyter notebook server:
     ec2-machine:~$ jupyter notebook --ip="*"          # Start Jupyter Server
 
 Then navigate to `http://XXX:XXX:XXX:XXX:8888` from your local browser.  Note,
-this is not secure.
+this method is not secure, see [Jupyter
+docs](http://jupyter-notebook.readthedocs.org/en/latest/public_server.html) for
+a better solution.
 
 
 ### Public datasets
@@ -306,7 +308,7 @@ Acknowledgments
 
 The `dec2` startup script is largely the work of Daniel Rodriguez.  Daniel
 usually works on [Anaconda
-Cluster](https://docs.continuum.io/anaconda-cluster/index) a proprietary
+Cluster](https://docs.continuum.io/anaconda-cluster/index), a proprietary
 product for cluster management that does things similar to `dec2`, but much
 more maturely.
 
