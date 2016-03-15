@@ -16,10 +16,7 @@ as part of the [Blaze Project](http://blaze.pydata.org)*
 tl;dr
 -----
 
-Copy-pasting the following commands should give you a Dask cluster on EC2.
-
-You will have to use your own AWS credentials, but you'll get subsecond
-distributed Pandas access on the NYCTaxi data, loaded from S3.
+Copy-pasting the following commands gives you a Dask cluster on EC2.
 
 ```
 pip install dec2
@@ -41,6 +38,9 @@ progress(df)
 df.head()
 ```
 
+You will have to use your own AWS credentials, but you'll get fast distributed
+Pandas access on the NYCTaxi data across a cluster, loaded from S3.
+
 
 Motivation
 ----------
@@ -51,10 +51,12 @@ Curiosity drives us to play with new tools.  We love the idea that previously
 difficult tasks will suddenly become easy, expanding our abilities and opening
 up a range of newly solvable problems.
 
-Conversely, as our problems grow more complex (e.g. large datasets) our tool
-complexity grows as well (e.g. distributed systems) and setup time increases,
-reducing user willingness to play around.  Tool makers who want feedback are
-strongly incentivized to decrease setup costs, especially for the play case.
+However, as our problems grow more complex (e.g. large datasets) our tools grow
+more cumbersome (e.g. distributed systems) and setup costs increase.  This cost
+stops us from playing around, which is a shame, because playing is good both
+for the education of the user and for the development of the tool.  Tool
+makers who want feedback are strongly incentive zed to decrease setup costs,
+especially for the play case.
 
 In February we introduced dask.distributed, a lightweight distributed computing
 framework for Python.  We focused on processing data with high level
@@ -64,9 +66,8 @@ abstractions like dataframes and arrays in the following blogposts:
 2.  [Use Dask DataFrames on CSV data in HDFS](http://matthewrocklin.com/blog/work/2016/02/22/dask-distributed-part-2)
 3.  [Process NetCDF data with Dask arrays on a traditional cluster](http://matthewrocklin.com/blog/work/2016/02/22/dask-distributed-part-3)
 
-Today we discuss how to start playing with dask.distributed, particularly using
-a simple setup script that launches nodes on EC2, sets everything up using
-Salt, and then lets you play with pre-hosted data on S3.
+Today we present a simple setup script to launch dask.distributed on EC2,
+enabling any user with AWS credentials to repeat these experiments easily.
 
 
 dec2
@@ -74,27 +75,13 @@ dec2
 
 *Devops tooling and EC2 to the rescue*
 
-When designing dask.distributed we intentionally made the setup lightweight
-(see [setup documentation](http://distributed.readthedocs.org/en/latest/setup.htmlhttp://distributed.readthedocs.org/en/latest/setup.html)),
-but this still assumes that you have a access to a nearby cluster.  Several do,
-and we've positive positive feedback about the setup process, but most
-potential users don't have a personal cluster.  Cloud providers like Amazon's
-EC2 or Google's Compute Cloud fill this gap with EC2 holding majority mindshare
-today.
-
-And so, if you want a cluster on EC2 running dask.distributed, you can use
-[dec2](https://github.com/dask/dec2/), a simple startup script that does the
-following:
+[DEC2](https://github.com/dask/dec2/) does the following:
 
 1.  Provisions nodes on EC2 using your AWS credentials
 2.  Installs Anaconda on those nodes
 3.  Deploys a dask.distributed `Scheduler` on the head node and `Worker`s on
     the rest of the nodes
 4.  Helps you to SSH into the head node or connect from your local machine
-
-*Note: when I say "we" above I mostly mean
-[Daniel Rodriguez](https://github.com/danielfrg)
-who has done the vast majority of the work to set up `dec2`.
 
     $ pip install dec2
     $ dec2 up --help
@@ -121,21 +108,22 @@ who has done the vast majority of the work to set up `dec2`.
       --nprocs INTEGER              Number of processes per worker  [default: 1]
       -h, --help                    Show this message and exit.
 
+*Note: dec2 was largely built by [Daniel Rodriguez](https://github.com/danielfrg)*
+
 Run
 ---
 
-As an example we use `dec2` to create a new cluster of nine nodes, one for the
-central scheduler and eight for the workers.  Each worker will run with eight
-processes, rather than using threads.
+As an example we use `dec2` to create a new cluster of nine nodes.  Each worker
+will run with eight processes, rather than using threads.
 
     dec2 up --keyname my-key-name
             --keypair ~/.ssh/my-key-file.pem
-            --count 9   # Provision nine nodes
-            --nprocs 8  # Use eight separate worker processes per node
+            --count 9       # Provision nine nodes
+            --nprocs 8      # Use eight separate worker processes per node
 
 ### Connect
 
-From here we ssh into the head node and start playing:
+We ssh into the head node and start playing in an IPython terminal:
 
     localmachine:~$ dec2 ssh                          # SSH into head node
     ec2-machine:~$ ipython                            # Start IPython console
@@ -150,7 +138,7 @@ Out[3]: <Executor: scheduler=127.0.0.1:8786 workers=64 threads=64>
 
 ### Notebooks
 
-Alternatively we can set up a globally visible Jupyter notebook server:
+Alternatively we set up a globally visible Jupyter notebook server:
 
     localmachine:~$ dec2 dask-distributed address    # Get location of head node
     Scheduler Address: XXX:XXX:XXX:XXX:8786
@@ -164,8 +152,9 @@ this is not secure.
 
 ### Public datasets
 
-Now everyone can repeat the experiments we ran in our first two blogposts on
-GitHub and NYCTaxi data.
+We repeat the experiments from our
+[earlier blogpost](http://matthewrocklin.com/blog/work/2016/02/22/dask-distributed-part-2)
+on NYCTaxi data.
 
 ```python
 df = s3.read_csv('dask-data/nyc-taxi/2015', lazy=False)
@@ -311,23 +300,20 @@ df.head()
   </tbody>
 </table>
 
-For examples on what to do with this data, see the previous blogpost:
-[Use Dask DataFrames on CSV data in HDFS](http://matthewrocklin.com/blog/work/2016/02/22/dask-distributed-part-2)
 
 Acknowledgments
 ---------------
 
-The `dec2` startup script is largely the work of Daniel Rodriguez.  Daniel is a
-Continuum employee who generally works on [Anaconda
+The `dec2` startup script is largely the work of Daniel Rodriguez.  Daniel
+usually works on [Anaconda
 Cluster](https://docs.continuum.io/anaconda-cluster/index) a proprietary
 product for cluster management that does things similar to `dec2`, but much
-much more.
+more maturely.
 
-DEC2 was inspired by the excellent feedback that we heard from users about the
-experience of the analagous `spark-ec2` script, which is how most Spark users,
-including myself, were first able to try out the library.  The `spark-ec2`
-script was unanimously praised as a really-good-idea that empowered many new
-users to try out a distributed system for the first time.
+DEC2 was inspired by the excellent `spark-ec2` setup script, which is how most
+Spark users, myself included, were first able to try out the library.  The
+`spark-ec2` script empowered many new users to try out a distributed system for
+the first time.
 
 The S3 work was largely done by Hussain Sultan (Capital One) and Martin Durant
 (Continuum).
@@ -341,8 +327,8 @@ What didn't work
    prone due to mismatches between the user's environment and the remote
    cluster's environment.
 *  It's tricky to replicate functionality that's present in a proprietary and
-   quite profitable product, Anaconda Cluster.  Fortunately, Continuum
-   management has been quite supportive.
+   profitable product, Anaconda Cluster.  Fortunately, Continuum management has
+   been quite supportive.
 *  There aren't many people in the data science community who know Salt, the
    system that backs `dec2`.  I expect maintenance to be a bit tricky moving
    forward, especially during periods when Daniel and other developers are
