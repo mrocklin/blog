@@ -56,7 +56,7 @@ However, as our problems grow more complex our tools grow more cumbersome and
 setup costs increase.  This cost stops us from playing around, which is a
 shame, because playing is good both for the education of the user and for the
 development of the tool.  Tool makers who want feedback are strongly
-incentiveized to decrease setup costs, especially for the play case.
+incentivized to decrease setup costs, especially for the play case.
 
 In February we introduced dask.distributed, a lightweight distributed computing
 framework for Python.  We focused on processing data with high level
@@ -306,10 +306,11 @@ Acknowledgments
 ---------------
 
 The `dec2` startup script is largely the work of Daniel Rodriguez.  Daniel
-usually works on [Anaconda
-Cluster](https://docs.continuum.io/anaconda-cluster/index), a proprietary
-product for cluster management that does things similar to `dec2`, but much
-more maturely.
+usually works on [cluster management for the Anaconda
+Platform](https://docs.continuum.io/anaconda-cluster/index) and the `acluster`
+tool in particular which is normally part of an Anaconda subscription but is
+also free for moderate use (4 nodes on private clusters, 16 nodes on public
+clouds.)  This does things similar to `dec2`, but much more maturely.
 
 DEC2 was inspired by the excellent `spark-ec2` setup script, which is how most
 Spark users, myself included, were first able to try out the library.  The
@@ -327,9 +328,9 @@ What didn't work
    and connected it to the remote scheduler.  This felt slick, but was error
    prone due to mismatches between the user's environment and the remote
    cluster's environment.
-*  It's tricky to replicate functionality that's present in a proprietary and
-   profitable product, Anaconda Cluster.  Fortunately, Continuum management has
-   been quite supportive.
+*  It's tricky to replicate functionality that's part of a proprietary
+   product (Anaconda for cluster management.)  Fortunately, Continuum
+   management has been quite supportive.
 *  There aren't many people in the data science community who know Salt, the
    system that backs `dec2`.  I expect maintenance to be a bit tricky moving
    forward, especially during periods when Daniel and other developers are
