@@ -306,11 +306,10 @@ Acknowledgments
 ---------------
 
 The `dec2` startup script is largely the work of Daniel Rodriguez.  Daniel
-usually works on [cluster management for the Anaconda
-Platform](https://docs.continuum.io/anaconda-cluster/index) and the `acluster`
-tool in particular which is normally part of an Anaconda subscription but is
-also free for moderate use (4 nodes on private clusters, 16 nodes on public
-clouds.)  This does things similar to `dec2`, but much more maturely.
+usually works on [Anaconda for cluster
+management](https://docs.continuum.io/anaconda-cluster/index) which is normally
+part of an Anaconda subscription but is also free for moderate use (4 nodes.)
+This does things similar to `dec2`, but much more maturely.
 
 DEC2 was inspired by the excellent `spark-ec2` setup script, which is how most
 Spark users, myself included, were first able to try out the library.  The
