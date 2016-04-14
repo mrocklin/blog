@@ -3,7 +3,6 @@ layout: post
 title: Fast Message Serialization
 tagline:
 category : work
-draft: true
 tags : [Programming, scipy, Python, dask]
 theme: twitter
 ---
@@ -156,8 +155,8 @@ Fortunately this is easy to correct, and a quick typecheck on common large
 dataformats in Python (NumPy and Pandas) gets us this speed boost.
 
 
-Problem 5: Pickle is actually still slower than you'd expect
-------------------------------------------------------------
+Problem 5: Pickle is still slower than you'd expect
+---------------------------------------------------
 
 Pickle runs at about half the speed of memcopy, which is what you'd expect from
 a protocol that is mostly just "serialize the dtype, strides, then tack on the
@@ -231,7 +230,18 @@ Dominant unwanted costs include the following:
 After this we're just bound by pushing bytes down a wire.
 
 
-### Links
+Conclusion
+----------
+
+Writing fast code isn't about writing any one thing particularly well, it's
+about mitigating everything that can get in your way.  As you approch peak
+performance, previously minor flaws suddenly become your dominant bottleneck.
+Success here depends on frequent profiling and keeping your mind open to
+unexpected and surprising costs.
+
+
+Links
+-----
 
 *  [EC2 slow memory copy StackOverflow question.](http://stackoverflow.com/questions/36523142/why-is-copying-memory-on-ec2-machines-slow)
 *  [Tornado issue for sending large messages](https://github.com/tornadoweb/tornado/issues/1685)
