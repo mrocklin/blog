@@ -1,10 +1,10 @@
 ---
 layout: post
-title: Ad Hoc Distributed Computing with Random Forests
+title: Ad Hoc Distributed Random Forests
 tagline: when arrays and dataframes aren't flexible enough
-category : work
 draft: true
-tags : [Programming, scipy, Python, dask]
+category: work
+tags: [Programming, scipy, Python, dask]
 theme: twitter
 ---
 {% include JB/setup %}
@@ -38,15 +38,16 @@ execute ad-hoc computations easily.
 Motivation
 ----------
 
-In the past few posts we used Dask collections on a cluster:
+In the past few posts we analyzed data on a cluster with Dask collections:
 
 1.  [Dask.bag on JSON records](http://matthewrocklin.com/blog/work/2016/02/17/dask-distributed-part1)
 2.  [Dask.dataframe on CSV data](http://matthewrocklin.com/blog/work/2016/02/22/dask-distributed-part-2)
 3.  [Dask.array on HDF5 data](http://matthewrocklin.com/blog/work/2016/02/26/dask-distributed-part-3)
 
 Often our computations don't fit neatly into the bag, dataframe, or array
-abstractions.  In these cases we wish we could go back to normal for loops, but
-still execute on a cluster.  With the dask.distributed task interface, we can.
+abstractions.  In these cases we want the flexibility of normal code with for
+loops, but still with the computational power of a cluster.  With the
+dask.distributed task interface, we achieve something close to this.
 
 
 Application: Naive Distributed Random Forest Algorithm
@@ -59,12 +60,12 @@ algorithm will look like the following:
 
 1.  Pull data from some external source (S3) into several dataframes on the
     cluster
-2.  Fit one `RandomForestClassifier` on each dataframe
+2.  For each dataframe, create and train one `RandomForestClassifier`
 3.  Scatter single testing dataframe to all machines
-4.  Predict output on testing dataframe with each classifier
-5.  Aggregate predictions together using a majority vote.  To avoid bringing
-    too much data to any one machine, perform this majority voting as a tree
-    reduction.
+4.  For each `RandomForestClassifier` predict output on test dataframe
+5.  Aggregate independent predictions from each classifier together by a
+    majority vote.  To avoid bringing too much data to any one machine, perform
+    this majority vote as a tree reduction.
 
 Data: NYC Taxi 2015
 -------------------
@@ -74,30 +75,33 @@ dataframes](http://matthewrocklin.com/blog/work/2016/02/22/dask-distributed-part
 we use the data on all NYC Taxi rides in 2015.  This is around 20GB on disk and
 60GB in RAM.
 
-We will try to predict the number of passengers in each cab given the other
+We predict the number of passengers in each cab given the other
 numeric columns like pickup and destination location, fare breakdown, distance,
 etc..
 
-We'll do this first on a small bit of data on a single machine and then do it
-on the entire dataset on the cluster.
+We do this first on a small bit of data on a single machine and then on the
+entire dataset on the cluster.
 
-*Disclaimer*: I am no expert in machine learning.  Our algorithm perform will
-perform very poorly so if you're excited about machine learning you can stop
-reading here.  However, if you're interested in how to *build* distributed
-algorithms with Dask then you may want to read on, especially if you happen to
-know enough machine learning to improve upon my naive solution.
+*Disclaimer and Spoiler Alert*: I am not an expert in machine learning.  Our
+algorithm perform will perform very poorly.  If you're excited about machine
+learning you can stop reading here.  However, if you're interested in how to
+*build* distributed algorithms with Dask then you may want to read on,
+especially if you happen to know enough machine learning to improve upon my
+naive solution.
 
 
-API: Dask.distributed + concurrent futures
-------------------------------------------
+API: submit, map, gather
+------------------------
 
-We use a small number of dask functions to build our code:
+We use a small number of [dask.distributed
+functions](http://distributed.readthedocs.org/en/latest/api.html) to build our
+computation:
 
 ```python
-futures = executor.scatter(data)
-future = executor.submit(function, *args, **kwargs)
-futures = executor.map(function, sequence)
-results = executor.gather(futures)
+futures = executor.scatter(data)                     # scatter data
+future = executor.submit(function, *args, **kwargs)  # submit single task
+futures = executor.map(function, sequence)           # submit many tasks
+results = executor.gather(futures)                   # gather results
 executor.replicate(futures, n=number_of_replications)
 ```
 
@@ -108,8 +112,8 @@ stay entirely on the cluster and trust the distributed scheduler to move data
 around intelligently.
 
 
-Lets go to work
----------------
+Load Pandas from S3
+-------------------
 
 First we load data from S3.  We use the `s3.read_csv(..., collection=False)`
 function to load 178 Pandas DataFrames on our cluster from CSV data on S3.  We
@@ -126,7 +130,8 @@ dfs = s3.read_csv('dask-data/nyc-taxi/2015',
 dfs = e.compute(dfs)
 ```
 
-Each of these is a `Future`
+Each of these is a lightweight `Future` pointing to a `pandas.DataFrame` on the
+cluster.
 
 ```python
 >>> dfs[:5]
@@ -137,10 +142,11 @@ Each of these is a `Future`
  <Future: status: finished, type: DataFrame, key: finalize-c8254256b09ae287badca3cf6d9e3142>]
 ```
 
-If we're willing to wait a bit we can pull data from any future back to our
-local process using the `.result()` method.  We don't want to do this too much
-though, data transfer can be expensive and we can't hold the entire dataset in
-the memory of a single machine.
+If we're willing to wait a bit then we can pull data from any future back to
+our local process using the `.result()` method.  We don't want to do this too
+much though, data transfer can be expensive and we can't hold the entire
+dataset in the memory of a single machine.  Here we just bring back one of the
+dataframes:
 
 ```python
 >>> df = dfs[0].result()
@@ -286,8 +292,8 @@ the memory of a single machine.
   </tbody>
 </table>
 
-Start with a single machine
----------------------------
+Train on a single machine
+-------------------------
 
 To start lets go through the standard Scikit Learn fit/predict/score cycle with
 this small bit of data on a single machine.
@@ -326,13 +332,14 @@ fancy random forest.
 >>> accuracy_score(df_test.passenger_count,
 ...                np.ones_like(df_test.passenger_count))
 0.70669390028780987
+```
 
 This is where my ignorance in machine learning really
 kills us.  There is likely a simple way to improve this.  However, because I'm
 more interested in showing how to build distributed computations with Dask than
-in actually doing machine learning I'm going to go ahead with this.  Spoiler
-alert, we're going to do a lot of computation and still not beat the "always
-guess one" strategy.
+in actually doing machine learning I'm going to go ahead with this naive
+approach.  Spoiler alert: we're going to do a lot of computation and still not
+beat the "always guess one" strategy.
 
 
 Fit across the cluster with executor.map
@@ -355,7 +362,6 @@ training data and hold out the last dataframe for testing.  There are more
 principled ways to do this, but again we're going to charge ahead here.
 
 ```python
-
 train = dfs[:-1]
 test = dfs[-1]
 
@@ -397,13 +403,13 @@ Aggregate predictions by majority vote
 For each estimator we now have an independent prediction of the passenger
 counts for all of the rides in our test data.  In other words for each ride we
 have 178 different opinions on how many passengers were in the cab.  By
-averaging these opinions together somehow we hope to achieve a more accurate
-consensus opinion.
+averaging these opinions together we hope to achieve a more accurate consensus
+opinion.
 
 For example, consider the first four prediction arrays:
 
 ```python
->>> a_few_predictions = e.gather(predictions[:4])
+>>> a_few_predictions = e.gather(predictions[:4])  # remote futures -> local arrays
 >>> a_few_predictions
 [array([1, 2, 1, ..., 2, 2, 1]),
  array([1, 1, 1, ..., 1, 1, 1]),
@@ -411,9 +417,9 @@ For example, consider the first four prediction arrays:
  array([1, 1, 1, ..., 1, 1, 1])]
 ```
 
-For the first ride we see that three of the four predictions are for a single
-passenger while one prediction disagrees and is for two passengers.  We create
-a consensus opinion by taking the mode of the stacked arrays:
+For the first ride/column we see that three of the four predictions are for a
+single passenger while one prediction disagrees and is for two passengers.  We
+create a consensus opinion by taking the mode of the stacked arrays:
 
 ```python
 from scipy.stats import mode
@@ -427,26 +433,28 @@ def mymode(*arrays):
 array([1, 1, 1, ..., 1, 1, 1])
 ```
 
-And so when we mode these four predictions together we see that the majority
-opinion of one passenger dominates for all of the six rides visible here.
+And so when we average these four prediction arrays together we see that the
+majority opinion of one passenger dominates for all of the six rides visible
+here.
 
 
 Tree Reduction
 --------------
 
-Hypothetically we could call our `mymode` function on all of our predictions.
-Unfortunately this would move all of our results to a single machine to compute
-the mode there.  This might swamp that single machine:
+We could call our `mymode` function on all of our predictions like this:
 
 ```python
 >>> mode_prediction = e.submit(mymode, *predictions)  # this doesn't scale well
 ```
 
-Instead we batch our predictions into groups of size 10, mode each group,
+Unfortunately this would move all of our results to a single machine to compute
+the mode there.  This might swamp that single machine.
+
+Instead we batch our predictions into groups of size 10, average each group,
 and then repeat the process with the smaller set of predictions until we have
-only one left.  This sort o multi-step reduction is called a tree reduction.
-We can write it up with a couple of loops and `executor.submit`.  This is
-only an approximation of the mode, but it's much more scalable to compute.
+only one left.  This sort of multi-step reduction is called a tree reduction.
+We can write it up with a couple nested loops and `executor.submit`.  This is
+only an approximation of the mode, but it's a much more scalable computation.
 This finishes in about 1.5 seconds.
 
 ```python
@@ -457,6 +465,7 @@ while len(predictions) > 1:
                    for chunk in partition_all(10, predictions)]
 
 result = e.gather(predictions)[0]
+
 >>> result
 array([1, 1, 1, ..., 1, 1, 1])
 ```
@@ -483,20 +492,21 @@ What didn't work
 As always I'll have a section like this that honestly says what doesn't work
 well and what I would have done with more time.
 
-*   Clearly this would have been more interesting with a better machine learning
-    algorithm.  Any thoughts on what would be ideal for this problem?
+*   Clearly this would have benefitted from more machine learning knowledge.
+    What would have been a good approach for this problem?
 *   I've been thinking a bit about memory management of replicated data on the
     cluster.  In this exercise we specifically replicated out the test data.
     Everything would have worked fine without this step but it would have been
     much slower as every worker gathered data from the single worker that
     originally had the test dataframe.  Replicating data is great until you
     start filling up distributed RAM.  It will be interesting to think of
-    policies about when you start cleaning up redundant data.
-*   Several people, both open source and Continuum customers have asked about a
-    general API for machine learning, something akin to Spark's MLLib.  Ideally
-    a future Dask.learn would leverage Scikit-Learn in the same way that
-    projects like Dask.dataframe leverages Pandas.  It's not clear how to
-    cleanly break up and parallelize Scikit-Learn algorithms.
+    policies about when to start cleaning up redundant data and when to keep it
+    around.
+*   Several people from both open source users and Continuum customers have
+    asked about a general Dask library for machine learning, something akin to
+    Spark's MLLib.  Ideally a future Dask.learn module would leverage
+    Scikit-Learn in the same way that Dask.dataframe leverages Pandas.  It's
+    not clear how to cleanly break up and parallelize Scikit-Learn algorithms.
 
 
 Conclusion
@@ -504,6 +514,6 @@ Conclusion
 
 This blogpost gives a concrete example using basic task submission with
 `executor.map` and `executor.submit` to build a non-trivial computation.  This
-approach is straightforward and not at all restrictive.  Personally this
-interface excites me more than collections like Dask.dataframe; there is a lot
-f freedom in arbitrary task submission.
+approach is straightforward and not restrictive.  Personally this interface
+excites me more than collections like Dask.dataframe; there is a lot of freedom
+in arbitrary task submission.
