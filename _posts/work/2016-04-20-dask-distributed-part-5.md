@@ -2,7 +2,6 @@
 layout: post
 title: Ad Hoc Distributed Random Forests
 tagline: when arrays and dataframes aren't flexible enough
-draft: true
 category: work
 tags: [Programming, scipy, Python, dask]
 theme: twitter
