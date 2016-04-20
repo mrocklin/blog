@@ -19,17 +19,9 @@ as part of the [Blaze Project](http://blaze.pydata.org)*
 TL;DR.
 ------
 
-Dask.distributed lets you submit individual tasks with the following functions:
-
-```python
-futures = executor.scatter(data)
-future = executor.submit(function, *args, **kwargs)
-futures = executor.map(function, sequence)
-results = executor.gather(futures)
-```
-
-We use these functions and Scikit Learn to train and run a distributed random
-forest on distributed tabular NYC Taxi data.
+Dask.distributed lets you submit individual tasks to the cluster.  We use this
+ability combined with Scikit Learn to train and run a distributed random forest
+on distributed tabular NYC Taxi data.
 
 Our machine learning model does not perform well, but we do learn how to
 execute ad-hoc computations easily.
@@ -80,10 +72,11 @@ numeric columns like pickup and destination location, fare breakdown, distance,
 etc..
 
 We do this first on a small bit of data on a single machine and then on the
-entire dataset on the cluster.
+entire dataset on the cluster.  Our cluster is composed of twelve m4.xlarges (4
+cores, 15GB RAM each).
 
 *Disclaimer and Spoiler Alert*: I am not an expert in machine learning.  Our
-algorithm perform will perform very poorly.  If you're excited about machine
+algorithm will perform very poorly.  If you're excited about machine
 learning you can stop reading here.  However, if you're interested in how to
 *build* distributed algorithms with Dask then you may want to read on,
 especially if you happen to know enough machine learning to improve upon my
@@ -115,9 +108,11 @@ around intelligently.
 Load Pandas from S3
 -------------------
 
-First we load data from S3.  We use the `s3.read_csv(..., collection=False)`
+First we load data from Amazon S3.  We use the `s3.read_csv(..., collection=False)`
 function to load 178 Pandas DataFrames on our cluster from CSV data on S3.  We
-get back a list of `Future` objects that refer to these remote dataframes.
+get back a list of `Future` objects that refer to these remote dataframes.  The
+use of `collection=False` gives us this list of futures rather than a single
+cohesive Dask.dataframe object.
 
 ```python
 from distributed import Executor, s3
@@ -368,8 +363,8 @@ test = dfs[-1]
 estimators = e.map(fit, train)
 ```
 
-This takes around two minutes to train on all of the 178 dataframes and now we
-have 178 independent estimators, each capable of guessing how many passengers a
+This takes around two minutes to train on all of the 177 dataframes and now we
+have 177 independent estimators, each capable of guessing how many passengers a
 particular ride had.  There is relatively little overhead in this computation.
 
 
@@ -377,7 +372,7 @@ Predict on testing data
 -----------------------
 
 Recall that we kept separate a future, `test`, that points to a Pandas dataframe on
-the cluster that was not used to train any of our 178 estimators.  We're going
+the cluster that was not used to train any of our 177 estimators.  We're going
 to replicate this dataframe across all workers on the cluster and then ask each
 estimator to predict the number of passengers for each ride in this dataset.
 
@@ -396,13 +391,19 @@ when and where to run these tasks for optimal computation time and minimal data
 transfer.  As with all functions, this returns futures that we can use to
 collect data if we want in the future.
 
+*Developers note: we explicitly replicate here in order to take advantage of
+efficient tree-broadcasting algorithms.  This is purely a performance
+consideration, everything would have worked fine without this, but the explicit
+broadcast turns a 30s communication+computation into a 2s
+communication+computation.*
+
 
 Aggregate predictions by majority vote
 --------------------------------------
 
 For each estimator we now have an independent prediction of the passenger
 counts for all of the rides in our test data.  In other words for each ride we
-have 178 different opinions on how many passengers were in the cab.  By
+have 177 different opinions on how many passengers were in the cab.  By
 averaging these opinions together we hope to achieve a more accurate consensus
 opinion.
 
@@ -492,7 +493,7 @@ What didn't work
 As always I'll have a section like this that honestly says what doesn't work
 well and what I would have done with more time.
 
-*   Clearly this would have benefitted from more machine learning knowledge.
+*   Clearly this would have benefited from more machine learning knowledge.
     What would have been a good approach for this problem?
 *   I've been thinking a bit about memory management of replicated data on the
     cluster.  In this exercise we specifically replicated out the test data.
@@ -504,7 +505,7 @@ well and what I would have done with more time.
     around.
 *   Several people from both open source users and Continuum customers have
     asked about a general Dask library for machine learning, something akin to
-    Spark's MLLib.  Ideally a future Dask.learn module would leverage
+    Spark's MLlib.  Ideally a future Dask.learn module would leverage
     Scikit-Learn in the same way that Dask.dataframe leverages Pandas.  It's
     not clear how to cleanly break up and parallelize Scikit-Learn algorithms.
 
