@@ -517,3 +517,9 @@ This blogpost gives a concrete example using basic task submission with
 approach is straightforward and not restrictive.  Personally this interface
 excites me more than collections like Dask.dataframe; there is a lot of freedom
 in arbitrary task submission.
+
+Links
+-----
+
+*  [Notebook](https://gist.github.com/mrocklin/9f5720d8658e5f2f66666815b1f03f00)
+*  [Video](https://www.youtube.com/watch?v=FkPlEqB8AnE&list=PLRtz5iA93T4PQvWuoMnIyEIz1fXiJ5Pri&index=11)
