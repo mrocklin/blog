@@ -3,6 +3,7 @@ layout: post
 title: Dask EC2 Startup Script
 tagline: The hardest step is standing up
 category : work
+draft: true
 tags : [Programming, scipy, Python, dask]
 theme: twitter
 ---
@@ -334,3 +335,9 @@ What didn't work
    system that backs `dec2`.  I expect maintenance to be a bit tricky moving
    forward, especially during periods when Daniel and other developers are
    occupied.
+
+Links
+-----
+
+*   [dec2](https://github.com/dask/dec2)
+*   [dask.distributed](https://distributed.readthedocs.org/en/latest/)

@@ -248,3 +248,4 @@ Links
 *  [Wikipedia page on Nagle's algorithm for TCP protocol for small packets](https://en.wikipedia.org/wiki/Nagle%27s_algorithm)
 *  [NumPy issue for double memory copy](https://github.com/numpy/numpy/issues/7544)
 *  [Cloudpickle issue for memoryview support](https://github.com/cloudpipe/cloudpickle/issues/59)
+*  [dask.distributed](https://distributed.readthedocs.org/en/latest/)

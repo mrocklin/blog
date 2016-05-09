@@ -344,3 +344,10 @@ would have done with more time:
 *   Reduction speed: The computation of normalized temperature, `z`, took a
     surprisingly long time.  I'd like to look into what is holding up that
     computation.
+
+
+Links
+-----
+
+*   [dask.array](https://dask.pydata.org/en/latest/array.html)
+*   [dask.distributed](https://distributed.readthedocs.org/en/latest/)

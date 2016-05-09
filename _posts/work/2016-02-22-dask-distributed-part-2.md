@@ -552,7 +552,7 @@ Links
 -----
 
 *   [dask](https://dask.pydata.org/en/latest/), the original project
-*   [distributed](https://distributed.readthedocs.org/en/latest/), the
+*   [dask.distributed](https://distributed.readthedocs.org/en/latest/), the
     distributed memory scheduler powering the cluster computing
 *   [dask.dataframe](http://dask.pydata.org/en/latest/dataframe.html), the user
     API we've used in this post.
