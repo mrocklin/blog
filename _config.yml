@@ -19,7 +19,7 @@ author :
 
 name: Working notes by Matthew Rocklin
 description: Working notes by Matthew Rocklin
-url: http://matthewrocklin.com/blog/
+url: https://matthewrocklin.com/blog/
 
 # The production_url is only used when full-domain names are needed
 # such as sitemap.txt
@@ -29,7 +29,7 @@ url: http://matthewrocklin.com/blog/
 # Else if you are pushing to username.github.com, replace with your username.
 # Finally if you are pushing to a GitHub project page, include the project name at the end.
 #
-production_url : http://mrocklin.github.com/blog
+production_url : https://mrocklin.github.com/blog
 
 # All Jekyll-Bootstrap specific configurations are namespaced into this hash
 #
@@ -58,7 +58,7 @@ JB :
   #   - Only the following values are falsy: ["", null, false]
   #   - When setting BASE_PATH it must be a valid url.
   #     This means always setting the protocol (http|https) or prefixing with "/"
-  BASE_PATH : http://mrocklin.github.com/blog
+  BASE_PATH : https://mrocklin.github.com/blog
 
   # By default, the asset_path is automatically defined relative to BASE_PATH plus the enabled theme.
   # ex: [BASE_PATH]/assets/themes/[THEME-NAME]
