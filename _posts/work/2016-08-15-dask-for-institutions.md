@@ -288,6 +288,12 @@ to human transportation mechanisms in a city.  Here we go:
 Again, there is a lot of selection bias here, if what you want is a database
 then you should probably get a database.  Dask is not a database.
 
+This is also wildly over-simplifying things.  Databases like Oracle have lots
+of ETL and analytics tools, Spark is known to go off road, etc..  I obviously
+have a bias towards Dask.  You really should never trust an author of a project
+to give a fair and unbiased view of the capabilities of the tools in the
+surrounding landscape.
+
 
 Conclusion
 ----------
