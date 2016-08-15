@@ -200,7 +200,7 @@ projects that just run ephemeral queries of off some persistent store, return
 the results, and then clear out state.
 
 
-### What happens if ``dask-worker``s are in two different data centers?  Can we
+### What happens if dask-workers are in two different data centers?  Can we
     scale in an asymmetric way?
 
 The short answer is no.  Other than number of cores and available RAM all
