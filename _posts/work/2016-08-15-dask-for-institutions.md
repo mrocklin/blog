@@ -8,10 +8,15 @@ theme: twitter
 ---
 {% include JB/setup %}
 
+<img src="http://dask.readthedocs.io/en/latest/_images/dask_horizontal.svg"
+     align="right"
+     width="20%">
+
+
+*This work is supported by [Continuum Analytics](http://continuum.io)*
+
 tl;dr
 -----
-
-
 
 Institutions use software differently than individuals.  Over the last few
 months I've had dozens of conversations about using Dask within larger
