@@ -41,15 +41,16 @@ SGE/LSF/Mesos/Other.
 
 However the cluster is still under-utilized and the users are still asking for
 help with parallel computing.  Either users aren't comfortable using the
-SGE/LSF/Mesos/Other interface or the interaction times aren't good enough for
-the interactive use that users appreciate.
+SGE/LSF/Mesos/Other interface, it doesn't support sufficiently complex/dynamic
+workloads, or the interaction times aren't good enough for the interactive use
+that users appreciate.
 
 There was an internal effort to build a more complex/interactive/Pythonic
 system on top of SGE/LSF/Mesos/Other but it's not particularly mature and
 definitely isn't something that Institution X wants to pursue.  It turned out
-to be a harder problem than expected to design/build/maintain such a system in
-house.  They'd love to find an open source solution that was well featured and
-maintained by a community.
+to be a harder problem than expected to design/build/maintain such a system
+in-house.  They'd love to find an open source solution that was well featured
+and maintained by a community.
 
 The Dask.distributed scheduler looks like it's 90% of the system that
 Institution X needs.  However there are a few open questions:
@@ -67,9 +68,9 @@ Institution X needs.  However there are a few open questions:
 
 So for the rest of this post I'm going to answer these questions.  As usual,
 few of answers will be of the form "Yes Dask can solve all of your problems."
-These are all of the open questions, not the questions that were easy to
-answer.  We'll get into what's possible today and how we might solve these
-problem in the future.
+These are open questions, not the questions that were easy to answer.  We'll
+get into what's possible today and how we might solve these problems in the
+future.
 
 
 ### How do we integrate dask.distributed with SGE/LSF/Mesos/Other?
@@ -104,12 +105,18 @@ schedulers.
 ### How can we grow and shrink the cluster dynamically based on use?
 
 Alternatively, we could have a single dask.distributed deployment running 24/7
-that scales itself up and down depending on current load.  Again, this is
-entirely possible today if you want to do it manually (you can add and remove
-workers on the fly) but we should add some signals to the scheduler like "I'm
-under duress, please add workers" or "I've been idling for a while, please
-reclaim some workers" and connect these signals to a manager that talks to the
-job scheduler.
+that scales itself up and down dynamically based on current load.  Again, this
+is entirely possible today if you want to do it manually (you can add and
+remove workers on the fly) but we should add some signals to the scheduler like
+the following:
+
+*  "I'm under duress, please add workers"
+*  "I've been idling for a while, please reclaim workers"
+
+and connect these signals to a manager that talks to the job scheduler.  This
+removes an element of control from the users and places it in the hands of a
+policy that IT can tune to play more nicely with their other services on the
+same network.
 
 
 ### How do users manage software environments on the workers?
@@ -120,10 +127,11 @@ to the workers but that's it.
 
 Generally Dask trusts that the full software environment will be handled by
 something else.  This might be a network file system (NFS) mount on traditional
-cluster setups, or it might be handled by moving conda environments around by
-some other tool like [knit](http://knit.readthedocs.io/en/latest/) for YARN
-deployments or something more custom.  For example Continuum [sells proprietary
-software](https://docs.continuum.io/anaconda-cluster/) that does this.
+cluster setups, or it might be handled by moving docker or conda environments
+around by some other tool like [knit](http://knit.readthedocs.io/en/latest/)
+for YARN deployments or something more custom.  For example Continuum [sells
+proprietary software](https://docs.continuum.io/anaconda-cluster/) that
+does this.
 
 Getting the standard software environment setup generally isn't such a big deal
 for institutions.  They typically have some system in place to handle this
@@ -160,8 +168,8 @@ For example we might rely on Docker to isolate workers from destroying their
 surrounding environment and rely on network access controls to protect data
 access.
 
-Because we're on Tornado, a serious networking library and web framework there
-are some things we can do easily like enabling SSL, authentication, etc..
+Because Dask runs on Tornado, a serious networking library and web framework,
+there are some things we can do easily like enabling SSL, authentication, etc..
 However I hesitate to jump into providing "just a little bit of security"
 without going all the way for fear of providing a false sense of security.  In
 short, I have no plans to work on this without a lot of encouragement.  Even
@@ -192,16 +200,16 @@ run as critical infrastructure in a giant institution.  We're not there yet.
 As of [recent work](https://github.com/dask/distributed/pull/413) spurred on by
 Stefan van der walt at UC Berkeley/BIDS the scheduler can now die and come back
 and everyone will reconnect.  The state for computations in flight is entirely
-lost but the computational infrastructure remains intact.
+lost but the computational infrastructure remains intact so that people can
+resubmit jobs without significant loss of service.
 
 Dask has a bit of a harder time with this topic because it offers a persistent
-stateful interface.  This problem is much easier for distributed databases
+stateful interface.  This problem is much easier for distributed database
 projects that just run ephemeral queries of off some persistent store, return
 the results, and then clear out state.
 
 
-### What happens if dask-workers are in two different data centers?  Can we
-    scale in an asymmetric way?
+### What happens if dask-workers are in two different data centers?  Can we scale in an asymmetric way?
 
 The short answer is no.  Other than number of cores and available RAM all
 workers are considered equal to each other (except when the user [explicitly
@@ -216,11 +224,12 @@ few examples of similar cases:
 4.  Multiple workers that have GPUs that can move data between each other easily
 3.  Multiple processes on a single machine
 
-Having some notion of worker group membership is probably inevitable long term.
-As with all distributed scheduling questions the hard part isn't deciding that
-this is useful, or even coming up with a sensible design, but rather figuring
-out how to make decisions on the sensible design foolproof and operate in
-constant time.  I don't personally have a good approach here yet.
+Having some notion of hierarchical worker group membership is probably
+inevitable long term.  As with all distributed scheduling questions the hard
+part isn't deciding that this is useful, or even coming up with a sensible
+design, but rather figuring out how to make decisions on the sensible design
+that are foolproof and operate in constant time.  I don't personally have a
+good approach here yet.
 
 
 ### How do we handle multiple concurrent users and priorities?
@@ -257,7 +266,7 @@ At an institutional level Spark seems to primarily target ETL + Database-like
 computations.  While Dask modules like Dask.bag and Dask.dataframe can happily
 play in this space this doesn't seem to be the focus of recent conversations.
 
-Recent conversations are almost entirely around supporting interactive ad-hoc
+Recent conversations are almost entirely around supporting interactive custom
 parallelism (lots of small tasks with complex dependencies between them) rather
 than the big Map->Filter->Groupby->Join abstractions you often find in a
 database or Spark.  That's not to say that these operations aren't hugely
