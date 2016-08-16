@@ -14,8 +14,8 @@ theme: twitter
 
 *This work is supported by [Continuum Analytics](http://continuum.io)*
 
-tl;dr
------
+Introduction
+------------
 
 Institutions use software differently than individuals.  Over the last few
 months I've had dozens of conversations about using Dask within larger
