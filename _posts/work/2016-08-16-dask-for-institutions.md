@@ -190,7 +190,7 @@ few things you could imagine here:
 
 1.  Backup state and recent events to some persistent storage so that state can
     be recovered in case of catastrophic loss
-2.  Having a hot failover node that gets a copy of every action that the
+2.  Have a hot failover node that gets a copy of every action that the
     scheduler takes
 3.  Have multiple peer schedulers operate simultaneously in a way that they can
     pick up slack from lost peers
@@ -202,15 +202,15 @@ there.  However options 2 or 3 would probably be necessary if Dask were to ever
 run as critical infrastructure in a giant institution.  We're not there yet.
 
 As of [recent work](https://github.com/dask/distributed/pull/413) spurred on by
-Stefan van der walt at UC Berkeley/BIDS the scheduler can now die and come back
+Stefan van der Walt at UC Berkeley/BIDS the scheduler can now die and come back
 and everyone will reconnect.  The state for computations in flight is entirely
 lost but the computational infrastructure remains intact so that people can
 resubmit jobs without significant loss of service.
 
 Dask has a bit of a harder time with this topic because it offers a persistent
 stateful interface.  This problem is much easier for distributed database
-projects that just run ephemeral queries of off some persistent store, return
-the results, and then clear out state.
+projects that run ephemeral queries off of persistent storage, return the
+results, and then clear out state.
 
 
 ### What happens if dask-workers are in two different data centers?  Can we scale in an asymmetric way?
@@ -228,12 +228,13 @@ few examples of similar cases:
 4.  Multiple workers that have GPUs that can move data between each other easily
 3.  Multiple processes on a single machine
 
-Having some notion of hierarchical worker group membership is probably
-inevitable long term.  As with all distributed scheduling questions the hard
-part isn't deciding that this is useful, or even coming up with a sensible
-design, but rather figuring out how to make decisions on the sensible design
-that are foolproof and operate in constant time.  I don't personally have a
-good approach here yet.
+Having some notion of hierarchical worker group membership or inter-worker
+preferred relationships is probably inevitable long term.  As with all
+distributed scheduling questions the hard part isn't deciding that this is
+useful, or even coming up with a sensible design, but rather figuring out how
+to make decisions on the sensible design that are foolproof and operate in
+constant time.  I don't personally see a good approach here yet but expect one
+to arise as more high priority use cases come in.
 
 
 ### How do we handle multiple concurrent users and priorities?
@@ -330,9 +331,8 @@ serious bugs.  These people don't show up on the GitHub issue tracker but their
 utility in flushing out bugs is invaluable.
 
 As interest in Dask grows it's interesting to see how it will evolve.
-Culturally Dask has managed to simultaneously cater to both the open source
-science crowd as well as the private-sector crowd.  The project gets both
-financial support and open source contributions from each side.  So far there
-hasn't been any conflict of interest (everyone is pushing in roughly the same
-direction) which has been a really fruitful experience for all involved I
-think.
+Culturally Dask has managed to simultaneously cater to both the open science
+crowd as well as the private-sector crowd.  The project gets both financial
+support and open source contributions from each side.  So far there hasn't been
+any conflict of interest (everyone is pushing in roughly the same direction)
+which has been a really fruitful experience for all involved I think.
