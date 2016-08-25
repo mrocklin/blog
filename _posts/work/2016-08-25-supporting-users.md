@@ -49,7 +49,7 @@ reports a day.
 Novice Users need help too
 --------------------------
 
-However there are a lot of novice users out there.  We were all been novice
+However there are a lot of novice users out there.  We have all been novice
 users once, and even if we are veterans today we are probably still novices at
 something else.  Knowing what to do and how to ask for help is hard.  Having
 the guts to walk into a chat room where people will quickly see that you're a
