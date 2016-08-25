@@ -59,7 +59,7 @@ language.  Respect is warranted here.
 I categorize novice users into two groups:
 
 1.  Experienced technical novices, who are very experienced in their field and
-    technical things generally, but who don't yet have an thorough
+    technical things generally, but who don't yet have a thorough
     understanding of open source culture and how to ask questions smoothly.
     They're entirely capable of behaving like a veteran user if pointed in the
     right directions.
