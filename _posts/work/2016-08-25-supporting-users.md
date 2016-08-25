@@ -138,3 +138,13 @@ I think that people should still ask questions.  I think that we need to foster
 an environment in which developers can say "Sorry. Busy." more easily.  I think
 that we as a community need better resources to teach novice users to become
 veteran users.
+
+One positive approach is to honor veteran users, and through this public praise
+to encourage other users to "up their game", much as developers do today with
+coding skills.  There are thousands of blogposts about how to develop code
+well, and people strive tirelessly to improve themselves.  My hope is that by
+attaching the language of skill, like the term "veteran", to user behaviors we
+can create an environment where people are proud of how cleanly they can raise
+issues and how clearly they can describe questions for documentation.  Doing
+this well is critical for a project's success and requires substantial effort
+and personal investment.
