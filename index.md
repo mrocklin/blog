@@ -1,11 +1,9 @@
 ---
 layout: page
-title: Working Notes 
+title: Working Notes
 tagline: from Matthew Rocklin
 ---
 {% include JB/setup %}
-
-## Posts
 
 <ul class="posts">
   {% for post in site.posts %}
