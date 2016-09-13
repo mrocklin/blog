@@ -364,15 +364,16 @@ Queue
 Final Thoughts
 --------------
 
-So I'll claim that for standard workloads Dask can easily replace Celery,
-*assuming you're not diving into deep API*.  However all of that deep API is
-actually really important.  Celery evolved in this domain and developed tons of
-features that solve problems that arise over and over again.  This history
-saves users an enormous amount of time.  Dask evolved in a very different space
-and has developed a very different set of tricks.  Many of Dask's tricks are
-general enough that they can solve Celery problems with a small bit of effort,
-but there's still that extra step.  I'm seeing people applying that effort to
-problems now and I think it'll be interesting to see what comes out of it.
+Based on this very shallow exploration of Celery, I'll foolishly claim that
+Dask can handle Celery workloads, *if you're not diving into deep API*.
+However all of that deep API is actually really important.  Celery evolved in
+this domain and developed tons of features that solve problems that arise over
+and over again.  This history saves users an enormous amount of time.  Dask
+evolved in a very different space and has developed a very different set of
+tricks.  Many of Dask's tricks are general enough that they can solve Celery
+problems with a small bit of effort, but there's still that extra step.  I'm
+seeing people applying that effort to problems now and I think it'll be
+interesting to see what comes out of it.
 
 Going through the Celery API was a good experience for me personally.  I think
 that there are some good concepts from Celery that can inform future Dask
