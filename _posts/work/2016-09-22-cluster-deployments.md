@@ -2,7 +2,6 @@
 layout: post
 title: Dask Cluster Deployments
 category: work
-draft: true
 tags: [Programming, Python, scipy]
 theme: twitter
 ---
@@ -33,9 +32,9 @@ These systems provide users access to cluster resources and ensure that
 many distributed services / users play nicely together.  They're essential for
 any modern cluster deployment.
 
-The people deploying Dask on these cluster resource managers are usually
-power-users; they know how their resource managers work and they've read the
-[documentation on how to setup Dask
+The people deploying Dask on these cluster resource managers are power-users;
+they know how their resource managers work and they read the [documentation on
+how to setup Dask
 clusters](http://distributed.readthedocs.io/en/latest/setup.html).  Generally
 these users are pretty happy; however we should reduce this barrier so that
 non-power-users with access to a cluster resource manager can use Dask on their
@@ -52,7 +51,8 @@ Unfortunately, there are a few challenges:
 2.  Individual cluster deployments are highly configurable.  Dask needs to get
     out of the way quickly and let existing technologies configure themselves.
 
-This post talks about some of these issues.  It does not contain a solution.
+This post talks about some of these issues.  It does not contain a definitive
+solution.
 
 
 Example: Kubernetes
@@ -83,7 +83,8 @@ pointing to other resources would be most welcome..
 However, even if Tim did find Olivier's solution I suspect he would still need
 to change it.  Tim has different software and scalability needs than Olivier.
 This raises the question of *"What should Dask provide and what should it leave
-to administrators?"*
+to administrators?"*  It may be that the *best* we can do is to support
+copy-paste-edit workflows.
 
 What is Dask-specific, resource-manager specific, and what needs to be
 configured by hand each time?
@@ -93,7 +94,7 @@ Adaptive Deployments
 --------------------
 
 In order to explore this topic of separable solutions I built a small adaptive
-deployment system for Dask dask.distributed on
+deployment system for Dask.distributed on
 [Marathon](https://mesosphere.github.io/marathon/), an orchestration platform
 on top of Mesos.
 
@@ -149,7 +150,6 @@ methods, `scale_up` and `scale_down`:
 
 ```python
 class MyCluster(object):
-    @gen.coroutine
     def scale_up(n):
         """
         Bring the total count of workers up to ``n``
@@ -159,7 +159,6 @@ class MyCluster(object):
         """
         raise NotImplementedError()
 
-    @gen.coroutine
     def scale_down(self, workers):
         """
         Remove ``workers`` from the cluster
@@ -171,7 +170,10 @@ class MyCluster(object):
 ```
 
 This cluster object contains the backend-specific bits of *how* to scale up and
-down, but none of the adaptive logic of *when* to scale up and down.
+down, but none of the adaptive logic of *when* to scale up and down.  The
+single-machine
+[LocalCluster](http://distributed.readthedocs.io/en/latest/local-cluster.html)
+object serves as reference implementation.
 
 So we combine this adaptive scheme with a deployment scheme.  We'll use a tiny
 Dask-Marathon deployment library available
@@ -188,8 +190,9 @@ mc = MarathonCluster(s, cpus=1, mem=4000,
 ac = Adaptive(s, mc)
 ```
 
-The Adaptive cluster watches the scheduler and calls the `scale_up/down` methods
-on the MarathonCluster as necessary.
+This combines a policy, Adaptive, with a deployment scheme, Marathon in a
+composable way.  The Adaptive cluster watches the scheduler and calls the
+`scale_up/down` methods on the MarathonCluster as necessary.
 
 
 Marathon code
@@ -197,7 +200,8 @@ Marathon code
 
 Because we've isolated all of the "when" logic to the Adaptive code, the
 Marathon specific code is blissfully short and specific.  We include a slightly
-simplified version below:
+simplified version below.  There is a fair amount of Marathon-specific setup in
+the constructor and then simple scale_up/down methods below:
 
 ```python
 from marathon import MarathonClient, MarathonApp
@@ -209,24 +213,27 @@ class MarathonCluster(object):
                  executable='dask-worker',
                  docker_image='mrocklin/dask-distributed',
                  marathon_address='http://localhost:8080',
-                 name=None, **kwargs):
+                 name=None, cpus=1, mem=4000, **kwargs):
         self.scheduler = scheduler
 
         # Create Marathon App to run dask-worker
-        args = [executable, scheduler.address,
-                '--name', '$MESOS_TASK_ID',  # use Mesos task ID as worker name
-                '--worker-port', '$PORT_WORKER',
-                '--nanny-port', '$PORT_NANNY',
-                '--http-port', '$PORT_HTTP']
+        args = [
+            executable,
+            scheduler.address,
+            '--nthreads', str(cpus),
+            '--name', '$MESOS_TASK_ID',  # use Mesos task ID as worker name
+            '--worker-port', '$PORT_WORKER',
+            '--nanny-port', '$PORT_NANNY',
+            '--http-port', '$PORT_HTTP'
+        ]
 
         ports = [{'port': 0,
                   'protocol': 'tcp',
                   'name': name}
                  for name in ['worker', 'nanny', 'http']]
 
-        if 'mem' in kwargs:
-            args.extend(['--memory-limit',
-                         str(int(kwargs['mem'] * 0.6 * 1e6))])
+        args.extend(['--memory-limit',
+                     str(int(mem * 0.6 * 1e6))])
 
         kwargs['cmd'] = ' '.join(args)
         container = MarathonContainer({'image': docker_image})
@@ -234,7 +241,7 @@ class MarathonCluster(object):
         app = MarathonApp(instances=0,
                           container=container,
                           port_definitions=ports,
-                          **kwargs)
+                          cpus=cpus, mem=mem, **kwargs)
 
         # Connect and register app
         self.client = MarathonClient(marathon_address)
@@ -252,9 +259,9 @@ class MarathonCluster(object):
 
 This isn't trivial, you need to know about Marathon for this to make sense, but
 fortunately you don't need to know much else.  My hope is that people familiar
-with other systems will be able to write similar objects for their cluster
-resource managers and will publish them as third party libraries as I have with
-this Marathon solution:
+with other cluster resource managers will be able to write similar objects and
+will publish them as third party libraries as I have with this Marathon
+solution here:
 [https://github.com/mrocklin/dask-marathon](https://github.com/mrocklin/dask-marathon)
 (thanks goes to Ben Zaitlen for setting up a great testing harness for this and
 getting everything started.)
