@@ -41,7 +41,7 @@ these users are pretty happy; however we should reduce this barrier so that
 non-power-users with access to a cluster resource manager can use Dask on their
 cluster just as easily.
 
-Unfortuantely, there are a few challenges:
+Unfortunately, there are a few challenges:
 
 1.  Several cluster resource managers exist, each with significant adoption.
     Finite developer time stops us from supporting all of them.
@@ -76,7 +76,9 @@ Tim was capable of doing this but many beginners wouldn't be.
 
 **One solution** would be to include a prominent registry of solutions like
 these within Dask documentation so that people can find quality references to
-use as starting points.
+use as starting points.  I've started a list of resources here:
+[dask/distributed #547](https://github.com/dask/distributed/pull/547) comments
+pointing to other resources would be most welcome..
 
 However, even if Tim did find Olivier's solution I suspect he would still need
 to change it.  Tim has different software and scalability needs than Olivier.
@@ -154,8 +156,6 @@ class MyCluster(object):
 
         This function/coroutine should bring the total number of workers up to
         the number ``n``.
-
-        This can be implemented either as a function or as a Tornado coroutine.
         """
         raise NotImplementedError()
 
@@ -165,10 +165,7 @@ class MyCluster(object):
         Remove ``workers`` from the cluster
 
         Given a list of worker addresses this function should remove those
-        workers from the cluster.  This may require tracking which jobs are
-        associated to which worker address.
-
-        This can be implemented either as a function or as a Tornado coroutine.
+        workers from the cluster.
         """
         raise NotImplementedError()
 ```
@@ -182,7 +179,7 @@ Dask-Marathon deployment library available
 
 ```python
 from dask_marathon import MarathonCluster
-from distributed import Scheudler
+from distributed import Scheduler
 from distributed.deploy import Adaptive
 
 s = Scheduler()
