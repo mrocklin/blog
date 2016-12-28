@@ -221,6 +221,9 @@ result = best.compute()
          alt="Custom ETL Task Stream"
          width="80%"></a>
 
+The [Bokeh](https://bokeh.pydata.org) image below is interactive.  You can pan
+and zoom by selecting the tools in the upper right.  You can see every task,
+which worker it ran on and how long it took by hovering over the rectangles.
 
 <iframe src="https://cdn.rawgit.com/mrocklin/52e1c411878fcdd64e04574877fe265e/raw/98d9f38c51b250523e9c584779e74156ab14a4fe/task-stream-custom-etl.html"
         width="800" height="400"></iframe>
