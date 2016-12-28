@@ -238,8 +238,8 @@ Final Thoughts
 Dask's ability to write down arbitrary computational graphs
 Celery/Luigi/Airflow-style and yet run them with the scalability promises of
 Hadoop/Spark allows for a pleasant freedom to write comfortably and yet still
-compute scalably.  This ability has allowed other developers to write both
-very complex numerical algorithms inside of projects like Dask.array and also
-to wrap around messy situations inside of companies (companies data systems are
-not always pristine) while still remaining within the bounds of "normal" Dask
-operation.
+compute scalably.  This ability has allowed other developers to write both very
+complex numerical algorithms inside of projects like Dask.array and also to
+wrap around messy situations inside of companies (enterprise data systems
+sometimes messy) while still remaining within the bounds of "normal and
+supported" Dask operation.
