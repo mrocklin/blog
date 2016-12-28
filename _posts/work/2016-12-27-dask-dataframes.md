@@ -352,7 +352,8 @@ hour      = (df2.groupby(df2.tpep_pickup_datetime.dt.hour)
 
 <a href="{{ BASE_PATH }}/images/tip-fraction-hourly.png">
     <img src="{{ BASE_PATH }}/images/tip-fraction-hourly.png"
-         width="40%" alt="tip fraction by hour"></a>
+         alt="tip fraction by hour"
+         width="80%"></a>
 
 We see that New Yorkers are generally pretty generous, tipping around 20%-25%
 on average.  We also notice that they become *very generous* at 4am in the
@@ -852,9 +853,11 @@ For example we can resample by day
 <iframe src="https://cdn.rawgit.com/mrocklin/ade9d1e3b0f44b17a84a551e39946e58/raw/9b46db7c97cda1c9d89472ff7e2129ba9405abf5/task-stream-resample.html"
         width="800" height="400"></iframe>
 
+
 <a href="{{ BASE_PATH }}/images/resample-day.png">
     <img src="{{ BASE_PATH }}/images/resample-day.png"
-         width="40%" alt="resample by day"></a>
+         alt="resample by day"
+         width="60%"></a>
 
 Or perform a rolling aggregation in about a second
 
