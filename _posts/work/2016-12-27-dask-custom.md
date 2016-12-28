@@ -18,8 +18,8 @@ Foundation](https://www.moore.org/)*
 This post describes Dask as a computational task scheduler that fits somewhere
 on a spectrum between big data computing frameworks like Hadoop/Spark and task
 schedulers like Airflow/Celery/Luigi.  We see how, by combining elements from
-both of these types of systems Dask is able to handle a certain kind of problem
-particularly well.
+both of these types of systems Dask is able to handle a complex data
+science problems particularly well.
 
 
 ### Big Data Collections
@@ -35,11 +35,12 @@ these large parallel operations start to break down.  For example, consider the
 following data loading and cleaning problem:
 
 1.  Load data from 100 different files (this is a simple `map` operation)
-2.  Also load a reference dataset from a SQL database (not parallel at all)
+2.  Also load a reference dataset from a SQL database (not parallel at all, but
+    could run alongside the map above)
 3.  Normalize each of the 100 datasets against the reference dataset (sort of
     like a map, but with another input)
 4.  Consider a sliding window of every three normalized datasets (Might be able
-    to hack this with a groupby?  Not sure.)
+    to hack this with a very clever groupby or join?  Not sure.)
 5.  Of all of the 98 outputs of the last stage, consider all pairs.  (Join or
     cartesian product) However, because we don't want to compute all 1000
     possibilities, lets just evaluate a random sample of these pairs
@@ -74,7 +75,7 @@ best = reduction(compared)
 
 This code is clearly parallelizeable, but it's not clear how to write it down
 as a MapReduce program, a Spark computation, or a SQL query.  These tools
-generally fail when asked to handle complex or messy problems.  We can still
+generally fail when asked to express complex or messy problems.  We can still
 use Hadoop/Spark to solve this problem, but we are often forced to change and
 simplify our objectives a bit.  (This problem is not particularly complex, and I
 suspect that there are clever ways to do it, but it's not trivial and often
@@ -94,7 +95,7 @@ MapReduce and Spark.  However systems like Celery, Luigi, and Airflow are also
 generally less efficient.  This is both because they know less about their computations (map is much easier to schedule than an arbitrary graph) and because they just don't have machinery for inter-worker communication, efficient serialization of custom datatypes, etc..
 
 
-### Dask Mixes these abstractions
+### Dask Mixes Task Scheduling with Efficient Computation
 
 Dask is both a big data system like Hadoop/Spark that is aware of resilience,
 inter-worker communication, live state, etc. and also a general task scheduler
@@ -105,15 +106,19 @@ automatically and so never really observe the task scheduler aspect of Dask.
 This is however, the core of what distinguishes Dask from other systems like
 Hadoop and Spark.  Dask is incredibly *flexible* in the kinds of algorithms it
 can run.  This is because, at its core, it can run *any* graph of tasks and not
-just map, reduce, groupby, join, etc..
+just map, reduce, groupby, join, etc..  Users can do this natively, without
+having to subclass anything or extend Dask to get this extra power.
 
-There are significant performance advantages to this:
+There are significant performance advantages to this.  For example:
 
 1.  Dask.dataframe can easily represent nearest neighbor computations for
     fast time-series algorithms
 2.  Dask.array can implement complex linear algebra solvers or SVD algorithms
     from the latest research
-3.  Complex hierarchies from bespoke data storage solutions can be explicitly
+3.  Complex Machine Learning algorithms are often easier to implement in Dask,
+    allowing it to be more efficient through smarter algorithms, as well as
+    through scalable computing.
+4.  Complex hierarchies from bespoke data storage solutions can be explicitly
     modeled and loaded in to other Dask systems
 
 This doesn't come for free.  Dask's scheduler has to be very intelligent to
@@ -126,7 +131,7 @@ GPUs and more.  It's a tough job.
 
 So lets go ahead and run the data ingestion job described with Dask.
 
-Some fake functions to simulate actual work:
+We craft some fake functions to simulate actual work:
 
 ```python
 import random
@@ -166,9 +171,9 @@ compare = delayed(compare)
 reduction = delayed(reduction)
 ```
 
-Now we just call our Python code from before.  However now rather than run
-immediately on our single processor we capture a computational graph that can
-be run elsewhere.
+Now we just call our normal Python for-loopy code from before.  However now
+rather than run immediately our functions capture a computational graph that
+can be run elsewhere.
 
 ```python
 filenames = ['mydata-%d.dat' % i for i in range(100)]
@@ -210,7 +215,8 @@ from dask.distributed import Client
 client = Client('scheduler-address:8786')
 ```
 
-And compute the result
+We compute the result and see the trace of the computation running in real
+time.
 
 ```python
 result = best.compute()
@@ -221,16 +227,17 @@ result = best.compute()
          alt="Custom ETL Task Stream"
          width="80%"></a>
 
-The [Bokeh](https://bokeh.pydata.org) image below is interactive.  You can pan
-and zoom by selecting the tools in the upper right.  You can see every task,
-which worker it ran on and how long it took by hovering over the rectangles.
+The completed [Bokeh](https://bokeh.pydata.org) image below is interactive.
+You can pan and zoom by selecting the tools in the upper right.  You can see
+every task, which worker it ran on and how long it took by hovering over the
+rectangles.
 
 <iframe src="https://cdn.rawgit.com/mrocklin/52e1c411878fcdd64e04574877fe265e/raw/98d9f38c51b250523e9c584779e74156ab14a4fe/task-stream-custom-etl.html"
         width="800" height="400"></iframe>
 
 We see that we use all 20 cores well.  Intermediate results are transferred
 between workers as necessary (these are the red rectangles).  We can scale this
-up as necessary.
+up as necessary.  Dask scales to thousands of cores.
 
 Final Thoughts
 --------------
@@ -238,8 +245,7 @@ Final Thoughts
 Dask's ability to write down arbitrary computational graphs
 Celery/Luigi/Airflow-style and yet run them with the scalability promises of
 Hadoop/Spark allows for a pleasant freedom to write comfortably and yet still
-compute scalably.  This ability has allowed other developers to write both very
-complex numerical algorithms inside of projects like Dask.array and also to
-wrap around messy situations inside of companies (enterprise data systems
-sometimes messy) while still remaining within the bounds of "normal and
-supported" Dask operation.
+compute scalably.  This ability opens up new possibilities both to support more
+sophisticated algorithms and also to handle messy situations that arise in the
+real world (enterprise data systems sometimes messy) while still remaining
+within the bounds of "normal and supported" Dask operation.
