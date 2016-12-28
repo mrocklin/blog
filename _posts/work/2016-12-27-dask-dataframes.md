@@ -106,7 +106,9 @@ can fit in memory if we break it up into many small pieces and load these
 pieces onto different computers across a cluster.
 
 We connect to our Dask cluster, which is running `dask-worker` processes on
-each of our workers.
+each of our computers in our cluster.  These `dask-worker` processes are all
+connected to a single `dask-scheduler` process, to which we also connect from
+our IPython session.
 
 ```python
 from dask.distributed import Client
@@ -115,7 +117,7 @@ client = Client('scheduler-address:8786')
 
 And we load our CSV data using `dask.dataframe` which looks and feels just
 like Pandas, even though it's actually coordinating hundreds of small Pandas
-dataframes.
+dataframes.  This takes about a minute to load and parse.
 
 ```python
 import dask.dataframe as dd
@@ -306,12 +308,15 @@ results to one node, followed by a `sum` of all of the intermediate lengths.
 <iframe src="https://cdn.rawgit.com/mrocklin/ade9d1e3b0f44b17a84a551e39946e58/raw/9b46db7c97cda1c9d89472ff7e2129ba9405abf5/task-stream-len.html"
         width="640" height="630"></iframe>
 
-This takes around 400-500ms.  You can see that the 365 length computations happened very quickly and then there was some delay, a bit of data transfer, and a final summation call.
+This takes around 400-500ms.  You can see that the 365 length computations happened quickly on the left, and then there was some delay, a bit of data transfer, and a final summation call.
 
 More complex operations like simple groupbys look similar, although sometimes
 with more communications.  Throughout this post we're going to do more and more
 complex computations and our profiles will similarly become more and more rich
-with information.
+with information.  Here we compute the average trip distance, grouped by number
+of passengers.  We find that single and double person rides go far longer
+distances on average.  We acheive this one big-data-groupby by performing many
+small Pandas groupbys and then cleverly combining their results.
 
 ```python
 >>> df.groupby(df.passenger_count).trip_distance.mean().compute()
@@ -360,14 +365,15 @@ on average.  We also notice that they become *very generous* at 4am in the
 morning, tipping an average of 38%.
 
 This more complex operation uses more of the Dask dataframe API (which
-incidentally is identical to the Pandas API).  Pandas users should find the
-code above fairly familiar.  We remove rows with zero fare or zero tip (not
-every tip gets recorded), make a new column which is the ratio of the tip
-amount to the fare amount, and then groupby the day of week and hour of day,
-computing the average tip fraction for each hour/day.
+is identical to the Pandas API).  Pandas users should find the code above
+fairly familiar.  We remove rows with zero fare or zero tip (not every tip gets
+recorded), make a new column which is the ratio of the tip amount to the fare
+amount, and then groupby the day of week and hour of day, computing the average
+tip fraction for each hour/day.
 
 Dask evaluates this computation with thousands of small Pandas calls across the
-cluster.  The answer comes back in about 3 seconds.
+cluster (try clicking the wheel zoom icon in the upper right of the image
+above and zooming in).  The answer comes back in about 3 seconds.
 
 ### Joins and Correlations
 
@@ -479,7 +485,7 @@ As a result our data is now nicely sorted by time and we can see this by
 looking at the head, tail, and by looking at data for a particular day.
 
 ```python
->>> df.head()
+>>> df.head()  # has the first entries of 2015
 ```
 <table border="1" class="dataframe">
   <thead>
@@ -595,7 +601,7 @@ looking at the head, tail, and by looking at data for a particular day.
 
 
 ```python
->>> df.tail()
+>>> df.tail()  # has the last entries of 2015
 ```
 <table border="1" class="dataframe">
   <thead>
@@ -710,7 +716,7 @@ looking at the head, tail, and by looking at data for a particular day.
 </table>
 
 ```python
->>> df.loc['2015-05-05'].head()
+>>> df.loc['2015-05-05'].head()  # has the entries for just May 5th
 ```
 
 <table border="1" class="dataframe">
@@ -828,12 +834,10 @@ looking at the head, tail, and by looking at data for a particular day.
 
 Because we know exactly which Pandas dataframe holds which data we can
 execute row-local queries like this very quickly.  The total round trip from
-pressing enter in the interpreter or notebook is about 40ms.  This creates the
-computation, sends it up to the scheduler, sends it to the right worker,
-gathers the data on the worker and sends it back through the scheduler to the
-client, finally rendering it on the screen.  For reference, 40ms is the delay
-between two frames in a movie running at 25 Hz.  This means that it's fast
-enough that human users perceive this query to be entirely fluid.
+pressing enter in the interpreter or notebook is about 40ms.  For reference,
+40ms is the delay between two frames in a movie running at 25 Hz.  This means
+that it's fast enough that human users perceive this query to be entirely
+fluid.
 
 ### Time Series
 
@@ -880,16 +884,18 @@ HDF5 data format.  Unfortunately the HDF5 file format is not ideal for
 distributed computing, so most Dask dataframe users have had to switch down to
 CSV historically.  This unfortunate because CSV is slow, doesn't support
 partial queries (you can't read in just one column), and also isn't supported
-well by the other standard distributed Dataframe solution Spark.
+well by the other standard distributed Dataframe solution Spark.  This makes it
+hard to move data back and forth.
 
 Fortunately there are now two decent Python readers for Parquet, a fast
 columnar binary store that shards nicely on distributed data stores like the
 Hadoop File System (HDFS, not to be confused with HDF5) and Amazon's S3.  The
-[Parquet-cpp project](https://github.com/apache/parquet-cpp) has been growing
-Python and Pandas support through
+already fast [Parquet-cpp project](https://github.com/apache/parquet-cpp) has
+been growing Python and Pandas support through
 [Arrow](http://pyarrow.readthedocs.io/en/latest/), and the [Fastparquet
 project](http://fastparquet.readthedocs.io/), which is an offshoot from the
-pure-python `parquet` library has been growing speed through use of
+[pure-python `parquet` library](https://github.com/jcrobak/parquet-python) has
+been growing speed through use of
 [NumPy](https://docs.scipy.org/doc/numpy/reference/) and
 [Numba](http://numba.pydata.org/).
 
@@ -933,7 +939,8 @@ We can then read our nicely indexed dataframe back with the
 The main benefit here is that we can quickly compute on single columns.  The
 following computation runs in around 6 seconds, even though we don't have any
 data in memory to start (recall that we started this blogpost with a
-minute-long call to `read_csv`.)
+minute-long call to `read_csv`.and
+[Client.persist](http://distributed.readthedocs.io/en/latest/api.html#distributed.client.Client.persist))
 
 ```python
 >>> df2.passenger_count.value_counts().compute()
@@ -962,7 +969,8 @@ syntax and scalable computing useful.
 Now would also be a good time to remind people that Dask dataframe is only one
 module among many within the [Dask project](http://dask.pydata.org/en/latest/).
 Dataframes are nice, certainly, but Dask's main strength is its flexibility to
-move beyond just plain dataframe computations.
+move beyond just plain dataframe computations to handle even more complex
+problems.
 
 
 What we could have done better
@@ -971,16 +979,17 @@ What we could have done better
 As always with computational posts we include a section on what went wrong, or
 what could have gone better.
 
-1.  The 400ms computation of `len(df)` is a regression from the previous
-    version where this was closer to 100ms.  We're getting bogged down
+1.  The 400ms computation of `len(df)` is a regression from previous
+    versions where this was closer to 100ms.  We're getting bogged down
     somewhere in many small inter-worker communications.
 2.  It would be nice to repeat this computation at a larger scale.  Dask
     deployments in the wild are often closer to 1000 cores rather than the 64
     core cluster we have here and datasets are often in the terrabyte scale
     rather than our 60 GB NYC Taxi dataset.  Unfortunately representative large
-    open datasets are hard to come by.
+    open datasets are hard to find.
 3.  The Parquet timings are nice, but there is still room for improvement.  We
-    seem to be making many small queries of S3 when reading Thrift headers.
+    seem to be making many small expensive queries of S3 when reading Thrift
+    headers.
 4.  It would be nice to support both Python Parquet readers, both the
     [Numba](http://numba.pydata.org/) solution
     [fastparquet](https://fastparquet.readthedocs.io) and the C++ solution
