@@ -13,14 +13,26 @@ the [XDATA Program](http://www.darpa.mil/program/XDATA)
 and the Data Driven Discovery Initiative from the [Moore
 Foundation](https://www.moore.org/)*
 
-Dask Dataframe extends the popular Pandas library to operate on big data on a
-distributed cluster.  We show its capabilities by running through common
-dataframe operations on a common dataset.  We break up these computations into
-three sections:
+Summary
+-------
 
-1.  Basic filtering and groupby operations
-2.  Shuffling operations and a distributed Pandas index
-3.  Parquet I/O
+Dask Dataframe extends the popular Pandas library to operate on larger datasets
+(10GB to 10TB) on a distributed cluster.  We show its capabilities by running
+through common dataframe operations on a common dataset.  We break up these
+computations into the following sections:
+
+1.  Introduction: Pandas is intuitive and fast, but needs Dask to scale
+2.  Read CSV and Basic operations
+    1.  Read CSV
+    2.  Basic Aggregations and Groupbys
+    3.  Joins and Correlations
+3.  Shuffles and Time Series
+4.  Parquet I/O
+5.  Final thoughts
+6.  What we could have done better
+
+Accompanying Plots
+------------------
 
 Throughout this post we accompany computational examples with profiles of
 exactly what task ran where on our cluster and when.  These profiles are
@@ -49,27 +61,24 @@ white space).  Inter-worker communication is always depicted in red (which is
 absent in this relatively straightforward computation.)
 
 
-Background
-----------
+Introduction
+------------
 
 Pandas provides an intuitive, powerful, and fast data analysis experience on
-tabular data.  However it doesn't parallelize well on its own or operate on big
-data.  That component is missing.  Generally people move to Spark or a proper
-database to resolve this issue.  Dask is a general library for parallel and
-distributed computing in Python that aims to fill this need for parallelism.
-Dask dataframes combine Dask and Pandas to deliver a faithful "big data"
-version of Pandas operating in parallel over a cluster.
+tabular data.  However, because Pandas uses only one thread of execution and
+requires all data to be in memory at once, it doesn't scale well to datasets
+much beyond the gigabyte scale.  That component is missing.  Generally people
+move to Spark DataFrames on HDFS or a proper relational database to resolve
+this scaling issue.  Dask is a Python library for parallel and distributed
+computing that aims to fill this need for parallelism among the PyData projects
+(NumPy, Pandas, Scikit-Learn, etc.).  Dask dataframes combine Dask and Pandas
+to deliver a faithful "big data" version of Pandas operating in parallel over a
+cluster.
 
 [I've written about this topic
 before](http://matthewrocklin.com/blog/work/2016/02/22/dask-distributed-part-2).
 This blogpost is newer and will focus on performance and newer features like
-fast shuffles and the Parquet format.  We separate the post into three
-sections:
-
-1.  CSV data with basic filtering and groupby operations
-2.  Shuffle to achieve a distributed Pandas index and fast time-series
-    operations
-3.  The fast Parquet data format
+fast shuffles and the Parquet format.
 
 
 CSV Data and Basic Operations
@@ -108,7 +117,7 @@ pieces onto different computers across a cluster.
 We connect to our Dask cluster, which is running `dask-worker` processes on
 each of our computers in our cluster.  These `dask-worker` processes are all
 connected to a single `dask-scheduler` process, to which we also connect from
-our IPython session.
+an IPython session.
 
 ```python
 from dask.distributed import Client
@@ -130,13 +139,14 @@ df = client.persist(df)
 <iframe src="https://cdn.rawgit.com/mrocklin/ade9d1e3b0f44b17a84a551e39946e58/raw/1c3345848d5313cc1c0ea827d66089bf200edaac/task-stream-read-csv.html"
         width="800" height="400"></iframe>
 
-This cuts up the bytes from the 12 CSV files on S3 into 365 different
-blocks of bytes.  We then call `pandas.read_csv` on each of those blocks of
-bytes to create 365 Pandas dataframes across our cluster.  Our single Dask
-Dataframe object, `df`, coordinates all of those Pandas dataframes.  Because
-we're just using Pandas calls it's very easy for Dask dataframes to use all of
-the tricks from Pandas.  For example we can use most of the keyword arguments
-from `pd.read_csv` in `dd.read_csv` without having to relearn anything.
+This cuts up our 12 CSV files on S3 into a few hundred blocks of bytes, each
+64MB large.  On each of these 64MB blocks we then call `pandas.read_csv` to
+create a few hundred Pandas dataframes across our cluster, one for each block
+of bytes.  Our single Dask Dataframe object, `df`, coordinates all of those
+Pandas dataframes.  Because we're just using Pandas calls it's very easy for
+Dask dataframes to use all of the tricks from Pandas.  For example we can use
+most of the keyword arguments from `pd.read_csv` in `dd.read_csv` without
+having to relearn anything.
 
 This data is about 20GB on disk or 60GB in RAM.  It's not huge, but is also
 larger than we'd like to manage on a laptop, especially if we value
@@ -293,7 +303,7 @@ etc.
 </table>
 
 
-### Trivial computations
+### Basic Aggregations and Groupbys
 
 As a quick exercise, we compute the length of the dataframe.  When we call
 `len(df)` Dask.dataframe translates this into many `len` calls on each of the
@@ -361,8 +371,8 @@ hour      = (df2.groupby(df2.tpep_pickup_datetime.dt.hour)
          width="80%"></a>
 
 We see that New Yorkers are generally pretty generous, tipping around 20%-25%
-on average.  We also notice that they become *very generous* at 4am in the
-morning, tipping an average of 38%.
+on average.  We also notice that they become *very generous* at 4am, tipping an
+average of 38%.
 
 This more complex operation uses more of the Dask dataframe API (which
 is identical to the Pandas API).  Pandas users should find the code above
@@ -402,9 +412,10 @@ Name: tip_amount, dtype: float64
 ```
 
 We see that while the average tip for a credit card transaction is $2.75, the
-average tip for a cash transaction is very close to zero.  Lets compute the
-Pearson correlation between paying cash and having zero tip.  Again, this code
-should look very familiar to Pandas users.
+average tip for a cash transaction is very close to zero.  At first glance it
+seems like cash tips aren't being reported.  To investigate this a bit further
+lets compute the Pearson correlation between paying cash and having zero tip.
+Again, this code should look very familiar to Pandas users.
 
 ```python
 zero_tip = df2.tip_amount == 0
@@ -466,7 +477,9 @@ distributed joins on columns that are not the index, etc..
 
 You can do a lot with dask.dataframe without performing shuffles, but sometimes
 it's necessary.  In the following example we sort our data by pickup datetime.
-This will allow fast lookups, fast joins, and fast time series operations, all common cases.  We do one shuffle ahead of time to make all future computations fast.
+This will allow fast lookups, fast joins, and fast time series operations, all
+common cases.  We do one shuffle ahead of time to make all future computations
+fast.
 
 We set the index as the pickup datetime column.  This takes anywhere from
 25-40s and is largely network bound (60GB, some text, eight machines with
@@ -481,8 +494,18 @@ plot below.
 <iframe src="https://cdn.rawgit.com/mrocklin/ade9d1e3b0f44b17a84a551e39946e58/raw/9b46db7c97cda1c9d89472ff7e2129ba9405abf5/task-stream-set-index.html"
         width="800" height="400"></iframe>
 
-As a result our data is now nicely sorted by time and we can see this by
-looking at the head, tail, and by looking at data for a particular day.
+This operation is expensive, far more expensive than it was with Pandas when
+all of the data was in the same memory space on the same computer.  This is a
+good time to point out that you should only use distributed tools like
+Dask.datframe and Spark after tools like Pandas break down.  We should only
+move to distributed systems when absolutely necessary.  However, when it does
+become necessary, it's nice knowing that Dask.dataframe can faithfully execute
+Pandas operations, even if some of them take a bit longer.
+
+As a result of this shuffle our data is now nicely sorted by time, which will
+keep future operations close to optimal.  We can see how the dataset is sorted
+by pickup time by quickly looking at the first entries, last entries, and
+entries for a particular day.
 
 ```python
 >>> df.head()  # has the first entries of 2015
@@ -901,7 +924,9 @@ been growing speed through use of
 
 Using Fastparquet under the hood, Dask.dataframe users can now happily read and
 write to Parquet files.  This increases speed, decreases storage costs, and
-improves data exchange between Dask and Spark (or other Hadoop tools).
+provides a shared format that both Dask dataframes and Spark dataframes can
+understand, improving the ability to use both computational systems in the same
+workflow.
 
 Writing our Dask dataframe to S3 can be as simple as the following:
 
@@ -971,6 +996,28 @@ module among many within the [Dask project](http://dask.pydata.org/en/latest/).
 Dataframes are nice, certainly, but Dask's main strength is its flexibility to
 move beyond just plain dataframe computations to handle even more complex
 problems.
+
+
+Learn More
+----------
+
+If you'd like to learn more about Dask dataframe, the Dask distributed system,
+or other components you should look at the following documentation:
+
+1.  http://dask.pydata.org/en/latest/
+2.  http://distributed.readthedocs.io/en/latest/
+
+The workflows presented here are captured in the following notebooks (among
+other examples):
+
+1.  NYC Taxi example, shuffling, others: https://gist.github.com/mrocklin/ada85ef06d625947f7b34886fd2710f8
+2.  Parquet: https://gist.github.com/mrocklin/89bccf2f4f37611b40c18967bb182066
+
+(Explicitly taking off my open source hat for a moment and putting on my
+for-profit hat)  If you work for a company and want to pay for help getting started with
+Dask (which itself is free software) then you may want to contact
+[Continuum Analytics](https://www.continuum.io/).  (Now putting back on my open
+source hat)
 
 
 What we could have done better
