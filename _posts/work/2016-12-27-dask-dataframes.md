@@ -44,7 +44,7 @@ computation `read_csv` computation produces the following profile:
 >>> df = dd.read_csv('s3://dask-data/nyc-taxi/2015/*.csv')
 ```
 
-<iframe src="https://cdn.rawgit.com/mrocklin/ade9d1e3b0f44b17a84a551e39946e58/raw/9b46db7c97cda1c9d89472ff7e2129ba9405abf5/task-stream-read-csv.html"
+<iframe src="https://cdn.rawgit.com/mrocklin/ade9d1e3b0f44b17a84a551e39946e58/raw/1c3345848d5313cc1c0ea827d66089bf200edaac/task-stream-read-csv.html"
         width="800" height="400"></iframe>
 
 Dask.dataframe breaks up reading this data into many small tasks of
@@ -315,7 +315,7 @@ results to one node, followed by a `sum` of all of the intermediate lengths.
 146112989
 ```
 
-<iframe src="https://cdn.rawgit.com/mrocklin/ade9d1e3b0f44b17a84a551e39946e58/raw/9b46db7c97cda1c9d89472ff7e2129ba9405abf5/task-stream-len.html"
+<iframe src="https://cdn.rawgit.com/mrocklin/ade9d1e3b0f44b17a84a551e39946e58/raw/1c3345848d5313cc1c0ea827d66089bf200edaac/task-stream-len.html"
         width="640" height="630"></iframe>
 
 This takes around 400-500ms.  You can see that the 365 length computations happened quickly on the left, and then there was some delay, a bit of data transfer, and a final summation call.
@@ -344,7 +344,7 @@ passenger_count
 Name: trip_distance, dtype: float64
 ```
 
-<iframe src="https://cdn.rawgit.com/mrocklin/ade9d1e3b0f44b17a84a551e39946e58/raw/9b46db7c97cda1c9d89472ff7e2129ba9405abf5/task-stream-groupby-sum.html"
+<iframe src="https://cdn.rawgit.com/mrocklin/ade9d1e3b0f44b17a84a551e39946e58/raw/1c3345848d5313cc1c0ea827d66089bf200edaac/task-stream-groupby-sum.html"
         width="640" height="630"></iframe>
 
 As a more complex operation we see how well New Yorkers tip by hour of day and
@@ -362,7 +362,7 @@ hour      = (df2.groupby(df2.tpep_pickup_datetime.dt.hour)
                 .mean())
 ```
 
-<iframe src="https://cdn.rawgit.com/mrocklin/ade9d1e3b0f44b17a84a551e39946e58/raw/9b46db7c97cda1c9d89472ff7e2129ba9405abf5/task-stream-groupby-datetime.html"
+<iframe src="https://cdn.rawgit.com/mrocklin/ade9d1e3b0f44b17a84a551e39946e58/raw/1c3345848d5313cc1c0ea827d66089bf200edaac/task-stream-groupby-datetime.html"
         width="800" height="400"></iframe>
 
 <a href="{{ BASE_PATH }}/images/tip-fraction-hourly.png">
@@ -446,7 +446,7 @@ dd.concat([zero_tip, cash], axis=1).corr().compute()
 </table>
 
 
-<iframe src="https://cdn.rawgit.com/mrocklin/ade9d1e3b0f44b17a84a551e39946e58/raw/9b46db7c97cda1c9d89472ff7e2129ba9405abf5/task-stream-join-corr.html"
+<iframe src="https://cdn.rawgit.com/mrocklin/ade9d1e3b0f44b17a84a551e39946e58/raw/1c3345848d5313cc1c0ea827d66089bf200edaac/task-stream-join-corr.html"
         width="800" height="400"></iframe>
 
 So we see that standard operations like row filtering, column selection,
@@ -491,7 +491,7 @@ plot below.
 >>> df = c.persist(df.set_index('tpep_pickup_datetime'))
 ```
 
-<iframe src="https://cdn.rawgit.com/mrocklin/ade9d1e3b0f44b17a84a551e39946e58/raw/9b46db7c97cda1c9d89472ff7e2129ba9405abf5/task-stream-set-index.html"
+<iframe src="https://cdn.rawgit.com/mrocklin/ade9d1e3b0f44b17a84a551e39946e58/raw/1c3345848d5313cc1c0ea827d66089bf200edaac/task-stream-set-index.html"
         width="800" height="400"></iframe>
 
 This operation is expensive, far more expensive than it was with Pandas when
@@ -877,7 +877,7 @@ For example we can resample by day
        .plot())
 ```
 
-<iframe src="https://cdn.rawgit.com/mrocklin/ade9d1e3b0f44b17a84a551e39946e58/raw/9b46db7c97cda1c9d89472ff7e2129ba9405abf5/task-stream-resample.html"
+<iframe src="https://cdn.rawgit.com/mrocklin/ade9d1e3b0f44b17a84a551e39946e58/raw/1c3345848d5313cc1c0ea827d66089bf200edaac/task-stream-resample.html"
         width="800" height="400"></iframe>
 
 
