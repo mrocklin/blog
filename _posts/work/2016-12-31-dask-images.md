@@ -116,12 +116,12 @@ dask.array<shape=(10000, 2000, 2000), dtype=uint8, chunksize=(1, 2000, 2000)>
 dask.array<shape=(10000, 2000, 2000), dtype=uint8, chunksize=(20, 2000, 2000)>
 ```
 
-So here we've constructed a lazy Dask.array from many delayed calls to
+So here we've constructed a lazy Dask.array from 10 000 delayed calls to
 `skimage.io.imread`.  We haven't done any actual work yet, we've just
 constructed a parallel array that knows how to get any particular slice of data
-if necessary.  This gives us a full NumPy-like abstraction on top of all of
-these remote images.  For example we can now download a particular image
-just by slicing our Dask array.
+by downloading the right image if necessary.  This gives us a full NumPy-like
+abstraction on top of all of these remote images.  For example we can now
+download a particular image just by slicing our Dask array.
 
 ```python
 >>> stack[5000, :, :].compute()
@@ -139,14 +139,16 @@ array([[0, 0, 0, ..., 0, 0, 0],
 
 However we probably don't want to operate too much further without connecting
 to a cluster.  That way we can just download all of the images once into
-distributed RAM and start doing some real computations.
+distributed RAM and start doing some real computations.  I happen to have ten
+`m4.2xlarges` on Amazon's EC2 (8 cores, 30GB RAM each) running Dask workers.
+So we'll connect to those.
 
 ```python
 from dask.distributed import Client, progress
-client = Client('localhost:8786')
+client = Client('schdeduler-address:8786')
 
 >>> client
-<Client: scheduler="localhost:8786" processes=10 cores=80>
+<Client: scheduler="scheduler-address:8786" processes=10 cores=80>
 ```
 
 And lets go ahead and bring in all of our images, persisting the array into
@@ -156,15 +158,21 @@ concrete data in memory.
 stack = client.persist(stack)
 ```
 
-This the downloads across our 10 processes.  When this completes we have 10 000
-NumPy arrays spread around on our cluster, coordinated by our single Dask
-array.  This takes a while, about five minutes.  We're mostly network bound
-here (Janelia's servers are not co-located with our compute nodes).  Here is a
-parallel profile of the computation as an interactive
-[Bokeh](http://bokeh.pydata.org/en/latest/) plot; there will be a few of these
-throughout the blogpost.  You can see every Python function that ran over time
-on every worker (y-axis) in our cluster.  You can hover over each rectangle
-(task) for more information on what kind of task it was, how long it took,
+This downloads our 10 000 images across our 10 workers.  When this completes we
+have 10 000 NumPy arrays spread around on our cluster, coordinated by our
+single Dask array.  This takes a while, about five minutes.  We're mostly
+network bound here (Janelia's servers are not co-located with our compute
+nodes).  Here is a parallel profile of the computation as an interactive
+[Bokeh](http://bokeh.pydata.org/en/latest/) plot.
+
+There will be a few of these profile plots throughout the blogpost, so you
+might want to familiarize yoursel with them now.  Every horizontal rectangle in
+this plot corresponds to a single Python function running somewhere in our
+cluster over time.  Because we called `skimage.io.imread` 10 000 times there
+are 10 000 purple rectangles.  Their position along the y-axis denotes which of
+the 80 cores in our cluster that they ran on and their position along the
+x-axis denotes their start and stop times.  You can hover over each rectangle
+(function) for more information on what kind of task it was, how long it took,
 etc..  In the image below, purple rectangles are `skimage.io.imread` calls and
 red rectangles are data transfer between workers in our cluster.  Click the
 magnifying glass icons in the upper right of the image to enable zooming tools.
@@ -172,9 +180,10 @@ magnifying glass icons in the upper right of the image to enable zooming tools.
 <iframe src="https://cdn.rawgit.com/mrocklin/e09cad939ff7a85a06f3b387f65dc2fc/raw/fa5e20ca674cf5554aa4cab5141019465ef02ce9/task-stream-image-load.html"
         width="800" height="400"></iframe>
 
-Now our Dask array is based on hundreds of concrete in-memory NumPy arrays
-across the cluster, rather than based on hundreds of lazy scikit-image calls.
-Now we can do all sorts of fun distributed array computations quickly.
+Now that we have persisted our Dask array in memory our data is based on
+hundreds of concrete in-memory NumPy arrays across the cluster, rather than
+based on hundreds of lazy scikit-image calls.  Now we can do all sorts of fun
+distributed array computations more quickly.
 
 For example we can easily see our field of interest move across the frame by
 averaging across time:
