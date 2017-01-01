@@ -13,12 +13,17 @@ the [XDATA Program](http://www.darpa.mil/program/XDATA)
 and the Data Driven Discovery Initiative from the [Moore
 Foundation](https://www.moore.org/)*
 
+*This page includes embedded large profiles.  It may look better on the actual
+site TODO: link to live site (rather than through syndicated pages like
+planet.python) and it may take a while to load on non-broadband connections
+(total size is around 20MB)*
+
 Summary
 -------
 
 We analyze a stack of images in parallel with NumPy arrays distributed across a
 cluster of machines on Amazon's EC2 with Dask array.  This is a model
-application shared among many image analysis groups ranging from satelite
+application shared among many image analysis groups ranging from satellite
 imagery to bio-medical applications.  We go through a series of common
 operations:
 
@@ -57,8 +62,8 @@ skimage.io.imshow(sample)
 The last number in the URL is an index into a large stack of about 10000 images.  We can change that number to get different slices through our 3D dataset.
 
 ```python
-samples = [skimage.io.imread('http://emdata.janelia.org/api/node/bf1/grayscale/raw/xy/2000_2000/1800_2300_%d'
-% i) for i in [1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000]]
+samples = [skimage.io.imread('http://emdata.janelia.org/api/node/bf1/grayscale/raw/xy/2000_2000/1800_2300_%d' % i)
+    for i in [1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000]]
 
 fig, axarr = plt.subplots(1, 9, sharex=True, sharey=True, figsize=(24, 2.5))
 for i, sample in enumerate(samples):
@@ -70,7 +75,7 @@ for i, sample in enumerate(samples):
          alt="Sample electron microscopy images over time"
                 width="100%"></a>
 
-We see that our field of interest moves a bit over time.
+We see that our field of interest wanders across the frame over time.
 
 
 Create a Distributed Array
@@ -79,7 +84,7 @@ Create a Distributed Array
 Even though our data is spread across many files, we still want to think of it
 as a single logical 3D array.  We know how to get any particular 2D slice of
 that array using Scikit-image.  Now we're going to use Dask.array to stitch
-all of those scikit-image calls into a single distributed array.
+all of those Scikit-image calls into a single distributed array.
 
 ```python
 import dask.array as da
@@ -98,10 +103,14 @@ arrays = [da.from_delayed(lazy_value,           # Construct a small Dask array
           for lazy_value in lazy_values]
 
 stack = da.stack(arrays, axis=0)                # Stack all small Dask arrays into one
+```
 
+```python
 >>> stack
 dask.array<shape=(10000, 2000, 2000), dtype=uint8, chunksize=(1, 2000, 2000)>
+```
 
+```python
 >>> stack = stack.rechunk((20, 2000, 2000))  # to reduce overhead
 >>> stack
 dask.array<shape=(10000, 2000, 2000), dtype=uint8, chunksize=(20, 2000, 2000)>
@@ -110,7 +119,7 @@ dask.array<shape=(10000, 2000, 2000), dtype=uint8, chunksize=(20, 2000, 2000)>
 So here we've constructed a lazy Dask.array from many delayed calls to
 `skimage.io.imread`.  We haven't done any actual work yet, we've just
 constructed a parallel array that knows how to get any particular slice of data
-if necessary.  This gives us a full NumPy-like abstaction on top of all of
+if necessary.  This gives us a full NumPy-like abstraction on top of all of
 these remote images.  For example we can now download a particular image
 just by slicing our Dask array.
 
@@ -151,10 +160,14 @@ This the downloads across our 10 processes.  When this completes we have 10 000
 NumPy arrays spread around on our cluster, coordinated by our single Dask
 array.  This takes a while, about five minutes.  We're mostly network bound
 here (Janelia's servers are not co-located with our compute nodes).  Here is a
-parallel profile of the computation.  You can see every Python function that
-ran over time on every worker (y-axis).  You can hover over each rectangle
+parallel profile of the computation as an interactive
+[Bokeh](http://bokeh.pydata.org/en/latest/) plot; there will be a few of these
+throughout the blogpost.  You can see every Python function that ran over time
+on every worker (y-axis) in our cluster.  You can hover over each rectangle
 (task) for more information on what kind of task it was, how long it took,
-etc..
+etc..  In the image below, purple rectangles are `skimage.io.imread` calls and
+red rectangles are data transfer between workers in our cluster.  Click the
+magnifying glass icons in the upper right of the image to enable zooming tools.
 
 <iframe src="https://cdn.rawgit.com/mrocklin/e09cad939ff7a85a06f3b387f65dc2fc/raw/fa5e20ca674cf5554aa4cab5141019465ef02ce9/task-stream-image-load.html"
         width="800" height="400"></iframe>
@@ -167,7 +180,7 @@ For example we can easily see our field of interest move across the frame by
 averaging across time:
 
 ```python
-skimage.io.imshow(stack.mean(axis=0))
+skimage.io.imshow(stack.mean(axis=0).compute())
 ```
 
 <a href="{{ BASE_PATH }}/images/dask-imaging-time-mean.png">
@@ -176,13 +189,13 @@ skimage.io.imshow(stack.mean(axis=0))
                 width="100%"></a>
 
 <iframe src="https://cdn.rawgit.com/mrocklin/e09cad939ff7a85a06f3b387f65dc2fc/raw/fa5e20ca674cf5554aa4cab5141019465ef02ce9/task-stream-image-mean-time.html"
-        width="800" height="400"></iframe>
+        width="700" height="300"></iframe>
 
 Or we can see when the field of interest is actually present within the frame
 by averaging across x and y
 
 ```python
-plt.plot(stack.mean(axis=[1, 2]))
+plt.plot(stack.mean(axis=[1, 2]).compute())
 ```
 
 <a href="{{ BASE_PATH }}/images/dask-imaging-spatial-mean.png">
@@ -191,7 +204,7 @@ plt.plot(stack.mean(axis=[1, 2]))
                 width="100%"></a>
 
 <iframe src="https://cdn.rawgit.com/mrocklin/e09cad939ff7a85a06f3b387f65dc2fc/raw/fa5e20ca674cf5554aa4cab5141019465ef02ce9/task-stream-image-mean-spatial.html"
-        width="800" height="400"></iframe>
+        width="700" height="300"></iframe>
 
 By looking at the profile plots for each case we can see that averaging over
 time involves much more inter-node communication, which can be quite expensive
@@ -203,7 +216,7 @@ Recenter Images with Numba
 
 In order to remove the spatial offset across time we're going to compute a
 centroid for each slice and then crop the image around that center.  I looked
-up centroids in the Scikit-Image docs but came across a function that did *way*
+up centroids in the Scikit-Image docs and came across a function that did *way*
 more than what I was looking for, so I just quickly coded up a solution in Pure
 Python and then JIT-ed it with [Numba](http://numba.pydata.org/) (which makes
 this run at C-speeds).
@@ -265,7 +278,8 @@ def recenter_block(block):
     """ Recenter a short stack of images """
     return np.stack([recenter(block[i]) for i in range(block.shape[0])])
 
-recentered = stack.map_blocks(recenter, chunks=(1, 1000, 1000),
+recentered = stack.map_blocks(recenter,
+                              chunks=(20, 1000, 1000),  # chunk size changes
                               dtype=a.dtype)
 recentered = client.persist(recentered)
 ```
@@ -275,17 +289,19 @@ recentered = client.persist(recentered)
 
 This profile provides a good opportunity to talk about a scheduling *failure*;
 things went a bit wrong here.  Towards the beginning we quickly recenter
-several images (Numba is fast) however then as some workers finish all of their
-work the scheduler erroneously starts to load balance, moving images from busy
-workers to idle workers.  Unfortunately the network at this time appeared to be
-much slower than expected and so the move + compute elsewhere strategy ended up
+several images (Numba is fast), taking around 300-400ms for each block of
+twenty images.  However as some workers finish all of their allotted tasks, the
+scheduler erroneously starts to load balance, moving images from busy workers
+to idle workers.  Unfortunately the network at this time appeared to be much
+slower than expected and so the move + compute elsewhere strategy ended up
 being much slower than just letting the busy workers finish their work.  The
 scheduler keeps track of expected compute times and transfer times precisely to
 avoid mistakes like this one.  These sorts of issues are rare, but do occur on
 occasion.
 
-We check our work and see that, indeed, our images are better centered with
-each other.
+We check our work by averaging our re-centered images across time and displaying
+that to the screen. We see that our images are better centered with each other
+as expected.
 
 ```python
 skimage.io.imshow(recentered.mean(axis=0))
@@ -303,8 +319,8 @@ giving us near-optimal performance with intuitive code across a cluster.
 <iframe src="https://cdn.rawgit.com/mrocklin/e09cad939ff7a85a06f3b387f65dc2fc/raw/fa5e20ca674cf5554aa4cab5141019465ef02ce9/task-stream-image-recenter-mean-time.html"
         width="800" height="400"></iframe>
 
-Rechunk to Time Series
-----------------------
+Rechunk to Time Series by Pixel
+-------------------------------
 
 We're now going to rearrange our data from being partitioned by time slice, to
 being partitioned by pixel.  This will allow us to run computations like Fast
@@ -313,8 +329,9 @@ pattern back and forth like this is generally a very difficult operation for
 distributed arrays because every slice of the array contributes to every
 time-series.  We have N-squared communication.
 
-This analysis may not be appropriate for this data, but it's a very frequent
-request, so I wanted to include it.
+This analysis may not be appropriate for this data (we won't learn any useful
+science from doing this), but it represents a very frequently asked question,
+so I wanted to include it.
 
 Currently our Dask array has chunkshape (20, 1000, 1000), meaning that our data
 is collected into 500 NumPy arrays across the cluster, each of size `(20, 1000,
@@ -326,24 +343,27 @@ dask.array<shape=(10000, 1000, 1000), dtype=uint8, chunksize=(20, 1000, 1000)>
 ```
 
 But we want to change this shape so that the chunks cover the entire first
-axis.  We could do something like the following:
+axis.  We want all data for any particular pixel to be in the same NumPy array,
+not spread across hundreds of different NumPy arrays.  We could solve this by
+rechunking so that each pixel is its own block like the following:
 
 ```python
 >>> rechunked = recentered.rechunk((10000, 1, 1))
 ```
 
 However this would result in one million chunks (there are one million pixels)
-which will result in a bit of overhead.  Instead we'll collect our time-series
-into `10 x 10` groups of one hundred pixels.  This will help us to reduce
-overhead.
+which will result in a bit of scheduling overhead.  Instead we'll collect our
+time-series into `10 x 10` groups of one hundred pixels.  This will help us to
+reduce overhead.
 
 ```python
->>> rechunked = recentered.rechunk((10000, 10, 10))
+>>> # rechunked = recentered.rechunk((10000, 1, 1))  # Too many chunks
+>>> rechunked = recentered.rechunk((10000, 10, 10))  # Use larger chunks
 ```
 
-Now we'll compute the FFT of each pixel, take the absolute value and square to
+Now we compute the FFT of each pixel, take the absolute value and square to
 get the power spectrum.  Finally to conserve space we'll down-grade the dtype
-to float32 (our original data is only 8-bit anyway.
+to float32 (our original data is only 8-bit anyway).
 
 ```python
 x = da.fft.fft(rechunked, axis=0)
@@ -352,18 +372,28 @@ power = abs(x ** 2).astype('float32')
 power = client.persist(power, optimize_graph=False)
 ```
 
-This is a fun profile to inspect.  We've included a real-time trace during
-execution, the full profile, as well as some diagnostics plots from a single
-worker.  These plots total up to around 20MB.  I sincerely apologize to those
-without broadband access.
+This is a fun profile to inspect; it includes both the rechunking and the
+subsequent FFTs.  We've included a real-time trace during execution, the full
+profile, as well as some diagnostics plots from a single worker.  These plots
+total up to around 20MB.  I sincerely apologize to those without broadband
+access.
+
+Real time plot of the computation finishing over time
 
 <a href="{{ BASE_PATH }}/images/task-stream-fft.gif">
   <img src="{{ BASE_PATH }}/images/task-stream-fft.gif"
          alt="Dask task stream of rechunk + fft"
                 width="100%"></a>
 
+Single interactive plot of the entire computation.  Zoom with the tools in the
+upper right.  Hover over rectangles to get more information.  Remember that red
+is communication.
+
 <iframe src="https://cdn.rawgit.com/mrocklin/e09cad939ff7a85a06f3b387f65dc2fc/raw/fa5e20ca674cf5554aa4cab5141019465ef02ce9/task-stream-image-fft.html"
         width="800" height="400"></iframe>
+
+Screenshots of the diagnostic dashboard of a single worker during this
+computation.
 
 <a href="{{ BASE_PATH }}/images/worker-state-fft.png">
   <img src="{{ BASE_PATH }}/images/worker-state-fft.png"
@@ -376,19 +406,29 @@ without broadband access.
 
 This computation starts with a lot of communication while we rechunk and
 realign our data (recent optimizations here by [Antoine
-Pitrou](https://github.com/pitrou) in [dask #417](https://github.com/dask/dask/pull/1737).
+Pitrou](https://github.com/pitrou) in [dask #417](https://github.com/dask/dask/pull/1737)).
 Then we transition into doing thousands of small FFTs and other arithmetic
-operations.  During all of this inter-worker communication was around
-100-300 MB/s (typical for Amazon's EC2) and CPU load remained high.  We're
-using our hardware.
+operations.  All of the plots above show a nice transition from heavy
+communication to heavy processing with some overlap each way (once some complex
+blocks are available we get to start overlapping communication and
+computation).  Inter-worker communication was around 100-300 MB/s (typical for
+Amazon's EC2) and CPU load remained high.  We're *using* our hardware.
 
 Finally we can inspect the results.  We see that the power spectrum is very
 boring the corner, and has typical activity towards the center of the image
+
+```python
+plt.semilogy(1 + power[:, 0, 0].compute())
+```
 
 <a href="{{ BASE_PATH }}/images/dask-imaging-fft-0.png">
   <img src="{{ BASE_PATH }}/images/dask-imaging-fft-0.png"
          alt="Power spectrum near edge"
                 width="70%"></a>
+
+```python
+plt.semilogy(1 + power[:, 500, 500].compute())
+```
 
 <a href="{{ BASE_PATH }}/images/dask-imaging-fft-center.png">
   <img src="{{ BASE_PATH }}/images/dask-imaging-fft-center.png"
@@ -401,15 +441,35 @@ Final Thoughts
 This blogpost showed a non-trivial image processing workflow, emphasizing the
 following points:
 
-1.  Constructing a Dask array from a stack of Python function calls.  In this
-    case using SKImage, but we could have use anything.
-2.  Using the NumPy syntax with Dask.array to do standard array manipulations
-    on data spread across a cluster of machines
-3.  Building an efficient centroid function with Numba, showing how Numba and
-    Dask.array complement each other well
-4.  Rechunking an array that was distributed by time slice into an array that
-    was distributed as time-series by pixel, a common and challenging operation
+1.  Construct a Dask array from lazy SKImage calls.
+2.  Use NumPy syntax with Dask.array to aggregate distributed data across a
+    cluster.
+3.  Build a centroid function with Numba.  Use Numba and Dask together to
+    cleanup image stack.
+4.  Rechunk to facilitate time-series operations.  Perform FFTs.
 
 Hopefully this example has components that look similar to what you want to do
 with your data on your hardware.  We would love to see more applications like
 this out there in the wild.
+
+
+What we could have done better
+------------------------------
+
+As always with all computationally focused blogposts we'll include a section on
+what went wrong and what we could have done better with more time.
+
+1.  **Communication is expensive**.  A common theme in these computations is
+    that inter-node communication is expensive.  For example when computing
+    the mean over time we have to do a lot of inter-node communication.  This
+    takes surprisingly long.  We need to take a closer look at our
+    communication pipelines to see if there are opportunities to tighten this
+    up.
+2.  **Faulty Load balancing**: We discovered a case where our load-balancing
+    heuristics misbehaved, incorrectly moving data between workers when it
+    would have been better to let everything alone.
+3.  **Loading from disk blocks network I/O**: While doing this we discovered an
+    issue where loading large amounts of data from disk can block workers from
+    responding to network requests ([dask/distributed #774](https://github.com/dask/distributed/issues/774))
+4.  **Larger datasets**: It would be fun to try this on a much larger dataset
+    to see how the solutions here scale.
