@@ -16,7 +16,7 @@ Foundation](https://www.moore.org/)*
 Summary
 -------
 
-Dask Dataframe extends the popular Pandas library to operate on larger datasets
+Dask Dataframe extends the popular Pandas library to operate on big data-sets
 (10GB to 10TB) on a distributed cluster.  We show its capabilities by running
 through common dataframe operations on a common dataset.  We break up these
 computations into the following sections:
@@ -114,10 +114,9 @@ This data is too large to fit into Pandas on a single computer.  However, it
 can fit in memory if we break it up into many small pieces and load these
 pieces onto different computers across a cluster.
 
-We connect to our Dask cluster, which is running `dask-worker` processes on
-each of our computers in our cluster.  These `dask-worker` processes are all
-connected to a single `dask-scheduler` process, to which we also connect from
-an IPython session.
+We connect a client to our Dask cluster, composed of one centralized
+`dask-scheduler` process and several `dask-worker` processes running on each of the
+machines in our cluster.
 
 ```python
 from dask.distributed import Client
@@ -132,7 +131,8 @@ dataframes.  This takes about a minute to load and parse.
 import dask.dataframe as dd
 
 df = dd.read_csv('s3://dask-data/nyc-taxi/2015/*.csv',
-                 parse_dates=['tpep_pickup_datetime', 'tpep_dropoff_datetime'])
+                 parse_dates=['tpep_pickup_datetime', 'tpep_dropoff_datetime'],
+                 storage_options={'anon': True})
 df = client.persist(df)
 ```
 
@@ -318,7 +318,9 @@ results to one node, followed by a `sum` of all of the intermediate lengths.
 <iframe src="https://cdn.rawgit.com/mrocklin/ade9d1e3b0f44b17a84a551e39946e58/raw/1c3345848d5313cc1c0ea827d66089bf200edaac/task-stream-len.html"
         width="640" height="630"></iframe>
 
-This takes around 400-500ms.  You can see that the 365 length computations happened quickly on the left, and then there was some delay, a bit of data transfer, and a final summation call.
+This takes around 400-500ms.  You can see that a few hundred length
+computations happened quickly on the left, followed by some delay, then a bit
+of data transfer (the red bar in the plot), and a final summation call.
 
 More complex operations like simple groupbys look similar, although sometimes
 with more communications.  Throughout this post we're going to do more and more
@@ -374,12 +376,12 @@ We see that New Yorkers are generally pretty generous, tipping around 20%-25%
 on average.  We also notice that they become *very generous* at 4am, tipping an
 average of 38%.
 
-This more complex operation uses more of the Dask dataframe API (which
-is identical to the Pandas API).  Pandas users should find the code above
-fairly familiar.  We remove rows with zero fare or zero tip (not every tip gets
-recorded), make a new column which is the ratio of the tip amount to the fare
-amount, and then groupby the day of week and hour of day, computing the average
-tip fraction for each hour/day.
+This more complex operation uses more of the Dask dataframe API (which mimics
+the Pandas API).  Pandas users should find the code above fairly familiar.  We
+remove rows with zero fare or zero tip (not every tip gets recorded), make a
+new column which is the ratio of the tip amount to the fare amount, and then
+groupby the day of week and hour of day, computing the average tip fraction for
+each hour/day.
 
 Dask evaluates this computation with thousands of small Pandas calls across the
 cluster (try clicking the wheel zoom icon in the upper right of the image
@@ -867,7 +869,7 @@ fluid.
 Additionally, once we have a nice datetime index all of Pandas' time series
 functionality becomes available to us.
 
-For example we can resample by day
+For example we can resample by day:
 
 ```python
 >>> (df.passenger_count
@@ -877,16 +879,18 @@ For example we can resample by day
        .plot())
 ```
 
-<iframe src="https://cdn.rawgit.com/mrocklin/ade9d1e3b0f44b17a84a551e39946e58/raw/1c3345848d5313cc1c0ea827d66089bf200edaac/task-stream-resample.html"
-        width="800" height="400"></iframe>
-
-
 <a href="{{ BASE_PATH }}/images/resample-day.png">
     <img src="{{ BASE_PATH }}/images/resample-day.png"
          alt="resample by day"
          width="60%"></a>
 
-Or perform a rolling aggregation in about a second
+<iframe src="https://cdn.rawgit.com/mrocklin/ade9d1e3b0f44b17a84a551e39946e58/raw/1c3345848d5313cc1c0ea827d66089bf200edaac/task-stream-resample.html"
+        width="800" height="400"></iframe>
+
+We observe a strong periodic signal here.  The number of passengers is reliably
+higher on the weekends.
+
+We can perform a rolling aggregation in about a second:
 
 ```python
 >>> s = client.persist(df.passenger_count.rolling(10).mean())
@@ -905,9 +909,9 @@ Parquet
 Pandas' standard "fast" recommended storage solution has generally been the
 HDF5 data format.  Unfortunately the HDF5 file format is not ideal for
 distributed computing, so most Dask dataframe users have had to switch down to
-CSV historically.  This unfortunate because CSV is slow, doesn't support
+CSV historically.  This is unfortunate because CSV is slow, doesn't support
 partial queries (you can't read in just one column), and also isn't supported
-well by the other standard distributed Dataframe solution Spark.  This makes it
+well by the other standard distributed Dataframe solution, Spark.  This makes it
 hard to move data back and forth.
 
 Fortunately there are now two decent Python readers for Parquet, a fast
