@@ -468,17 +468,17 @@ What we could have done better
 As always with all computationally focused blogposts we'll include a section on
 what went wrong and what we could have done better with more time.
 
-1.  **Communication is expensive**.  A common theme in these computations is
-    that inter-node communication is expensive.  For example when computing
-    the mean over time we have to do a lot of inter-node communication.  This
-    takes surprisingly long.  We need to take a closer look at our
-    communication pipelines to see if there are opportunities to tighten this
-    up.
+1.  **Communication is too expensive**:  Interworker communications that should
+    be taking 200ms are taking up to 10 or 20 seconds.  We need to take a
+    closer look at our communications pipeline (which normally performs just
+    fine on other computations) to see if something is acting up.
 2.  **Faulty Load balancing**: We discovered a case where our load-balancing
     heuristics misbehaved, incorrectly moving data between workers when it
-    would have been better to let everything alone.
+    would have been better to let everything alone.  This is likely due to the
+    oddly low bandwidth issues observed above.
 3.  **Loading from disk blocks network I/O**: While doing this we discovered an
     issue where loading large amounts of data from disk can block workers from
-    responding to network requests ([dask/distributed #774](https://github.com/dask/distributed/issues/774))
+    responding to network requests ([dask/distributed
+    #774](https://github.com/dask/distributed/issues/774))
 4.  **Larger datasets**: It would be fun to try this on a much larger dataset
     to see how the solutions here scale.
