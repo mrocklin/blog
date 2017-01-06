@@ -18,8 +18,8 @@ Foundation](https://www.moore.org/)*
 This post describes Dask as a computational task scheduler that fits somewhere
 on a spectrum between big data computing frameworks like Hadoop/Spark and task
 schedulers like Airflow/Celery/Luigi.  We see how, by combining elements from
-both of these types of systems Dask is able to handle a complex data
-science problems particularly well.
+both of these types of systems Dask is able to handle complex data science
+problems particularly well.
 
 
 ### Big Data Collections
@@ -42,8 +42,8 @@ following data loading and cleaning problem:
 4.  Consider a sliding window of every three normalized datasets (Might be able
     to hack this with a very clever groupby or join?  Not sure.)
 5.  Of all of the 98 outputs of the last stage, consider all pairs.  (Join or
-    cartesian product) However, because we don't want to compute all 1000
-    possibilities, lets just evaluate a random sample of these pairs
+    cartesian product) However, because we don't want to compute all 10000
+    possibilities, let's just evaluate a random sample of these pairs
 6.  Find the best of all of these possibilities (reduction)
 
 In code this might look like the following:
@@ -85,10 +85,10 @@ inefficient.)
 ### Task Schedulers
 
 So instead people use task schedulers like Celery, Luigi, or Airflow.  These
-systems track hundreds of *tasks* which is just some normal Python function
-that runs on some normal Python data.  The task scheduler tracks dependencies
-between tasks and so runs as many as it can at once if they don't depend on
-each other.
+systems track hundreds of *tasks*, each of which is just a normal Python
+function that runs on some normal Python data.  The task scheduler tracks
+dependencies between tasks and so runs as many as it can at once if they don't
+depend on each other.
 
 This is a far more granular approach than the Big-Bulk-Collection approach of
 MapReduce and Spark.  However systems like Celery, Luigi, and Airflow are also
@@ -102,8 +102,8 @@ inter-worker communication, live state, etc. and also a general task scheduler
 like Celery, Luigi, or Airflow, capable of arbitrary task execution.
 
 Many Dask users use something like Dask dataframe, which generates these graphs
-automatically and so never really observe the task scheduler aspect of Dask.
-This is however, the core of what distinguishes Dask from other systems like
+automatically, and so never really observe the task scheduler aspect of Dask
+This is, however, the core of what distinguishes Dask from other systems like
 Hadoop and Spark.  Dask is incredibly *flexible* in the kinds of algorithms it
 can run.  This is because, at its core, it can run *any* graph of tasks and not
 just map, reduce, groupby, join, etc..  Users can do this natively, without
@@ -129,7 +129,7 @@ GPUs and more.  It's a tough job.
 
 ### Dask.delayed
 
-So lets go ahead and run the data ingestion job described with Dask.
+So let's go ahead and run the data ingestion job described with Dask.
 
 We craft some fake functions to simulate actual work:
 
@@ -247,5 +247,5 @@ Celery/Luigi/Airflow-style and yet run them with the scalability promises of
 Hadoop/Spark allows for a pleasant freedom to write comfortably and yet still
 compute scalably.  This ability opens up new possibilities both to support more
 sophisticated algorithms and also to handle messy situations that arise in the
-real world (enterprise data systems sometimes messy) while still remaining
+real world (enterprise data systems are sometimes messy) while still remaining
 within the bounds of "normal and supported" Dask operation.
