@@ -33,7 +33,7 @@ operations:
 4.  Transpose data to get a time-series for every pixel, compute FFTs
 
 This last step is quite fun.  Even if you skim through the rest of this article
-I recommend checkout out the last section.
+I recommend checking out the last section.
 
 
 Inspect Dataset
@@ -42,7 +42,7 @@ Inspect Dataset
 I asked a colleague at the US National Institutes for Health (NIH) for a
 biggish imaging dataset.  He came back with the following message:
 
-*Electron microscopy is probably generating the biggest ndarray datasets in the field - terabytes regularly. Neuroscience need EM to see connections between neurons because the critical features of neural synapses (connections) are below the diffraction limit of light microscopes. The hard part is machine vision on the data to follow small neuron parts from one slice to the next.  This type of research has been called "connectomics".*
+*Electron microscopy is probably generating the biggest ndarray datasets in the field - terabytes regularly. Neuroscience needs EM to see connections between neurons because the critical features of neural synapses (connections) are below the diffraction limit of light microscopes. The hard part is machine vision on the data to follow small neuron parts from one slice to the next.  This type of research has been called "connectomics".*
 
 This data is from drosophila: [http://emdata.janelia.org/](http://emdata.janelia.org/). Here is an example 2d slice of the data [http://emdata.janelia.org/api/node/bf1/grayscale/raw/xy/2000_2000/1800_2300_5000](http://emdata.janelia.org/api/node/bf1/grayscale/raw/xy/2000_2000/1800_2300_5000).
 
@@ -151,7 +151,7 @@ client = Client('schdeduler-address:8786')
 <Client: scheduler="scheduler-address:8786" processes=10 cores=80>
 ```
 
-And lets go ahead and bring in all of our images, persisting the array into
+And let's go ahead and bring in all of our images, persisting the array into
 concrete data in memory.
 
 ```python
@@ -424,7 +424,7 @@ computation).  Inter-worker communication was around 100-300 MB/s (typical for
 Amazon's EC2) and CPU load remained high.  We're *using* our hardware.
 
 Finally we can inspect the results.  We see that the power spectrum is very
-boring the corner, and has typical activity towards the center of the image
+boring in the corner, and has typical activity towards the center of the image.
 
 ```python
 plt.semilogy(1 + power[:, 0, 0].compute())
@@ -454,7 +454,7 @@ following points:
 2.  Use NumPy syntax with Dask.array to aggregate distributed data across a
     cluster.
 3.  Build a centroid function with Numba.  Use Numba and Dask together to
-    cleanup image stack.
+    clean up an image stack.
 4.  Rechunk to facilitate time-series operations.  Perform FFTs.
 
 Hopefully this example has components that look similar to what you want to do
