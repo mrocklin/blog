@@ -43,6 +43,11 @@ computation `read_csv` computation produces the following profile:
 >>> df = dd.read_csv('s3://dask-data/nyc-taxi/2015/*.csv')
 ```
 
+*If you are reading this through a syndicated website like planet.python.org or
+through an RSS reader then these plots will not show up.  You may want to visit
+[http://matthewrocklin.com/blog/work/2017/01/12/dask-dataframes](http://matthewrocklin.com/blog/work/2017/01/12/dask-dataframes)
+directly.*
+
 <iframe src="https://cdn.rawgit.com/mrocklin/ade9d1e3b0f44b17a84a551e39946e58/raw/1c3345848d5313cc1c0ea827d66089bf200edaac/task-stream-read-csv.html"
         width="800" height="400"></iframe>
 
