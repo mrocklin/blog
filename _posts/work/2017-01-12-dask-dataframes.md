@@ -2,7 +2,6 @@
 layout: post
 title: Distributed Pandas on a Cluster with Dask DataFrames
 category: work
-draft: true
 tags: [Programming, Python, scipy]
 theme: twitter
 ---
@@ -17,9 +16,9 @@ Summary
 -------
 
 Dask Dataframe extends the popular Pandas library to operate on big data-sets
-(10GB to 10TB) on a distributed cluster.  We show its capabilities by running
-through common dataframe operations on a common dataset.  We break up these
-computations into the following sections:
+on a distributed cluster.  We show its capabilities by running through common
+dataframe operations on a common dataset.  We break up these computations into
+the following sections:
 
 1.  Introduction: Pandas is intuitive and fast, but needs Dask to scale
 2.  Read CSV and Basic operations
