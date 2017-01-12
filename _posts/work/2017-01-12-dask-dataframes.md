@@ -1007,20 +1007,14 @@ Learn More
 If you'd like to learn more about Dask dataframe, the Dask distributed system,
 or other components you should look at the following documentation:
 
-1.  http://dask.pydata.org/en/latest/
-2.  http://distributed.readthedocs.io/en/latest/
+1.  [http://dask.pydata.org/en/latest/](http://dask.pydata.org/en/latest/)
+2.  [http://distributed.readthedocs.io/en/latest/](http://distributed.readthedocs.io/en/latest/)
 
 The workflows presented here are captured in the following notebooks (among
 other examples):
 
-1.  NYC Taxi example, shuffling, others: https://gist.github.com/mrocklin/ada85ef06d625947f7b34886fd2710f8
-2.  Parquet: https://gist.github.com/mrocklin/89bccf2f4f37611b40c18967bb182066
-
-(Explicitly taking off my open source hat for a moment and putting on my
-for-profit hat)  If you work for a company and want to pay for help getting started with
-Dask (which itself is free software) then you may want to contact
-[Continuum Analytics](https://www.continuum.io/).  (Now putting back on my open
-source hat)
+1.  [NYC Taxi example, shuffling, others](https://gist.github.com/mrocklin/ada85ef06d625947f7b34886fd2710f8)
+2.  [Parquet](https://gist.github.com/mrocklin/89bccf2f4f37611b40c18967bb182066)
 
 
 What we could have done better
