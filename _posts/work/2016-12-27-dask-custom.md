@@ -13,7 +13,7 @@ the [XDATA Program](http://www.darpa.mil/program/XDATA)
 and the Data Driven Discovery Initiative from the [Moore
 Foundation](https://www.moore.org/)*
 
-### tl;dr
+### Summary
 
 This post describes Dask as a computational task scheduler that fits somewhere
 on a spectrum between big data computing frameworks like Hadoop/Spark and task

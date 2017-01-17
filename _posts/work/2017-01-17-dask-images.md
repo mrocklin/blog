@@ -473,6 +473,8 @@ what went wrong and what we could have done better with more time.
     be taking 200ms are taking up to 10 or 20 seconds.  We need to take a
     closer look at our communications pipeline (which normally performs just
     fine on other computations) to see if something is acting up.
+    Disucssion here [dask/distributed #776](https://github.com/dask/distributed/issues/776)
+    and early work here [dask/distributed #810](https://github.com/dask/distributed/pull/810).
 2.  **Faulty Load balancing**: We discovered a case where our load-balancing
     heuristics misbehaved, incorrectly moving data between workers when it
     would have been better to let everything alone.  This is likely due to the
