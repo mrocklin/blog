@@ -2,7 +2,6 @@
 layout: post
 title: Distributed NumPy on a Cluster with Dask Arrays
 category: work
-draft: true
 tags: [Programming, Python, scipy]
 theme: twitter
 ---
@@ -42,7 +41,7 @@ Inspect Dataset
 I asked a colleague at the US National Institutes for Health (NIH) for a
 biggish imaging dataset.  He came back with the following message:
 
-*Electron microscopy is probably generating the biggest ndarray datasets in the field - terabytes regularly. Neuroscience needs EM to see connections between neurons because the critical features of neural synapses (connections) are below the diffraction limit of light microscopes. The hard part is machine vision on the data to follow small neuron parts from one slice to the next.  This type of research has been called "connectomics".*
+*Electron microscopy may be generating the biggest ndarray datasets in the field - terabytes regularly. Neuroscience needs EM to see connections between neurons, because the critical features of neural synapses (connections) are below the diffraction limit of light microscopes. This type of research has been called “connectomics”.  Many groups are looking at machine vision approaches to follow small neuron parts from one slice to the next. *
 
 This data is from drosophila: [http://emdata.janelia.org/](http://emdata.janelia.org/). Here is an example 2d slice of the data [http://emdata.janelia.org/api/node/bf1/grayscale/raw/xy/2000_2000/1800_2300_5000](http://emdata.janelia.org/api/node/bf1/grayscale/raw/xy/2000_2000/1800_2300_5000).
 
@@ -75,7 +74,8 @@ for i, sample in enumerate(samples):
          alt="Sample electron microscopy images over time"
                 width="100%"></a>
 
-We see that our field of interest wanders across the frame over time.
+We see that our field of interest wanders across the frame over time and drops
+off in the beginning and at the end.
 
 
 Create a Distributed Array
@@ -95,7 +95,7 @@ imread = delayed(skimage.io.imread, pure=True)  # Lazy version of imread
 urls = ['http://emdata.janelia.org/api/node/bf1/grayscale/raw/xy/2000_2000/1800_2300_%d' % i
         for i in range(10000)]  # A list of our URLs
 
-lazy_values = [imread(url) for url in urls]     # Lazily evaluate imread
+lazy_values = [imread(url) for url in urls]     # Lazily evaluate imread on each url
 
 arrays = [da.from_delayed(lazy_value,           # Construct a small Dask array
                           dtype=sample.dtype,   # for every lazy value
@@ -111,7 +111,7 @@ dask.array<shape=(10000, 2000, 2000), dtype=uint8, chunksize=(1, 2000, 2000)>
 ```
 
 ```python
->>> stack = stack.rechunk((20, 2000, 2000))  # to reduce overhead
+>>> stack = stack.rechunk((20, 2000, 2000))     # combine chunks to reduce overhead
 >>> stack
 dask.array<shape=(10000, 2000, 2000), dtype=uint8, chunksize=(20, 2000, 2000)>
 ```
@@ -151,19 +151,20 @@ client = Client('schdeduler-address:8786')
 <Client: scheduler="scheduler-address:8786" processes=10 cores=80>
 ```
 
-And let's go ahead and bring in all of our images, persisting the array into
-concrete data in memory.
+I've replaced the actual address of my scheduler (something like
+`54.183.180.153` with `scheduler-address.  Let's go ahead and bring in all of
+our images, persisting the array into concrete data in memory.
 
 ```python
 stack = client.persist(stack)
 ```
 
-This downloads our 10 000 images across our 10 workers.  When this completes we
-have 10 000 NumPy arrays spread around on our cluster, coordinated by our
-single Dask array.  This takes a while, about five minutes.  We're mostly
-network bound here (Janelia's servers are not co-located with our compute
-nodes).  Here is a parallel profile of the computation as an interactive
-[Bokeh](http://bokeh.pydata.org/en/latest/) plot.
+This starts downloads of our 10 000 images across our 10 workers.  When this
+completes we have 10 000 NumPy arrays spread around on our cluster, coordinated
+by our single logical Dask array.  This takes a while, about five minutes.
+We're mostly network bound here (Janelia's servers are not co-located with our
+compute nodes).  Here is a parallel profile of the computation as an
+interactive [Bokeh](http://bokeh.pydata.org/en/latest/) plot.
 
 There will be a few of these profile plots throughout the blogpost, so you
 might want to familiarize yoursel with them now.  Every horizontal rectangle in
@@ -387,16 +388,16 @@ profile, as well as some diagnostics plots from a single worker.  These plots
 total up to around 20MB.  I sincerely apologize to those without broadband
 access.
 
-Real time plot of the computation finishing over time
+Here is a real time plot of the computation finishing over time:
 
 <a href="{{ BASE_PATH }}/images/task-stream-fft.gif">
   <img src="{{ BASE_PATH }}/images/task-stream-fft.gif"
          alt="Dask task stream of rechunk + fft"
                 width="100%"></a>
 
-Single interactive plot of the entire computation.  Zoom with the tools in the
-upper right.  Hover over rectangles to get more information.  Remember that red
-is communication.
+And here is a single interactive plot of the entire computation after it
+completes.  Zoom with the tools in the upper right.  Hover over rectangles to
+get more information.  Remember that red is communication.
 
 <iframe src="https://cdn.rawgit.com/mrocklin/e09cad939ff7a85a06f3b387f65dc2fc/raw/fa5e20ca674cf5554aa4cab5141019465ef02ce9/task-stream-image-fft.html"
         width="800" height="400"></iframe>
@@ -472,6 +473,8 @@ what went wrong and what we could have done better with more time.
     be taking 200ms are taking up to 10 or 20 seconds.  We need to take a
     closer look at our communications pipeline (which normally performs just
     fine on other computations) to see if something is acting up.
+    Disucssion here [dask/distributed #776](https://github.com/dask/distributed/issues/776)
+    and early work here [dask/distributed #810](https://github.com/dask/distributed/pull/810).
 2.  **Faulty Load balancing**: We discovered a case where our load-balancing
     heuristics misbehaved, incorrectly moving data between workers when it
     would have been better to let everything alone.  This is likely due to the
