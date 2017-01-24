@@ -2,7 +2,6 @@
 layout: post
 title: Scalable Customizable Data Science in Python with Dask
 category: work
-draft: true
 tags: [Programming, Python, scipy]
 theme: twitter
 ---
