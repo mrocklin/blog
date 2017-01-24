@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Custom Algorithms on a Cluster with Dask
+title: Custom Parallel Algorithms on a Cluster with Dask
 category: work
 tags: [Programming, Python, scipy]
 theme: twitter
