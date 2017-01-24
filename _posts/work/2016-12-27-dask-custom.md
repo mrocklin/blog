@@ -31,8 +31,8 @@ operations then they serve you well.  Most of the time this is great because
 most big data problems are pretty simple.
 
 However, as we explore new complex algorithms or messier data science problems,
-these large parallel operations start to break down.  For example, consider the
-following data loading and cleaning problem:
+these large parallel operations start to become insufficiently flexible.  For
+example, consider the following data loading and cleaning problem:
 
 1.  Load data from 100 different files (this is a simple `map` operation)
 2.  Also load a reference dataset from a SQL database (not parallel at all, but
@@ -40,13 +40,13 @@ following data loading and cleaning problem:
 3.  Normalize each of the 100 datasets against the reference dataset (sort of
     like a map, but with another input)
 4.  Consider a sliding window of every three normalized datasets (Might be able
-    to hack this with a very clever groupby or join?  Not sure.)
+    to hack this with a very clever join?  Not sure.)
 5.  Of all of the 98 outputs of the last stage, consider all pairs.  (Join or
-    cartesian product) However, because we don't want to compute all 10000
+    cartesian product) However, because we don't want to compute all ~10000
     possibilities, let's just evaluate a random sample of these pairs
 6.  Find the best of all of these possibilities (reduction)
 
-In code this might look like the following:
+In sequential for-loopy code this might look like the following:
 
 ```python
 filenames = ['mydata-%d.dat' % i for i in range(100)]
