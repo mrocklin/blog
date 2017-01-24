@@ -21,14 +21,20 @@ schedulers like Airflow/Celery/Luigi.  We see how, by combining elements from
 both of these types of systems Dask is able to handle complex data science
 problems particularly well.
 
+This post is in contrast to two recent posts on structured parallel
+collections:
+
+1.  [Distributed DataFrames](https://mrocklin.github.com/blog/work/2017/01/12/dask-dataframes)
+2.  [Distributed Arrays](https://mrocklin.github.com/blog/work/2017/01/17/dask-images)
+
 
 ### Big Data Collections
 
 Most distributed computing systems like Hadoop or Spark or SQL databases
 implement a small but powerful set of parallel operations like map, reduce,
 groupby, and join.  As long as you write your programs using only those
-operations then they serve you well.  Most of the time this is great because
-most big data problems are pretty simple.
+operations then the platforms understand your program and serve you well.  Most
+of the time this is great because most big data problems are pretty simple.
 
 However, as we explore new complex algorithms or messier data science problems,
 these large parallel operations start to become insufficiently flexible.  For
