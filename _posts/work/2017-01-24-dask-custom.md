@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Scalable Customizable Data Science in Python with Dask
+title: Custom Algorithms on a Cluster with Dask
 category: work
 tags: [Programming, Python, scipy]
 theme: twitter
