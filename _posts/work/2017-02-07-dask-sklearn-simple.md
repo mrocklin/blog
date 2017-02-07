@@ -1,8 +1,7 @@
 ---
 layout: post
-title: Two Simple Ways to Use Scikit Learn and Dask
+title: Two Easy Ways to Use Scikit Learn and Dask
 category: work
-draft: true
 tags: [Programming, Python, scipy]
 theme: twitter
 ---
@@ -26,7 +25,7 @@ operations either on a single computer or across a cluster.
 For the impatient, these look like the following:
 
 ```python
-### Joblib trick
+### Joblib
 
 from joblib import parallel_backend
 with parallel_backend('dask.distributed', scheduler_host='scheduler-address:8786'):
@@ -41,14 +40,18 @@ with parallel_backend('dask.distributed', scheduler_host='scheduler-address:8786
   from dklearn.pipeline import Pipeline
 ```
 
+However, neither of these techniques are perfect.  These are the easiest things
+to try, but not always the best solutions.  This blogpost focuses on
+low-hanging fruit.
+
 
 Joblib
 ------
 
 Scikit-Learn already parallelizes across a multi-core CPU using
-[Joblib](https://pythonhosted.org/joblib/) a simple but powerful and mature
+[Joblib](https://pythonhosted.org/joblib/), a simple but powerful and mature
 library that provides an extensible map operation.  Here is a simple example of
-using Joblib on its own (without sklearn):
+using Joblib on its own without sklearn:
 
 ```python
 # Sequential code
@@ -70,8 +73,8 @@ Dask users will recognize the `delayed` function modifier.  Dask stole
 the `delayed` decorator from Joblib.
 
 Many of Scikit-learn's parallel algorithms use Joblib internally.  If we can
-extend Joblib to clusters then we get some added parallelism from Scikit-learn
-functions immediately.
+extend Joblib to clusters then we get some added parallelism from
+joblib-enabled Scikit-learn functions immediately.
 
 
 ### Distributed Joblib
@@ -81,6 +84,7 @@ and act as an execution engine.  We can do this with the `parallel_backend`
 context manager to run with hundreds or thousands of cores in a nearby cluster:
 
 ```python
+import distributed.joblib
 from joblib import parallel_backend
 
 with parallel_backend('dask.distributed', scheduler_host='scheduler-address:8786'):
@@ -97,10 +101,10 @@ So we can use Joblib to parallelize normally on our multi-core processor:
 estimator = GridSearchCV(n_jobs=4, ...)  # use joblib on local multi-core processor
 ```
 
-or we can use Joblib together with Dask.distributed to parallelize across a
+*or* we can use Joblib together with Dask.distributed to parallelize across a
 multi-node cluster:
 
-```
+```python
 with parallel_backend('dask.distributed', scheduler_host='scheduler-address:8786'):
     estimator = GridSearchCV(...)  # use joblib with Dask cluster
 ```
