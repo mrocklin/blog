@@ -12,10 +12,10 @@ the [XDATA Program](http://www.darpa.mil/program/XDATA)
 and the Data Driven Discovery Initiative from the [Moore
 Foundation](https://www.moore.org/)*
 
-*This page includes embedded large profiles.  It may look better on the actual
-site TODO: link to live site (rather than through syndicated pages like
-planet.python) and it may take a while to load on non-broadband connections
-(total size is around 20MB)*
+*This page includes embedded large profiles.  It may look better on the [actual
+site](http://matthewrocklin.com/blog/work/2017/01/17/dask-images) rather than
+through syndicated pages like planet.python and it may take a while to load on
+non-broadband connections (total size is around 20MB)*
 
 Summary
 -------
