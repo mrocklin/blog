@@ -636,3 +636,16 @@ interested in performing and publishing about a more serious distributed deep
 learning experiment with TensorFlow and Dask I would be happy to support them
 on the Dask side.  I think that there is plenty to learn here about best
 practices.
+
+
+Acknowledgements
+----------------
+
+The following individuals contributed to the construction of this blogpost:
+
+-   [Stephan Hoyer](http://stephanhoyer.com/) contributed with conversations
+    about how TensorFlow is used in practice and with concrete experience on
+    deployment.
+-   [Will Warner](https://github.com/electronwill) and
+    [Erik Welch](https://github.com/eriknw) both provided valuable editing and
+    language recommendations
