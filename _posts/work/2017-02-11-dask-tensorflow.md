@@ -54,42 +54,38 @@ TensorFlow in a more complex situation.  We'll find we can accomplish a fairly
 sophisticated workflow easily, both due to how sensible TensorFlow is to set up
 and how flexible Dask can be in advanced situations.
 
-But first, a note on why you shouldn't care about any of this.
-
 
 Motivation and Disclaimers
 --------------------------
 
 Distributed deep learning is fundamentally changing the way humanity solves
 some very hard computing problems like natural language translation,
-speech-to-text transcription, image recognition, and so on.  However, distributed
-deep learning suffers from public excitement and hype, which distorts our image
-of its utility.  Distributed deep learning is *rarely* the correct choice for
+speech-to-text transcription, image recognition, etc..  However, distributed
+deep learning also suffers from public excitement, which may distort our image
+of its utility.  Distributed deep learning is not always the correct choice for
 most problems.  This is for two reasons:
 
-1.  **Single machine** computation often suffices.  Focusing on model design,
-    GPU hardware, and so on is often a better use of time.  I enjoyed watching [this
-    video lecture series](https://simons.berkeley.edu/talks/tutorial-deep-learning)
-    from the Simons institute at CMU.
+1.  Focusing on **single machine** computation is often a better use of time.
+    Model design, GPU hardware, etc. can have a more dramatic impact than
+    scaling out.  For newcomers to deep learning, watching [online video lecture
+    series](https://simons.berkeley.edu/talks/tutorial-deep-learning) may be a
+    better use of time than reading this blogpost.
 2.  **Traditional machine learning** techniques like logistic regression, and
     gradient boosted trees can be more effective than deep learning if you have
     finite data.  They can also sometimes provide valuable interpretability
     results.
 
-Deep learning is a sexy and enticing topic right now, and with good reason.
-However posts like this one that say "Use X with TensorFlow on distributed
-data!" are almost always motivated by a drive to increase excitement around X.
-This blogpost is no different.  Please read it with the appropriate lens.
-Additionally the author does not claim expertise in deep learning and wrote
-this blogpost in haste.
-
-However, there are some concrete take-aways on complimentary topics:
+Regardless, there are some concrete take-aways, even if distributed deep
+learning is not relevant to your application:
 
 1.  TensorFlow is straightforward to set up from Python
 2.  Dask is sufficiently flexible out of the box to support complex settings
     and workflows
 3.  We'll see an example of a typical distributed learning approach that
     generalizes beyond deep learning.
+
+Additionally the author does not claim expertise in deep learning and wrote
+this blogpost in haste.
 
 
 Simple Parallelism
