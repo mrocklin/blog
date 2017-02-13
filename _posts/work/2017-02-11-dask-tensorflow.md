@@ -20,32 +20,36 @@ This post breifly describes potential interactions between Dask and Tensorflow
 and then goes through a concrete example using them together for distributed
 training with a moderately complex architecture.
 
+This post was written in haste, see disclaimers below.
+
 
 Introduction
 ------------
 
-Dask and Tensorflow both provide systems for distributed computing in Python.
-Tensorflow excels at deep learning applications while Dask is more generic.  We
-can use both together in a few applications:
+Dask and Tensorflow both provide distributed computing in Python.
+Tensorflow excels at deep learning applications while Dask is more generic.
+We can combine both together in a few applications:
 
-1.  **Simple parallelism:** hyper-parameter searches during training
+1.  **Simple data parallelism:** hyper-parameter searches during training
     and predicting already-trained models against large datasets are both
     trivial to distribute with Dask as they would be trivial to distribute with
-    any distributed computing system (Hadoop/Spark/Flink/etc.).
+    any distributed computing system (Hadoop/Spark/Flink/etc..)  We won't
+    discuss this topic much.  It should be straightforward.
 2.  **Deployment:** A common painpoint with Tensorflow is that setup isn't
     well automated.  This plagues all distributed systems, especially those
     that are run on a wide variety of cluster managers (see [cluster deployment
     blogpost](http://matthewrocklin.com/blog/work/2016/09/22/cluster-deployments)
     for more information).  Fortunately, if you already have a Dask cluster
     running it's trivial to stand up a distributed TensorFlow network on
-    top of it.
-3.  **Pre-processing:** Using libraries like Dask.dataframe and Dask.array,
-    Dask can load and pre-process data intuitively.  If Dask and Tensorflow are
-    co-located on the same processes then it is trivial to load and pre-process
-    data with Dask and then hand it to Tensorflow for training.
+    top of it running within the same processes.
+3.  **Pre-processing:** We pre-process data with dask.dataframe or dask.array,
+    and then hand that data off to Tensorflow for training.  If Dask and
+    Tensorflow are co-located on the same processes then this movement is
+    efficient.  Working together we can build efficient and general use deep
+    learning pipelines.
 
-So in this blogpost we'll look *very* briefly at the first case of simple
-parallelism, then go into a bit more depth on an experiment that uses Dask and
+In this blogpost we look *very* briefly at the first case of simple
+parallelism.  Then go into more depth on an experiment that uses Dask and
 Tensorflow in a more complex situation.  We'll find we can accomplish a fairly
 sophisticated workflow easily, both due to how sensibly Tensorflow is to set up
 and how flexible Dask can be in advanced situations
@@ -59,32 +63,31 @@ Motivation and Disclaimers
 Distributed deep learning is fundamentally changing the way humanity solves
 some very hard computing problems like natural language translation,
 speech-to-text transcription, image recognition, etc..  However, distributed
-deep learning suffers from public excitement and hype, which tends to distort
-our image of its utility.  Distributed deep learning is *rarely* the correct
-choice for most problems.  This is for two reasons:
+deep learning suffers from public excitement and hype, which distorts our image
+of its utility.  Distributed deep learning is *rarely* the correct choice for
+most problems.  This is for two reasons:
 
-1.  Single machine computation can often suffice.  Focusing on model design,
+1.  **Single machine** computation often suffices.  Focusing on model design,
     GPU hardware, etc. is often a better use of time.  I enjoyed watching [this
     video lecture series](https://simons.berkeley.edu/talks/tutorial-deep-learning)
     from the Simons institute at CMU.
-2.  Traditional machine learning techniques like logistic regression, gradient
-    boosted trees, etc. can be more effective than deep learning if you have
+2.  **Traditional machine learning** techniques like logistic regression, and
+    gradient boosted trees can be more effective than deep learning if you have
     finite data.  They can also somtimes provide valuable interpretability
     results.
 
 Deep learning is a sexy and enticing topic right now, and with good reason.
 However posts like this one that say "Use X with Tensorflow on distributed
 data!" are almost always motivated by a drive to increase excitement around X.
-This blogpost came from a conference talk at a marketing-driven event, and so
-is no different.  Please read given with the appropriate lens.  Additionally
-the author does not claim expertise in deep learning and wrote this blogpost
-in haste.
+This blogpost is no different.  Please read given with the appropriate lens.
+Additionally the author does not claim expertise in deep learning and wrote
+this blogpost in haste.
 
 However, there are some concrete take-aways on complimentary topics:
 
 1.  Tensorflow is straightforward to set up from Python
-2.  Dask is sufficiently flexible out of the box to support very complex
-    settings and workflows
+2.  Dask is sufficiently flexible out of the box to support complex settings
+    and workflows
 3.  We'll see an example of a typical distributed learning approach that
     generalizes beyond deep learning.
 
@@ -92,20 +95,20 @@ However, there are some concrete take-aways on complimentary topics:
 Simple Parallelism
 ------------------
 
-Most parallel computing involves applying one function to lots of data, perhaps
-with slight variation.  In the case of deep learning this function could be a
-couple of things:
+Most parallel computing is simple.  We easily apply one function to lots of
+data, perhaps with slight variation.  In the case of deep learning this
+can enable a couple of common workflows:
 
-1.  Build a slightly different model, train it on the same data, and see how
-    well it does.  Use the model that scores the best from these many
-    independent runs.  This looks something like the following:
+1.  Build many different models, train each on the same data, choose the best
+    performing one.  Using dask's concurrent.futures interface, this looks
+    something like the following:
 
     ```python
     # Hyperparameter search
     client = Client('dask-scheduler-address:8786')
     scores = client.map(train_and_evaluate, hyper_param_list, data=data)
-    scores = client.gather(scores)
-    best = max(scores)
+    best = client.submit(max, scores)
+    best.result()
     ```
 
 2.  Given an already-trained model, use it to predict outcomes on lots of data.
@@ -113,12 +116,13 @@ couple of things:
 
     ```python
     # Distributed prediction
+
     df = dd.read_parquet('...')
-    # do some preprocessing here
+    ... # do some preprocessing here
     df['outcome'] = df.map_partitions(predict)
     ```
 
-These techniques are relativley straightforward if you have modest exposure to
+These techniques are relatively straightforward if you have modest exposure to
 Dask and Tensorflow (or any other machine learning library like scikit-learn),
 so I'm going to ignore them for now and focus on more complex situations.
 
@@ -133,7 +137,7 @@ A Distributed TensorFlow Application
 
 We're going to replicate [this tensorflow example](https://github.com/tensorflow/tensorflow/blob/master/tensorflow/tools/dist_test/python/mnist_replica.py)
 which uses multiple machines to train a model that fits in memory using
-parameter servers for coordiantion.  Our Tensorflow network will have a few
+parameter servers for coordiantion.  Our Tensorflow network will have three
 different kinds of servers:
 
 <img src="{{ BASE_PATH }}/images/tensorflow-distributed-network.svg"
@@ -159,6 +163,7 @@ Dask to do everything else.  In particular, we're about to do the following:
 1.  Prepare data with dask.array
 2.  Set up Tensorflow workers as long-running tasks
 3.  Feed data from Dask to Tensorflow while scores remain poor
+4.  Let Tensorflow handle training using its own network
 
 
 Prepare Data with Dask.array
@@ -193,9 +198,9 @@ dask.array<concate..., shape=(1100000, 784), dtype=float32, chunksize=(55000, 78
 images, labels = c.persist([images, labels])  # persist data in memory
 ```
 
-This gives us a moderately large array of around a million small images.  If we
-wanted to we could inspect or clean up this data using normal dask.array
-constructs:
+This gives us a moderately large distributed array of around a million tiny
+images.  If we wanted to we could inspect or clean up this data using normal
+dask.array constructs:
 
 ```python
 im = images[1].compute().reshape((28, 28))
@@ -530,7 +535,7 @@ def worker_task():
         sess, x, y_, train_step, global_step, _ = model(c.worker.tensorflow_server)
 
         while scores.data[-1] > 1000:
-            batch = queue.get(timeout=0.5)
+            batch = queue.get()
 
             train_data = {x: batch[0],
                           y_: batch[1]}
@@ -554,8 +559,8 @@ scorer_task = c.submit(scoring_task, workers=dask_spec['scorer'][0])
 This starts long-running tasks that just sit there, waiting for external
 stimulation:
 
-<img src="{{ BASE_PATH }}/images/tf-long-running-tasks.png"
-     width="40%"
+<img src="{{ BASE_PATH }}/images/tf-long-running-task.png"
+     width="70%"
      alt="long running tensorflow tasks">
 
 
