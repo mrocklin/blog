@@ -609,6 +609,11 @@ both libraries play nicely within Python and the greater PyData stack
 (NumPy/Pandas) makes it trivial to move data between them without costly or
 complex tricks.
 
+Additionally, we didn't have to work to integrate these two systems.  There is
+no need for a separate collaborative effort to integrate Dask and TensorFlow at
+a core level.  Instead, they are designed in such a way so as to foster this
+type of interaction without special attention or effort.
+
 This is also the first blogpost that I've written that, from a Dask
 perspective, uses some more complex features like [long running
 tasks](http://distributed.readthedocs.io/en/latest/task-launch.html#submit-tasks-from-worker)
@@ -621,13 +626,13 @@ parallel computing systems, such as are often found within companies.
 What we could have done better
 ------------------------------
 
-From a deep learning perspective this example is both elementary and incomplete.  It
-would have been nice to train on a dataset that was larger and more complex
-than MNIST.  Also it would be nice to see the effects of training over time and
-the performance of using different numbers of workers.  In defense of this
-blogpost I can only claim that Dask shouldn't affect any of these scaling
-results, because TensorFlow is entirely in control at these stages and
-TensorFlow already has plenty of published scaling information.
+From a deep learning perspective this example is both elementary and
+incomplete.  It would have been nice to train on a dataset that was larger and
+more complex than MNIST.  Also it would be nice to see the effects of training
+over time and the performance of using different numbers of workers.  In
+defense of this blogpost I can only claim that Dask shouldn't affect any of
+these scaling results, because TensorFlow is entirely in control at these
+stages and TensorFlow already has plenty of published scaling information.
 
 Generally speaking though, this experiment was done in a weekend afternoon and
 the blogpost was written in a few hours shortly afterwards.  If anyone is
