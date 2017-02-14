@@ -1,7 +1,6 @@
 ---
 layout: post
-title: Dask and TensorFlow, integration experiments
-draft: true
+title: Experiment with Dask and TensorFlow
 category: work
 tags: [Programming, Python, scipy]
 theme: twitter
