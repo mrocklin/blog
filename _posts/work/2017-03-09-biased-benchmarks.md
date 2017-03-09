@@ -43,8 +43,8 @@ experiments that I ran were clear and reproducible, but there was so much bias
 in how I selected, set up, and ran those experiments that the end result was
 misleading.  After checking results myself and then having other experts come
 in and check my results I now see much more sensible numbers.  At the moment
-both projects within a factor of two most of the time, with some interesting
-exceptions either way.
+both projects are within a factor of two most of the time, with some
+interesting exceptions either way.
 
 This blogpost outlines the ways in which library authors can fool themselves
 when performing benchmarks, using my recent experience as an anecdote.  I hope
@@ -67,18 +67,20 @@ about our original objectives and dismissing the objectives of the other
 projects then we'll very likely trick ourselves.
 
 For example consider reading CSV files.  Dask's CSV reader is based off of
-Pandas' CSV reader, which was the target of a lot of effort and love; this is because CSV was so important to the finance community where Pandas grew up.  Spark's CSV solution is less awesome, but that's less about the quality of Spark and more a statement to the fact that Spark users tend not to use CSV.
-If they're using text-based formats they're much
-more likely to use line-delimited JSON, which is typical in Spark's common use
-cases (web diagnostics, click logs, etc..)  Pandas/Dask came from the
-scientific and finance worlds where CSV is king while Spark came from the web
-world where JSON reigns.
+Pandas' CSV reader, which was the target of great effort and love; this is
+because CSV was so important to the finance community where Pandas grew up.
+Spark's CSV solution is less awesome, but that's less about the quality of
+Spark and more a statement about how Spark users tend not to use CSV.  When
+they use text-based formats they're much more likely to use line-delimited
+JSON, which is typical in Spark's common use cases (web diagnostics, click
+logs, etc..)  Pandas/Dask came from the scientific and finance worlds where CSV
+is king while Spark came from the web world where JSON reigns.
 
 Conversely, Dask.dataframe hasn't bothered to hook up the `pandas.read_json`
-function to Dask.dataframe yet.  Surprisingly it never comes up.  Both projects
-can correctly say that the other project's solution to what they consider the
-standard text-based file format is less-than-awesome.  Comparing performance
-here either way will likely lead to misguided conclusions.
+function to Dask.dataframe yet.  Surprisingly it rarely comes up.  Both
+projects can correctly say that the other project's solution to what they
+consider the standard text-based file format is less-than-awesome.  Comparing
+performance here either way will likely lead to misguided conclusions.
 
 So when benchmarking data ingestion maybe we look around a bit, see that both
 claim to support Parquet well, and use that as the basis for comparison.
@@ -90,24 +92,24 @@ Skewed Experience
 *Whoa, this other project has a lot of configuration parameters!  Lets just use
 the defaults*
 
-Software is often easy to set up, but requires experience set up optimally.
-Authors are naturally more adept at setting up their own software than the
-software of their competition.
+Software is often easy to set up, but often requires experience set up
+optimally.  Authors are naturally more adept at setting up their own software
+than the software of their competition.
 
 My original (and flawed) solution to this was to "just use the defaults" on
 both projects.  Given my inability to tune Spark (there are several dozen
 parameters) I decided to also not tune Dask and run under default settings.  I
-figured that this would be a good benchmark not only of the software, but on
-choices for sane defaults, which is a good design principle in itself.
+figured that this would be a good benchmark not only of the software, but also
+on choices for sane defaults, which is a good design principle in itself.
 
-However this failed spectacularly because I was making unconscious decisions
-like the size of machines that I was using for the experiment, CPU/memory
-ratios, etc..  It turns out that Spark's defaults are optimized for very small
-machines (or more likely, small YARN containers) and use only 1GB of memory per
-executor by default while Dask is typically run on larger boxes or has the full
-use of a single machine in a single shared-memory process.  My standard
-cluster configurations were biased towards Dask before I even considered
-running a benchmark.
+This failed spectacularly because I was making unconscious decisions like the
+size of machines that I was using for the experiment, CPU/memory ratios, etc..
+It turns out that Spark's defaults are optimized for *very small machines* (or
+more likely, small YARN containers) and use only 1GB of memory per executor by
+default while Dask is typically run on larger boxes or has the full use of a
+single machine in a single shared-memory process.  My standard cluster
+configurations were biased towards Dask before I even considered running a
+benchmark.
 
 Similarly the APIs of software projects are complex and for any given problem
 there is often both a fast way and a general-but-slow way.  Authors naturally
@@ -116,8 +118,8 @@ way that comes up first when reading documentation for the other project.  It
 often takes months of hands-on experience to understand a project well enough
 to definitely say that you're not doing things in a dumb way.
 
-In both cases here I think the only solution is to collaborate with someone
-that primarily uses the other system.
+In both cases I think the only solution is to collaborate with someone that
+primarily uses the other system.
 
 
 Preference towards strengths
@@ -147,10 +149,10 @@ I'm doing this right now.  Dask dataframe shuffles are generally slower than
 Spark dataframe shuffles.  On numeric data this used to be around a 2x
 difference, now it's more like a 1.2x difference (at least on my current
 problem and machine).  Overall this is great, seeing that another project was
-beating Dask motivated me to [dive in (see dask/distributed
+beating Dask motivated me to dive in [(see dask/distributed
 #932)](https://github.com/dask/distributed/issues/932) and this will result in
 a better experience for users in the future.  As a developer this is also how I
-operate.  I define a benchmark, profile my code, identify hot-spots, and
+operate.  I define a benchmark, profile my code, identify bottlenecks, and
 optimize.  Business as usual.
 
 However as an author of a comparative benchmark this also somewhat dishonest;
