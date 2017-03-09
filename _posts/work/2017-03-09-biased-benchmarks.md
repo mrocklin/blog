@@ -2,7 +2,6 @@
 layout: post
 title: Biased Benchmarks
 tagline: honesty is hard
-draft: true
 category: work
 tags: [Programming, Python, scipy]
 theme: twitter
