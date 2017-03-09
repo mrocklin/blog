@@ -21,7 +21,7 @@ Performing benchmarks to compare software is surprisingly difficult to do
 fairly, even assuming the best intentions of the author.  Technical developers
 can fall victim to a few natural human failings:
 
-1.  We judge other projects by our objectives rather than the objectives under which our own project was developed
+1.  We judge other projects by our own objectives rather than the objectives under which that project was developed
 2.  We fail to use other projects with the same expertise that we have for our own
 3.  We naturally gravitate towards cases at which our project excels
 4.  We improve our software during the benchmarking process
