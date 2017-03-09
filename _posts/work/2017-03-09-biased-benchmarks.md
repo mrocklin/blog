@@ -11,7 +11,7 @@ theme: twitter
 *This work is supported by [Continuum Analytics](http://continuum.io)
 the [XDATA Program](http://www.darpa.mil/program/XDATA)
 and the Data Driven Discovery Initiative from the [Moore
-Foundation](https://www.moore.org/)*
+Foundation](https://www.moore.org/).*
 
 Summary
 -------
@@ -38,7 +38,7 @@ that I maintain) and Spark Dataframes (the current standard).  My initial
 results showed that Dask.dataframes were overall *much* faster, somewhere like
 5x.
 
-These results were wrong.  They're weren't wrong in a factual sense, the
+These results were wrong.  They weren't wrong in a factual sense, and the
 experiments that I ran were clear and reproducible, but there was so much bias
 in how I selected, set up, and ran those experiments that the end result was
 misleading.  After checking results myself and then having other experts come
@@ -73,7 +73,7 @@ Spark's CSV solution is less awesome, but that's less about the quality of
 Spark and more a statement about how Spark users tend not to use CSV.  When
 they use text-based formats they're much more likely to use line-delimited
 JSON, which is typical in Spark's common use cases (web diagnostics, click
-logs, etc..)  Pandas/Dask came from the scientific and finance worlds where CSV
+logs, and so on).  Pandas/Dask came from the scientific and finance worlds where CSV
 is king while Spark came from the web world where JSON reigns.
 
 Conversely, Dask.dataframe hasn't bothered to hook up the `pandas.read_json`
@@ -89,10 +89,10 @@ claim to support Parquet well, and use that as the basis for comparison.
 Skewed Experience
 -----------------
 
-*Whoa, this other project has a lot of configuration parameters!  Lets just use
-the defaults*
+*Whoa, this other project has a lot of configuration parameters!  Let's just use
+the defaults.*
 
-Software is often easy to set up, but often requires experience set up
+Software is often easy to set up, but often requires experience to set up
 optimally.  Authors are naturally more adept at setting up their own software
 than the software of their competition.
 
@@ -103,7 +103,7 @@ figured that this would be a good benchmark not only of the software, but also
 on choices for sane defaults, which is a good design principle in itself.
 
 This failed spectacularly because I was making unconscious decisions like the
-size of machines that I was using for the experiment, CPU/memory ratios, etc..
+size of machines that I was using for the experiment, CPU/memory ratios, and so on.
 It turns out that Spark's defaults are optimized for *very small machines* (or
 more likely, small YARN containers) and use only 1GB of memory per executor by
 default while Dask is typically run on larger boxes or has the full use of a
@@ -125,7 +125,7 @@ primarily uses the other system.
 Preference towards strengths
 ----------------------------
 
-*Oh hey, we're doing **really** well here.  This is great!  Lets dive into this a
+*Oh hey, we're doing **really** well here.  This is great!  Let's dive into this a
 bit more.*
 
 It feels great to see your project doing well.  This emotional pleasure
@@ -155,7 +155,7 @@ a better experience for users in the future.  As a developer this is also how I
 operate.  I define a benchmark, profile my code, identify bottlenecks, and
 optimize.  Business as usual.
 
-However as an author of a comparative benchmark this also somewhat dishonest;
+However as an author of a comparative benchmark this is also somewhat dishonest;
 I'm not giving the Spark developers the same opportunity to find and fix
 similar performance issues in their software before I publish my results.  I'm
 also giving a biased picture to my readers.  I've made all of the pieces that
@@ -168,14 +168,14 @@ that level.
 Omission
 --------
 
-*So, this didn't go as planned.  Lets wait a few months until the next release.*
+*So, this didn't go as planned.  Let's wait a few months until the next release.*
 
 There is no motivation to publish negative results.  Unless of course you've
 just written a blogpost announcing that you plan to release benchmarks in the
 near future.  Then you're really forced to release numbers, even if they're
 mixed.
 
-That's ok, mixed numbers can be informative.  They build trust and
+That's ok. Mixed numbers can be informative.  They build trust and
 community.  And we all talk about open source community driven software, so
 these should be welcome.
 
@@ -186,7 +186,7 @@ Straight up bias
 *Look, we're not in grad-school any more.  We've got to convince companies to
 actually use this stuff.*
 
-Everything we've discussed so far assumes best intentions, that the author is
+Everything we've discussed so far assumes best intentions, and that the author is
 acting in good faith, but falling victim to basic human failings.
 
 However many developers today (including myself) are paid and work for
@@ -194,7 +194,7 @@ for-profit companies that need to make money.  To an increasing extent making
 this money depends on community mindshare, which means publishing
 benchmarks that sway users to our software.  Authors have bosses that
 they're trying to impress or the content and tone of an article may be
-influenced by other people within the company other than the stated author.
+influenced by people within the company other than the stated author.
 
 I've been pretty lucky working with Continuum Analytics (my employer) in that
 they've been pretty hands-off with technical writing.  For other
