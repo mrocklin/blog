@@ -19,7 +19,9 @@ This post briefly describes potential interactions between Dask and TensorFlow
 and then goes through a concrete example using them together for distributed
 training with a moderately complex architecture.
 
-This post was written in haste, see disclaimers below.
+This post was written in haste and the attached experiment is of low quality,
+see disclaimers below.  A similar and much better example with XGBoost is
+included in the comments at the end.
 
 
 Introduction
