@@ -2,7 +2,6 @@
 layout: post
 title: Dask and Pandas and XGBoost
 tagline: Playing nicely between distributed systems
-draft: true
 category: work
 tags: [Programming, Python, scipy]
 theme: twitter
@@ -26,6 +25,8 @@ between them.
 
 -  [Notebook](https://gist.github.com/mrocklin/3696fe2398dc7152c66bf593a674e4d9)
 -  [Screencast](https://youtu.be/Cc4E-PdDSro)
+-  [Github issue](https://github.com/dmlc/xgboost/issues/2032)
+
 
 Introduction
 ------------
@@ -385,4 +386,7 @@ Acknowledgements
 ----------------
 
 Thanks to [Tianqi Chen](http://homes.cs.washington.edu/~tqchen/) and [Olivier
-Grisel](http://ogrisel.com/) for their help when building `dask-xgboost`.
+Grisel](http://ogrisel.com/) for their help when [building and
+testing](https://github.com/dmlc/xgboost/issues/2032) `dask-xgboost`.  Thanks
+to [Will Warner](http://github.com/electronwill) for his help in editing this
+post.
