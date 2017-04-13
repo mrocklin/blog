@@ -186,7 +186,10 @@ Futures as a receipt.
 
 Under normal operation you don't need to think about Tornado futures at all
 (many Python users aren't familiar with asynchronous programming) but it's nice
-to know that the library will keep track of balancing out flow.
+to know that the library will keep track of balancing out flow.  The code below
+uses `@gen.coroutine` and `yield` common for Tornado coroutines.  This is
+similar to the async/await syntax in Python 3.  Again, you can safely ignore it
+if you're not familiar with asynchronous programming.
 
 ```python
 @gen.coroutine
@@ -270,10 +273,10 @@ source.emit(1)
 >>> L
 [1, 2, 3, 5]
 
->>> L
+>>> L  # wait a couple seconds, then check again
 [1, 2, 3, 5, 8, 13, 21, 34]
 
->>> L
+>>> L  # wait a couple seconds, then check again
 [1, 2, 3, 5, 8, 13, 21, 34, 55, 89]
 ```
 
@@ -407,6 +410,7 @@ directory](https://github.com/mrocklin/streams/tree/master/examples) for a
 basic Daskified web crawler).  It could use patient users with real-world use
 cases to test-drive things and hopefully provide PRs adding necessary features.
 
-Just to be clear, this was an educational experiment.  This library will not
-necessarily be maintained in the future.  It does not signal a change in Dask
-(though could if people choose to participate).
+I genuinely don't know if this project is worth pursuing.  This blogpost is a
+test to see if people have sufficient interest to use and contribute to such a
+library or if the best solution is to carry on with any of the fine solutions
+that already exist.
