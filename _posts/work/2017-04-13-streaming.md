@@ -369,7 +369,7 @@ are some aspects of it that I like quite a bit and want to highlight.
     event loop, but it's also fully operational in your local Python thread.
     There is no magic in the common case.  Everything up until time-handling
     runs with tools that you learn in an introductory programming class.
-2.  **Small and maintainable:** The codebase is currently a few hundred lines.
+2.  **Small and maintainable:** [The codebase](https://github.com/mrocklin/streams) is currently a few hundred lines.
     It is also, I claim, easy for other people to understand.  Here is the code
     for filter:
 
@@ -402,7 +402,8 @@ Future Work
 This project needs both users and developers.
 
 I find it fun and satisfying to work on and so encourage others to play around.
-The codebase is short and, I think, easily digestible in an hour or two.
+[The codebase](https://github.com/mrocklin/streams) is short and, I think,
+easily digestible in an hour or two.
 
 This project was built without a real use case (see the project's [examples
 directory](https://github.com/mrocklin/streams/tree/master/examples) for a
@@ -413,3 +414,5 @@ I genuinely don't know if this project is worth pursuing.  This blogpost is a
 test to see if people have sufficient interest to use and contribute to such a
 library or if the best solution is to carry on with any of the fine solutions
 that already exist.
+
+    pip install git+https://github.com/mrocklin/streams
