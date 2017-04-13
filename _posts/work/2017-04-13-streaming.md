@@ -64,21 +64,21 @@ seq = accumulate(lambda total, x: total + x, seq)
 12
 ```
 
-This is usually a fine way to handle infinite data streams.  However it gets a
-little weird if you don't want to block on calling `next(seq)` and have your
-program hang until new data comes in.   It also gets a little weird if you want
-to branch off your sequence to multiple outputs or consume from multiple
-inputs.  There are also a set of operations like rate limiting, time windowing,
-etc. that end up occurring frequently and which are tricky to implement
-if you're not comfortable using lots of threads and queues.  These
-complications often push people to a different model that sometimes goes by
-the name of "streaming" computation.
+This is usually a fine way to handle infinite data streams.  However this
+approach becomes awkward if you don't want to block on calling `next(seq)` and
+have your program hang until new data comes in.   This approach also becomes
+awkward when you want to branch off your sequence to multiple outputs and
+consume from multiple inputs.  Additionally there are operations like rate
+limiting, time windowing, etc. that occur frequently but are tricky to
+implement if you are not comfortable using threads and queues.  These
+complications often push people to a computation model that goes by the name
+*streaming*.
 
-To introduce this concept I'll use my new little library, currently called
-[streams](https://github.com/mrocklin/streams) (better name to come in the
-future).  However if you read this blogpost and decide you really want to use
-streaming systems in your workplace today then you should probably use some
-other library instead.  Common recommendations include the following:
+To introduce streaming systems in this blogpost I'll use my new tiny library,
+currently called [streams](https://github.com/mrocklin/streams) (better name to
+come in the future).  However if you decide to use streaming systems in your
+workplace then you should probably use some other more mature library instead.
+Common recommendations include the following:
 
 -  ReactiveX (RxPy)
 -  Flink
@@ -90,8 +90,8 @@ other library instead.  Common recommendations include the following:
 Streams
 -------
 
-OK, so lets make a stream, which is an infinite sequence of data into which we
-can emit values and from which we can subscribe to make new streams.
+We make a stream, which is an infinite sequence of data into which we can emit
+values and from which we can subscribe to make new streams.
 
 ```python
 from streams import Stream
@@ -127,9 +127,9 @@ And now lets push some data in at the source and see it arrive at the sink:
 [2, 6, 12]
 ```
 
-OK great, so we've accomplished the same result as our infinite iterator,
-except that rather than *pulling* data with `next` we push data through
-with `source.emit`.  And we've done all of this at only a 10x slowdown :)
+We've accomplished the same result as our infinite iterator, except that rather
+than *pulling* data with `next` we push data through with `source.emit`.  And
+we've done all of this at only a 10x slowdown over normal Python iteators :)
 (this library takes a few microseconds per element rather than CPython's normal
 100ns overhead).
 
@@ -139,7 +139,7 @@ This will get more interesting in the next few sections.
 Branching
 ---------
 
-This gets more interesting if we add multiple inputs and outputs.
+This approach becomes more interesting if we add multiple inputs and outputs.
 
 ```python
 source = Stream()
@@ -154,14 +154,15 @@ odds.accumulate(sub)
 Or we can combine streams together
 
 ```python
-s = combine_latest(evens, odds).map(sum)
+second_source = Stream()
+s = combine_latest(second_source, odds).map(sum)
 ```
 
 So you may have multiple different input sources updating at different rates
 and you may have multiple outputs, perhaps some going to a diagnostics
 dashboard, others going to long-term storage, others going to a database, etc..
-A streaming library makes it relatively easy to set up infrastructure for this
-and pipe everything to all of the right locations.
+A streaming library makes it relatively easy to set up infrastructure and pipe
+everything to the right locations.
 
 Time and Back Pressure
 ----------------------
@@ -184,8 +185,8 @@ Futures as a receipt.
               data that I just gave to you.
 
 Under normal operation you don't need to think about Tornado futures at all
-(most Python users aren't very familiar with asynchronous programming) but it's
-nice to know that the library will keep track of balancing out flow.
+(many Python users aren't familiar with asynchronous programming) but it's nice
+to know that the library will keep track of balancing out flow.
 
 ```python
 @gen.coroutine
@@ -211,7 +212,7 @@ source = Stream()
 source.timed_window(interval=0.050)  # Capture all records of the last 50ms into batches
       .filter(len)                   # Remove empty batches
       .map(...)                      # Do work on each batch
-      .buffer(10)                    # Allow ten results to pile up here
+      .buffer(10)                    # Allow ten batches to pile up here
       .sink(write_to_database)       # Potentially rate-limiting stage
 ```
 
@@ -254,6 +255,7 @@ create feedback loops.  Here is stream that produces the Fibonnacci sequence.
 To stop it from overwhelming our local process we added in a rate limiting step:
 
 ```python
+from streams import Stream
 source = Stream()
 s = source.sliding_window(2).map(sum)
 L = s.sink_to_list()  # store result in a list
@@ -275,18 +277,24 @@ source.emit(1)
 [1, 2, 3, 5, 8, 13, 21, 34, 55, 89]
 ```
 
+*Note: due to the time rate-limiting functionality this example relied on an
+event loop running somewhere in another thread.  This is the case for example
+in a Jupyter notebook, or if you have a Dask Client running.*
+
 
 Things that this doesn't do
 ---------------------------
 
-OK, so at this point if you're familiar with streaming systems then you're
-saying "Lets not get ahead of ourselves; there's way more to a good streaming
+If you are familiar with streaming systems then you may say the following:
+
+*Lets not get ahead of ourselves; there's way more to a good streaming
 system than what is presented here.  You need to handle parallelism, fault
-tolerance, out-of-order elements, event/processing times, etc.."  and you would
-be entirely correct.  What is presented here is not in any way a competitor to
-systems like Flink for production-level data engineering problems.  There is a
-*lot* of logic that hasn't been built here (and its good to remember that this
-project was built at night over a week).
+tolerance, out-of-order elements, event/processing times, etc..*
+
+... and you would be entirely correct.  What is presented here is not in any
+way a competitor to existing systems like Flink for production-level data
+engineering problems.  There is a *lot* of logic that hasn't been built here
+(and its good to remember that this project was built at night over a week).
 
 Although some of those things, and in particular the distributed computing
 bits, we may get for free.
