@@ -1,7 +1,6 @@
 ---
 layout: post
 title: Streaming Python Prototype
-draft: true
 category: work
 tags: [Programming, Python, scipy]
 theme: twitter
