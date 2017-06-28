@@ -133,6 +133,7 @@ github: [metadata]
 kramdown:
     input: GFM
     hard_wrap: false
+    parse_block_html: true
 gems:
     - jekyll-coffeescript
     - jekyll-paginate
