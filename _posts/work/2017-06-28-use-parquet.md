@@ -211,6 +211,24 @@ column is especially easy for Parquet) but generally Parquet will be *much*
 faster than CSV.  This lets us work from disk comfortably without worrying
 about how much memory we have.
 
+Convert
+-------
+
+So do yourself a favor and convert your data
+
+```python
+In [1]: import dask.dataframe as dd
+In [2]: df = dd.read_csv('csv/yellow_tripdata_2015-*.csv')
+In [3]: from dask.diagnostics import ProgressBar
+In [4]: ProgressBar().register()
+In [5]: df.to_parquet('yellow_tripdata.parquet')
+[############                            ] | 30% Completed |  1min 54.7s
+```
+
+If you want to be more clever you can specify dtypes and compression when
+converting.  This can definitely help give you significantly greater speedups,
+but just using the default settings will still be a large improvement.
+
 
 Parquet Versions
 ----------------
@@ -225,5 +243,3 @@ There are two nice Python Parquet packages out there
 Both are good.  Both can do most things.  Each has separate strengths.  The
 code above used `fastparquet` by default but you can change this in Dask with
 the `engine='arrow'` keyword if desired.
-
-
