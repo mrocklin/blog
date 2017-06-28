@@ -117,7 +117,6 @@ In [6]: df.passenger_count.sum().compute()
 [########################################] | 100% Completed |
 3min 58.8s
 Out[6]: 245566747
-
 ```
 
 We were able to ask questions about this data (and learn that 250 million
@@ -230,6 +229,20 @@ If you want to be more clever you can specify dtypes and compression when
 converting.  This can definitely help give you significantly greater speedups,
 but just using the default settings will still be a large improvement.
 
+
+Advantages
+----------
+
+Parquet enables the following:
+
+1.  Binary representation of data, allowing for speedy conversion of
+    bytes-on-disk to bytes-in-memory
+2.  Columnar storage, meaning that you can load in as few columns as you need
+    without loading the entire dataset
+3.  Row-chunked storage so that you can pull out data from a particular range
+    without touching the others
+4.  Per-chunk statistics so that you can find subsets quickly
+5.  Compression
 
 Parquet Versions
 ----------------
