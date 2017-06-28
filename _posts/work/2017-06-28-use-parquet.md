@@ -251,8 +251,8 @@ There are two nice Python packages with support for the Parquet format:
 
 1.  [pyarrow](https://arrow.apache.org/docs/python/parquet.html):
     Python bindings for the Apache Arrow and Apache Parquet C++ libraries
-2.  [fastparquet](http://fastparquet.readthedocs.io/en/latest/): a direct NumPy
-    + Numba implementation of the Parquet format
+2.  [fastparquet](http://fastparquet.readthedocs.io/en/latest/): a direct
+    NumPy + Numba implementation of the Parquet format
 
 Both are good.  Both can do most things.  Each has separate strengths.  The
 code above used `fastparquet` by default but you can change this in Dask with
