@@ -12,10 +12,11 @@ theme: twitter
 and the Data Driven Discovery Initiative from the [Moore
 Foundation](https://www.moore.org/).*
 
-This is a tiny blogpost to encourage you to use Parquet instead of CSV for your
-dataframe computations.  I'll use Dask.dataframe here but Pandas would work
-just as well.  I'll also use my local laptop here, but Parquet is an excellent
-format to use on a cluster.
+This is a tiny blogpost to encourage you to use
+[Parquet](http://parquet.apache.org/) instead of CSV for your dataframe
+computations.  I'll use Dask.dataframe here but Pandas would work just as well.
+I'll also use my local laptop here, but Parquet is an excellent format to use
+on a cluster.
 
 ### CSV is convenient, but slow
 
@@ -233,12 +234,12 @@ but just using the default settings will still be a large improvement.
 Parquet Versions
 ----------------
 
-There are two nice Python Parquet packages out there
+There are two nice Python packages with support for the Parquet format:
 
-1.  [Arrow + Parquet-CPP](https://arrow.apache.org/docs/python/parquet.html)
-    A C++ code base connected to Python through Arrow
-2.  [Fastparquet](http://fastparquet.readthedocs.io/en/latest/) a NumPy + Numba
-    codebase
+1.  [pyarrow](https://arrow.apache.org/docs/python/parquet.html):
+    Python bindings for the Apache Arrow and Apache Parquet C++ libraries
+2.  [fastparquet](http://fastparquet.readthedocs.io/en/latest/): a direct NumPy
+    + Numba implementation of the Parquet format
 
 Both are good.  Both can do most things.  Each has separate strengths.  The
 code above used `fastparquet` by default but you can change this in Dask with
