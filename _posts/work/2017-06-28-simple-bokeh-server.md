@@ -10,6 +10,8 @@ theme: twitter
 
 *This work is supported by [Continuum Analytics](http://continuum.io)*
 
+*This was cross posted to the Bokeh blog [here](https://bokeh.github.io/blog/2017/6/29/simple_bokeh_server/).  Please consider referencing and sharing that post via social media instead of this one.*
+
 This blogpost shows how to start a *very simple* bokeh server application
 *programmatically*.  For more complex examples, or for the more standard
 command line interface, see the [Bokeh
@@ -190,7 +192,7 @@ Final Thoughts
 
 I've found the Bokeh server to be incredibly helpful in my work and also very
 approachable once you understand how to set one up (as you now do).  I hope
-that this post serves people well. 
+that this post serves people well.
 This blogpost is available as a [Jupyter
 notebook](https://gist.github.com/e014f11aab7eb3fd12d83a746d8c87df) if you want
 to try it out yourself.
