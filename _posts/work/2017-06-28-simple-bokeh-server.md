@@ -2,7 +2,6 @@
 layout: post
 title: Programmatic Bokeh Servers
 category: work
-draft: true
 tags: [Programming, Python, scipy, dask]
 theme: twitter
 ---
