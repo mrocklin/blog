@@ -24,7 +24,7 @@ live-streaming, interactive visualizations that update with real-time data.  I
 personally use Bokeh to serve [real-time diagnostics for a distributed computing
 system](http://distributed.readthedocs.io/en/latest/web.html).  In this case I
 embed Bokeh directly into my library.  I've found it incredibly useful and easy
-to deploy sophisticated and beaufitul visualizations that help me understand
+to deploy sophisticated and beautiful visualizations that help me understand
 the deep inner-workings of my system.
 
 <img src="https://raw.githubusercontent.com/dask/dask-org/master/images/daskboard.gif"
@@ -93,12 +93,12 @@ client/browser and then updating plots in the browser.
 Bokeh handles this by keeping a synchronized table of data on the client and
 the server, the `ColumnDataSource`.  If you define plots around the column data
 source and then push more data into the source then Bokeh will handle the rest.
-Updating your plots in the browswer just requires pushing more data into the
+Updating your plots in the browser just requires pushing more data into the
 column data source on the server.
 
 In the example below every time someone connects to our server we make a new
 `ColumnDataSource`, make an update function that adds a new record into it,
-and set up a calllback to call that function every 100ms.  We then make a plot
+and set up a callback to call that function every 100ms.  We then make a plot
 around that data source to render the data as colored circles.
 
 Because this is a new Bokeh server we start this on a new port, though in
@@ -136,9 +136,9 @@ server.start()
      width="40%">
 
 By changing around the figures (or combining multiple figures, text, other
-visual elements, etc.) you have full freedom over the visual styling of your
+visual elements, and so on) you have full freedom over the visual styling of your
 web service.  By changing around the update function you can pull data from
-sensors, shove in more interesting data, etc..  This toy example is meant to
+sensors, shove in more interesting data, and so on.  This toy example is meant to
 provide the skeleton of a simple application; hopefully you can fill in details
 from your application.
 
@@ -182,7 +182,7 @@ def make_document(doc):
     doc.add_periodic_callback(update, 100)
 ```
 
-You can also have buttons, sliders, widgets, etc..  I rarely use these
+You can also have buttons, sliders, widgets, and so on.  I rarely use these
 personally though so they don't interest me as much.
 
 Final Thoughts
@@ -190,7 +190,7 @@ Final Thoughts
 
 I've found the Bokeh server to be incredibly helpful in my work and also very
 approachable once you understand how to set one up (as you now do).  I hope
-that this post serves people well.  If you want to try things out yourself.
+that this post serves people well. 
 This blogpost is available as a [Jupyter
 notebook](https://gist.github.com/e014f11aab7eb3fd12d83a746d8c87df) if you want
 to try it out yourself.
