@@ -61,7 +61,9 @@ def make_document(doc):
     server.start()
 ```
 
-<img src="{{ BASE_PATH }}/images/bokeh-server-line-plot.png" align="right">
+<img src="{{ BASE_PATH }}/images/bokeh-server-line-plot.png"
+     align="right"
+     width="40%">
 
 We make a function `make_document` which is called every time someone visits
 our website.  This function can create plots, call functions, and generally do
@@ -121,7 +123,8 @@ server = Server(apps, port=5001)
 server.start()
 ```
 
-<img src="{{ BASE_PATH }}/images/bokeh-server-circle-plot.gif" align="right">
+<img src="{{ BASE_PATH }}/images/bokeh-server-circle-plot.gif"
+     width="40%">
 
 By changing around the figures (or combining multiple figures, text, other
 visual elements, etc.) you have full freedom over the visual styling of your
@@ -129,6 +132,9 @@ web service.  By changing around the update function you can pull data from
 sensors, shove in more interesting data, etc..  This toy example is meant to
 provide the skeleton of a simple application; hopefully you can fill in details
 from your application.
+
+Real example
+------------
 
 Here is a simple example taken from Dask's dashboard that maintains a streaming
 time series plot with the number of idle and saturated workers in a Dask
