@@ -21,19 +21,25 @@ Motivation
 Many people know Bokeh as a tool for building web visualizations from languages
 like Python.  However I find that Bokeh's true value is in serving
 live-streaming, interactive visualizations that update with real-time data.  I
-personally use Bokeh to serve real-time diagnostics for a distributed computing
-system.  In this case I embed Bokeh directly into my library.  I've found it
-incredibly useful and easy to deploy sophisticated and beaufitul visualizations
-that help me understand the deep inner-workings of my system.
+personally use Bokeh to serve [real-time diagnostics for a distributed computing
+system](http://distributed.readthedocs.io/en/latest/web.html).  In this case I
+embed Bokeh directly into my library.  I've found it incredibly useful and easy
+to deploy sophisticated and beaufitul visualizations that help me understand
+the deep inner-workings of my system.
+
+<img src="https://raw.githubusercontent.com/dask/dask-org/master/images/daskboard.gif"
+     width="70%">
 
 Most of the (excellent) documentation focuses on stand-alone applications using
 the Bokeh server
 
     $ bokeh serve myapp.py
 
-However I mostly deal with programmers who would prefer to execute things
-programmatically.  I thought I'd provide some examples on how to do this within
-a Jupyter notebook.
+However as a developer who wants to integrate Bokeh into my application
+starting up a separate process from the command line doesn't work for me. Also,
+I find that starting things from Python tends to be a bit simpler on my brain.
+I thought I'd provide some examples on how to do this within a Jupyter
+notebook.
 
 Launch Bokeh Servers from a Notebook
 ------------------------------------
@@ -55,10 +61,10 @@ def make_document(doc):
     doc.title = "Hello, world!"
     doc.add_root(fig)
 
-    apps = {'/': Application(FunctionHandler(make_document))}
+apps = {'/': Application(FunctionHandler(make_document))}
 
-    server = Server(apps, port=5000)
-    server.start()
+server = Server(apps, port=5000)
+server.start()
 ```
 
 <img src="{{ BASE_PATH }}/images/bokeh-server-line-plot.png"
@@ -71,7 +77,10 @@ whatever it wants.  Here we make a simple line plot and register that plot with
 the document with the `doc.add_root(...)` method.
 
 This starts a Tornado web server and creates a new image whenever someone
-connects, similar to libraries like Tornado, or Flask
+connects, similar to libraries like Tornado, or Flask.  In this case our web
+server piggybacks on the Jupyter notebook's own IOLoop.  Because Bokeh is built
+on Tornado it can play nicely with other async applications like Tornado or
+Asyncio.
 
 Live Updates
 --------------
@@ -82,15 +91,15 @@ server, figuring out how web sockets work, sending the data to the
 client/browser and then updating plots in the browser.
 
 Bokeh handles this by keeping a synchronized table of data on the client and
-the server.  This is the `ColumnDataSource`.  If you define plots around the
-column data source and then push more data into the source then Bokeh will
-handle the rest, synchronizing the plots on the screen with the data that you
-provide.
+the server, the `ColumnDataSource`.  If you define plots around the column data
+source and then push more data into the source then Bokeh will handle the rest.
+Updating your plots in the browswer just requires pushing more data into the
+column data source on the server.
 
 In the example below every time someone connects to our server we make a new
-`ColumnDataSource`, make a function that will add a new record into it, and set
-up a calllback to call that function every 100ms.  We then make a plot around
-that data source to render the data as colored circles.
+`ColumnDataSource`, make an update function that adds a new record into it,
+and set up a calllback to call that function every 100ms.  We then make a plot
+around that data source to render the data as colored circles.
 
 Because this is a new Bokeh server we start this on a new port, though in
 practice if we had multiple pages we would just add them as multiple routes in
@@ -173,15 +182,16 @@ def make_document(doc):
     doc.add_periodic_callback(update, 100)
 ```
 
+You can also have buttons, sliders, widgets, etc..  I rarely use these
+personally though so they don't interest me as much.
+
 Final Thoughts
 --------------
 
-You can also have buttons, sliders, widgets, etc..  I rarely use these
-personally though so they don't interest me as much.  I've found the Bokeh
-server to be incredibly helpful in my work and also very approachable once you
-understand how to set one up (as you now do).  I hope that this post serves
-people well.  If you want to try things out yourself.  This blogpost is
-available as a [Jupyter
+I've found the Bokeh server to be incredibly helpful in my work and also very
+approachable once you understand how to set one up (as you now do).  I hope
+that this post serves people well.  If you want to try things out yourself.
+This blogpost is available as a [Jupyter
 notebook](https://gist.github.com/e014f11aab7eb3fd12d83a746d8c87df) if you want
 to try it out yourself.
 
