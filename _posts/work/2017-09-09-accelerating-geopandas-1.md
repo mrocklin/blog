@@ -133,7 +133,7 @@ first dataset mentioned above, crimes in Chicago, has roughly seven million
 entries and is several gigabytes in memory.  Analyzing this sort of dataset
 interactively with GeoPandas today is not feasible.
 
-<img src="{{BASE_IMAGE}}/images/geopandas-shapely-1.svg"
+<img src="{{BASE_PATH}}/images/geopandas-shapely-1.svg"
      width="50%"
      align="right">
 
@@ -190,9 +190,9 @@ Cythonizing GeoPandas
 Currently the slowdown in GeoPandas is because we iterate over every Shapely
 object in Python, rather than calling the underlying C library GEOS directly.
 
-<img src="{{BASE_IMAGE}}/images/geopandas-shapely-1.svg"
+<img src="{{BASE_PATH}}/images/geopandas-shapely-1.svg"
      width="49%">
-<img src="{{BASE_IMAGE}}/images/geopandas-shapely-2.svg"
+<img src="{{BASE_PATH}}/images/geopandas-shapely-2.svg"
      width="49%">
 
 So instead of using a Pandas `object`-dtype column that holds shapely objects
@@ -282,15 +282,15 @@ partitions.
 
 Just as dask.array organizes many NumPy arrays along a grid
 
-<img src="{{BASE_PATH}}/images/dask-array-black-text.svg">
+<img src="{{BASE_PATH}}/images/dask-array-black-text.svg" width="40%">
 
 or dask.dataframe organizes many Pandas dataframes along a linear index
 
-<img src="{{BASE_PATH}}/images/dask-dataframe.svg">
+<img src="{{BASE_PATH}}/images/dask-dataframe.svg" width="30%">
 
 Dask-geopandas organizes many GeoPandas dataframes along spatial regions
 
-<img src="{{BASE_PATH}}/images/nyc-boroughs.svg">
+<img src="{{BASE_PATH}}/images/nyc-boroughs.svg" width="50%">
 
 This gives us two advantages:
 
