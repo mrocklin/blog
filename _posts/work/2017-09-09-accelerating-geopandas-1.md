@@ -20,8 +20,8 @@ We briefly describe Python's GeoSpatial stack and the role of the GeoPandas
 library within that stack.  We then discuss two efforts to accelerate
 GeoPandas:
 
-1.  Accelerating GeoPandas with Cython
-2.  Parallelizing GeoPandas with Dask
+1.  Accelerating GeoPandas with C/Cython
+2.  Parallelizing GeoPandas with Dask for multi-core and distributed computing
 
 We give performance comparisons and end with work that still has to be done.
 
@@ -46,18 +46,26 @@ with the following passage on the utility of geospatial analysis to our society.
 > specifically, computational geometry.
 
 Shapely is one library within Python's GeoSpatial stack, which is currently
-composed of the following tools: TODO: links
+composed of the following tools:
 
-1.  Shapely: Manages shapes like points, linestrings, and polygons.
+1.  [Shapely](https://toblerity.org/shapely/manual.html):
+    Manages shapes like points, linestrings, and polygons.
     Wraps the GEOS C++ library
-2.  Fiona: Handles data ingestion.  Wraps the GDAL library
-3.  Rasterio: Handles raster data like sattelite imagery
-4.  GeoPandas: Extends Pandas with a column of shapely geometries to
+2.  [Fiona](https://toblerity.org/fiona/manual.html):
+    Handles data ingestion.  Wraps the GDAL library
+3.  [Rasterio](https://mapbox.github.io/rasterio/):
+    Handles raster data like satelite imagery
+4.  [GeoPandas](http://geopandas.org/):
+    Extends Pandas with a column of shapely geometries to
     intuitively query tables of geospatially annotated data.
 
-In this post we focus on GeoPandas, which manages tabular data that is
-annotated with geometry information.  For example GeoPandas makes it easy to
-load and plot the [Police Districts of
+In this post we focus on GeoPandas, a geospatial extension of Pandas which
+helps to manages tabular data that is annotated with geometry information like
+points, paths, and polygons.
+
+### GeoPandas Example
+
+For example GeoPandas makes it easy to load and plot the [Police Districts of
 Chicago](https://data.cityofchicago.org/Public-Safety/Boundaries-Police-Districts/4dt9-88ua).
 
 ```python
@@ -128,10 +136,10 @@ geospatially-aware datasets that you might find interesting:
 Performance
 -----------
 
-Unfortunately, GeoPandas can be quite slow, especially on larger datasets.  The
-first dataset mentioned above, crimes in Chicago, has roughly seven million
-entries and is several gigabytes in memory.  Analyzing this sort of dataset
-interactively with GeoPandas today is not feasible.
+Unfortunately GeoPandas can be slow, which limits interactive exploration on
+larger datasets.  The first dataset mentioned above, crimes in Chicago, has
+roughly seven million entries and is several gigabytes in memory.  Analyzing
+this sort of dataset interactively with GeoPandas today is not feasible.
 
 <img src="{{BASE_PATH}}/images/geopandas-shapely-1.svg"
      width="50%"
@@ -148,12 +156,19 @@ calls are roughly equivalent:
     [geom.distance(p) for geom in df.geometry]
 
 Where each `geom` object in this iteration is an individual Shapely object.
-Iterating through these Python objects can be quite slow.  In Joris's recent
-EuroSciPy talk he compares performance to PostGIS, the standard geospatial
-plugin for the PostgreSQL database.  He finds that while GeoPandas can often be
-as expressive as PostGIS it is also much slower.  Here is his benchmark query
-against the NYC census data.
+This is inefficient for two reasons:
 
+1.  Iterating through these Python objects can be quite slow relative to iterating through those same objects in C.
+2.  Shapely Python objects can take up a significant amount of RAM relative to
+    the GEOS Geometry objects that they wrap.
+
+In Joris's recent [EuroSciPy talk](https://www.youtube.com/watch?v=bWsA2R707BM)
+he compares performance to [PostGIS](http://postgis.net/), the standard
+geospatial plugin for the popular PostgreSQL database.  He finds that while
+GeoPandas can often be as expressive as PostGIS it is also much slower.  Here
+is his benchmark query against the NYC census data.
+
+#### PostGIS Query
 ```sql
 -- What is the population and racial make-up of the neighborhoods of Manhattan?
 SELECT
@@ -166,6 +181,8 @@ ON ST_Intersects(neighborhoods.geom, census.geom)
 GROUP BY neighborhoods.name
 ORDER BY white_pct DESC;
 ```
+
+#### GeoPandas Code
 
 ```python
 res = geopandas.sjoin(nyc_neighborhoods, nyc_census_blocks, op='intersects')
@@ -190,16 +207,26 @@ Cythonizing GeoPandas
 Currently the slowdown in GeoPandas is because we iterate over every Shapely
 object in Python, rather than calling the underlying C library GEOS directly.
 
+So instead of using a Pandas `object`-dtype column that *holds shapely objects*
+like the following image:
+
 <img src="{{BASE_PATH}}/images/geopandas-shapely-1.svg"
      width="49%">
+
+We instead store a NumPy array of *direct pointers to the GEOS objects*.
+
+
 <img src="{{BASE_PATH}}/images/geopandas-shapely-2.svg"
      width="49%">
 
-So instead of using a Pandas `object`-dtype column that holds shapely objects
-we instead store a NumPy array of direct pointers to the GEOS objects.  When we
-perform bulk vectorized operations on many GEOS pointers at once like in the
+This allows us to store data more efficiently, and also requires us to now
+write our loops over these geometries in C or Cython.  When we perform bulk
+vectorized operations on many GEOS pointers at once like in the
 `df.geometry.distance(some_point)` example above we can now drop down to Cython
-or C to write these loops directly.
+or C to write these loops directly, which provides a significant speedup.
+
+As an example, we include Cython code to compute distance between a GeoSeries
+and an individual shapely object below:
 
 ```python
 cdef GEOSGeometry *left_geom
@@ -217,6 +244,8 @@ with nogil:
 For more complex operations, like spatial joins, we tend to use C rather than
 Cython just for future development ease.  In both cases we use Cython to
 connect the C code back to Python.
+
+#### Results
 
 These operations now run at full C speed, and so we get back to exactly the
 performance of PostGIS.
@@ -268,27 +297,36 @@ tested.  Also spatial joins (a backbone of many geospatial operations) are up
 and running at full speed.  If you work in a non-production environment then
 Cythonized GeoPandas may be worth your time to investigate.
 
-TODO: installation instructions
+You can track future progress on this effort at
+[geopandas/geopandas #473](https://github.com/geopandas/geopandas/issues/473)
+which includes installation instructions.
 
 
-Parallelizing with Dask
------------------------
+Parallelism with Dask
+---------------------
 
-After we have maxed out performance on a single CPU the next natural thing to
-do is to parallelize with Dask.  There is a rudimentary
+Cythonizing can give us speedups in the 10x-100x range.  We can probably get
+another 2-3x by parallelizing with Dask on single multi-core machines, or use
+Dask to scale out onto clusters.  In order to do this we need to figure out how
+to split apart geospatial data in a way that most geospatial algorithms can be
+efficiently parallelized.  We will do this by partitioning our data spatially
+into different regions.  There is a rudimentary
 [dask-geopandas](https://github.com/mrocklin/dask-geopandas) library available
-on GitHub.  It organzies many GeoPandas GeoDataFrames in spatially aware
-partitions.
+on GitHub which implements this approach.
 
 Just as dask.array organizes many NumPy arrays along a grid
 
-<img src="{{BASE_PATH}}/images/dask-array-black-text.svg" width="40%">
+<img src="{{BASE_PATH}}/images/dask-array-black-text.svg" width="60%">
 
-or dask.dataframe organizes many Pandas dataframes along a linear index
+and dask.dataframe organizes many Pandas dataframes along a linear index
 
 <img src="{{BASE_PATH}}/images/dask-dataframe.svg" width="30%">
 
-Dask-geopandas organizes many GeoPandas dataframes along spatial regions
+Dask-geopandas organizes many GeoPandas dataframes along spatial regions.  In
+the example below we might partition data in the city of New York along its
+different boroughs.  Data for each borough would be handled separately by a
+different thread or, in a distributed situation, might live on a different
+machine.
 
 <img src="{{BASE_PATH}}/images/nyc-boroughs.svg" width="50%">
 
