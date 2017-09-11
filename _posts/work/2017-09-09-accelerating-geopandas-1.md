@@ -11,7 +11,7 @@ theme: twitter
 *This work is supported by [Anaconda Inc.](http://anaconda.com)
 and the NASA TODO program*
 
-*This work is a collaboration with [Joris Van den Bossche](https://github.com/jorisvandenbossche/).  This blogpost builds on [Joris's EuroSciPy talk](https://www.youtube.com/watch?v=bWsA2R707BM) on the same topic*
+*This work is a collaboration with [Joris Van den Bossche](https://github.com/jorisvandenbossche/).  This blogpost builds on [Joris's EuroSciPy talk](https://www.youtube.com/watch?v=bWsA2R707BM) ([slides](https://jorisvandenbossche.github.io/talks/2017_EuroScipy_geopandas/#1)) on the same topic*
 
 Summary
 -------
@@ -164,7 +164,7 @@ This is inefficient for two reasons:
 
 In Joris's recent [EuroSciPy talk](https://www.youtube.com/watch?v=bWsA2R707BM)
 he compares performance to [PostGIS](http://postgis.net/), the standard
-geospatial plugin for the popular PostgreSQL database.  He finds that while
+geospatial plugin for the popular PostgreSQL database ([original notebook](https://github.com/jorisvandenbossche/talks/blob/master/2017_EuroScipy_geopandas/geopandas_postgis_comparison.ipynb) with the comparison).  He finds that while
 GeoPandas can often be as expressive as PostGIS it is also much slower.  Here
 is his benchmark query against the NYC census data.
 
@@ -271,9 +271,12 @@ how it tracks a normal integer array.  This is both for usability reasons, like
 we want to render them differently and don't want users to be able to perform
 numeric operations like sum and mean on these arrays, and also for stability
 reasons, because we need to track these pointers and release their allocated
-GEOSGeometry objects from memory at the appropriate times.  This will require
-some changes to Pandas itself to enable custom block types.   TODO: get details
-and github links from Joris.
+GEOSGeometry objects from memory at the appropriate times. Currently, this
+goal is pursued by creating a new block type, the GeometryBlock ('blocks' are
+the internal building blocks of pandas that hold the data of the different columns).
+This will require some changes to Pandas itself to enable custom block types
+(see [this issue](https://github.com/pandas-dev/pandas/issues/17144) on the pandas
+issue tracker).
 
 Second, data ingestion is still quite slow.  This relies not on GEOS, but on
 GDAL/OGR, which is handled in Python today by Fiona.  Fiona is more optimized
