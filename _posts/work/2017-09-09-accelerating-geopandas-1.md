@@ -338,7 +338,63 @@ This gives us two advantages:
     engage only those parts of the parallel dataframe that we know are relevant
     for various parts of the computation.
 
-TODO: example
+### Design
+
+As mentioned above a Dask GeoDataFrame is a collection of GeoPandas
+GeoDataFrame objects, each associated to a polygon.  Ideally those polygons are
+disjoint, so for any particular query we only need to touch a small number of
+regions.  However in practice they may come to overlap for a few reasons:
+
+1.  Collections of lines or polygons will necessarily overlap somewhat.  There
+    may not be clean divisions that don't at least partially intersect their
+    constituent elements.
+2.  In common practice we may choose not to partition our data spatially (this
+    can take some time).  In these cases the regions used for spatial
+    partitioning are given infinite extent.
+
+### Example
+
+Given a GeoPandas dataframe
+
+```python
+import geopandas as gpd
+df = gpd.read_file('...')
+```
+
+We can repartition it into a Dask-GeoPandas dataframe either naively by rows.
+This does not provide a spatial partitioning and so won't gain the efficiencies
+of spatial reasoning, but will still provide basic multi-core parallelism.
+
+```python
+import dask_geopandas as dg
+ddf = dg.from_pandas(df, npartitions=4)
+```
+
+We can also repartition by a set of known regions.  This suffers an an upfront
+cost of a spatial join, but enables spatial-aware computations in the future to
+be faster.
+
+```python
+regions = gpd.read_file('boundaries.shp')
+
+ddf = dg.repartition(df, regions)
+```
+
+Additionally, if you have a distributed dask.dataframe you can pass columns of
+x-y points to the `set_geometry` method.  Currently this only supports point
+data.
+
+```python
+import dask.dataframe as dd
+import dask_geopandas as dg
+
+df = dd.read_csv('...')
+
+df = df.set_geometry(df[['latitude', 'longitude']])
+```
+
+TODO: actual experiment
+
 
 Problems
 --------
@@ -348,14 +404,20 @@ break for non-trivial applications (and indeed many trivial ones).  It was
 designed to see how hard it would be to implement some of the trickier
 operations like spatial joins, repartitioning, and overlays.  This is why, for
 example, it supports a fully distributed spatial join, but lacks simple
-operations like series addition.
+operations like series addition.  There are other longer-term issues as well.
 
-There are other longer term problems as well.  For example geo-spatial
-serialization is not particularly fast.  We currently use the standard
-"well known binary" WKB format common in other geospatial applications but have
-found it to be fairly slow, which bogs down inter-process parallelism.
+Serialization costs are managable, but decently high.  We currently use the
+standard "well known binary" WKB format common in other geospatial applications
+but have found it to be fairly slow, which bogs down inter-process parallelism.
+
 Similarly distributed and spatially partitioned data stores don't seem to be
 common (or at least I haven't run across them yet).
+
+It's not clear how dask-geopandas dataframes and normal dask dataframes should
+interact.  It would be very convenient to reuse all of the algorithms in
+dask.dataframe, but the index structures of the two libraries is very
+different.  This may require some clever software engineering on the part of
+the Dask developers.
 
 Still though, these seem surmountable and generally this process has been easy
 so far.  I suspect that we can build an intuitive and performant parallel GIS
