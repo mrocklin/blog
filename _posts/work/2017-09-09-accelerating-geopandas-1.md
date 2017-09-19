@@ -8,28 +8,59 @@ theme: twitter
 ---
 {% include JB/setup %}
 
-*This work is supported by [Anaconda Inc.](http://anaconda.com)
-and the NASA TODO program*
+*This work is supported by [Anaconda Inc.](http://anaconda.com), the Data
+Driven Discovery Initiative from the [Moore
+Foundation](https://www.moore.org/), and [NASA SBIR
+NNX16CG43P](https://sbir.nasa.gov/SBIR/abstracts/16/sbir/phase2/SBIR-16-2-S5.03-7927.html)*
 
 *This work is a collaboration with [Joris Van den Bossche](https://github.com/jorisvandenbossche/).  This blogpost builds on [Joris's EuroSciPy talk](https://www.youtube.com/watch?v=bWsA2R707BM) ([slides](https://jorisvandenbossche.github.io/talks/2017_EuroScipy_geopandas/#1)) on the same topic*
 
-Summary
+TL;DR:
 -------
 
-We briefly describe Python's GeoSpatial stack and the role of the GeoPandas
-library within that stack.  We then discuss two efforts to accelerate
-GeoPandas:
+Python's Geospatial stack is slow.  We accelerate the GeoPandas library with
+Cython and Dask.  Cython provides 10-100x speedups.  Dask gives an additional
+3-4x on a multi-core laptop.  Everything is still rough, please come help.
 
-1.  Accelerating GeoPandas with C/Cython
-2.  Parallelizing GeoPandas with Dask for multi-core and distributed computing
+We start by reproducing a
+[blogpost](https://medium.com/towards-data-science/geospatial-operations-at-scale-with-dask-and-geopandas-4d92d00eb7e8)
+published last June, but with 30x speedups.  Then we talk about how we achieved
+the speedup with Cython and Dask.
 
-We give performance comparisons and end with work that still has to be done.
+*All code in this post is experiemntal.  It should not be relied upon.*
 
-This work is not yet appropriate for general use, but may be appropriate for
-early adopters and developers.
 
-Background
+Experiment
 ----------
+
+In June [Ravi Shekhar](http://people.earth.yale.edu/profile/ravi-shekhar/about)
+published a blogpost [Geospatial Operations at Scale with Dask and GeoPandas](https://medium.com/towards-data-science/geospatial-operations-at-scale-with-dask-and-geopandas-4d92d00eb7e8)
+in which he counted the number of rides originating from each of the official
+taxi zones of New York City.  He read, processed, and plotted 120 million
+rides, performing an expensive point-in-polygon test for each ride, and produced a
+figure much like the following:
+
+TODO: image
+
+This took about three hours on his laptop.  He used Dask and a bit of custom
+code to parallelize Geopandas across all of his cores.  Using this combination he
+got close to the speed of PostGIS, but from Python.
+
+Today, using an accelerated GeoPandas and a new dask-geopandas library, we can do
+the above computation in around eight minutes (half of which is reading CSV
+files) and so can produce a number of other interesting images with faster
+interaction times.
+
+TODO: images
+
+A full notebook producing these computations is available here: TODO
+
+The rest of this article talks about GeoPandas, Cython, and speeding up
+geospatial data analysis.
+
+
+Background in Geospatial Data
+-----------------------------
 
 The [Shapely User Manual](https://toblerity.org/shapely/manual.html) begins
 with the following passage on the utility of geospatial analysis to our society.
@@ -45,8 +76,8 @@ with the following passage on the utility of geospatial analysis to our society.
 > questions addressable using non-statistical spatial analysis, and more
 > specifically, computational geometry.
 
-Shapely is one library within Python's GeoSpatial stack, which is currently
-composed of the following tools:
+Shapely is part of Python's GeoSpatial stack which is currently composed of the
+following libraries:
 
 1.  [Shapely](https://toblerity.org/shapely/manual.html):
     Manages shapes like points, linestrings, and polygons.
@@ -59,13 +90,22 @@ composed of the following tools:
     Extends Pandas with a column of shapely geometries to
     intuitively query tables of geospatially annotated data.
 
+These libraries provide intuitive Python wrappers around the OSGeo C/C++
+libraries (GEOS, GDAL, ...) which power virtually every open source geospatial
+library, like PostGIS, QGIS, etc..  They provide the same functionality, but
+are typically much slower due to how they use Python.  This is acceptable for
+small datasets, but becomes an issue as we transition to larger and larger
+datasets.
+
 In this post we focus on GeoPandas, a geospatial extension of Pandas which
-helps to manages tabular data that is annotated with geometry information like
-points, paths, and polygons.
+manages tabular data that is annotated with geometry information like points,
+paths, and polygons.
+
 
 ### GeoPandas Example
 
-For example GeoPandas makes it easy to load and plot the [Police Districts of
+GeoPandas makes it easy to load, manipulate, and plot geospatial data.  Here
+are the [Police Districts of
 Chicago](https://data.cityofchicago.org/Public-Safety/Boundaries-Police-Districts/4dt9-88ua).
 
 ```python
@@ -122,10 +162,10 @@ df.plot(color='black')
 ```
 <img src="{{BASE_PATH}}/images/chicago-police-districts.png">
 
-Municipal data like this for cities around the world is becoming increasingly
-more common.  Cities are now doing a wonderful job of publishing data in the
-open, which provides transparency and an opportunity for citizens to help
-analyze, understand, and improve their communities..  Here are a few fun
+Open data for cities is now widely available.  This is new and very exciting.
+Cities are doing a wonderful job publishing data in the open. This provides
+transparency and an opportunity for civic involvement to help analyze,
+understand, and improve our communities.  Here are a few fun
 geospatially-aware datasets that you might find interesting:
 
 1.  [Chicago Crimes from 2001 to present (one week ago)](https://data.cityofchicago.org/Public-Safety/Crimes-2001-to-present/ijzp-q8t2)
@@ -133,34 +173,37 @@ geospatially-aware datasets that you might find interesting:
 3.  [Bike lanes in New Orleans](http://portal-nolagis.opendata.arcgis.com/datasets/bike-lanes)
 4.  [New Orleans Police Department incidents involving the use of force](https://data.nola.gov/Public-Safety-and-Preparedness/NOPD-Use-of-Force-Incidents/9mnw-mbde)
 
+
 Performance
 -----------
 
-Unfortunately GeoPandas can be slow, which limits interactive exploration on
-larger datasets.  The first dataset mentioned above, crimes in Chicago, has
-roughly seven million entries and is several gigabytes in memory.  Analyzing
-this sort of dataset interactively with GeoPandas today is not feasible.
+Unfortunately GeoPandas is slow.  This limits interactive exploration on larger
+datasets.  For example Chicago crimes (the first dataset above) has seven
+million entries and is several gigabytes in memory.  Analyzing a dataset of
+this size interactively with GeoPandas is not feasible today.  This is
+unfortunate, because crime in Chicago is worth understanding.
 
 <img src="{{BASE_PATH}}/images/geopandas-shapely-1.svg"
      width="50%"
      align="right">
 
-This slow performance is because of how GeoPandas is designed today.  Today
-GeoPandas is a Pandas dataframe with a special `object`-dtype column that
-stores Shapely geometries.  Shapely geometries are Python objects that provide
-a Python interface and reference to GEOS Geometry objects in C.  GeoPandas
-operations are really just Python for loops over shapely calls so the following
-calls are roughly equivalent:
+This slowdown is because GeoPandas wraps each geometry (like a point, line, or
+polygon) with a Shapely object and stores all of those objects in an
+`object`-dtype column.  When we compute a GeoPandas operation on all of our
+shapes we just iterate over these shapes in Python
 
-    df.geometry.distance(some_point)  # this line is the same as the line below
-    [geom.distance(p) for geom in df.geometry]
+```python
+def distance(self, other):
+    result = [geom.distance(other)
+              for geom in self.geometry]
+    return pd.Series(result)
+```
 
 Where each `geom` object in this iteration is an individual Shapely object.
 This is inefficient for two reasons:
 
-1.  Iterating through these Python objects can be quite slow relative to iterating through those same objects in C.
-2.  Shapely Python objects can take up a significant amount of RAM relative to
-    the GEOS Geometry objects that they wrap.
+1.  Iterating through Python objects is slow relative to iterating through those same objects in C.
+2.  Shapely Python objects consume more memory than the GEOS Geometry objects that they wrap.
 
 In Joris's recent [EuroSciPy talk](https://www.youtube.com/watch?v=bWsA2R707BM)
 he compares performance to [PostGIS](http://postgis.net/), the standard
@@ -198,14 +241,13 @@ He observes the following performance comparison.
 
 <img src="{{BASE_PATH}}/images/timings_sjoin.png">
 
-Fortunately, we can improve upon this both by accelerating GeoPandas with
-Cython, and then by parallelizing it with Dask.
 
 Cythonizing GeoPandas
 ---------------------
 
-Currently the slowdown in GeoPandas is because we iterate over every Shapely
-object in Python, rather than calling the underlying C library GEOS directly.
+Fortunately, we've rewritten GeoPandas with Cython to directly loop over the
+underlying GEOS pointers.  This provides a 10-100x speedup depending on the
+operation.
 
 So instead of using a Pandas `object`-dtype column that *holds shapely objects*
 like the following image:
@@ -215,50 +257,49 @@ like the following image:
 
 We instead store a NumPy array of *direct pointers to the GEOS objects*.
 
-
 <img src="{{BASE_PATH}}/images/geopandas-shapely-2.svg"
      width="49%">
 
-This allows us to store data more efficiently, and also requires us to now
-write our loops over these geometries in C or Cython.  When we perform bulk
-vectorized operations on many GEOS pointers at once like in the
-`df.geometry.distance(some_point)` example above we can now drop down to Cython
-or C to write these loops directly, which provides a significant speedup.
-
-As an example, we include Cython code to compute distance between a GeoSeries
-and an individual shapely object below:
+As an example, our function for distance above now looks like the following
+(some liberties taken for brevity):
 
 ```python
-cdef GEOSGeometry *left_geom
-cdef GEOSGeometry *right_geom = some_point.__geom__  # a geometry pointer
+cpdef distance(self, other):
+    cdef int n = self.size
+    cdef GEOSGeometry *left_geom
+    cdef GEOSGeometry *right_geom = other.__geom__  # a geometry pointer
+    geometries = self._geometry_array
 
-with nogil:
-    for idx in xrange(n):
-        left_geom = <GEOSGeometry *> arr[idx]
-        if left_geom != NULL:
-            distance = GEOSDistance_r(handle, left_geom, some_point.__geom)
-        else:
-            distance = NaN
+    with nogil:
+        for idx in xrange(n):
+            left_geom = <GEOSGeometry *> geometries[idx]
+            if left_geom != NULL:
+                distance = GEOSDistance_r(left_geom, some_point.__geom)
+            else:
+                distance = NaN
 ```
 
-For more complex operations, like spatial joins, we tend to use C rather than
-Cython just for future development ease.  In both cases we use Cython to
-connect the C code back to Python.
+For fast operations we see speedups of 100x.  For slower operations we're
+closer to 10x.  For operations that are more complex, like spatial joins, we
+use straight C rather than Cython for future development ease.  In both cases
+we use Cython to connect the C code back to Python.
+
 
 #### Results
 
 These operations now run at full C speed, and so we get back to exactly the
-performance of PostGIS.
+performance of PostGIS.  Joris reports the following results:
 
 <img src="{{BASE_PATH}}/images/timings_sjoin_all.png">
 
-This is not surprising because PostGIS is using the same GEOS library
-internally.  In fact, nearly *all* open source GIS libraries all depend on
-GEOS.  These algorithms are not particularly complex, so it is not surprising
-that everyone has implemented them more or less exactly the same.
+GeoPandas and PostGIS run at almost exactly the same speed.  This is because
+they use the same underlying C library, GEOS.  These algorithms are not
+particularly complex, so it is not surprising that everyone implements
+them more or less in exactly the same way.
 
 This is great.  The Python GIS stack now has a full-speed library that operates
 as fast as any other open GIS system is likely to manage.
+
 
 Problems
 --------
@@ -305,31 +346,37 @@ You can track future progress on this effort at
 which includes installation instructions.
 
 
-Parallelism with Dask
+Parallelize with Dask
 ---------------------
 
-Cythonizing can give us speedups in the 10x-100x range.  We can probably get
-another 2-3x by parallelizing with Dask on single multi-core machines, or use
-Dask to scale out onto clusters.  In order to do this we need to figure out how
-to split apart geospatial data in a way that most geospatial algorithms can be
-efficiently parallelized.  We will do this by partitioning our data spatially
-into different regions.  There is a rudimentary
-[dask-geopandas](https://github.com/mrocklin/dask-geopandas) library available
-on GitHub which implements this approach.
+Cythonizing gives us speedups in the 10x-100x range.  We use a single core as
+effectively as is possible with the GEOS library.  Now we move on to using
+multiple cores in parallel.  This gives us an extra 3-4x on a standard 4 core
+laptop.  We can also scale to clusters, though I'll leave that for a future
+blogpost.
 
-Just as dask.array organizes many NumPy arrays along a grid
+To parallelize we need to split apart our dataset into multiple chunks.  We can
+do this naively by placing the first million rows in one chunk, the second
+million rows in another chunk, etc. or we can partition our data spatially,
+for example by placing all of the data for one region of our dataset in one
+chunk and all of the data for another region in another chunk, and so on.
+Both approaches are implemented in a rudimentary
+[dask-geopandas](https://github.com/mrocklin/dask-geopandas) library
+available on GitHub.
+
+So just as dask-array organizes many NumPy arrays along a grid
 
 <img src="{{BASE_PATH}}/images/dask-array-black-text.svg" width="60%">
 
-and dask.dataframe organizes many Pandas dataframes along a linear index
+and dask-dataframe organizes many Pandas dataframes along a linear index
 
 <img src="{{BASE_PATH}}/images/dask-dataframe.svg" width="30%">
 
-Dask-geopandas organizes many GeoPandas dataframes along spatial regions.  In
-the example below we might partition data in the city of New York along its
-different boroughs.  Data for each borough would be handled separately by a
-different thread or, in a distributed situation, might live on a different
-machine.
+the dask-geopandas library organizes many GeoPandas dataframes into spatial
+regions.  In the example below we might partition data in the city of New York
+into its different boroughs.  Data for each borough would be handled
+separately by a different thread or, in a distributed situation, might live on
+a different machine.
 
 <img src="{{BASE_PATH}}/images/nyc-boroughs.svg" width="50%">
 
@@ -340,6 +387,10 @@ This gives us two advantages:
 2.  For spatially aware operations, like spatial joins or subselections we can
     engage only those parts of the parallel dataframe that we know are relevant
     for various parts of the computation.
+
+However this is also expensive and not always necessary.  In the example at the
+bottom of this post we won't do this, and will still get significant speedups.
+
 
 ### Design
 
@@ -355,61 +406,19 @@ regions.  However in practice they may come to overlap for a few reasons:
     can take some time).  In these cases the regions used for spatial
     partitioning are given infinite extent.
 
-### Example
-
-Given a GeoPandas dataframe
-
-```python
-import geopandas as gpd
-df = gpd.read_file('...')
-```
-
-We can repartition it into a Dask-GeoPandas dataframe either naively by rows.
-This does not provide a spatial partitioning and so won't gain the efficiencies
-of spatial reasoning, but will still provide basic multi-core parallelism.
-
-```python
-import dask_geopandas as dg
-ddf = dg.from_pandas(df, npartitions=4)
-```
-
-We can also repartition by a set of known regions.  This suffers an an upfront
-cost of a spatial join, but enables spatial-aware computations in the future to
-be faster.
-
-```python
-regions = gpd.read_file('boundaries.shp')
-
-ddf = dg.repartition(df, regions)
-```
-
-Additionally, if you have a distributed dask.dataframe you can pass columns of
-x-y points to the `set_geometry` method.  Currently this only supports point
-data.
-
-```python
-import dask.dataframe as dd
-import dask_geopandas as dg
-
-df = dd.read_csv('...')
-
-df = df.set_geometry(df[['latitude', 'longitude']])
-```
-
-TODO: actual experiment
-
 
 Problems
 --------
 
-The dask-geopandas project is just a prototype at the moment.  It will easily
-break for non-trivial applications (and indeed many trivial ones).  It was
-designed to see how hard it would be to implement some of the trickier
-operations like spatial joins, repartitioning, and overlays.  This is why, for
-example, it supports a fully distributed spatial join, but lacks simple
-operations like series addition.  There are other longer-term issues as well.
+The [dask-geopandas](https://github.com/mrocklin/dask-geopandas) project is
+currently a prototype.  It will easily break for non-trivial applications (and
+indeed many trivial ones).  It was designed to see how hard it would be to
+implement some of the trickier operations like spatial joins, repartitioning,
+and overlays.  This is why, for example, it supports a fully distributed
+spatial join, but lacks simple operations like indexing.  There are
+other longer-term issues as well.
 
-Serialization costs are managable, but decently high.  We currently use the
+Serialization costs are manageable, but decently high.  We currently use the
 standard "well known binary" WKB format common in other geospatial applications
 but have found it to be fairly slow, which bogs down inter-process parallelism.
 
@@ -425,6 +434,9 @@ the Dask developers.
 Still though, these seem surmountable and generally this process has been easy
 so far.  I suspect that we can build an intuitive and performant parallel GIS
 analytics system with modest effort.
+
+The notebook for the example at the start of the blogpost shows using
+dask-geopandas with good results.
 
 
 Conclusion
