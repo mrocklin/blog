@@ -86,6 +86,7 @@ blogpost](http://activisiongamescience.github.io/2016/06/15/Kafka-Client-Benchma
 which gives benchmarks comparing the three libraries.  The primary numeric
 results follow below:
 
+
 ### Producer Throughput
 
 <table border="1" class="dataframe">
@@ -119,7 +120,7 @@ results follow below:
     <tr>
       <th>python_kafka_producer</th>
       <td>68</td>
-      <td>1.4
+      <td>1.4</td>
       <td>15000</td>
     </tr>
   </tbody>
@@ -164,6 +165,7 @@ results follow below:
     </tr>
   </tbody>
 </table>
+
 
 *Note: I discovered this article on [parsely/pykafka #559](https://github.com/Parsely/pykafka/issues/559), which has good conversation about the three libraries.*
 
