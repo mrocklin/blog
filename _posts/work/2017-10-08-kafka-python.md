@@ -105,16 +105,16 @@ results follow below:
       <td>183456.277455</td>
     </tr>
     <tr>
-      <th>pykafka_producer</th>
-      <td>57.318527</td>
-      <td>1.663815</td>
-      <td>17446.365994</td>
-    </tr>
-    <tr>
       <th>pykafka_producer_rdkafka</th>
       <td>15.724413</td>
       <td>6.064928</td>
       <td>63595.378094</td>
+    </tr>
+    <tr>
+      <th>pykafka_producer</th>
+      <td>57.318527</td>
+      <td>1.663815</td>
+      <td>17446.365994</td>
     </tr>
     <tr>
       <th>python_kafka_producer</th>
@@ -145,16 +145,16 @@ results follow below:
       <td>261407.908007</td>
     </tr>
     <tr>
-      <th>pykafka_consumer</th>
-      <td>29.431728</td>
-      <td>3.240293</td>
-      <td>33976.938217</td>
-    </tr>
-    <tr>
       <th>pykafka_consumer_rdkafka</th>
       <td>6.086001</td>
       <td>15.669966</td>
       <td>164311.503412</td>
+    </tr>
+    <tr>
+      <th>pykafka_consumer</th>
+      <td>29.431728</td>
+      <td>3.240293</td>
+      <td>33976.938217</td>
     </tr>
     <tr>
       <th>python_kafka_consumer</th>
