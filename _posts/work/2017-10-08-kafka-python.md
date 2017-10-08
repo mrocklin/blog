@@ -100,27 +100,27 @@ results follow below:
   <tbody>
     <tr>
       <th>confluent_kafka_producer</th>
-      <td>5.450890</td>
-      <td>17.495754</td>
-      <td>183456.277455</td>
+      <td>5.4</td>
+      <td>17</td>
+      <td>183000</td>
     </tr>
     <tr>
       <th>pykafka_producer_rdkafka</th>
-      <td>15.724413</td>
-      <td>6.064928</td>
-      <td>63595.378094</td>
+      <td>16</td>
+      <td>6.1</td>
+      <td>64000</td>
     </tr>
     <tr>
       <th>pykafka_producer</th>
-      <td>57.318527</td>
-      <td>1.663815</td>
-      <td>17446.365994</td>
+      <td>57</td>
+      <td>1.7</td>
+      <td>17000</td>
     </tr>
     <tr>
       <th>python_kafka_producer</th>
-      <td>67.855882</td>
-      <td>1.405441</td>
-      <td>14737.115900</td>
+      <td>68</td>
+      <td>1.4
+      <td>15000</td>
     </tr>
   </tbody>
 </table>
@@ -140,27 +140,27 @@ results follow below:
   <tbody>
     <tr>
       <th>confluent_kafka_consumer</th>
-      <td>3.825439</td>
-      <td>24.929801</td>
-      <td>261407.908007</td>
+      <td>3.8</td>
+      <td>25</td>
+      <td>261000</td>
     </tr>
     <tr>
       <th>pykafka_consumer_rdkafka</th>
-      <td>6.086001</td>
-      <td>15.669966</td>
-      <td>164311.503412</td>
+      <td>6.1</td>
+      <td>17</td>
+      <td>164000</td>
     </tr>
     <tr>
       <th>pykafka_consumer</th>
-      <td>29.431728</td>
-      <td>3.240293</td>
-      <td>33976.938217</td>
+      <td>29</td>
+      <td>3.2</td>
+      <td>34000</td>
     </tr>
     <tr>
       <th>python_kafka_consumer</th>
-      <td>26.547753</td>
-      <td>3.592298</td>
-      <td>37667.971237</td>
+      <td>26</td>
+      <td>3.6</td>
+      <td>38000</td>
     </tr>
   </tbody>
 </table>
