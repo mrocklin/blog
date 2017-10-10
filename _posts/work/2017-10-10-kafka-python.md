@@ -87,6 +87,9 @@ blogpost](http://activisiongamescience.github.io/2016/06/15/Kafka-Client-Benchma
 which gives benchmarks comparing the three libraries.  The primary numeric
 results follow below:
 
+*Note: It's worth noting that this blogpost was moving smallish 100 byte messages
+around.  I would hope that Kafka would perform better (closer to network
+bandwidths) when messages are of a decent size.*
 
 ### Producer Throughput
 
