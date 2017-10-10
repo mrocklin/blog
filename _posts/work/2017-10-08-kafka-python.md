@@ -54,9 +54,10 @@ are optionally backed by a C implementation,
 -  [kafka-python](https://kafka-python.readthedocs.io/en/master/): The first on
    the scene, a Pure Python Kafka client with robust documentation and an API
    that is fairly faithful to the original Java API.  This implementation has
-   the most stars on GitHub, but also lacks a connection to the fast C library.
-   I'll admit that I didn't spend enough time on this project to judge it well
-   because of this.
+   the most stars on GitHub, the most active development team (by number of
+   committers) but also lacks a connection to the fast C library.  I'll admit
+   that I didn't spend enough time on this project to judge it well because of
+   this.
 
 -  [PyKafka](http://pykafka.readthedocs.io/en/latest/): The second
    implementation chronologically.  This library is maintained by
@@ -79,7 +80,7 @@ are optionally backed by a C implementation,
 Performance
 -----------
 
-Confluent-kafka message-consumption bandwidths are around 30% higher and
+Confluent-kafka message-consumption bandwidths are around 50% higher and
 message-production bandwidths are around 3x higher than PyKafka, both of which
 are significantly higher than kafka-python.  I'm taking these numbers from
 [this
@@ -199,7 +200,7 @@ However, I persisted with confluent-kafka, found the right [Java
 documentation](https://kafka.apache.org/documentation/#api), and eventually did
 get things up and running.  Once this happened everything fell into place and I
 was able to easily build applications with Confluent-kafka that were both
-simple and speedy.
+simple and fast.
 
 
 Development experience
@@ -245,9 +246,10 @@ pykafka$ git shortlog -ns --since "six months ago"
 In regards to the codebases I found that PyKafka was easier to hack on for a
 few reasons:
 
-1.  PyKafka is written in Python rather than C extensions, and so it is more
-    accessible to a broader development base.  I find that Python C extensions
-    are not pleasant to work with, even if you are comfortable with C.
+1.  Most of PyKafka is written in Python rather than C extensions, and so it is
+    more accessible to a broader development base.  I find that Python C
+    extensions are not pleasant to work with, even if you are comfortable with
+    C.
 2.  PyKafka appears to be much more extensively tested.  PyKafka actually spins
     up a local Kafka instance to do comprehensive integration tests while
     Confluent-kafka seems to only test API without actually running against a
