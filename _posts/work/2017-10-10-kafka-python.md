@@ -2,7 +2,6 @@
 layout: post
 title: The State of Kafka in Python
 category: work
-draft: true
 tags: [Programming, Python, scipy, dask]
 theme: twitter
 ---
