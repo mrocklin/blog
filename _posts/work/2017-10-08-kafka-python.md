@@ -30,7 +30,7 @@ support asynchronous workloads with Tornado.
 *Disclaimer: I am not an expert in this space.  I have no strong affiliation
 with any of these projects.  This is a report based on my experience of the
 past few weeks.  I don't encourage anyone to draw conclusions from this work.
-I do encourage people to investigate on their own.*
+I encourage people to investigate on their own.*
 
 
 Introduction
@@ -80,8 +80,9 @@ Performance
 -----------
 
 Confluent-kafka message-consumption bandwidths are around 30% higher and
-message-production bandwidths are around 3x higher.  I'm taking these numbers
-from [this
+message-production bandwidths are around 3x higher than PyKafka, both of which
+are significantly higher than kafka-python.  I'm taking these numbers from
+[this
 blogpost](http://activisiongamescience.github.io/2016/06/15/Kafka-Client-Benchmarking/)
 which gives benchmarks comparing the three libraries.  The primary numeric
 results follow below:
@@ -169,14 +170,17 @@ results follow below:
 
 *Note: I discovered this article on [parsely/pykafka #559](https://github.com/Parsely/pykafka/issues/559), which has good conversation about the three libraries.*
 
-However it's not clear how important this is.  I profiled PyKafka in these
-cases and it doesn't appear that these code paths have yet been optimized.  I
-expect that modest effort could close that gap considerably.
+I profiled PyKafka in these cases and it doesn't appear that these code paths
+have yet been optimized.  I expect that modest effort could close that gap
+considerably.  This difference seems to be more from lack of interest than any
+hard design constraint.
 
-It's also not clear how critical these speeds are.  According to the PyKafka
+It's not clear how critical these speeds are.  According to the PyKafka
 maintainers at Parse.ly they haven't actually turned on the librdkafka
-optimizations in their internal pipelines.  This just isn't their bottleneck.
-It may be that these 250,000 messages/sec limits are not significant in most
+optimizations in their internal pipelines, and are instead using the slow
+Pure Python implementation, which is apparently more than fast enough for
+common use.  Getting messages out of Kafka just isn't their bottleneck.  It may
+be that these 250,000 messages/sec limits are not significant in most
 applications.  I suspect that this matters more in bulk analysis workloads than
 in online applications.
 
@@ -188,13 +192,14 @@ It took me a few times to get confluent-kafka to work.  It wasn't clear what
 information I needed to pass to the constructor to connect to Kafka and when I
 gave the wrong information I received no message that I had done anything
 incorrectly.  Docstrings and documentation were both minimal.  In contrast,
-PyKafka quickly led me to correct behavior and I was up and running within
-a minute.
+PyKafka's API and error messages quickly led me to correct behavior and I was
+up and running within a minute.
 
-However, I persisted with confluent-kafka, found the right Java documentation,
-and eventually did get things up and running.  Once this happened everything
-fell into place and I was able to easily build applications with
-Confluent-kafka that were both simple and speedy.
+However, I persisted with confluent-kafka, found the right [Java
+documentation](https://kafka.apache.org/documentation/#api), and eventually did
+get things up and running.  Once this happened everything fell into place and I
+was able to easily build applications with Confluent-kafka that were both
+simple and speedy.
 
 
 Development experience
@@ -202,12 +207,40 @@ Development experience
 
 I would like to add asynchronous support to one or both of these libraries so
 that they can read or write data in a non-blocking fashion and play nicely with
-other asynchronous systems like Tornado or asyncio.  I started investigating
+other asynchronous systems like Tornado or Asyncio.  I started investigating
 this with both libraries on GitHub.
+
+### Developers
 
 Both libraries have a maintainer who is somewhat responsive and whose time is
 funded by the parent company.  Both maintainers seem active on a day-to-day
 basis and handle contributions from external developers.
+
+Both libraries are fully active with a common pattern of a single main dev
+merging work from a number of less active developers.  Distributions of commits
+over the last six months look similar:
+
+```
+confluent-kafka-python$ git shortlog -ns --since "six months ago"
+38  Magnus Edenhill
+5  Christos Trochalakis
+4  Ewen Cheslack-Postava
+1  Simon Wahlgren
+
+pykafka$ git shortlog -ns --since "six months ago"
+52  Emmett Butler
+23  Emmett J. Butler
+20  Marc-Antoine Parent
+18  Tanay Soni
+5  messense
+1  Erik Stephens
+1  Jeff Widman
+1  Prateek Shrivastava
+1  aleatha
+1  zpcui
+```
+
+### Codebase
 
 In regards to the codebases I found that PyKafka was easier to hack on for a
 few reasons:
@@ -229,7 +262,7 @@ few reasons:
 
 *To be clear, no maintainer has any responsibility to answer my questions on
 github.  They are likely busy with other things that are of more relevance to
-their mandate.*
+their particular mandate.*
 
 
 Conda packages
