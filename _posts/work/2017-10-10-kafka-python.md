@@ -1,6 +1,6 @@
 ---
 layout: post
-title: The State of Kafka in Python
+title: Notes on Kafka in Python
 category: work
 tags: [Programming, Python, scipy, dask]
 theme: twitter
