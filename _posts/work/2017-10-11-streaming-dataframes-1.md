@@ -42,7 +42,7 @@ For example, lets say that we have a continuous stream of CSV files coming at
 us and we want to print out the mean over time.  Whenever a new CSV file
 arrives we need to recompute the mean of the entire dataset.  If we're clever
 we keep around enough state so that we can compute this mean without looking
-back and the rest of our data.  We can accomplish this by keeping running
+back over the rest of our data.  We can accomplish this by keeping running
 totals and running counts as follows:
 
 ```python
@@ -64,8 +64,8 @@ point.  Our output data is an infinite stream, just like our input data.
 
 When our computations are linear and straightforward like this a for loop
 suffices.  However when our computations have several streams branching out or
-converging, possibly with rate limiting or buffering between them this for-loop
-approach can grow complex.
+converging, possibly with rate limiting or buffering between them, this
+for-loop approach can grow complex and difficult to manage.
 
 Streamz
 -------
@@ -100,7 +100,7 @@ sdf.mean().stream.sink(print)                   # printed stream of mean values
 
 This example is no more clear than the for-loop version.  On its own this is
 probably a *worse* solution than what we had before, just because it involves
-new technology.  This starts to become useful in two situations:
+new technology.  However it starts to become useful in two situations:
 
 1.  You want to do more complex streaming algorithms
 
@@ -113,6 +113,9 @@ new technology.  This starts to become useful in two situations:
     sdf.x.rolling('300ms').mean()
     ```
 
+    It would require more cleverness to build these algorithms with a for loop
+    as above.
+
 2.  You want to do multiple operations, deal with flow control, etc..
 
     ```python
@@ -121,17 +124,22 @@ new technology.  This starts to become useful in two situations:
     ...
     ```
 
+    Consistently branching off computations, routing data correctly, and
+    handling time can all be challenging to accomplish consistently.
+
 
 Jupyter Integration and Streaming Outputs
 -----------------------------------------
 
 During development we've found it very useful to have live updating outputs in
-Jupyter.  Usually when we evaluate code in Jupyter we have static inputs and
-static outputs:
+Jupyter.
+
+Usually when we evaluate code in Jupyter we have static inputs and static
+outputs:
 
 <img src="{{BASE_PATH}}/images/jupyter-output-static.png" width="40%">
 
-However now our inputs and outputs are live:
+However now both our inputs and our outputs are live:
 
 <img src="{{BASE_PATH}}/images/jupyter-output-streaming.gif" width="70%">
 
@@ -139,7 +147,7 @@ We accomplish this using a combination of
 [ipywidgets](https://ipywidgets.readthedocs.io/en/stable/) and [Bokeh
 plots](https://bokeh.pydata.org/en/latest/) both of which provide nice hooks to
 change previous Jupyter outputs and work well with the Tornado IOLoop (streamz,
-bokeh, Jupyter, and Dask all use Tornado for concurrency).  We're able to build
+Bokeh, Jupyter, and Dask all use Tornado for concurrency).  We're able to build
 nicely responsive feedback whenever things change.
 
 In the following example we build our CSV to dataframe pipeline that updates
@@ -206,14 +214,16 @@ What's missing?
 3.  **Out-of-order data access:** soon after parallel data ingestion (like reading
     from multiple Kafka partitions at once) we'll need to figure out how to
     handle out-of-order data access.  This is doable, but will take some
-    effort.
+    effort.  This is where more mature libraries like
+    [Flink](https://flink.apache.org/) are quite strong.
 4.  **Performance:** Some of the operations above (particularly rolling
     operations) do involve non-trivial copying, especially with larger windows.
     We're relying heavily on the Pandas library which wasn't designed with
-    rapidly changing data in mind.
-5.  **Filled out API:**  We still many common operations (like variance) that we
-    haven't yet implemented.  Some of this is due to laziness and some is due
-    to wanting to find the right algorithm.
+    rapidly changing data in mind.  Hopefully future iterations of Pandas
+    (Arrow/libpandas/Pandas 2.0?) will make this more efficient.
+5.  **Filled out API:**  We still many common operations (like variance) that
+    we haven't yet implemented.  Some of this is due to laziness and some is
+    due to wanting to find the right algorithm.
 6.  **Robust plotting:** Currently this works well for numeric data with a
     timeseries index but not so well for other data.
 
