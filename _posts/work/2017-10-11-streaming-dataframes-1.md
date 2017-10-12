@@ -129,11 +129,11 @@ During development we've found it very useful to have live updating outputs in
 Jupyter.  Usually when we evaluate code in Jupyter we have static inputs and
 static outputs:
 
-<img src="{{BASE_PATH}}/images/jupyter-output-static.png" width="60%">
+<img src="{{BASE_PATH}}/images/jupyter-output-static.png" width="40%">
 
 However now our inputs and outputs are live:
 
-<img src="{{BASE_PATH}}/images/jupyter-output-streaming.gif" width="60%">
+<img src="{{BASE_PATH}}/images/jupyter-output-streaming.gif" width="70%">
 
 We accomplish this using a combination of
 [ipywidgets](https://ipywidgets.readthedocs.io/en/stable/) and [Bokeh
@@ -214,7 +214,7 @@ What's missing?
 5.  **Filled out API:**  We still many common operations (like variance) that we
     haven't yet implemented.  Some of this is due to laziness and some is due
     to wanting to find the right algorithm.
-6.  **Robust plotting::** Currently this works well for numeric data with a
+6.  **Robust plotting:** Currently this works well for numeric data with a
     timeseries index but not so well for other data.
 
 But most importantly this needs **use** by people with real problems to help us
