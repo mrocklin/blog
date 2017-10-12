@@ -15,13 +15,13 @@ Driven Discovery Initiative from the [Moore Foundation](https://www.moore.org/)*
 <a href="{{BASE_PATH}}/images/streaming-dataframes-plot.gif">
   <img src="{{BASE_PATH}}/images/streaming-dataframes-plot.gif"
      align="right"
-     width="40%"></a>
+     width="70%"></a>
 
 Summary
 -------
 
 This post describes a prototype project to handle continuous data sources of
-tabular data using Pandas, and Streamz.
+tabular data using Pandas and Streamz.
 
 
 Introduction
@@ -39,10 +39,11 @@ Example: Streaming Mean
 -----------------------
 
 For example, lets say that we have a continuous stream of CSV files coming at
-us and we want to print out the mean over time.  We get a new CSV file every
-once in a while, so we never stop.
-
-We can accomplish this by keeping running totals and running counts as follows:
+us and we want to print out the mean over time.  Whenever a new CSV file
+arrives we need to recompute the mean of the entire dataset.  If we're clever
+we keep around enough state so that we can compute this mean without looking
+back and the rest of our data.  We can accomplish this by keeping running
+totals and running counts as follows:
 
 ```python
 total = 0
@@ -57,14 +58,14 @@ for filename in filenames:  # filenames is an infinite iterator
 ```
 
 Now as we add new files to our `filenames` iterator our code prints out new
-means that are updated over time.  We don't have a single result, we have
-continuous stream of results.  Our output data is an infinite stream, just like our
-input data.
+means that are updated over time.  We don't have a single mean result, we have
+continuous stream of mean results that are each valid for the data up to that
+point.  Our output data is an infinite stream, just like our input data.
 
-When our computations are linear and straghtforward like this a for loop
-suffices.  However when our computations branch out and have several streams
-branching out or converging, possibly with rate limiting or buffering between
-them this for-loop approach can grow complex.
+When our computations are linear and straightforward like this a for loop
+suffices.  However when our computations have several streams branching out or
+converging, possibly with rate limiting or buffering between them this for-loop
+approach can grow complex.
 
 Streamz
 -------
@@ -79,10 +80,10 @@ couple of groups and now feels fairly clean and useful.
 
 Streamz was designed to handle the *control flow* of such a system, but did
 nothing to help you with streaming algorithms.  Over the past week I've been
-building a dataframe abstraction on top of streamz to help with streaming
-tabular data.  This module uses Pandas, and implements a subset of the Pandas
-API, so hopefully it will be easy to use for programmers with existing Python
-knowledge.
+building a dataframe module on top of streamz to help with common streaming
+tabular data situations.  This module uses Pandas and implements a subset of
+the Pandas API, so hopefully it will be easy to use for programmers with
+existing Python knowledge.
 
 Example: Streaming Mean
 -----------------------
@@ -99,30 +100,62 @@ sdf.mean().stream.sink(print)                   # printed stream of mean values
 
 This example is no more clear than the for-loop version.  On its own this is
 probably a *worse* solution than what we had before, just because it involves
-new technology.  Where this starts becoming useful is when you start wanting to
-do multiple things with your data at once, and the administrative cost of
-updating all of the relevant data structures becomes challenging.
+new technology.  This starts to become useful in two situations:
 
-For example if you wanted to compute both the sum, and a groupby-aggregation at
-the same time, and then use that aggregation to trigger other events when it
-got too high, then this might become problematic for basic for loops.
+1.  You want to do more complex streaming algorithms
 
-Jupyter Integration
--------------------
+    ```python
+    sdf = sdf[sdf.name == 'Alice']
+    sdf.x.groupby(sdf.y).mean().sink(print)
 
-Using [ipywidgets](https://ipywidgets.readthedocs.io/en/stable/) and [Bokeh
-plots](https://bokeh.pydata.org/en/latest/) we're able to build nicely
-responsive feedback whenever things change.
+    # or
+
+    sdf.x.rolling('300ms').mean()
+    ```
+
+2.  You want to do multiple operations, deal with flow control, etc..
+
+    ```python
+    sdf.mean().sink(print)
+    sdf.x.sum().rate_limit(0.500).sink(write_to_database)
+    ...
+    ```
+
+
+Jupyter Integration and Streaming Outputs
+-----------------------------------------
+
+During development we've found it very useful to have live updating outputs in
+Jupyter.  Usually when we evaluate code in Jupyter we have static inputs and
+static outputs:
+
+<img src="{{BASE_PATH}}/images/jupyter-output-static.png" width="60%">
+
+However now our inputs and outputs are live:
+
+<img src="{{BASE_PATH}}/images/jupyter-output-streaming.gif" width="60%">
+
+We accomplish this using a combination of
+[ipywidgets](https://ipywidgets.readthedocs.io/en/stable/) and [Bokeh
+plots](https://bokeh.pydata.org/en/latest/) both of which provide nice hooks to
+change previous Jupyter outputs and work well with the Tornado IOLoop (streamz,
+bokeh, Jupyter, and Dask all use Tornado for concurrency).  We're able to build
+nicely responsive feedback whenever things change.
+
+In the following example we build our CSV to dataframe pipeline that updates
+whenever new files appear in a directory.  Whenever we drag files to the data
+directory we see that all of our outputs update.
 
 <a href="{{BASE_PATH}}/images/streaming-dataframes-files.gif">
   <img src="{{BASE_PATH}}/images/streaming-dataframes-files.gif"
      width="100%"></a>
 
+
 What is supported?
 ------------------
 
-This project is young and there are plenty of holes in the API.  That being
-said, the following works fine:
+This project is very young and could use some help.  There are plenty of holes
+in the API.  That being said, the following works well:
 
 Elementwise operations:
 
@@ -159,21 +192,32 @@ sdf.plot()
 
 <a href="{{BASE_PATH}}/images/streaming-dataframes-plot.gif">
   <img src="{{BASE_PATH}}/images/streaming-dataframes-plot.gif"
-     align="right"
-     width="40%"></a>
+     width="100%"></a>
 
 What's missing?
 ---------------
 
-1.  Streamz has an optional Dask backend for parallel computing.  I haven't
-    made any attempt to attach these two
-2.  Data ingestion from common streaming sources like Kafka.  I'm in the
-    process now of building asynchronous aware wrappers around Kafka Python
+1.  **Parallel computing:**  The core streamz library has an optional Dask backend for
+    parallel computing.  I haven't yet made any attempt to attach this to the
+    dataframe implementation.
+2.  **Data ingestion** from common streaming sources like Kafka.  I'm in the
+    process now of building asynchronous-aware wrappers around Kafka Python
     client libraries, so this is likely to come soon.
-3.  Computation currently happens on the event loop, which is a bit of an
-    anti-pattern.  This will be resolved if we connect Dask.
-4.  Performance.  Some of the operations above (particularly rolling
-    operations) do involve some non-trivial copying, especially with larger
-    windows.
-5.  Filled out API.  We still many common operations (like variance).
-6.  ...
+3.  **Out-of-order data access:** soon after parallel data ingestion (like reading
+    from multiple Kafka partitions at once) we'll need to figure out how to
+    handle out-of-order data access.  This is doable, but will take some
+    effort.
+4.  **Performance:** Some of the operations above (particularly rolling
+    operations) do involve non-trivial copying, especially with larger windows.
+    We're relying heavily on the Pandas library which wasn't designed with
+    rapidly changing data in mind.
+5.  **Filled out API:**  We still many common operations (like variance) that we
+    haven't yet implemented.  Some of this is due to laziness and some is due
+    to wanting to find the right algorithm.
+6.  **Robust plotting::** Currently this works well for numeric data with a
+    timeseries index but not so well for other data.
+
+But most importantly this needs **use** by people with real problems to help us
+understand what here is valuable and what is unpleasant.
+
+Help would be welcome with any of this.
