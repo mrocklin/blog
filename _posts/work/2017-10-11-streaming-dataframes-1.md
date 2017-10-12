@@ -221,3 +221,12 @@ But most importantly this needs **use** by people with real problems to help us
 understand what here is valuable and what is unpleasant.
 
 Help would be welcome with any of this.
+
+You can install this from github
+
+    pip install git+https://github.com/mrocklin/streamz.git
+
+Documentation and code are here:
+
+-   [streamz.readthedocs.io](http://matthewrocklin.com/blog/work/2017/10/11/streaming-dataframes-1)
+-   [github.com/mrocklin/streamz](https://github.com/mrocklin/streamz)
