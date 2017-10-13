@@ -28,22 +28,24 @@ Introduction
 ------------
 
 Some data never stops.  It arrives continuously in a constant, never-ending
-stream.  Algorithms to handle this data are slightly different from what you
-find in libraries like NumPy and Pandas, which assume that they know all of the
-data up-front.  It's still possible to use these libraries, but you need to be
-clever and keep enough intermediate data around to compute marginal updates
-when new data comes in.
+stream.  This happens in financial time series, web server logs, scientific
+instruments, IoT telemetry, and more.  Algorithms to handle this data are
+slightly different from what you find in libraries like NumPy and Pandas, which
+assume that they know all of the data up-front.  It's still possible to use
+NumPy and Pandas, but you need to combine them with some cleverness and keep
+enough intermediate data around to compute marginal updates when new data comes
+in.
 
 
 Example: Streaming Mean
 -----------------------
 
-For example, lets say that we have a continuous stream of CSV files coming at
-us and we want to print out the mean over time.  Whenever a new CSV file
-arrives we need to recompute the mean of the entire dataset.  If we're clever
-we keep around enough state so that we can compute this mean without looking
-back over the rest of our data.  We can accomplish this by keeping running
-totals and running counts as follows:
+For example, imagine that we have a continuous stream of CSV files arriving
+and we want to print out the mean of our data over time.  Whenever a new CSV
+file arrives we need to recompute the mean of the entire dataset.  If we're
+clever we keep around enough state so that we can compute this mean without
+looking back over the rest of our historical data.  We can accomplish this by keeping
+running totals and running counts as follows:
 
 ```python
 total = 0
