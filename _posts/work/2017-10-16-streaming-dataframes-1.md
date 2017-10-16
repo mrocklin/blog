@@ -11,6 +11,8 @@ theme: twitter
 *This work is supported by [Anaconda Inc](http://anaconda.com) and the Data
 Driven Discovery Initiative from the [Moore Foundation](https://www.moore.org/)*
 
+*This post is about experimental software.  This is not ready for public use.*
+
 <a href="{{BASE_PATH}}/images/streaming-dataframes-plot.gif">
   <img src="{{BASE_PATH}}/images/streaming-dataframes-plot.gif"
      align="right"
@@ -241,3 +243,9 @@ Documentation and code are here:
 
 -   [streamz.readthedocs.io](http://matthewrocklin.com/blog/work/2017/10/11/streaming-dataframes-1)
 -   [github.com/mrocklin/streamz](https://github.com/mrocklin/streamz)
+
+Current work
+------------
+
+Current and upcoming work is focused on data ingestion from Kafka and
+parallelizing with Dask.
