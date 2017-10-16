@@ -2,7 +2,6 @@
 layout: post
 title: Streaming Dataframes
 category: work
-draft: true
 tags: [Programming, Python, scipy, dask]
 theme: twitter
 ---
@@ -210,12 +209,12 @@ What's missing?
 1.  **Parallel computing:**  The core streamz library has an optional Dask backend for
     parallel computing.  I haven't yet made any attempt to attach this to the
     dataframe implementation.
-2.  **Data ingestion** from common streaming sources like Kafka.  I'm in the
+2.  **Data ingestion** from common streaming sources like Kafka.  We're in the
     process now of building asynchronous-aware wrappers around Kafka Python
     client libraries, so this is likely to come soon.
-3.  **Out-of-order data access:** soon after parallel data ingestion (like reading
-    from multiple Kafka partitions at once) we'll need to figure out how to
-    handle out-of-order data access.  This is doable, but will take some
+3.  **Out-of-order data access:** soon after parallel data ingestion (like
+    reading from multiple Kafka partitions at once) we'll need to figure out
+    how to handle out-of-order data access.  This is doable, but will take some
     effort.  This is where more mature libraries like
     [Flink](https://flink.apache.org/) are quite strong.
 4.  **Performance:** Some of the operations above (particularly rolling
