@@ -11,7 +11,8 @@ theme: twitter
 *This work is supported by [Anaconda Inc](http://anaconda.com) and the Data
 Driven Discovery Initiative from the [Moore Foundation](https://www.moore.org/)*
 
-*This post is about experimental software.  This is not ready for public use.*
+*This post is about experimental software.  This is not ready for public use.
+All code examples and API in this post are subject to change without warning.*
 
 <a href="{{BASE_PATH}}/images/streaming-dataframes-plot.gif">
   <img src="{{BASE_PATH}}/images/streaming-dataframes-plot.gif"
