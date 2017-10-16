@@ -242,7 +242,7 @@ You can install this from github
 
 Documentation and code are here:
 
--   [streamz.readthedocs.io](http://matthewrocklin.com/blog/work/2017/10/11/streaming-dataframes-1)
+-   [streamz.readthedocs.io](https://streamz.readthedocs.io/en/latest/)
 -   [github.com/mrocklin/streamz](https://github.com/mrocklin/streamz)
 
 Current work
