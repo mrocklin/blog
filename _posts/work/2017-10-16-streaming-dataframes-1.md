@@ -224,9 +224,9 @@ What's missing?
     We're relying heavily on the Pandas library which wasn't designed with
     rapidly changing data in mind.  Hopefully future iterations of Pandas
     (Arrow/libpandas/Pandas 2.0?) will make this more efficient.
-5.  **Filled out API:**  We still many common operations (like variance) that
-    we haven't yet implemented.  Some of this is due to laziness and some is
-    due to wanting to find the right algorithm.
+5.  **Filled out API:**  Many common operations (like variance) haven't yet
+    been implemented.  Some of this is due to laziness and some is due to
+    wanting to find the right algorithm.
 6.  **Robust plotting:** Currently this works well for numeric data with a
     timeseries index but not so well for other data.
 
