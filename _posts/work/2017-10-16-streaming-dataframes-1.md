@@ -196,7 +196,7 @@ sdf.rolling(20).x.mean()
 sdf.rolling('100ms').x.quantile(0.9)
 ```
 
-Real time plotting with Bokeh (one of my favorite features)
+Real time plotting with [Bokeh](https://bokeh.pydata.org) (one of my favorite features)
 
 ```python
 sdf.plot()
@@ -209,9 +209,9 @@ sdf.plot()
 What's missing?
 ---------------
 
-1.  **Parallel computing:**  The core streamz library has an optional Dask backend for
-    parallel computing.  I haven't yet made any attempt to attach this to the
-    dataframe implementation.
+1.  **Parallel computing:**  The core streamz library has an optional
+    [Dask](https;//dask.pydata.org/) backend for parallel computing.  I haven't
+    yet made any attempt to attach this to the dataframe implementation.
 2.  **Data ingestion** from common streaming sources like Kafka.  We're in the
     process now of building asynchronous-aware wrappers around Kafka Python
     client libraries, so this is likely to come soon.
