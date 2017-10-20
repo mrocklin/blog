@@ -156,7 +156,7 @@ nicely responsive feedback whenever things change.
 
 In the following example we build our CSV to dataframe pipeline that updates
 whenever new files appear in a directory.  Whenever we drag files to the data
-directory we see that all of our outputs update.
+directory on the left we see that all of our outputs update on the right.
 
 <a href="{{BASE_PATH}}/images/streaming-dataframes-files.gif">
   <img src="{{BASE_PATH}}/images/streaming-dataframes-files.gif"
