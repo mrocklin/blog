@@ -97,7 +97,7 @@ without alteration.
 
 And run
 
-    $ python -c "import ds_benchmark"
+    $ python -c "import benchmark"
     Duration: 0.73 seconds
 
 This gives us a decent speedup from 1.1 seconds to 0.73 seconds.  This isn't
