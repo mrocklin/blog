@@ -16,10 +16,10 @@ Driven Discovery Initiative from the [Moore Foundation](https://www.moore.org/)*
 
 ### tl;dr
 
-Cython's support of PEP-484 type annotations allows us to write fast code
-that both runs naively from Python and can be compiled for significant speedups
-from Cython.  This, combined with the ability to cross compile to Python 2,
-might make it attractive enough for PyData projects to consider adopting it more
+Cython's support of PEP-484 type annotations allows us to write code that both
+runs naively from Python and can be compiled for significant speedups from
+Cython.  This, combined with the ability to be used within Python 2, might
+make it attractive enough for PyData projects to consider adopting it more
 wholistically throughout the ecosystem.
 
 
@@ -43,7 +43,7 @@ some pros and cons
 
 I'm starting to consider that we should instead write in the subset that is
 simultaneously valid Python 3 and Cython, and then use Cython to support Python
-2.  This blog post explores this idea.
+2 .  This blog post explores this idea.
 
 
 ### Cython in PyData Today
@@ -54,12 +54,12 @@ typed memoryviews, ...).  Typically we take our existing Python code, annotate
 it with more information, and then compile it with Cython into C.
 
 The side-by-side example below provides a sense of the work involved to get
-a 10x speedup on numeric code:
+a 10x speedup on numeric code with Cython:
 
 ```python
 # Python code                          # Cython code
 
-                                        cdef int i
+                                        cdef int i        # Add type declarations
                                         cdef float total
 
 total = 0.0                             total = 0.0
@@ -136,7 +136,7 @@ compile.
 
 -  **Pros**
     -  We get to use Python 3 features
-    -  We get speedups in some cases
+    -  We get speedups in some cases from Cython compilation
     -  We find a possible resolution to the Python 2 legacy maintenance problem
     -  We might be able to drop some existing Cython pyx files, and unify
        development in the core language, broadening the developer base that can
