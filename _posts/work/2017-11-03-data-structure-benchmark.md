@@ -19,8 +19,8 @@ structure bound.
 
 Our benchmark is a toy problem that creates three data structures that index
 each other with dictionaries, lists, and sets, and then does some simple
-arithmetic (you don't need to understand this benchmark deeply to read this
-article):
+arithmetic. (You don't need to understand this benchmark deeply to read this
+article.)
 
 ```python
 import random
@@ -87,7 +87,7 @@ Cython
 ------
 
 First we compile our Python code with Cython.  Normally when using Cython we
-annotate our variables with types, giving the compiler enough informaiton
+annotate our variables with types, giving the compiler enough information
 to avoid using Python altogether.  However in our case we don't have many
 numeric operations and we're going to be using Python data structures
 regardless, so this won't help much.  We compile our original Python code
