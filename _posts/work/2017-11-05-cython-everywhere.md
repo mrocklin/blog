@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Should PyData switch to Cython entirely?
+title: Should PyData use Cython everywhere?
 draft: true
 category: work
 tags: [Programming, Python, scipy, dask]
@@ -14,13 +14,15 @@ Driven Discovery Initiative from the [Moore Foundation](https://www.moore.org/)*
 
 *This post is mainly written for other developers*
 
+
 ### tl;dr
 
 Cython's support of PEP-484 type annotations allows us to write code that both
 runs naively from Python and can be compiled for significant speedups from
-Cython.  This, combined with the ability to be used within Python 2, might
-make it attractive enough for PyData projects to consider adopting it more
-wholistically throughout the ecosystem.
+Cython.  This, combined with Cython's the ability to build Python 2 compatible
+modules, might make it attractive enough for PyData projects to consider
+adopting it more wholistically throughout the ecosystem rather than the current
+Python 2/3 approach.
 
 
 ### Background
@@ -43,7 +45,105 @@ some pros and cons
 
 I'm starting to consider that we should instead write in the subset that is
 simultaneously valid Python 3 and Cython, and then use Cython to support Python
-2 .  This blog post explores this idea.
+2.
+
+
+### Cython supports Python type annotations
+
+Cython recently added support for Python 3 type annotations and so can
+meaningfully compile and accelerate plain Python code.  So for a subset of
+features we can use Cython without splitting our code out to separate pyx files
+that are incompatible with the Python interpreter.
+This significantly reduces the barrier to use Cython, and so makes it more
+attractive for more pervasive use throughout the ecosystem.
+
+Lets consider the following example in normal Python, annotated Cython, and
+normal Python with type annotations.
+
+```python
+# myfile.py                    # myfile.pyx                     # myfile.py
+
+                                                                import cython
+                                cdef int i                      i: cython.int
+                                cdef float total                total: float
+
+total = 0.0                     total = 0.0                     total = 0.0
+for i in range(10000000):       for i in range(10000000):       for i in range(10000000):
+    total += i                      total += i                      total += i
+```
+
+-  **Left**: This Pure-Python code runs in 0.5 seconds.  It works in either
+   Python 2 or Python 3
+-  **Center**: This Cython code runs in 0.06 seconds after compilation with
+   Cython.
+-  **Right**: This Pure-Python code can run with either system
+    -   It runs in 0.5 seconds with Python 3 interpreter but doesn't work under
+        Python 2
+    -   It runs in 0.06 seconds after compilation with Cython.  This compiled
+        version can run with either Python 2 or 3.
+
+The fact that we can meaningfully compile pure Python code with Cython
+significantly reduces the barrier to Cython's use.  If we can reduce these
+barriers further then it might be reasonable to use Cython more pervasively
+throughout the ecosystem.  There are some pros and cons here.
+
+
+### Complications
+
+So we get to stay in Python and optionally add Cython without pulling our code
+out into a new language or file.  There are some costs here though.
+
+-   We had to use Cython types to get performance in some cases
+
+    In the example we called `import cython`, creating a runtime dependence on
+    the Cython library.  In our case this was because Cython won't convert
+    Python integers into C integers for safety reasons (Python integers handle
+    things like overflow and large numbers while C integers don't).  More generally
+    we can imagine wanting more features from Cython that are not easily or safely
+    expressible with Python type hints.
+
+    This brings up the broader concerns of balancing consistent behavior with
+    performance when crossing between Python and C.
+
+-  We lost Python 2 support
+
+    The type annotations raise SyntaxErrors in Python 2, so our Python code
+    won't run under a Python 2 interpreter.  However, code compiled with Cython
+    can also target Python 2, even if it used Python 3 syntax.  This means that
+    Python 2 users can still use our libraries, but only after they've been
+    compiled.  Git-master becomes inaccessible to Python 2 users if those users
+    don't have Cython and a C compiler locally.
+
+-  We had to invoke Cython and use a C compiler to get speedups
+
+    Our setup.py will become a bit more complex.  If we want to get speedups or
+    support Python 2 we'll probably have to start building conda packages and/or
+    wheels.
+
+
+### Pros and Cons
+
+So lets look at some of the pros and cons to this approach:
+
+-  **Pros**
+    -  We get to use Python 3 features
+    -  We get speedups in some cases from Cython compilation
+    -  We find a possible resolution to the Python 2 legacy maintenance problem
+    -  We might be able to drop some existing Cython pyx files, and unify
+       development in the core language, broadening the developer base that can
+       touch core routines
+    -  We gain extra motivation to add type annotations to our codebases,
+       enabling other tools like MyPy
+-  **Cons**
+    -  We raise a new class of subtle bugs where Python and Cython behavior
+       might differ slightly
+    -  This increases our packaging burden to include a Cython compilation step
+    -  This limits our ability to inspect / debug / profile within our compiled
+       Python code
+    -  Python 2 users need to compile on their own to use dev versions
+
+
+
 
 
 ### Cython in PyData Today
@@ -106,45 +206,3 @@ Python as normal and then, when we want to package our code for distribution or
 want to run benchmarks we can Cythonize our code and get the extra speed boost
 that compilation offers.
 
-
-### Costs and benefits
-
-So we get to stay in Python and optionally add Cython without pulling our code
-out into a new language or file.
-
-There are some costs here though.
-
--  We had to use Cython types to get performance in some cases
--  We lost Python 2 support
--  We had to invoke Cython and use a C compiler to get speedups
-
-In the example above we had to `import cython`, creating a runtime dependence on
-the Cython library.  In our specific case this is because Cython won't convert
-Python integers into C integers for safety reasons (Python integers handle
-things like overflow and large numbers while C integers don't).  More generally
-we can imagine wanting more features from Cython that are not easily or safely
-expressible with Python type hints.  This will create a constant pressure to
-include runtime dependence on Cython.  This isn't terrible; Cython has no
-dependencies outside of the standard library and imports in around 5ms.
-
-We've also lost Python 2 interpretability (type annotations raise
-SyntaxErrors in Python 2).  However code compiled with Cython can also target
-Python 2, even if it used Python 3 syntax.  This means that Python 2 users can
-still use our libraries, but only after they've gone through a compilation
-cycle.  Git-master becomes inaccessible to Python 2 users if they're not able to
-compile.
-
--  **Pros**
-    -  We get to use Python 3 features
-    -  We get speedups in some cases from Cython compilation
-    -  We find a possible resolution to the Python 2 legacy maintenance problem
-    -  We might be able to drop some existing Cython pyx files, and unify
-       development in the core language, broadening the developer base that can
-       touch core routines
-    -  We gain extra motivation to add type annotations to our codebases,
-       enabling other tools like MyPy
--  **Cons**
-    -  This increases our packaging burden to include a Cython compilation step
-    -  This limits our ability to inspect / debug / profile within our compiled
-       Python code
-    -  Python 2 users need to compile on their own to use dev versions
