@@ -3,8 +3,13 @@ layout: post
 title: Towards Out-of-core ND-Arrays
 category : work
 tags : [scipy, Python, Programming, Blaze, dask]
+theme: twitter
 ---
 {% include JB/setup %}
+
+*This work is supported by [Continuum Analytics](http://continuum.io)
+and the [XDATA Program](http://www.darpa.mil/program/XDATA)
+as part of the [Blaze Project](http://blaze.pydata.org)*
 
 **tl;dr** We propose a system for task-centered computation, show an example
 with out-of-core nd-arrays, and ask for comments.
@@ -15,8 +20,8 @@ Motivation
 ----------
 
 Recent notebooks (links
-[1](http://nbviewer.ipython.org/url/blaze.pydata.org/notebooks/timings-csv.ipynb),
-[2](http://nbviewer.ipython.org/url/blaze.pydata.org/notebooks/timings-bcolz.ipynb))
+[1](http://nbviewer.ipython.org/url/blaze.pydata.org/en/latest/_static/notebooks/timings-csv.ipynb),
+[2](http://nbviewer.ipython.org/url/blaze.pydata.org/en/latest/_static/notebooks/timings-bcolz.ipynb))
 describe how Blaze handles out-of-core single-dataset tabular computations in
 the following stages.
 

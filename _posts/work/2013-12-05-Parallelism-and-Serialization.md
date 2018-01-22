@@ -3,6 +3,7 @@ layout: post
 title:  Parallelism and Serialization
 tagline:  how poor pickling breaks multiprocessing
 category : work
+theme: twitter
 draft:
 tags : [Python, SciPy]
 ---

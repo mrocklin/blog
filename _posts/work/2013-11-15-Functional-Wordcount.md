@@ -3,6 +3,7 @@ layout: post
 title:  Wordcounting and Verbosity
 tagline:  a discussion of functional vocabulary
 category : work
+theme: twitter
 tags : [Python, scipy]
 ---
 {% include JB/setup %}

@@ -3,9 +3,14 @@ layout: post
 title: Blaze Datasets
 tagline: Often the greatest challenge is finding what you already have
 category : work
+theme: twitter
 tags : [scipy, Python, Programming, Blaze]
 ---
 {% include JB/setup %}
+
+*This work is supported by [Continuum Analytics](http://continuum.io)
+and the [XDATA Grant](http://www.darpa.mil/program/XDATA)
+as part of the [Blaze Project](http://blaze.pydata.org)*
 
 **tl;dr** Blaze aids exploration by supporting full databases and
 collections of datasets.

@@ -3,8 +3,13 @@ layout: post
 title: Towards Out-of-core ND-Arrays -- Multi-core Scheduling
 category : work
 tags : [scipy, Python, Programming, Blaze, dask]
+theme: twitter
 ---
 {% include JB/setup %}
+
+*This work is supported by [Continuum Analytics](http://continuum.io)
+and the [XDATA Program](http://www.darpa.mil/program/XDATA)
+as part of the [Blaze Project](http://blaze.pydata.org)*
 
 **tl;dr** We show off a multi-threaded shared-memory task scheduler.  We share
 two techniques for space-constrained computing.  We end with pretty GIFs.

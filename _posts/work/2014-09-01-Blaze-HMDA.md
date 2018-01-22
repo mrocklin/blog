@@ -3,9 +3,14 @@ layout: post
 title: Introducing Blaze - Practice
 tagline: in which we solve a real problem
 category : work
+theme: twitter
 tags : [scipy, Python, Programming, Blaze]
 ---
 {% include JB/setup %}
+
+*This work is supported by [Continuum Analytics](http://continuum.io)
+and the [XDATA Grant](http://www.darpa.mil/program/XDATA)
+as part of the [Blaze Project](http://blaze.pydata.org)*
 
 
 We look at data from the [Home Mortgage Disclosure

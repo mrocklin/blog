@@ -3,6 +3,7 @@ layout: post
 title: Introducing CyToolz
 tagline: Functional Python, now in C
 category : work
+theme: twitter
 tags : [scipy, Python, Programming]
 ---
 {% include JB/setup %}

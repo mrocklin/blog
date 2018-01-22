@@ -3,8 +3,13 @@ layout: post
 title: Towards Out-of-core ND-Arrays -- Frontend
 category : work
 tags : [scipy, Python, Programming, Blaze, dask]
+theme: twitter
 ---
 {% include JB/setup %}
+
+*This work is supported by [Continuum Analytics](http://continuum.io)
+and the [XDATA Program](http://www.darpa.mil/program/XDATA)
+as part of the [Blaze Project](http://blaze.pydata.org)*
 
 **tl;dr** Blaze adds usability to our last post on out-of-core ND-Arrays
 
