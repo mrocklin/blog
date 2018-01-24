@@ -1,6 +1,6 @@
 ---
 layout: post
-title: The Case for Numba
+title: The Case for Numba in Community Code
 category: work
 draft: true
 tags: [Programming, Python, scipy, numba]
@@ -30,6 +30,7 @@ We'll use the following blogposts by other community members throughout this pos
 -  [http://jakevdp.github.io/blog/2013/06/15/numba-vs-cython-take-2/](http://jakevdp.github.io/blog/2013/06/15/numba-vs-cython-take-2/)
 -  [http://jakevdp.github.io/blog/2015/02/24/optimizing-python-with-numpy-and-numba/](http://jakevdp.github.io/blog/2015/02/24/optimizing-python-with-numpy-and-numba/)
 -  [http://stephanhoyer.com/2015/04/09/numba-vs-cython-how-to-choose/](http://stephanhoyer.com/2015/04/09/numba-vs-cython-how-to-choose/)
+-  [https://murillogroupmsu.com/numba-versus-c/](https://murillogroupmsu.com/numba-versus-c/)
 
 *Disclaimer: I work alongside many of the Numba developers within the same company and am partially funded through the same granting institution.*
 
@@ -45,12 +46,12 @@ Typically they use one of the following options:
 3.  **Standalone C/C++** codebases with Python wrappers: for newer projects that target inter-language operation, like XTensor and Arrow
 
 Each of these choices has tradeoffs in performance, packaging, attracting new developers and so on.
-Ideally we want a solution that
+Ideally we want a solution that is ...
 
 1.  **Fast:** about as fast as C/Fortran
 2.  **Easy:** Is accessible to a broad base of developers and maintainers
 3.  **Builds easily:** Introduces few complications in building and packaging
-4.  **Installs easily:** Introduces few runtime dependencies
+4.  **Installs easily:** Introduces few install and runtime dependencies
 5.  **Trustworthy:** Is well trusted within the community, both in terms of governance and long term maintenance
 
 The two main approaches today, Cython and C/C++, both do well on most of these objectives.
@@ -58,7 +59,7 @@ However neither is perfect.  Some issues that arise include the following:
 
 -  **Cython**
     -  Often requires effort to make fast
-    -  Is often only used by core developers.  Requires training and trickery to use well.
+    -  Is often only used by core developers.  Requires expertise to use well.
     -  Introduces mild packaging pain, though this pain is solved frequently enough that experienced community members are used to dealing with it
 -  **Standalone C/C++**
     -  Sometimes introduces complex build and packaging concerns
@@ -81,7 +82,8 @@ but has historically not been trusted due to packaging and community concerns.
 In any test of either performance or usability Numba almost always wins (or ties for the win).
 It does all of the compiler optimization tricks you expect.
 It supports both for-loopy code as well as Numpy-style slicing and bulk operation code.
-It requires almost no additional information from the user (assuming that you're ok with JIT behavior) and so is easily the most approachable tool.
+It requires almost no additional information from the user (assuming that you're ok with JIT behavior)
+and so is very approachable, and very easy for novices to use well.
 
 This means that we get phrases like the following:
 
@@ -102,6 +104,9 @@ This means that we get phrases like the following:
 -  [http://stephanhoyer.com/2015/04/09/numba-vs-cython-how-to-choose/](http://stephanhoyer.com/2015/04/09/numba-vs-cython-how-to-choose/)
     -   "Using Numba is usually about as simple as adding a decorator to your functions"
     -   "Numba is usually easier to write for the simple cases where it works"
+-  [https://murillogroupmsu.com/numba-versus-c/](https://murillogroupmsu.com/numba-versus-c/)
+    -   "Numba allows for speedups comparable to most compiled languages with almost no effort"
+    -   "We find that Numba is more than 100 times as fast as basic Python for this application. In fact, using a straight conversion of the basic Python code to C++ is slower than Numba."
 
 In all cases where authors compared Numba to Cython for numeric code
 (Cython is probably the standard for these cases)
@@ -238,3 +243,16 @@ then that seems to have been resolved years ago.*
 
 *If your concern is more about not knowing who is behind the project then I encourage you to reach out.
 I would be surprised if you don't walk away pleased.*
+
+
+### The Continued Cases Against Numba
+
+For completeness, lets list a number of reasons why it is still quite reasonable to avoid Numba today:
+
+1.  It isn't a community standard
+2.  Numba hasn't attracted a wide developer base, and so is probably still dependent on financial support for paid developers
+3.  I want to speed up non-numeric code that includes classes, dicts, lists, etc. for which I need Cython or PyPy
+4.  I want to build a library that is useful outside of Python, and so plan to build most numeric algorithms on C/C++/Fortran
+5.  I prefer ahead-of-time compilation and want to avoid JIT times
+6.  While `llvmlite` is cheaper than LLVM, it's still 50MB
+7.  Understanding the compiled results is hard, I don't have good familiarity with LLVM
