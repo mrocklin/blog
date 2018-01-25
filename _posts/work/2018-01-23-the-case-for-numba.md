@@ -114,7 +114,7 @@ Numba always performs as-well-or-better and is always much simpler to write.
 
 Here is a code example from Jake's second blogpost:
 
-### Cython
+### Code Sample
 
 ```
 # From http://jakevdp.github.io/blog/2015/02/24/optimizing-python-with-numpy-and-numba/
