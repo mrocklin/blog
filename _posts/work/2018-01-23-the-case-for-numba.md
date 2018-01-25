@@ -114,7 +114,7 @@ Numba always performs as-well-or-better and is always much simpler to write.
 
 Here is a code example from Jake's second blogpost:
 
-### Code Sample
+#### Example: Code Complexity
 
 ```
 # From http://jakevdp.github.io/blog/2015/02/24/optimizing-python-with-numpy-and-numba/
@@ -148,6 +148,9 @@ both at the function definition (which we would expect for any AOT compiler),
 but also within the body of the function for various utility variables.
 The Numba code is just straight Python + Numpy code.
 We could remove the `@numba.jit` decorator and step through our function with normal Python.
+
+
+#### Example: Numpy Operations
 
 Additionally Numba lets us use Numpy syntax directly in the function,
 so for example the following function is well accelerated by Numba,
