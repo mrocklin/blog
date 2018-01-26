@@ -32,6 +32,9 @@ We'll use the following blogposts by other community members throughout this pos
 -  [http://stephanhoyer.com/2015/04/09/numba-vs-cython-how-to-choose/](http://stephanhoyer.com/2015/04/09/numba-vs-cython-how-to-choose/)
 -  [https://murillogroupmsu.com/numba-versus-c/](https://murillogroupmsu.com/numba-versus-c/)
 
+At the end of the blogpost these authors will also share some thoughts on Numba today,
+looking back with some hindsight.
+
 *Disclaimer: I work alongside many of the Numba developers within the same company and am partially funded through the same granting institution.*
 
 
@@ -137,7 +140,7 @@ def pairwise_python(X):                 def pairwise_cython(double[:, ::1] X):
             d = 0.0                                 d = 0.0
             for k in range(N):                      for k in range(N):
                 tmp = X[i, k] - X[j, k]                 tmp = X[i, k] - X[j, k]
-                d += tmp * tmp                          d == tmp * tmp
+                d += tmp * tmp                          d += tmp * tmp
             D[i, j] = np.sqrt(d)                    D[i, j] = sqrt(d)
     return D                                return np.asarray(D)
 ```
@@ -180,6 +183,7 @@ I believe that there are two primary reasons why Numba has not been more widely 
 1.  **LLVM Dependency**: Numba depends on LLVM, which was historically difficult to install without a system package manager (like apt-get, brew) or conda.
 	Library authors are not willing to exclude users that use other packaging toolchains, particularly Python's standard tool, `pip`.
 2.  **Community Trust:** Numba is largely developed within a single for-profit company (Anaconda Inc.) and its developers are not well known by other library maintainers.
+3.  **Lack of Interpretability:** Numba's output, LLVM, is less well understood by the community than Cython's output, C (discussed in original-author comments in the last section)
 
 These are both excellent reasons to avoid adding a dependency.
 Technical excellence alone is insufficient, and must be considered alongside community and long-term maintenance concerns.
@@ -256,3 +260,55 @@ For completeness, lets list a number of reasons why it is still quite reasonable
 5.  I prefer ahead-of-time compilation and want to avoid JIT times
 6.  While `llvmlite` is cheaper than LLVM, it's still 50MB
 7.  Understanding the compiled results is hard, I don't have good familiarity with LLVM
+
+
+### Update from Original Blogpost Authors
+
+After writing the above I reached out both to Stan and Siu from Numba
+and to the original authors of the referenced blogposts
+to get some of their impressions now having the benefit of additional experience.
+
+Here are a few choice responses:
+
+1.  Stan:
+
+    *I think one of the biggest arguments against Numba still is time.  Due to a massive rewrite of the code base, Numba, in its present form, is ~3 years old, which isn't that old for a project like this.  I think it took PyPy at least 5-7 years to reach a point where it was stable enough to really trust.  Cython is 10 years old.  People have good reason to be conservative with taking on new core dependencies.*
+
+2.  Jake:
+
+    *One thing I think would be worth fleshing-out a bit (you mention it in the final bullet list) is the fact that numba is kind of a black box from the perspective of the developer. My experience is that it works well for straightforward applications, but when it doesn't work well it's *extremely* difficult to diagnose what the problem might be.*
+
+    *Contrast that with Cython, where the html annotation output does wonders for understanding your bottlenecks both at a non-technical level ("this is dark yellow so I should do something different") and a technical level ("let me look at the C code that was generated"). If there's a similar tool for numba, I haven't seen it.*
+
+-  Florian:
+
+    *Elaborating on Jake's answer, I completely agree that Cython's annotation tool does wonders in terms of understanding your code. In fact, numba does possess this too, but as a command-line utility. I tried to demonstrate this in my blogpost, but exporting the CSS in the final HTML render kind of mangles my blog post so here's a screenshot:*
+
+    <a href="{{BASE_PATH}}/images/numba-html-annotations.png"><img src="{{BASE_PATH}}/images/numba-html-annotations.png" alt="Numba HTML annotations"></a>
+
+    *This is a case where `jit(nopython=True)` works, so there seems to be no coloring at all.*
+
+    Florian also pointed to the [SciPy 2017 tutorial](https://www.youtube.com/watch?v=1AwG0T4gaO0) by Gil Forsyth and Lorena Barba
+
+-  Dion:
+
+    *I hold Numba in high regard, and the speedups impress me every time. I use it quite often to optimize some bottlenecks in our production code or data analysis pipelines (unfortunately not open source). And I love how Numba makes some functions like `scipy.optimize.minimize` or `scipy.ndimage.generic_filter` well-usable with minimal effort.*
+
+    *However, I would never use Numba to build larger systems, precisely for the reason Jake mentioned. Subjectively, Numba feels hard to debug, has cryptic error messages, and seemingly inconsistent behavior. It is not a "decorate and forget" solution; instead it always involves plenty of fiddling to get right.*
+
+    *That being said, if I were to build some high-level scientific library à la Astropy with some few performance bottlenecks, I would definitely favor Numba over Cython (and if it's just to spare myself the headache of getting a working C compiler on Windows).*
+
+-  Stephan:
+
+    *I wonder if there are any examples of complex codebases (say >1000 LOC) using Numba. My sense is that this is where Numba's limitations will start to become more evident, but maybe newer features like jitclass would make this feasible.*
+
+### SciPy tutorial link
+
+As a final take-away, you might want to follow Florian's advice and watch
+Gil and Lorena's tutorial here:
+
+<iframe width="560" height="315"
+        src="https://www.youtube.com/embed/1AwG0T4gaO0"
+        frameborder="0"
+        allow="autoplay; encrypted-media"
+        allowfullscreen></iframe>
