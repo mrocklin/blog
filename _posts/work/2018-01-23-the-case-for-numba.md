@@ -117,7 +117,7 @@ Numba always performs as-well-or-better and is always much simpler to write.
 
 Here is a code example from Jake's second blogpost:
 
-### Cython
+#### Example: Code Complexity
 
 ```
 # From http://jakevdp.github.io/blog/2015/02/24/optimizing-python-with-numpy-and-numba/
@@ -152,6 +152,9 @@ but also within the body of the function for various utility variables.
 The Numba code is just straight Python + Numpy code.
 We could remove the `@numba.jit` decorator and step through our function with normal Python.
 
+
+#### Example: Numpy Operations
+
 Additionally Numba lets us use Numpy syntax directly in the function,
 so for example the following function is well accelerated by Numba,
 even though it already fits NumPy's syntax well.
@@ -176,7 +179,7 @@ Benchmarks in the these blogposts show that Numba is both simpler to use and oft
 
 ### Numba drawbacks
 
-So, given these advantages why didn't Jake's original prophecy not hold true?
+So, given these advantages why didn't Jake's original prophecy hold true?
 
 I believe that there are two primary reasons why Numba has not been more widely adopted among other open source projects:
 
@@ -214,7 +217,7 @@ If your concern was about the average user's inability to install Numba, then I 
 Numba has two community problems:
 
 1.  Development of Numba has traditionally happened within the closed walls of Anaconda Inc (formerly Continuum Analytics)
-2.  The Numba maintainers do not socialize much within the broader Python community, and so are not well known
+2.  The Numba maintainers are not well known within the broader Python community
 3.  There used to be a proprietary version, Numba Pro
 
 This combination strongly attached Numba's image to Continuum's for-profit ventures,
@@ -224,9 +227,8 @@ for fear that dependence on this library might be used for Continuum's financial
 Things have changed significantly.
 
 Numba Pro was abolished years ago.
-The funding for the project today comes more often from hardware vendors
-looking to ensure that Python runs as efficiently as possible on their systems
-(TODO verify with Stan that this is ok to say),
+The funding for the project today comes more often from consulting work,
+hardware vendors looking to ensure that Python runs as efficiently as possible on their systems,
 and from generous donations from the Gordon and Betty Moore foundation
 to ensure that Numba serves the open source Python community.
 
@@ -234,13 +236,13 @@ Developers outside of Continuum now have core commit access,
 which forces communication to happen in public channels,
 notably GitHub (which was standard before) and Gitter chat (which is relatively new).
 
-The maintainers are still fairly asocial.
+The maintainers are still fairly relatively unknown within the broader community.
 This isn't due to any sort of conspiracy,
-but is instead due more to shyness and having interests outside of OSS.
+but is instead due more to shyness or having interests outside of OSS.
 Antoine, Siu, Stan, and Stuart are all considerate, funny, and clever fellows
 with strong enthusiasm for compilers, OSS, and performance.
-But they don't often go out of their way to attend conferences or interact with community members,
-so you may have to go slightly out of your way to interact with them.
+They are quite responsive on the [Numba mailing list](https://groups.google.com/a/continuum.io/forum/#!forum/numba-users)
+should you have any questions or concerns.
 
 *If your concern was about Numba trapping users into a for-profit mode,
 then that seems to have been resolved years ago.*
