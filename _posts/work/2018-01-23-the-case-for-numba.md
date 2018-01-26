@@ -264,7 +264,15 @@ For completeness, lets list a number of reasons why it is still quite reasonable
 7.  Understanding the compiled results is hard, I don't have good familiarity with LLVM
 
 
-### Update from Original Blogpost Authors
+### Numba features we didn't talk about
+
+1.  Multi-core parallelism
+2.  GPUs
+3.  Specializes to the CPU you're running on
+4.  Easy to swap out for other JIT compilers, like PyPy, if they arise in the future
+
+
+### Update from the original blogpost authors
 
 After writing the above I reached out both to Stan and Siu from Numba
 and to the original authors of the referenced blogposts
