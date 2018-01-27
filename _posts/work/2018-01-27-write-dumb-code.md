@@ -27,10 +27,11 @@ using the all the tricks that we learned in school.
 We implement this feature and feel accomplished, and with good reason.
 Programming in real systems is no small accomplishment.  This was certainly my
 experience.  I was excited to write code and proud that I could show off all of
-the things that I knew how to do to the world.  (As evidence of my historical
+the things that I knew how to do to the world.  As evidence of my historical
 love of programming technology, here is a [linear algebra
 language](https://github.com/mrocklin/matrix-algebra) built with a another
-meta-programming language.)
+meta-programming language.  Notice that no one has touched this code in several
+years.
 
 However after maintaining code a bit more I now think somewhat differently.
 
@@ -60,9 +61,9 @@ could be spending this time outside in the sunshine or with their family.
 So when you add code to a project you should feel meek.  It should feel as
 though you are eating with your family and there isn't enough food on the
 table.  You should take only what you need and no more.  The people with you
-will respect you for your efforts on this to restrict yourself.  Solving
-problems with less code is a hard, but it is a burden that you take on yourself
-to lighten the burdens of others.
+will respect you for your efforts to restrict yourself.  Solving problems with
+less code is a hard, but it is a burden that you take on yourself to lighten
+the burdens of others.
 
 
 Complex technologies are harder to maintain
@@ -76,10 +77,10 @@ sophistication.
 
 However when working with a team to solve problems in the world the situation
 is reversed.  Now we strive to solve problems with code that is as simple as
-possible.  By solving our problem simply, then other junior programmers can
-extend our solution it to solve other problems.  Simple code enables use by
-others and boosts our impact.  We demonstrate our value by solving hard
-problems with only basic techniques.
+possible.  When we solve a problem simply we enable junior programmers to
+extend our solution to solve other problems.  Simple code enables others and
+boosts our impact.  We demonstrate our value by solving hard problems with only
+basic techniques.
 
 *Look! I replaced this recursive function with a for loop and it still does
 everything that we need it to.  I know it's not as clever, but I noticed that
