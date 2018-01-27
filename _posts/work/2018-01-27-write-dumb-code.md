@@ -2,7 +2,6 @@
 layout: post
 title: Write Dumb Code
 category: work
-draft: true
 tags: [Programming, Python, scipy, dask]
 theme: twitter
 ---
@@ -10,7 +9,8 @@ theme: twitter
 
 *The best way you can contribute to an open source project is to remove lines of code from it.*
 *We should endeavor to write code that a novice programmer can easily
-understand without explanation or significant time investment.*
+understand without explanation or that a maintainer can understand without
+significant time investment.*
 
 As students we attempt increasingly challenging problems with increasingly
 sophisticated technologies.  We first learn loops, then functions, then
