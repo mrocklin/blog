@@ -14,7 +14,7 @@ This blogpost discusses these these strengths and weaknesses from the perspectiv
 It uses other more technical blogposts written on the topic as references.
 It is biased in favor of wider adoption given recent changes to the project.
 
-Lets start with a wildly unprophetic quote from Jake Vanderplas in 2013:
+Let's start with a wildly unprophetic quote from Jake Vanderplas in 2013:
 
 > I'm becoming more and more convinced that Numba is the future of fast scientific computing in Python.
 >
@@ -72,7 +72,7 @@ However neither is perfect.  Some issues that arise include the following:
 There are some other options out there like Numba and Pythran that,
 while they provide excellent performance and usability benefits,
 are rarely used.
-Lets look into Numba's benefits and drawbacks more closely.
+Let's look into Numba's benefits and drawbacks more closely.
 
 
 ### Numba Benefits
@@ -252,7 +252,7 @@ I would be surprised if you don't walk away pleased.*
 
 ### The Continued Cases Against Numba
 
-For completeness, lets list a number of reasons why it is still quite reasonable to avoid Numba today:
+For completeness, let's list a number of reasons why it is still quite reasonable to avoid Numba today:
 
 1.  It isn't a community standard
 2.  Numba hasn't attracted a wide developer base, and so is probably still dependent on financial support for paid developers
