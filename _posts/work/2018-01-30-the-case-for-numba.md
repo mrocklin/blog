@@ -293,7 +293,7 @@ Here are a few choice responses:
 
     *Elaborating on Jake's answer, I completely agree that Cython's annotation tool does wonders in terms of understanding your code. In fact, numba does possess this too, but as a command-line utility. I tried to demonstrate this in my blogpost, but exporting the CSS in the final HTML render kind of mangles my blog post so here's a screenshot:*
 
-    <a href="{{BASE_PATH}}/images/numba-html-annotations.png"><img src="{{BASE_PATH}}/images/numba-html-annotations.png" alt="Numba HTML annotations" width="80%"></a>
+    <a href="{{BASE_PATH}}/images/numba-html-annotations.png"><img src="{{BASE_PATH}}/images/numba-html-annotations.png" alt="Numba HTML annotations" width="100%"></a>
 
     *This is a case where `jit(nopython=True)` works, so there seems to be no coloring at all.*
 
