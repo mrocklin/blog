@@ -226,12 +226,12 @@ for fear that dependence on this library might be used for Continuum's financial
 Things have changed significantly.
 
 Numba Pro was abolished years ago.
-The funding for the project today comes more often from consulting work,
+The funding for the project today comes more often from Anaconda Inc. consulting revenue,
 hardware vendors looking to ensure that Python runs as efficiently as possible on their systems,
 and from generous donations from the Gordon and Betty Moore foundation
 to ensure that Numba serves the open source Python community.
 
-Developers outside of Continuum now have core commit access,
+Developers outside of Anaconda Inc. now have core commit access,
 which forces communication to happen in public channels,
 notably GitHub (which was standard before) and Gitter chat (which is relatively new).
 
@@ -255,19 +255,19 @@ I would be surprised if you don't walk away pleased.*
 For completeness, let's list a number of reasons why it is still quite reasonable to avoid Numba today:
 
 1.  It isn't a community standard
-2.  Numba hasn't attracted a wide developer base, and so is probably still dependent on financial support for paid developers
-3.  I want to speed up non-numeric code that includes classes, dicts, lists, etc. for which I need Cython or PyPy
-4.  I want to build a library that is useful outside of Python, and so plan to build most numeric algorithms on C/C++/Fortran
-5.  I prefer ahead-of-time compilation and want to avoid JIT times
+2.  Numba hasn't attracted a wide developer base (compilers are hard), and so is probably still dependent on financial support for paid developers
+3.  You want to speed up non-numeric code that includes classes, dicts, lists, etc. for which I need Cython or PyPy
+4.  You want to build a library that is useful outside of Python, and so plan to build most numeric algorithms on C/C++/Fortran
+5.  You prefer ahead-of-time compilation and want to avoid JIT times
 6.  While `llvmlite` is cheaper than LLVM, it's still 50MB
-7.  Understanding the compiled results is hard, I don't have good familiarity with LLVM
+7.  Understanding the compiled results is hard, and you don't have good familiarity with LLVM
 
 
 ### Numba features we didn't talk about
 
 1.  Multi-core parallelism
 2.  GPUs
-3.  Specializes to the CPU you're running on
+3.  Run-time Specialization to the CPU you're running on
 4.  Easy to swap out for other JIT compilers, like PyPy, if they arise in the future
 
 
@@ -293,7 +293,7 @@ Here are a few choice responses:
 
     *Elaborating on Jake's answer, I completely agree that Cython's annotation tool does wonders in terms of understanding your code. In fact, numba does possess this too, but as a command-line utility. I tried to demonstrate this in my blogpost, but exporting the CSS in the final HTML render kind of mangles my blog post so here's a screenshot:*
 
-    <a href="{{BASE_PATH}}/images/numba-html-annotations.png"><img src="{{BASE_PATH}}/images/numba-html-annotations.png" alt="Numba HTML annotations"></a>
+    <a href="{{BASE_PATH}}/images/numba-html-annotations.png"><img src="{{BASE_PATH}}/images/numba-html-annotations.png" alt="Numba HTML annotations" width="80%"></a>
 
     *This is a case where `jit(nopython=True)` works, so there seems to be no coloring at all.*
 
