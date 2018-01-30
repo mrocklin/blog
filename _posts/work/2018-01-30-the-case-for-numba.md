@@ -213,7 +213,7 @@ If your concern was about the average user's inability to install Numba, then I 
 
 #### Community
 
-Numba has two community problems:
+Numba has three community problems:
 
 1.  Development of Numba has traditionally happened within the closed walls of Anaconda Inc (formerly Continuum Analytics)
 2.  The Numba maintainers are not well known within the broader Python community
