@@ -2,7 +2,6 @@
 layout: post
 title: The Case for Numba in Community Code
 category: work
-draft: true
 tags: [Programming, Python, scipy, numba]
 theme: twitter
 ---
