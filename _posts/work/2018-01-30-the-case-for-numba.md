@@ -187,7 +187,7 @@ I believe that there are two primary reasons why Numba has not been more widely 
 2.  **Community Trust:** Numba is largely developed within a single for-profit company (Anaconda Inc.) and its developers are not well known by other library maintainers.
 3.  **Lack of Interpretability:** Numba's output, LLVM, is less well understood by the community than Cython's output, C (discussed in original-author comments in the last section)
 
-These are both excellent reasons to avoid adding a dependency.
+All three of these are excellent reasons to avoid adding a dependency.
 Technical excellence alone is insufficient, and must be considered alongside community and long-term maintenance concerns.
 
 -  [http://jakevdp.github.io/blog/2015/02/24/optimizing-python-with-numpy-and-numba/](http://jakevdp.github.io/blog/2015/02/24/optimizing-python-with-numpy-and-numba/)
