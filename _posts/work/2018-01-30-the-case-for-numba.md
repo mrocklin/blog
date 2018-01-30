@@ -180,7 +180,7 @@ Benchmarks in the these blogposts show that Numba is both simpler to use and oft
 
 So, given these advantages why didn't Jake's original prophecy hold true?
 
-I believe that there are two primary reasons why Numba has not been more widely adopted among other open source projects:
+I believe that there are three primary reasons why Numba has not been more widely adopted among other open source projects:
 
 1.  **LLVM Dependency**: Numba depends on LLVM, which was historically difficult to install without a system package manager (like apt-get, brew) or conda.
 	Library authors are not willing to exclude users that use other packaging toolchains, particularly Python's standard tool, `pip`.
