@@ -165,8 +165,7 @@ avg_default.visualize()
 And that is how dask can be used to construct a complex system of equations with reusable intermediary calculations.
 
 
-How we used dask in practice
-----------------------------
+## How we used dask in practice
 
 For our credit modeling problem, we used dask to make a custom data structure to represent the individual equations. Using the default example above, this looked something like the following:
 
@@ -184,7 +183,7 @@ This allows us to write each equation as it's own isolated function and mark it'
 
 <img src="{{BASE_PATH}}/images/credit_models/graph1.png" alt="calc task graph">
 
-This graph was a bit too large to render with the normal `my_task.visualize()` method, so instead we rendered it with [Gephi](https://gephi.org) and make the pretty colored graph above. The chaotic upper region of this graph is the individual equation calculations. Zooming in we can see the entry point, our input pandas DataFrame, as the large orange circle at the top and how it gets fed into many of the original equations.
+This graph was a bit too large to render with the normal `my_task.visualize()` method, so instead we rendered it with [Gephi](https://gephi.org) to make the pretty colored graph above. The chaotic upper region of this graph is the individual equation calculations. Zooming in we can see the entry point, our input pandas DataFrame, as the large orange circle at the top and how it gets fed into many of the equations.
 
 <img src="{{BASE_PATH}}/images/credit_models/graph_model.png" alt="zoomed model section">
 
@@ -195,7 +194,7 @@ The output of the model is about 100 times the size of the input so we do some a
 
 ## Final Thoughts
 
-With our dask-based data structure, we spend more of our time writing model code rather than maintenance of the engine itself. This allows a clean separation between our analysts that design and write our models, and our computational system, tha runs them.  Dask also offers a number of advantages not covered above. For example, with dask you also get access to [diagnostics](https://distributed.readthedocs.io/en/latest/web.html) such as time spent running each task and resources used. Also, you can easily distribute your computation with [dask distributed](https://distributed.readthedocs.io/en/latest/) with relative ease. Now if I want to run our model across larger-than-memory data or on a distributed cluster, we don't have to worry about rewriting our code to incorporate something like Spark. Finally, dask allows you to give pandas-capable business analysts or less technical folks access to large datasets with the [dask dataframe](http://dask.pydata.org/en/latest/dataframe.html).
+With our dask-based data structure, we spend more of our time writing model code rather than maintenance of the engine itself. This allows a clean separation between our analysts that design and write our models, and our computational system, that runs them.  Dask also offers a number of advantages not covered above. For example, with dask you also get access to [diagnostics](https://distributed.readthedocs.io/en/latest/web.html) such as time spent running each task and resources used. Also, you can easily distribute your computation with [dask distributed](https://distributed.readthedocs.io/en/latest/) with relative ease. Now if I want to run our model across larger-than-memory data or on a distributed cluster, we don't have to worry about rewriting our code to incorporate something like Spark. Finally, dask allows you to give pandas-capable business analysts or less technical folks access to large datasets with the [dask dataframe](http://dask.pydata.org/en/latest/dataframe.html).
 
 
 ## Full Example
@@ -246,7 +245,6 @@ avg_default.compute()
 avg_default.visualize()  # requires graphviz and python-graphviz to be installed
 ```
 
-Acknowledgements
-----------------
+## Acknowledgements
 
 Special thanks to Matt Rocklin, Michael Grant, and Gus Cavanagh for their feedback when writing this article.
