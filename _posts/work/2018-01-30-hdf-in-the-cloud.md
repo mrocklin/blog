@@ -25,7 +25,7 @@ Multi-Dimensional Data
 ----------------------
 
 We're talking about data that is multi-dimensional and regularly strided.
-This data often occurs in simulation output (like weather),
+This data often occurs in simulation output (like climate models),
 biomedical imaging (like an MRI scan),
 or needs to be efficiently accessed across a number of different dimensions (like many complex time series).
 Here is an image from XArray to put you in the right frame of mind:
@@ -36,9 +36,14 @@ This data is often stored in blocks such that, say,
 each 100x100x100 chunk of data is stored together,
 and can be accessed without reading through the rest of the file.
 
-A few file formats allow this layout, the most popular of which is the HDF format, which has been the standard for decades.
-HDF is a powerful and efficient format capable of handling both complex hierarchical data systems (filesystem-in-a-file)
+A few file formats allow this layout,
+the most popular of which is the HDF format,
+which has been the standard for decades.
+HDF is a powerful and efficient format capable of handling both complex hierarchical data systems
+(filesystem-in-a-file)
 and efficiently blocked numeric arrays.
+Unfortunately HDF is difficult to access from cloud object stores (like S3),
+which presents a challenge to the scientific community.
 
 
 The Opportunity and Challenge of Cloud Storage
@@ -55,7 +60,8 @@ Hopefully this generates more social value from existing simulations and observa
 
 Unfortunately, the layout of HDF files makes it difficult to query them efficiently on cloud storage systems
 (like Amazon's S3, Google's GCS, Microsoft's ADL).
-The HDF format is complex and metadata is strewn throughout the file a complex sequence of reads within a binary blob of data.
+The HDF format is complex and metadata is strewn throughout the file,
+so that a complex sequence of reads is required to reach a specific chunk of data.
 The only pragmatic way to read a chunk of data from an HDF file today is to use the existing HDF C library,
 which expects to receive a C `FILE` object, pointing to a normal file system
 (not a cloud object store) (this is not entirely true, as we'll see below).
@@ -64,40 +70,40 @@ So organizations like NASA are dumping large amounts of HDF onto Amazon's S3,
 that no one can actually read, except by downloading the entire file down to their hard drive,
 and then pulling out the particular bits that they need.
 This is inefficient.
-It misses out on the potential that cloud-hosted public data can offer our to society.
+It misses out on the potential that cloud-hosted public data can offer to our society.
 
 The rest of this post discusses a few of the options to solve this problem,
 including their advantages and disadvantages.
 
 1.  **Cloud Optimized GeoTIFF:** We can use modern and efficient formats from other domains, like Cloud Optimized GeoTIFF
 
-    **Good**: Fast, well established
+    *Good:* Fast, well established
 
-    **Bad**: Not actually sophisticated enough to handle some scientific use cases
+    *Bad:* Not actually sophisticated enough to handle some scientific use cases
 
 2.  **HDF + FUSE:** Continue using HDF, but mount cloud object stores as a file system with [Filesystem in Userspace, aka FUSE](https://en.wikipedia.org/wiki/Filesystem_in_Userspace)
 
-    **Good:** Works with existing files, no changes to the HDF library necessary
+    *Good:* Works with existing files, no changes to the HDF library necessary
 
-    **Bad:** It's complex, probably not as fast as possible, and has historically been brittle
+    *Bad:* It's complex, probably not as fast as possible, and has historically been brittle
 
 2.  **HDF + Custom Reader:** Continue using HDF, but teach it how to read from S3, GCS, ADL, ...
 
-    **Good:** Works with existing files, no complex FUSE tricks
+    *Good:* Works with existing files, no complex FUSE tricks
 
-    **Bad:** Requires changes to the HDF library and all downstream libraries (like Python wrappers).  Probably not performance optimal
+    *Bad:* Requires changes to the HDF library and all downstream libraries (like Python wrappers).  Probably not performance optimal
 
 3.  **HDF + Web Service:** Continue using HDF, but buffer it with a distributed service
 
-    **Good:** Works with existing files, probably decently fast, probably also works for efficient writes
+    *Good:* Probably decently fast, probably also works for efficient writes
 
-    **Bad:** Complex to write and to deploy.  Probably not free.  It hides our data behind someone who owns and runs a service, introducing an intermediary.
+    *Bad:* Complex to write and to deploy.  Probably not free.  It hides our data behind someone who owns and runs a service, introducing an intermediary.
 
 4.  **New Formats for Scientific Data:** Design a new format, optimized for science use on the cloud
 
-    **Good:** Fast, intuitive, and modern
+    *Good:* Fast, intuitive, and modern
 
-    **Bad:** Not a community standard
+    *Bad:* Not a community standard
 
 Now we go into each option in more depth
 
