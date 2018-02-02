@@ -347,3 +347,16 @@ From [earthdata.nasa.gov/cmr-and-esdc-in-cloud](https://earthdata.nasa.gov/cmr-a
 > From its current cumulative archive size of almost 22 petabytes (PB), the volume of data in the EOSDIS archive is expected to grow to almost 247 PB by 2025, according to estimates by NASA’s Earth Science Data Systems (ESDS) Program. Over the next five years, the daily ingest rate of data into the EOSDIS archive is expected to reach 114 terabytes (TB) per day, with the upcoming joint NASA/Indian Space Research Organization Synthetic Aperture Radar (NISAR) mission (scheduled for launch by 2021) contributing an estimated 86 TB per day of data when operational.
 
 This is only one example of many agencies in many domains pushing scientific data to the cloud.
+
+
+Acknowledgements
+----------------
+
+Thanks to
+[Joe Jevnik](https://github.com/llllllllll) (Quantopian),
+[John Readey](https://github.com/jreadey) (HDF Group),
+[Rich Signell](https://github.com/rsignell-usgs) (USGS),
+and [Ryan Abernathey](https://rabernat.github.io/) (Columbia University)
+for their feedback when writing this article.
+This conversation started within the [Pangeo](https://pangeo-data.github.io/) collaboration.
+
