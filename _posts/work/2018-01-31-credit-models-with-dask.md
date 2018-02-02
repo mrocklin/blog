@@ -156,15 +156,15 @@ class Default(Equation):
 
 This allows us to write each equation as it's own isolated function and mark it's inputs and outputs. With this set of equation objects, we can determine the order of computation (with a [topological sort](https://en.wikipedia.org/wiki/Topological_sorting)) and let dask handle the graph generation and computation. This eliminates the onerous task of manually passing around the arguments in the code base. Below is an example task graph for one particular model that the bank actually does.
 
-<img src="{{BASE_PATH}}/images/credit_models/graph1.png" alt="calc task graph">
+<img src="{{BASE_PATH}}/images/credit_models/graph.svg" alt="calc task graph">
 
 Thanks to [Gephi](https://gephi.org), I am able to process the large dot file outputted from `my_task.visualize()` and make the pretty colored graph above. The chaotic upper region of this graph is the individual equation calculations. Zooming in we can see the entry point, our input pandas DataFrame, as the large orange circle at the top and how it gets fed into the equations.
 
-<img src="{{BASE_PATH}}/images/credit_models/graph_model.png" alt="zoomed model section">
+<img src="{{BASE_PATH}}/images/credit_models/graph_model.svg" alt="zoomed model section">
 
 The output of the model is about 100 times the size of the input so we do some aggregation at the end via tree reduction. This accounts for the more structured bottom half of the graph. The large green node at the bottom is our final output.
 
-<img src="{{BASE_PATH}}/images/credit_models/graph_agg.png" alt="zoomed agg section">
+<img src="{{BASE_PATH}}/images/credit_models/graph_agg.svg" alt="zoomed agg section">
 
 ## Final Thoughts
 
