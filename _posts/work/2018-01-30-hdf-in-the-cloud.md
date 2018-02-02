@@ -1,6 +1,7 @@
 ---
 layout: post
-title: Scientific Data in the Cloud
+title: HDF in the Cloud
+tagline: challenges and solutions for scientific data
 category: work
 draft: True
 tags: [Programming, Python, scipy, Pangeo]
@@ -8,7 +9,9 @@ theme: twitter
 ---
 {% include JB/setup %}
 
-Multi-dimensional data, such as is commonly stored in HDF and NetCDF formats, is difficult to access on traditional cloud storage platforms.
+Multi-dimensional data,
+such as is commonly stored in HDF and NetCDF formats,
+is difficult to access on traditional cloud storage platforms.
 This post outlines the situation, current approaches, and their strengths and weaknesses.
 
 Not Tabular Data
@@ -38,7 +41,8 @@ and can be accessed without reading through the rest of the file.
 
 A few file formats allow this layout,
 the most popular of which is the HDF format,
-which has been the standard for decades.
+which has been the standard for decades
+and forms the basis for other scientific formats like NetCDF.
 HDF is a powerful and efficient format capable of handling both complex hierarchical data systems
 (filesystem-in-a-file)
 and efficiently blocked numeric arrays.
@@ -91,13 +95,13 @@ including their advantages and disadvantages.
 
     *Good:* Works with existing files, no complex FUSE tricks
 
-    *Bad:* Requires changes to the HDF library and all downstream libraries (like Python wrappers).  Probably not performance optimal
+    *Bad:* Requires plugins to the HDF library and tweaks to downstream libraries (like Python wrappers).  Probably not performance optimal
 
-3.  **HDF + Web Service:** Continue using HDF, but buffer it with a distributed service
+3.  **Build a Distributed Service:** Allow others to serve this data behind a web API, built however they think best
 
-    *Good:* Probably decently fast, probably also works for efficient writes
+    *Good:* Lets other groups think about this problem and evolve backend solutions while maintaining stable frontend API
 
-    *Bad:* Complex to write and to deploy.  Probably not free.  It hides our data behind someone who owns and runs a service, introducing an intermediary.
+    *Bad:* Complex to write and deploy.  Probably not free.  Hides data behind an intermediary.
 
 4.  **New Formats for Scientific Data:** Design a new format, optimized for science use on the cloud
 
@@ -105,24 +109,24 @@ including their advantages and disadvantages.
 
     *Bad:* Not a community standard
 
-Now we go into each option in more depth
+Now we discuss each option in more depth.
 
 
 Use Other Formats, like Cloud Optimized GeoTIFF
 -----------------------------------------------
 
 We could use formats other than HDF and NetCDF that are already well established.
-The two that I hear most often proposed are Cloud Optimized GeoTIFF and Apache Parquet.
+The two that I hear most often proposed are [Cloud Optimized GeoTIFF](http://www.cogeo.org/) and [Apache Parquet](https://parquet.apache.org/).
 Both are efficient, well designed for cloud storage, and well established as community standards.
 If you haven't already, I strongly recommend reading Chris Holmes' (Planet) blog series on [Cloud Native Geospatial](https://medium.com/tag/cloud-native-geospatial/latest).
 
 These formats are well designed for cloud storage because they support random access well with relatively few communications and with relatively simple code.
 If you needed to you could open up the Cloud Optimized GeoTIFF spec,
-and with about an hour of reading,
+and within an hour of reading,
 get an image that you wanted using nothing but a couple of `curl` commands.
 Metadata is in a clear centralized place.
 That metadata provides enough information to issue further commands to get the relevant bytes from the object store.
-Those bytes are stored in a format that is easily interpreted by a variety of common tools on all platforms.
+Those bytes are stored in a format that is easily interpreted by a variety of common tools across all platforms.
 
 However, neither of these formats are sufficiently expressive to handle some of the use cases of HDF and NetCDF.
 Recall our image earlier about atmospheric data:
@@ -132,7 +136,7 @@ Recall our image earlier about atmospheric data:
 Our data isn't a parquet table, nor is it a stack of geo-images.
 While it's true that you could store any data in these formats,
 for example by saving each horizontal slice as a GeoTIFF,
-or each spatial point in a Parquet table,
+or each spatial point as a row in a Parquet table,
 these storage layouts would be *inefficient* for regular access patterns.
 Some parts of the scientific community *need* blocked layouts for multi-dimensional array data.
 
@@ -195,45 +199,64 @@ HDF and a Custom Reader
 
 The HDF library doesn't *need* to use C File pointers,
 we can extend it to use other storage backends as well.
+[Virtual File Layers](https://support.hdfgroup.org/HDF5/doc/TechNotes/VFL.html)
+are an extension mechanism within HDF5 that could allow it to target cloud object stores.
+This has already been done to support Amazon's S3 object store twice:
 
-This has already been done to support Amazon's S3 twice,
+1.  Once by the [HDF group](https://www.hdfgroup.org/), S3VFD (currently private),
+2.  Once by [Joe Jevnik](https://github.com/llllllllll) and [Scott Sanderson](https://github.com/ssanderson) ([Quantopian](https://www.quantopian.com/)) at [https://h5s3.github.io/h5s3/](https://h5s3.github.io/h5s3/) (highly [experimental](https://h5s3.github.io/h5s3/warnings.html))
 
-1.  Once by the [HDF group](https://www.hdfgroup.org/) (currently private private),
-2.  Once by Joe Jevnik and Scott Sanderson (Quantopian) at [https://h5s3.github.io/h5s3/](https://h5s3.github.io/h5s3/) (highly [experimental](https://h5s3.github.io/h5s3/warnings.html))
-
-This provides an alternative to FUSE.
-This is better because it doesn't require privileged access,
+This provides an alternative to FUSE
+that is better because it doesn't require privileged access,
 but is worse because it only solves this problem for HDF and not all file access.
 
-In either case we'll need to do look-ahead buffering and caching to get reasonable performance.
+In either case we'll need to do look-ahead buffering and caching to get reasonable performance (or see below).
 
 
 Centralize Metadata
 -------------------
 
-Alternatively, we might centralize metadata in one place so that we can avoid many hops through the file.
-This could be within the HDF format itself, or in a separate side-file.
+Alternatively, we might centralize metadata in the HDF file in order to avoid many hops throughout that file.
+This would remove the need to perform clever file-system caching and buffering tricks.
 
-This would remove the need to perform clever file-system caching and buffering tricks,
-but requires some work on the HDF library itself.
+Here is a brief technical explanation from [Joe Jevnik](https://github.com/llllllllll):
+
+> Regarding the centralization of metadata: this is already a feature of hdf5
+  and is used by many of the built-in drivers. This optimization is enabled by
+  setting the `H5FD_FEAT_AGGREGATE_METADATA` and
+  `H5FD_FEAT_ACCUMULATE_METADATA` feature flags in your VFL driver's query
+  function. The first flag says that the hdf5 library should pre-allocate a
+  large region to store metadata, future metadata allocations will be served
+  from this pool. The second flag says that the library should buffer metadata
+  changes into large chunks before dispatching the VFL driver's write
+  function. Both the default driver (sec2) and h5s3 enable these
+  optimizations. This is further supported by using the `H5FD_FLMAP_DICHOTOMY`
+  free list option which uses one free list for metadata allocations and
+  another for non-metadata allocations. If you really want to ensure that the
+  metadata is aggregated, even without a repack, you can use the built-in
+  'multi' driver which dispatches different allocation flavors to their own
+  driver.
 
 
-HDF + Web Service
------------------
+Distributed Service
+-------------------
 
 We could offload this problem to a for-profit entity,
-like the [HDF group](https://www.hdfgroup.org/) or a cloud provider (Google, Amazon, Microsoft).
+like the [HDF group](https://www.hdfgroup.org/)
+or a cloud provider (Google, Amazon, Microsoft).
 They would solve this problem however they like,
 and expose a web API that we can hit for our data.
 
-This would be distributed service of several computers on the cloud near our data
-that will take our requests for what data we want,
+This would be a distributed service of several computers on the cloud near our data,
+that takes our requests for what data we want,
 perform whatever tricks they deem appropriate to get that data,
 and then deliver it to us.
 This fleet of machines will still have to address the problems listed above,
 but we can let them figure it out, and presumably they'll learn as they go.
 
-However, this is somewhat complex, and creates an intermediary between us and our data.
+However, this has both technical and social costs.
+Technically this is complex, and they'll have to handle a new set of issues around scalability, consistency, and so on that are already solved(ish) in the cloud object stores.
+Socially this creates an intermediary between us and our data, which we may not want both for reasons of cost and trust.
 
 The HDF group is working on such a service, HSDS that works on Amazon's S3 (or anything that looks like S3).
 They have created a [h5pyd](https://github.com/HDFGroup/h5pyd) library that is a drop-in replacement for the popular [h5py](https://github.com/HDFGroup/h5pyd) Python library.
@@ -241,6 +264,8 @@ They have created a [h5pyd](https://github.com/HDFGroup/h5pyd) library that is a
 Presumably a cloud provider, like Amazon, Google, or Microsoft could do this as well.
 By providing open standards like [OpenDAP](https://www.opendap.org/) they might attract more science users onto their platform
 to more efficiently query their cloud-hosted datasets.
+
+The satellite imagery company [Planet](https://planet.com) already has [such a service](https://medium.com/planet-os/an-api-for-the-worlds-weather-climate-data-7e9946169f48).
 
 
 New Formats for Scientific Data
@@ -309,3 +334,16 @@ And so we need to answer a couple of difficult questions:
 
 1.  How hard is it to make HDF efficient in the cloud?
 2.  How hard is it to shift the community to a new standard?
+
+
+A Sense of Urgency
+------------------
+
+These questions are important now.
+NASA and other agencies are pushing NetCDF data into the Cloud today and will be increasing these rates substantially in the coming years.
+
+From [earthdata.nasa.gov/cmr-and-esdc-in-cloud](https://earthdata.nasa.gov/cmr-and-esdc-in-cloud) (via [Ryan Abernathey](http://rabernat.github.io/))
+
+> From its current cumulative archive size of almost 22 petabytes (PB), the volume of data in the EOSDIS archive is expected to grow to almost 247 PB by 2025, according to estimates by NASA’s Earth Science Data Systems (ESDS) Program. Over the next five years, the daily ingest rate of data into the EOSDIS archive is expected to reach 114 terabytes (TB) per day, with the upcoming joint NASA/Indian Space Research Organization Synthetic Aperture Radar (NISAR) mission (scheduled for launch by 2021) contributing an estimated 86 TB per day of data when operational.
+
+This is only one example of many agencies in many domains pushing scientific data to the cloud.
