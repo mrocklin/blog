@@ -241,9 +241,9 @@ Here is a brief technical explanation from [Joe Jevnik](https://github.com/lllll
 Distributed Service
 -------------------
 
-We could offload this problem to a for-profit entity,
-like the [HDF group](https://www.hdfgroup.org/)
-or a cloud provider (Google, Amazon, Microsoft).
+We could offload this problem to a company,
+like the non-profit [HDF group](https://www.hdfgroup.org/)
+or a for-profit cloud provider like Google, Amazon, or Microsoft.
 They would solve this problem however they like,
 and expose a web API that we can hit for our data.
 
