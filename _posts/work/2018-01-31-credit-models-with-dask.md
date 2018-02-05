@@ -164,7 +164,9 @@ To see the computation graph that dask will use, we call `visualize`:
 avg_default.visualize()
 ```
 
-<img src="{{BASE_PATH}}/images/credit_models/dummy_graph.png" alt="default graph">
+<img src="{{BASE_PATH}}/images/credit_models/dummy_graph.png"
+     alt="default graph"
+     width="100%">
 
 And that is how dask can be used to construct a complex system of equations with reusable intermediary calculations.
 
