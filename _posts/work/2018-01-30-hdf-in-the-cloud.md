@@ -61,24 +61,27 @@ The Opportunity and Challenge of Cloud Storage
 
 The scientific community generates several petabytes of HDF data annually.
 Supercomputer simulations (like a large climate model) produce a few petabytes.
-Planned NASA satellite missions will produce hundreds of petabytes a year.
+Planned NASA satellite missions will produce [hundreds of petabytes](https://earthdata.nasa.gov/cmr-and-esdc-in-cloud) a year of observational data.
 All of these tend to be stored in HDF.
 
 To increase access,
 institutions now place this data on the cloud.
-Hopefully this generates more social value from existing simulations and observations.
+Hopefully this generates more social value from existing simulations and observations,
+as they are ideally now more accessible to any researcher
+or any company
+without coordination with the host institution.
 
-Unfortunately, the layout of HDF files makes it difficult to query them efficiently on cloud storage systems
-(like Amazon's S3, Google's GCS, Microsoft's ADL).
+Unfortunately, the layout of HDF files makes them difficult to query efficiently on cloud storage systems
+(like Amazon's S3, Google's GCS, or Microsoft's ADL).
 The HDF format is complex and metadata is strewn throughout the file,
 so that a complex sequence of reads is required to reach a specific chunk of data.
 The only pragmatic way to read a chunk of data from an HDF file today is to use the existing HDF C library,
 which expects to receive a C `FILE` object, pointing to a normal file system
 (not a cloud object store) (this is not entirely true, as we'll see below).
 
-So organizations like NASA are dumping large amounts of HDF onto Amazon's S3,
+So organizations like NASA are dumping large amounts of HDF onto Amazon's S3
 that no one can actually read, except by downloading the entire file to their local hard drive,
-and then pulling out the particular bits that they need.
+and then pulling out the particular bits that they need with the HDF library.
 This is inefficient.
 It misses out on the potential that cloud-hosted public data can offer to our society.
 
@@ -89,13 +92,13 @@ including their advantages and disadvantages.
 
     *Good:* Fast, well established
 
-    *Bad:* Not actually sophisticated enough to handle some scientific use cases
+    *Bad:* Not sophisticated enough to handle some scientific domains
 
 2.  **HDF + FUSE:** Continue using HDF, but mount cloud object stores as a file system with [Filesystem in Userspace, aka FUSE](https://en.wikipedia.org/wiki/Filesystem_in_Userspace)
 
     *Good:* Works with existing files, no changes to the HDF library necessary, useful in non-HDF contexts as well
 
-    *Bad:* It's complex, probably not as fast as possible, and has historically been brittle
+    *Bad:* It's complex, probably not performance-optimal, and has historically been brittle
 
 2.  **HDF + Custom Reader:** Continue using HDF, but teach it how to read from S3, GCS, ADL, ...
 
@@ -107,7 +110,7 @@ including their advantages and disadvantages.
 
     *Good:* Lets other groups think about this problem and evolve complex backend solutions while maintaining stable frontend API
 
-    *Bad:* Complex to write and deploy.  Probably not free.  Hides data behind an intermediary.
+    *Bad:* Complex to write and deploy.  Probably not free.  Introduces an intermediary between us and our data.
 
 4.  **New Formats for Scientific Data:** Design a new format, optimized for scientific data in the cloud
 
@@ -127,9 +130,9 @@ Both are efficient, well designed for cloud storage, and well established as com
 If you haven't already, I strongly recommend reading Chris Holmes' (Planet) blog series on [Cloud Native Geospatial](https://medium.com/tag/cloud-native-geospatial/latest).
 
 These formats are well designed for cloud storage because they support random access well with relatively few communications and with relatively simple code.
-If you needed to you could open up the Cloud Optimized GeoTIFF spec,
+If you needed to you could look at the [Cloud Optimized GeoTIFF spec](https://trac.osgeo.org/gdal/wiki/CloudOptimizedGeoTIFF),
 and within an hour of reading,
-get an image that you wanted using nothing but a couple of `curl` commands.
+get an image that you wanted using nothing but a few `curl` commands.
 Metadata is in a clear centralized place.
 That metadata provides enough information to issue further commands to get the relevant bytes from the object store.
 Those bytes are stored in a format that is easily interpreted by a variety of common tools across all platforms.
