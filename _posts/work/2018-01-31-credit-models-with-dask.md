@@ -35,7 +35,7 @@ P.S. If others have similar solutions and would like to share them I'd love to h
 
 ## The Problem
 
-When applying for a loan, like a credit card, mortgage, auto loan, etc., we want to estimate the likelihood of default and the profit (or loss) to be gained. Those models are composed of a complex set of equations that depend on each other. There can be hundreds of equations each of which could have up to 20 inputs and yield 20 outputs. That is a lot of information to keep track of and we want to avoid manually keeping track of the dependencies. We want to avoid messy code like the following Python function:
+When applying for a loan, like a credit card, mortgage, auto loan, etc., we want to estimate the likelihood of default and the profit (or loss) to be gained. Those models are composed of a complex set of equations that depend on each other. There can be hundreds of equations each of which could have up to 20 inputs and yield 20 outputs. That is a lot of information to keep track of! We want to avoid manually keeping track of the dependencies, as well as messy code like the following Python function:
 
 ```python
 def final_equation(inputs):
@@ -54,7 +54,7 @@ This boils down to a dependency and ordering problem known as task scheduling.
 
 <img src="{{BASE_PATH}}/images/credit_models/snatch.jpg" alt="snatch joke">
 
-A [directed acyclic graph](https://en.wikipedia.org/wiki/Directed_acyclic_graph) (DAG) is commonly used to solve task scheduling problems. Dask is a library for delayed task computation that makes use of directed graphs at it's core. [dask.delayed](http://dask.pydata.org/en/latest/delayed.html) is a simple decorator that turns a python function into a graph vertex. If I pass the output from one delayed function as a parameter to another delayed function, dask creates a directed edge between them. Let's look at an example:
+A [directed acyclic graph](https://en.wikipedia.org/wiki/Directed_acyclic_graph) (DAG) is commonly used to solve task scheduling problems. Dask is a library for delayed task computation that makes use of directed graphs at its core. [dask.delayed](http://dask.pydata.org/en/latest/delayed.html) is a simple decorator that turns a Python function into a graph vertex. If I pass the output from one delayed function as a parameter to another delayed function, Dask creates a directed edge between them. Let's look at an example:
 
 ```python
 def add(x, y):
@@ -122,7 +122,7 @@ def default(hist, income):
     return hist**2 + income
 ```
 
-Note, how I wrapped the functions with `delayed`. Now instead of returning a number these functions will return a `Delayed` object. Even better is that these functions can also take `Delayed` objects as inputs. It is this passing of `Delayed` objects as inputs to other `delayed` functions that allows dask to construct the task graph. I can now call these functions on my data in the style of normal Python code:
+Note how I wrapped the functions with `delayed`. Now instead of returning a number these functions will return a `Delayed` object. Even better is that these functions can also take `Delayed` objects as inputs. It is this passing of `Delayed` objects as inputs to other `delayed` functions that allows Dask to construct the task graph. I can now call these functions on my data in the style of normal Python code:
 
 ```python
 inc_hist = [increment(n) for n in hist_yrs]
@@ -158,7 +158,7 @@ avg_default = default_sum[0] / 10
 avg_default.compute()  # 40.75
 ```
 
-To see the computation graph that dask will use, we call `visualize`:
+To see the computation graph that Dask will use, we call `visualize`:
 
 ```python
 avg_default.visualize()
@@ -168,12 +168,12 @@ avg_default.visualize()
      alt="default graph"
      width="100%">
 
-And that is how dask can be used to construct a complex system of equations with reusable intermediary calculations.
+And that is how Dask can be used to construct a complex system of equations with reusable intermediary calculations.
 
 
-## How we used dask in practice
+## How we used Dask in practice
 
-For our credit modeling problem, we used dask to make a custom data structure to represent the individual equations. Using the default example above, this looked something like the following:
+For our credit modeling problem, we used Dask to make a custom data structure to represent the individual equations. Using the default example above, this looked something like the following:
 
 ```python
 class Default(Equation):
@@ -185,7 +185,7 @@ class Default(Equation):
         return inc_hist**2 + halved_income
 ```
 
-This allows us to write each equation as it's own isolated function and mark it's inputs and outputs. With this set of equation objects, we can determine the order of computation (with a [topological sort](https://en.wikipedia.org/wiki/Topological_sorting)) and let dask handle the graph generation and computation. This eliminates the onerous task of manually passing around the arguments in the code base. Below is an example task graph for one particular model that the bank actually does.
+This allows us to write each equation as its own isolated function and mark its inputs and outputs. With this set of equation objects, we can determine the order of computation (with a [topological sort](https://en.wikipedia.org/wiki/Topological_sorting)) and let Dask handle the graph generation and computation. This eliminates the onerous task of manually passing around the arguments in the code base. Below is an example task graph for one particular model that the bank actually does.
 
 <a href="{{BASE_PATH}}/images/credit_models/simple.svg">
   <img src="{{BASE_PATH}}/images/credit_models/simple.svg"
@@ -210,7 +210,7 @@ The output of the model is about 100 times the size of the input so we do some a
 
 ## Final Thoughts
 
-With our dask-based data structure, we spend more of our time writing model code rather than maintenance of the engine itself. This allows a clean separation between our analysts that design and write our models, and our computational system, that runs them.  Dask also offers a number of advantages not covered above. For example, with dask you also get access to [diagnostics](https://distributed.readthedocs.io/en/latest/web.html) such as time spent running each task and resources used. Also, you can easily distribute your computation with [dask distributed](https://distributed.readthedocs.io/en/latest/) with relative ease. Now if I want to run our model across larger-than-memory data or on a distributed cluster, we don't have to worry about rewriting our code to incorporate something like Spark. Finally, dask allows you to give pandas-capable business analysts or less technical folks access to large datasets with the [dask dataframe](http://dask.pydata.org/en/latest/dataframe.html).
+With our Dask-based data structure, we spend more of our time writing model code rather than maintenance of the engine itself. This allows a clean separation between our analysts that design and write our models, and our computational system that runs them.  Dask also offers a number of advantages not covered above. For example, with Dask you also get access to [diagnostics](https://distributed.readthedocs.io/en/latest/web.html) such as time spent running each task and resources used. Also, you can easily distribute your computation with [dask distributed](https://distributed.readthedocs.io/en/latest/) with relative ease. Now if I want to run our model across larger-than-memory data or on a distributed cluster, we don't have to worry about rewriting our code to incorporate something like Spark. Finally, Dask allows you to give pandas-capable business analysts or less technical folks access to large datasets with the [dask dataframe](http://dask.pydata.org/en/latest/dataframe.html).
 
 
 ## Full Example
