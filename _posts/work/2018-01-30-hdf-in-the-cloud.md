@@ -12,16 +12,22 @@ theme: twitter
 Multi-dimensional data,
 such as is commonly stored in HDF and NetCDF formats,
 is difficult to access on traditional cloud storage platforms.
-This post outlines the situation, current approaches, and their strengths and weaknesses.
+This post outlines the situation, the following possible solutions, and their strengths and weaknesses.
+
+1.  **Cloud Optimized GeoTIFF:** We can use modern and efficient formats from other domains, like Cloud Optimized GeoTIFF
+2.  **HDF + FUSE:** Continue using HDF, but mount cloud object stores as a file system with [FUSE](https://en.wikipedia.org/wiki/Filesystem_in_Userspace)
+2.  **HDF + Custom Reader:** Continue using HDF, but teach it how to read from S3, GCS, ADL, ...
+3.  **Build a Distributed Service:** Allow others to serve this data behind a web API, built however they think best
+4.  **New Formats for Scientific Data:** Design a new format, optimized for scientific data in the cloud
 
 Not Tabular Data
 ----------------
 
 If your data fits into a tabular format,
 such that you can use tools like SQL, Pandas, or Spark,
-then this post is not relevant to you.
+then this post is not for you.
 You should consider Parquet, ORC,
-or any of a hundred other excellent formats that are well designed for use on cloud storage technologies.
+or any of a hundred other excellent formats or databases that are well designed for use on cloud storage technologies.
 
 
 Multi-Dimensional Data
@@ -31,7 +37,7 @@ We're talking about data that is multi-dimensional and regularly strided.
 This data often occurs in simulation output (like climate models),
 biomedical imaging (like an MRI scan),
 or needs to be efficiently accessed across a number of different dimensions (like many complex time series).
-Here is an image from XArray to put you in the right frame of mind:
+Here is an image from the popular [XArray](http://xarray.pydata.org/en/stable/) library to put you in the right frame of mind:
 
 <img src="{{BASE_PATH}}/images/xarray-boxes-2.png" width="100%">
 
@@ -71,7 +77,7 @@ which expects to receive a C `FILE` object, pointing to a normal file system
 (not a cloud object store) (this is not entirely true, as we'll see below).
 
 So organizations like NASA are dumping large amounts of HDF onto Amazon's S3,
-that no one can actually read, except by downloading the entire file down to their hard drive,
+that no one can actually read, except by downloading the entire file to their local hard drive,
 and then pulling out the particular bits that they need.
 This is inefficient.
 It misses out on the potential that cloud-hosted public data can offer to our society.
@@ -87,7 +93,7 @@ including their advantages and disadvantages.
 
 2.  **HDF + FUSE:** Continue using HDF, but mount cloud object stores as a file system with [Filesystem in Userspace, aka FUSE](https://en.wikipedia.org/wiki/Filesystem_in_Userspace)
 
-    *Good:* Works with existing files, no changes to the HDF library necessary
+    *Good:* Works with existing files, no changes to the HDF library necessary, useful in non-HDF contexts as well
 
     *Bad:* It's complex, probably not as fast as possible, and has historically been brittle
 
@@ -95,15 +101,15 @@ including their advantages and disadvantages.
 
     *Good:* Works with existing files, no complex FUSE tricks
 
-    *Bad:* Requires plugins to the HDF library and tweaks to downstream libraries (like Python wrappers).  Probably not performance optimal
+    *Bad:* Requires plugins to the HDF library and tweaks to downstream libraries (like Python wrappers).  Will require effort to make performance optimal
 
 3.  **Build a Distributed Service:** Allow others to serve this data behind a web API, built however they think best
 
-    *Good:* Lets other groups think about this problem and evolve backend solutions while maintaining stable frontend API
+    *Good:* Lets other groups think about this problem and evolve complex backend solutions while maintaining stable frontend API
 
     *Bad:* Complex to write and deploy.  Probably not free.  Hides data behind an intermediary.
 
-4.  **New Formats for Scientific Data:** Design a new format, optimized for science use on the cloud
+4.  **New Formats for Scientific Data:** Design a new format, optimized for scientific data in the cloud
 
     *Good:* Fast, intuitive, and modern
 
@@ -158,10 +164,13 @@ Here is an example with the [gcsfs](https://gcsfs.readthedocs.org) Python librar
 ```
 $ pip install gcsfs --upgrade
 $ mkdir /gcs
-$ gcsfuse pangeo-data /gcs --background
-Mounting bucket pangeo-data to directory gcs
+$ gcsfuse bucket-name /gcs --background
+Mounting bucket bucket-name to directory /gcs
 
 $ ls /gcs
+my-file-1.hdf
+my-file-2.hdf
+my-file-3.hdf
 ...
 ```
 
@@ -190,7 +199,7 @@ FUSE also requires elevated operating system permissions,
 which can introduce challenges if working from Docker containers
 (which is likely on the cloud).
 Docker containers running FUSE need to be running in privileged mode.
-There are some tricks around this, with Kubernetes, notably FlexVolumes,
+There are some tricks around this,
 but generally FUSE brings some excess baggage.
 
 
