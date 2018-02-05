@@ -24,8 +24,11 @@ Rich was kind enough to write up this description of their problem and share it 
 
 Thanks Rich!
 
-<img src="{{BASE_PATH}}/images/credit_models/simple.svg"
-     alt="calc task graph">
+<a href="{{BASE_PATH}}/images/credit_models/simple.svg">
+  <img src="{{BASE_PATH}}/images/credit_models/simple.svg"
+       alt="calc task graph"
+       width="100%">
+  </a>
 
 P.S. If others have similar solutions and would like to share them I'd love to host those on this blog as well.
 
@@ -182,15 +185,25 @@ class Default(Equation):
 
 This allows us to write each equation as it's own isolated function and mark it's inputs and outputs. With this set of equation objects, we can determine the order of computation (with a [topological sort](https://en.wikipedia.org/wiki/Topological_sorting)) and let dask handle the graph generation and computation. This eliminates the onerous task of manually passing around the arguments in the code base. Below is an example task graph for one particular model that the bank actually does.
 
-<a href="{{BASE_PATH}}/images/credit_models/simple.svg"><img src="{{BASE_PATH}}/images/credit_models/simple.svg" alt="calc task graph"></a>
+<a href="{{BASE_PATH}}/images/credit_models/simple.svg">
+  <img src="{{BASE_PATH}}/images/credit_models/simple.svg"
+       alt="calc task graph"
+       width="100%">
+  </a>
 
 This graph was a bit too large to render with the normal `my_task.visualize()` method, so instead we rendered it with [Gephi](https://gephi.org) to make the pretty colored graph above. The chaotic upper region of this graph is the individual equation calculations. Zooming in we can see the entry point, our input pandas DataFrame, as the large orange circle at the top and how it gets fed into many of the equations.
 
-<a href="{{BASE_PATH}}/images/credit_models/simple-model.svg"><img src="{{BASE_PATH}}/images/credit_models/simple-model.svg" alt="zoomed model section"></a>
+<a href="{{BASE_PATH}}/images/credit_models/simple-model.svg">
+  <img src="{{BASE_PATH}}/images/credit_models/simple-model.svg"
+       alt="zoomed model section"
+       width="100%"></a>
 
 The output of the model is about 100 times the size of the input so we do some aggregation at the end via tree reduction. This accounts for the more structured bottom half of the graph. The large green node at the bottom is our final output.
 
-<a href="{{BASE_PATH}}/images/credit_models/simple-agg.svg"><img src="{{BASE_PATH}}/images/credit_models/simple-agg.svg" alt="zoomed agg section"></a>
+<a href="{{BASE_PATH}}/images/credit_models/simple-agg.svg">
+  <img src="{{BASE_PATH}}/images/credit_models/simple-agg.svg"
+       alt="zoomed agg section"
+       width="100%"></a>
 
 
 ## Final Thoughts
