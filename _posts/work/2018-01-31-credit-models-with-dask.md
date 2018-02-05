@@ -52,7 +52,7 @@ This boils down to a dependency and ordering problem known as task scheduling.
 
 ## DAGs to the rescue
 
-<img src="{{BASE_PATH}}/images/credit_models/snatch.jpg" alt="snatch joke">
+<img style="margin: 0 auto; display: block;" src="{{BASE_PATH}}/images/credit_models/snatch.jpg" alt="snatch joke">
 
 A [directed acyclic graph](https://en.wikipedia.org/wiki/Directed_acyclic_graph) (DAG) is commonly used to solve task scheduling problems. Dask is a library for delayed task computation that makes use of directed graphs at its core. [dask.delayed](http://dask.pydata.org/en/latest/delayed.html) is a simple decorator that turns a Python function into a graph vertex. If I pass the output from one delayed function as a parameter to another delayed function, Dask creates a directed edge between them. Let's look at an example:
 
@@ -85,7 +85,7 @@ Delayed('add-f6204fac-b067-40aa-9d6a-639fc719c3ce')
 
 Below we can see how the DAG starts to come together.
 
-<img src="{{BASE_PATH}}/images/credit_models/four.png" alt="four graph">
+<img style="margin: 0 auto; display: block;" src="{{BASE_PATH}}/images/credit_models/four.png" alt="four graph">
 
 
 ## Mock credit example
@@ -165,6 +165,7 @@ avg_default.visualize()
 ```
 
 <img src="{{BASE_PATH}}/images/credit_models/dummy_graph.png"
+     style="margin: 0 auto; display: block;"
      alt="default graph"
      width="100%">
 
