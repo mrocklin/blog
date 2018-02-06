@@ -264,4 +264,4 @@ avg_default.visualize()  # requires graphviz and python-graphviz to be installed
 
 ## Acknowledgements
 
-Special thanks to Matt Rocklin, Michael Grant, and Gus Cavanagh for their feedback when writing this article.
+Special thanks to Matt Rocklin, Michael Grant, Gus Cavanagh, and Rory Merritt for their feedback when writing this article.
