@@ -3,7 +3,6 @@ layout: post
 title: HDF in the Cloud
 tagline: challenges and solutions for scientific data
 category: work
-draft: True
 tags: [Programming, Python, scipy, Pangeo]
 theme: twitter
 ---
