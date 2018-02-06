@@ -97,7 +97,7 @@ hist_yrs = range(10)
 incomes = range(10)
 ```
 
-Let's also assume that productivity is a function of the incremented years history and half the years experience. While this could be written like:
+Let's also assume that default is a function of the incremented years history and half the years experience. While this could be written like:
 
 ```python
 def default(hist, income):
