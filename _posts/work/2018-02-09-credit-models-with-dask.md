@@ -9,7 +9,8 @@ author: Richard Postelnik
 ---
 {% include JB/setup %}
 
-This post explores a use case for dask to create a calculation engine for credit models in Python.
+This post explores a real-world use case calculating complex credit models in Python using Dask.
+It is an example of a complex parallel system that is well outside of the traditional "big data" workloads.
 
 ## This is a guest post
 
@@ -28,6 +29,8 @@ Thanks Rich!
   <img src="{{BASE_PATH}}/images/credit_models/simple-model.svg"
        alt="zoomed model section"
        width="100%"></a>
+
+*This is cross-posted at [Anaconda's Developer Blog](https://www.anaconda.com/blog/developer-blog/credit-modeling-with-dask/).*
 
 P.S. If others have similar solutions and would like to share them I'd love to host those on this blog as well.
 
