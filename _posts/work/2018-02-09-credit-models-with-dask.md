@@ -1,8 +1,8 @@
 ---
 layout: post
 title: Credit Modeling with Dask
+tagline: complex task graphs in the real world
 category: work
-draft: true
 tags: [Programming, Python]
 theme: twitter
 author: Richard Postelnik
@@ -24,11 +24,10 @@ Rich was kind enough to write up this description of their problem and share it 
 
 Thanks Rich!
 
-<a href="{{BASE_PATH}}/images/credit_models/simple.svg">
-  <img src="{{BASE_PATH}}/images/credit_models/simple.svg"
-       alt="calc task graph"
-       width="100%">
-  </a>
+<a href="{{BASE_PATH}}/images/credit_models/simple-model.svg">
+  <img src="{{BASE_PATH}}/images/credit_models/simple-model.svg"
+       alt="zoomed model section"
+       width="100%"></a>
 
 P.S. If others have similar solutions and would like to share them I'd love to host those on this blog as well.
 
