@@ -7,7 +7,7 @@ theme: twitter
 ---
 {% include JB/setup %}
 
-Following up on a post on [supporting users in open source]()
+Following up on a post on [supporting users in open source](../../../2016/08/25/supporting-users)
 this post lists some suggestions on how to ask a package maintainer to help you with a problem.
 
 You don't have to follow these suggestions.  They are optional.
