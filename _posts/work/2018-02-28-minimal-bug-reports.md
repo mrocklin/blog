@@ -117,10 +117,14 @@ I found that this was critical to reproducing the error.
 
 ```python
 import pandas as pd
-df = pd.DataFrame({'datetime': ['2000-01-01', '2000-01-03', '2000-01-02'],
-                   'id': [1, 2, 3],
+df = pd.DataFrame({'account-start': ['2000-01-01', '2000-01-03', '2000-01-02'],
+                   'db-id': [1, 2, 3],
                    'name': ['Alice', 'Bob', 'Charlie'})
 ```
+
+As we shrink down our example problem we often discover a lot about what causes the problem.
+This discovery is valuable
+and something that only the question-asker is capable of doing efficiently.
 
 
 See how small you can make things
@@ -131,6 +135,7 @@ For example if working with tabular data (like Pandas),
 then how many columns do you actually need to reproduce the failure?
 How many rows do you actually need to reproduce the failure?
 Do the columns need to be named as you have them now or could they be just "A" and "B"
+or descriptive of the types within?
 
 
 ### Do
@@ -173,9 +178,6 @@ df = pd.DataFrame(...)
 
 df.groupby(df.x).y.mean()  # <-- this produces the error
 ```
-
-Think of it like a game.
-How many lines can you remove while still getting the same error to occur?
 
 
 Use Syntax Highlighting
