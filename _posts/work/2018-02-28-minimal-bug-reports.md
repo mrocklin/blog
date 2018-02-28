@@ -8,35 +8,43 @@ theme: twitter
 {% include JB/setup %}
 
 Following up on a post on [supporting users in open source](../../../2016/08/25/supporting-users)
-this post lists some suggestions on how to ask a package maintainer to help you with a problem.
+this post lists some suggestions on how to ask a maintainer to help you with a problem.
 
 You don't have to follow these suggestions.  They are optional.
-They make it more likely that a project maintainer to spend time helping you.
+They make it more likely that a project maintainer will spend time helping you.
 It's important to remember that their willingness to support you for free is optional too.
 
+Crafting minimal bug reports is essential for the life and maintenance of community-driven open source projects.
+Doing this well is an incredible service to the community.
 
 Minimal Complete Verifiable Examples
 ------------------------------------
 
 I strongly recommend following Stack Overflow's guidelines on [Minimal Complete Verifiable Exmamples](https://stackoverflow.com/help/mcve).  I'll include brief highlights here:
 
-... code should be ...
+> ... code should be ...
 
--  Minimal – Use as little code as possible that still produces the same problem
--  Complete – Provide all parts needed to reproduce the problem
--  Verifiable – Test the code you're about to provide to make sure it reproduces the problem
+> -  Minimal – Use as little code as possible that still produces the same problem
+
+> -  Complete – Provide all parts needed to reproduce the problem
+
+> -  Verifiable – Test the code you're about to provide to make sure it reproduces the problem
+
 
 Lets be clear, this is *hard* and takes time.
-I find that creating an MCVE often takes 10-30 minutes.
+
+As a question-asker I find that creating an MCVE often takes 10-30 minutes for a simple problem.
 Fortunately this work is usually straightforward,
 even if I don't know very much about the package I'm having trouble with.
-Most of creating an MCVE is about removing all of the code that was specific to my application.
+Most of the work to create a minimal example is about removing all of the code that was specific to my application,
+and as the question-asker I am probably the most qualified person to do that.
 
-When answering questions I often point people to this document.
-They sometimes come back with a better-but-no-yet-minimal example.
+When answering questions I often point people to StackOverflow's MCVE document.
+They sometimes come back with a better-but-not-yet-minimal example.
 This post clarifies a few common issues.
 
 As an running example I'm going to use Pandas dataframe problems.
+
 
 Don't post data
 ---------------
