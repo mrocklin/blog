@@ -221,7 +221,7 @@ make sense of?  You should include it.
     div(1, 0)
     ```
 
-    ```python
+    ```python-traceback
     ZeroDivisionError                         Traceback (most recent call last)
     <ipython-input-4-7b96263abbfa> in <module>()
     ----> 1 div(1, 0)
@@ -264,3 +264,29 @@ it in `<details>`  brackets.
     ```
 
     </details>
+
+
+### Ask Questions in Public Places
+
+When raising issues you often have a few possible locations:
+
+1.  GitHub issue tracker
+2.  Stack Overflow
+3.  Project mailing list
+4.  Project Chat room
+5.  E-mail maintainers directly (never do this)
+
+Different projects handle this differently, but they usually have a page on
+their documentation about where to go for help.  This is often labeled
+"Community", "Support" or "Where to ask for help".  Here are the
+recommendations from the
+[Pandas community](https://pandas.pydata.org/community.html).
+
+Generally it's good to ask questions where many maintainers can see your
+question and help, and where other users can find your question and answer if
+they encounter a similar bug in the future.
+
+While your goal may be to solve your problem, the maintainer's goal is likely
+to create a record of how to solve problems like yours.  This helps many more
+users who will have a similar problem in the future, see your well-crafted bug
+report, and learn from the resulting conversation.
