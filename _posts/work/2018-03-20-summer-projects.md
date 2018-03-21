@@ -2,7 +2,6 @@
 layout: post
 title: Summer Student Projects 2018
 category: work
-draft: true
 tags: [Programming, scipy, Python]
 theme: twitter
 ---
