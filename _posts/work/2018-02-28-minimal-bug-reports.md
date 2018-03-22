@@ -290,3 +290,21 @@ While your goal may be to solve your problem, the maintainer's goal is likely
 to create a record of how to solve problems like yours.  This helps many more
 users who will have a similar problem in the future, see your well-crafted bug
 report, and learn from the resulting conversation.
+
+
+### My personal preferences
+
+-   For user questions like "What is the right way to do X?" I prefer Stack Overflow.
+-   For bug reports like "I did X, I'm pretty confident that it should work, but I
+    get this error" I prefer Github issues
+-   For general chit-chat I prefer Gitter, though actually, I personally spend
+    almost no time in gitter because it isn't easily searchable by future
+    users.  If you've asked me a question in Gitter I will almost certainly
+    not respond to it, except to direct you to github, stack overflow, or this
+    blogpost.
+-   I only like personal e-mail if someone is proposing to fund or seriously
+    support the project in some way
+
+But again, different projects do this differently and have different policies.
+You should check the documentation of the project you're dealing with to learn
+how they like to support users.
