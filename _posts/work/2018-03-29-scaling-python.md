@@ -330,7 +330,9 @@ like this video of Amish farmers raising a barn:
 Given a large project (like raising a barn)
 you break it down into many manageable pieces
 (like "nail these boards together", "lift this roofing panel", or "sand down this edge").
-You take stock of however may workers come to help that day (some may be busy and some may have brought extra hands) and assign these tasks to those workers according to the worker's skills,
+You take stock of however may workers come to help that day
+(some may be busy and some many have brought extra hands)
+and assign these tasks to those workers according to the workers' skills,
 dependencies between tasks (need to build the roof before you raise the roofing panels),
 and other constraints that may arise unexpectedly (like injuries, rain, or daylight hours).
 
