@@ -317,16 +317,69 @@ You can also *scale out* to parallelize across many machines.
 This provides the most scalability,
 but also introduces new challenges and opportunities.
 
-TODO
+If you will excuse the analogy, scaling out to distributed computing is a bit
+like this video of Amish farmers raising a barn:
 
+<iframe width="700"
+        height="394"
+        src="https://www.youtube.com/embed/AsTB0HnM6WM"
+        frameborder="0"
+        allow="autoplay; encrypted-media"
+        allowfullscreen></iframe>
 
+Given a large project (like raising a barn)
+you break it down into many manageable pieces
+(like "nail these boards together", "lift this roofing panel", or "sand down this edge").
+You take stock of however may workers come to help that day (some may be busy and some may have brought extra hands) and assign these tasks to those workers according to the worker's skills,
+dependencies between tasks (need to build the roof before you raise the roofing panels),
+and other constraints that may arise unexpectedly (like injuries, rain, or daylight hours).
 
+This is exactly how distributed computational systems work,
+except that now the barn is a large and complex computation,
+the tasks are now smaller in-memory computations that can be handled by a single Python process,
+and the workers are now computers in your cluster provided by some resource manager (like Yarn or Kubernetes).
+
+As any experienced foreman will tell you, there are Pros and Cons to working with a large team of workers:
+
+**Pros**
+
+1.  You can leverage many more workers to achieve your goals
+2.  If workers are unexpectedly removed from service that's ok, you can fill in with others
+3.  Those same workers can shift between different projects in a predictable way, as mediated by a resource manager
+
+**Cons**
+
+1.  You need to break up your project intelligently into many small tasks
+2.  You need a foreman that can allocate those tasks intelligently to workers according to their abilities
+3.  There will be some excess costs in coordination, even if you do the above steps exceedingly well
+
+Distributed systems like Spark, Dask, or SQL databases are intended to handle the first two cons for you.
+They are not perfect though and there is always a bit of havoc, even with the best run crew.
+
+Dropping the barn analogy for a bit, there are some more concrete challenges:
+
+1.  You will need to find a way for your users to control their software environment across the cluster.
+    For example they might want a very specific version of Scikit-Learn or Pandas.
+2.  Inter-worker communication costs can dominate some workloads, limiting the kinds of computations that you can run.  No distributed system, no matter what it promises, actually gives you a "seamless experience" on a cluster.
+3.  Your distributed system (the foreman) will limit the kinds of algorithms that you can encode.  Internally they all have limitations on the level of coordination between workers that they can handle.
+
+These limitations are not always immediately obvious,
+especially to someone thinking about the high level picture.
+Expert analysts within the group are likely to have some idea on the kinds of computations that are common within the group
+and the kinds of computations that particular distributed computational systems are able to run.
+Their advice may be crucial during this process.
 
 
 
 All of the above
 ----------------
 
-The three options above can and should be overlapped.
-You can write effiicient compiled code that scales up onto multi-core CPUs
+The three options above are complimentary and should be overlapped.
+You can write efficient compiled code that scales up onto multi-core CPUs
 and scales out onto distributed systems.
+
+Most analyses start on small datasets on a laptop
+and eventually grow to run on a distributed system
+after which they come back down to a laptop for refinement.
+For long-term productivity it is important to have a good handle on the many
+platforms and stages through which a computation will pass as it evolves.
