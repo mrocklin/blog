@@ -37,7 +37,7 @@ and how do we choose between them?
 
 This article describes three classes of options for accelerating and scaling Python code,
 the common options within each class.
-We also discuss the pro's and con's of each class
+It also discusses the pros and cons of each class
 so that people can make high level decisions that are appropriate for their situation.
 Where possible we link to other resources that discuss particular libraries in more depth.
 
@@ -73,12 +73,11 @@ Even though they are including Pandas dataframes in their code
 it doesn't mean that they are using Pandas algorithms backed by fast C code.
 
 
-This mistake is *very common* and is the *single largest contributor to performance issues* that we see in the community.
+*This mistake is very common and is the single largest contributor to performance issues that we see in the community.*
 
 This isn't surprising.
 These libraries take skill to use well and the right way to do something may not be immediately obvious
 to a new user.
-
 In this situation you have two options:
 
 1.  Learn more about how to solve your problem within the Numpy/Pandas/Scikit-Learn system so that you leverage fast compiled code
@@ -175,7 +174,7 @@ often a more productive choice:
 
 In this section we'll cover laptops, mostly from a perspective of user convenience.
 In the next section we'll cover heavy workstations,
-which are big enough to often fully replace a cluster.
+which are sometimes big enough to replace the need for a full cluster.
 
 
 ### Multi-core execution on laptops: the benefits of convenience
@@ -190,8 +189,8 @@ cluster for the following reasons:
 
     You have greater control over the software and development environment on your laptop,
     and so can iterate more quickly.
-3.  You can use these eight cores in transit, in a coffee shop, or at home,
-    without the administrative hassles of interacting with an remote cluster.
+3.  You can use these 4-8 cores in your office, in transit, in a coffee shop, or at home,
+    without the administrative hassles of interacting with an remote or shared system.
 4.  By writing parallel code on your laptop
     you learn many of the techniques
     for writing parallel code on the cluster,
@@ -205,14 +204,19 @@ cluster for the following reasons:
 
 Common tools in Python for local parallel processing include the following:
 
-1.  The multiprocessing module or the newer concurrent.futures module.
-    The former has been around for longer and is more commonly used,
-    but the latter is now standard among developers and is the recommended approach for new users.
-    They are functionally equivalent for common cases.
-    Concurrent.futures allows for some more advanced workflows.
+1.  The [multiprocessing](https://docs.python.org/3/library/concurrent.futures.html) module
+    or the newer [concurrent.futures](https://docs.python.org/3/library/concurrent.futures.html) module.
+    Multiprocessing has been around for longer and is more commonly used,
+    but concurrent.futures is now standard among developers and is the recommended approach for new users.
+    They are functionally equivalent for common cases,
+    but concurrent.futures allows for some more advanced workflows.
 2.  Most cluster-focused tools can also run sensibly on a single machine.
-    These include Spark, Dask, and IPython Parallel, to name a few
-3.  Some libraries like Scikit-Learn have built in their own systems for parallel computing.
+    These include [Spark](https://spark.apache.org/),
+    [Dask](https://dask.pydata.org/en/latest/),
+    and [IPython Parallel](https://ipyparallel.readthedocs.io/en/latest/), to
+    name a few
+3.  Some libraries like [Scikit-Learn](http://scikit-learn.org/stable/)
+    have built [their own systems](https://pythonhosted.org/joblib/) for parallel computing.
     You should always check the documentation on how a project recommends handling multi-core scaling.
 
 
@@ -222,8 +226,7 @@ The many cores on your laptop don't help if your data doesn't fit in memory.
 Fortunately, modern fast hard drives do.
 
 A high-end laptop in 2018 has around 32GB of memory.
-On a database table with ten columns,
-this is around 400 million rows.
+This is the size of a database table with forty columns and 100 million rows.
 *Many* companys' data fits into this space.
 Or, even if the entire database doesn't fit,
 the working set that people tend to deal with *does*.
@@ -236,18 +239,22 @@ may start to complain.
 Fortunately this is where fast modern hard drives come in.
 Hard drive technology has changed a lot in the last few years.
 Aside from GPUs it is probably the single largest recent change of
-consumer-grade computational technology.
-For many computational analyses modern flash-based hard drives are fast enough
+consumer-grade computational technology, reaching 1-2GB/s bandwidth.
+For many computational analyses, like machine learning,
+modern flash-based hard drives are fast enough
 that you can read data from them as fast as your CPUs can process that data.
-This means that your effective capacity for your computation changes from 32GB of memory,
-to a Terabyte of fast disk space.
-Combined with modern storage formats like Parquet
+This means that the effective capacity for your computation changes from 32GB of memory,
+to a terabyte of fast disk space.
+
+*Combined with modern storage formats like Parquet
 an analyst using the right tools
-can comfortably work with "Big" datasets comfortably on their laptop.
+can manipulate "Big" datasets comfortably on their laptop.*
 
 This does require some special care, you can't just use Pandas as normal.
 But the techniques used in parallel computing
 will also make it easy to read data from disk in an incremental fashion.
+Libraries like [Spark](https://spark.apache.org) or
+[Dask](https://dask.pydata.org/en/latest) mentioned above can help.
 
 
 
@@ -255,30 +262,30 @@ Scaling Up: Large Workstations
 ------------------------------
 
 Sometimes a laptop just isn't enough, even if well used.
+
 Your analysis requires an order of magnitude more computation or memory than a modern laptop can provide.
-You might consider *scaling up* to a single heavy workstation,
+You might consider *scaling up* further to a single heavy workstation,
 before you *scale out* to a distributed system.
 
 <img src="https://pbs.twimg.com/media/DZOT53jWAAA-vWu.jpg:large"
-     width="60%">
+     width="70%">
 
 The comic above, while illustrative of a point, is also a few years out of date.
 In early 2018 blade servers can have upwards of 100 cores and several terabytes of memory.
 A system like this combines many of the convenience benefits of a personal laptop
-with many of performance benefits of a distributed system, and then some,
+with many of performance benefits of a distributed system,
 making it a good choice for analytic groups doing exploratory work on large datasets.
 Lets consider some Pros and Cons of this approach:
 
 **Pros:**
 
 1.  Has orders of magnitude more computational power and memory than a laptop
-2.  Still has a single software and developer environment that a user can often control directly
-3.  Is easy to program because it looks just like a laptop, only bigger.
-4.  The data lives on a normal hard drive controled by normal permissions systems
-5.  It is often easier for users to log in and share work
-6.  It is often separate from production so that users can experiment more freely
-7.  It does not suffer from the network costs of distributed systems,
-    so it often *out-performs* distributed systems up to a certain data size
+2.  Is easy to use because it still has a single environment that a user can often control directly
+3.  Is familiar to program because it looks just like a laptop, only bigger.
+5.  Is easy for users to log into and share work
+6.  Is often separate from production so that users can experiment more freely
+7.  Does not suffer from the network costs of distributed systems,
+    so often *out-performs* distributed systems up to a certain data size
 
 **Cons:**
 
@@ -292,8 +299,11 @@ Lets consider some Pros and Cons of this approach:
 
 This set of pros and cons make large workstations a common choice for research or analytics groups.
 Most machine learning groups in universities or research labs share such a machine within the group.
-
 Large workstations have also been the platform of choice for the highly competitive finance industry for years.
+
+This isn't where you want to run your critical work though.
+This is a very effective environment for exploratory data science.
+
 
 ### Python Tools
 
@@ -305,7 +315,7 @@ Scaling Out
 
 You can also *scale out* to parallelize across many machines.
 This provides the most scalability,
-but also introduces the most challenges for users and IT.
+but also introduces new challenges and opportunities.
 
 TODO
 
