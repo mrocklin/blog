@@ -43,9 +43,9 @@ Fortunately other libraries in the ecosystem implement the Numpy array API on th
 So even when the Numpy implementation is no longer ideal,
 the Numpy API lives on in successor projects.
 
-*Note: the Numpy implementation remains ideal 95+% of the time.
+*Note: the Numpy implementation remains ideal most of the time.
 Dense in-memory arrays are still the common case.
-This blogpost is about the other 5% of cases (which are also important)*
+This blogpost is about the minority of cases where Numpy is not ideal*
 
 We can write code very similar code between all of
 Numpy, GPU, sparse, and parallel arrays:
@@ -290,6 +290,8 @@ to help it make changes like this more rapidly.
 The full time developers hired under this funding have just started though,
 and it's not clear how much of a priority this work is for them at first.
 
+For what it's worth I'd prefer to see this Numpy protocol solution take hold.
+
 
 Final Thoughts
 --------------
@@ -308,12 +310,13 @@ usually with surprisingly positive results.
 
 The open questions I have today are the following:
 
-1.  How quickly can Numpy move to adapt to this demand for protocols
+1.  How quickly can Numpy adapt to this demand for protocols
     while still remaining stable for its existing role as foundation of the ecosystem
-2.  Are there really algorithmic domains that can be written in a cross-hardware way?
-    Or will algorithm authors always want to specialize.
-    Clearly there are some domains where this makes sense (XArray, automatic differentiation), but how common are these?
-3.  Once a standard protocol is in place, what other array-like implementations might arise?
+2.  What algorithmic domains can be written in a cross-hardware way
+    that depends only on the high-level Numpy API,
+    and doesn't require specialization at the data structure level.
+    Clearly some domains exist (XArray, automatic differentiation),
+    but how common are these?
+3.  Once a standard protocol is in place,
+    what other array-like implementations might arise?
     In-memory compression?  Probabilistic?  Symbolic?
-
-If you have different thoughts or concerns please engage in the comments below.
