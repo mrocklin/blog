@@ -12,59 +12,69 @@ theme: twitter
 Executive Summary
 -----------------
 
-There are now several implementations of Numpy's array API for
-GPU, sparse, and distributed arrays.
+In recent years Python's array computing ecosystem has grown organically to support
+GPUs, sparse, and distributed arrays.
+This is wonderful and a great example of the growth that can occur in decentralized open source development.
+
+However to solidify this growth and apply it across the ecosystem we now need to do some central planning
+to move from a pair-wise model where packages need to know about each other
+to an ecosystem model where packages can negotiate by developing and adhering to community-standard protocols.
 
 With moderate effort we can define a subset of the Numpy API that works well across all of them,
 allowing the ecosystem to more smoothly transition between hardware.
+This post describes the opportunities and challenges to accomplish this.
 
-This post describes the opportunities and challenges to accomplishing this.
+We start by discussing two kinds of libraries:
+
+1.  Libraries that *implement* the Numpy API
+2.  Libraries that *consume* the Numpy API and build new functionality on top
+    of it
 
 
-Context: Array Implementations
-------------------------------
+Libraries the Implement the Numpy API
+-------------------------------------
 
-The foundational NumPy library represents multidimensional gridded data,
-such as is common in satellite and biomedical imagery, super-computer simulations,
-financial models, genomics, and thousands of other domains critical to our society.
 The Numpy array is one of the foundations of the numeric Python ecosystem,
 and serves as the standard model for similar libraries in other languages.
+Today it is used to analyze satellite and biomedical imagery, financial models,
+genomes, oceans and the atmosphere, super-computer simulations,
+and data from thousands of other domains.
 
 However, Numpy was designed several years ago,
-and its implementation no longer reflects modern hardware trends to
-multi-core workstations, many-core GPUs, and distributed clusters.
+and its implementation is no longer optimal for some modern hardware,
+particularly multi-core workstations, many-core GPUs, and distributed clusters.
 
-Fortunately other libraries in the ecosystem implement the Numpy array API on these other architectures:
+Fortunately other libraries implement the Numpy array API on these other architectures:
 
 -  [CuPy](https://cupy.chainer.org/): implements the Numpy API on GPUs with CUDA
 -  [Sparse](https://sparse.pydata.org/): implements the Numpy API for sparse arrays that are mostly zeros
 -  [Dask array](https://dask.pydata.org/): implements the Numpy API in parallel for multi-core workstations or distributed clusters
 
 So even when the Numpy implementation is no longer ideal,
-the Numpy API lives on in successor projects.
+the *Numpy API* lives on in successor projects.
 
 *Note: the Numpy implementation remains ideal most of the time.
 Dense in-memory arrays are still the common case.
 This blogpost is about the minority of cases where Numpy is not ideal*
 
-We can write code very similar code between all of
+So today we can write code similar code between all of
 Numpy, GPU, sparse, and parallel arrays:
 
 ```python
 import numpy as np
-x = np.random.random(...)
+x = np.random.random(...)  # Runs on a single CPU
 y = x.T.dot(np.log(x) + 1)
 z = y - y.mean(axis=0)
 print(z[:5])
 
 import cupy as cp
-x = cp.random.random(...)
+x = cp.random.random(...)  # Runs on a GPU
 y = x.T.dot(cp.log(x) + 1)
 z = y - y.mean(axis=0)
 print(z[:5].get())
 
 import dask.array as da
-x = da.random.random(...)
+x = da.random.random(...)  # Runs on many CPUs
 y = x.T.dot(da.log(x) + 1)
 z = y - y.mean(axis=0)
 print(z[:5].compute())
@@ -78,80 +88,97 @@ has a Numpy-like thing that is *similar-ish* to Numpy's API,
 but definitely not trying to be an exact match.
 
 
-Context: Algorithmic Libraries
-------------------------------
+Libraries that consume and extend the Numpy API
+-----------------------------------------------
 
-Simultaneous to the development of Numpy-like arrays for different hardware,
-many libraries build algorithmic functionality on top of the Numpy API:
+At the same time as the development of Numpy APIs for different hardware,
+many libraries today build algorithmic functionality on top of the Numpy API:
 
-1.  [XArray](http://xarray.pydata.org/en/stable/) for labeled and indexed collections of arrays
-2.  [Autograd](https://github.com/hips/autograd) and [Tangent](https://github.com/google/tangent/): for automatic differentiation
-3.  [TensorLy](http://tensorly.org/stable/index.html) for higher order array factorizations
-4.  [Dask array](https://dask.pydata.org) which coordinates many Numpy-like arrays into a logical parallel array
+1.  [XArray](http://xarray.pydata.org/en/stable/)
+    for labeled and indexed collections of arrays
+2.  [Autograd](https://github.com/hips/autograd) and
+    [Tangent](https://github.com/google/tangent/):
+    for automatic differentiation
+3.  [TensorLy](http://tensorly.org/stable/index.html)
+    for higher order array factorizations
+4.  [Dask array](https://dask.pydata.org)
+    which coordinates many Numpy-like arrays into a logical parallel array
 
     (dask array both *consumes* and *implements* the Numpy API)
-5.  ...
+5.  [Opt Einsum](http://optimized-einsum.readthedocs.io/en/latest/)
+    for more efficient einstein summation operations
+6.  ...
 
-These enhance array computing in Python, building on new features beyond what Numpy itself provides.
+These projects and more enhance array computing in Python,
+building on new features beyond what Numpy itself provides.
 
-Additionally, there are many other libraries like Pandas, Scikit-Learn, SciPy, etc.
-that use the Numpy API *and* its internal representation (they dive into the dense in-memory representation).
-We're going to ignore these libraries for the purposes of this blogpost
-and focus only on those that only use the high-level Numpy API
+There are also projects like Pandas, Scikit-Learn, and SciPy,
+that use Numpy's in-memory internal representation.
+We're going to ignore these libraries for this blogpost
+and focus on those libraries that only use the high-level Numpy API
 and not the low-level representation.
 
 
 Opportunities and Challenges
 ----------------------------
 
-So now that we have these new Numpy-like arrays,
-and these new Numpy-enhancing algorithmic libraries,
-we would like to use them together.
-This will enable the ecosystem to scale and transition more easily
-between different hardware contexts.
+Given the two groups of projects:
 
-We would like to apply the new algorithmic functionality
-(labels, automatic differentiation, parallelism, ...)
-to the new implementations
-(GPUs, sprase, parallel, ...)
-and to all future implementations that might follow.
+1.  New libraries that *implement* the Numpy API
+    (CuPy, Sparse, Dask array)
+2.  New libraries that *consume* and *extend* the Numpy API
+    (XArray, Autograd/tangent, TensorLy, Einsum)
+
+We want to use them together, applying Autograd to CuPy, TensorLy to Sparse,
+and so on, including all future implementations that might follow.
+This is challenging.
 
 Unfortunately,
 while all of the array implementations APIs are *very similar* to Numpy's API,
-they do technically use different functions.
+they use different functions.
 
 ```python
 >>> numpy.sin is cupy.sin
 False
 ```
 
-This creates problems for the algorithmic libraries mentioned above,
-because now they need to switch out which functions they use,
+This creates problems for the consumer libraries,
+because now they need to switch out which functions they use
 depending on which array-like objects they've been given.
-To resolve these problems
-each of the array projects mentioned above
-implements a custom plugin system
-that they use to switch between
-a few of the array options.
-We include links to these plugin mechanisms below if you're interested in
-looking at code:
+
+```python
+def f(x):
+    if isinstance(x, numpy.ndarray):
+        return np.sin(x)
+    elif isinstance(x, cupy.ndarray):
+        return cupy.sin(x)
+    elif ...
+
+```
+
+Today each array project implements a custom plugin system
+that they use to switch between some of the array options.
+Links to these plugin mechanisms are below if you're interested:
 
 -  [xarray/core/duck_array_ops.py](https://github.com/pydata/xarray/blob/master/xarray/core/duck_array_ops.py)
 -  [tensorly/backend](https://github.com/tensorly/tensorly/tree/master/tensorly/backend)
 -  [autograd/numpy/numpy_vspaces.py](https://github.com/HIPS/autograd/blob/master/autograd/numpy/numpy_vspaces.py)
 -  [tangent/template.py](https://github.com/google/tangent/blob/master/tangent/template.py)
 -  [dask/array/core.py#L51-L54](https://github.com/dask/dask/blob/master/dask/array/core.py#L51-L54)
+-  [opt_einsum/backends.py](https://github.com/dgasmith/opt_einsum/blob/master/opt_einsum/backends.py)
 
 For example XArray can use either Numpy arrays or Dask arrays.
 This has been hugely beneficial to users of that project,
 which today seamlessly transition from small in-memory datasets on their laptops
 to 100TB datasets on clusters,
 all using the same programming model.
+However when considering adding sparse or GPU arrays to XArray's plugin system,
+it quickly became clear that this would be expensive today.
 
-However building, maintaining, and extending these plugin mechanisms is *costly*.
-These bits of plugin code in each project are not alike.
-Any new array implementation has to go to each library and build more-or-less the same code several times.
-Similarly any new algorithmic library has to build plugins to every ndarray implementation.
+Building, maintaining, and extending these plugin mechanisms is *costly*.
+The plugin systems in each project are not alike,
+so any new array implementation has to go to each library and build the same code several times.
+Similarly, any new algorithmic library must build plugins to every ndarray implementation.
 Each library has to explicitly import and understand each other library,
 and has to adapt as those libraries change over time.
 This coverage is not complete,
@@ -250,7 +277,7 @@ allowing the array implementations to take over when possible.
 This would allow existing Numpy code to work on externally developed array implementations.
 
 There is precedent for this.
-The [`__array_ufunc__`](https://docs.scipy.org/doc/numpy/reference/arrays.classes.html#numpy.class.__array_ufunc__) protocol
+The [__array_ufunc__](https://docs.scipy.org/doc/numpy/reference/arrays.classes.html#numpy.class.__array_ufunc__) protocol
 allows any class that defines the `__array_ufunc__` method
 to take control of any Numpy ufunc like `np.sin` or `np.exp`.
 Numpy reductions like `np.sum` already look for `.sum` methods on their arguments and defer to them if possible.
@@ -302,7 +329,7 @@ This is wonderful and a great example of the growth that can occur in decentrali
 
 However to solidify this growth and apply it across the ecosystem we now need to do some central planning
 to move from a pair-wise model where packages need to know about each other
-to a ecosystem model where packages can negotiate by developing and adhering to community-standard protocols.
+to an ecosystem model where packages can negotiate by developing and adhering to community-standard protocols.
 
 The community has done this transition before
 (Numeric + Numarray -> Numpy, the Scikit-Learn fit/predict API, etc..)
