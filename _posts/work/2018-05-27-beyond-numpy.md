@@ -2,7 +2,6 @@
 layout: post
 title: Beyond Numpy Arrays in Python
 tagline: Protocols for GPU, distributed, and sparse arrays for Python
-draft: true
 category: work
 tags: [Programming, Python, scipy, dask]
 theme: twitter
