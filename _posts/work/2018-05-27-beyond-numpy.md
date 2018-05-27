@@ -245,7 +245,7 @@ but now we build a community standard plugin system
 that hopefully all of the projects can agree to use.
 
 This reduces the big `n by m` cost of maintaining several plugin systems,
-to a more managable `n plus m` cost of using a single plugin system in each library.
+to a more manageable `n plus m` cost of using a single plugin system in each library.
 This centralized project would also benefit, perhaps,
 from being better maintained than any individual project is likely to do on its own.
 
@@ -263,8 +263,11 @@ However this has costs:
 
 3.  Someone needs to build an maintain the central infrastructure
 
-Hameer Abbasi put together a rudimentary prototype for arrayish here: [github.com/hameerabbasi/arrayish](https://github.com/hameerabbasi/arrayish).
-There has been some discussion about this topic, using XArray+Sparse as an example, in [pydata/sparse #1](https://github.com/pydata/sparse/issues/1)
+[Hameer Abbasi](https://github.com/hameerabbasi)
+put together a rudimentary prototype for arrayish here:
+[github.com/hameerabbasi/arrayish](https://github.com/hameerabbasi/arrayish).
+There has been some discussion about this topic, using XArray+Sparse as an example, in
+[pydata/sparse #1](https://github.com/pydata/sparse/issues/1)
 
 
 ### Dispatch from within Numpy
