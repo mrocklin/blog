@@ -160,12 +160,12 @@ Today each array project implements a custom plugin system
 that they use to switch between some of the array options.
 Links to these plugin mechanisms are below if you're interested:
 
--  [xarray/core/duck_array_ops.py](https://github.com/pydata/xarray/blob/master/xarray/core/duck_array_ops.py)
--  [tensorly/backend](https://github.com/tensorly/tensorly/tree/master/tensorly/backend)
--  [autograd/numpy/numpy_vspaces.py](https://github.com/HIPS/autograd/blob/master/autograd/numpy/numpy_vspaces.py)
--  [tangent/template.py](https://github.com/google/tangent/blob/master/tangent/template.py)
--  [dask/array/core.py#L51-L54](https://github.com/dask/dask/blob/master/dask/array/core.py#L51-L54)
--  [opt_einsum/backends.py](https://github.com/dgasmith/opt_einsum/blob/master/opt_einsum/backends.py)
+-  [xarray/core/duck_array_ops.py](https://github.com/pydata/xarray/blob/c346d3b7bcdbd6073cf96fdeb0710467a284a611/xarray/core/duck_array_ops.py)
+-  [tensorly/backend](https://github.com/tensorly/tensorly/tree/af0700af61ca2cd104e90755d5e5033e23fd4ec4/tensorly/backend)
+-  [autograd/numpy/numpy_vspaces.py](https://github.com/HIPS/autograd/blob/bd3f92fcd4d66424be5fb6b6d3a7f9195c98eebf/autograd/numpy/numpy_vspaces.py)
+-  [tangent/template.py](https://github.com/google/tangent/blob/bc64848bba964c632a6da4965fb91f2f61a3cdd4/tangent/template.py)
+-  [dask/array/core.py#L59-L62](https://github.com/dask/dask/blob/8f164773cb3717b3c5ad856341205f605b8404cf/dask/array/core.py#L59-L62)
+-  [opt_einsum/backends.py](https://github.com/dgasmith/opt_einsum/blob/32c1b0adb50511da1b86dc98bcf169d79b44efce/opt_einsum/backends.py)
 
 For example XArray can use either Numpy arrays or Dask arrays.
 This has been hugely beneficial to users of that project,
