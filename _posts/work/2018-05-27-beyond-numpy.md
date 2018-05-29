@@ -349,3 +349,14 @@ The open questions I have today are the following:
 3.  Once a standard protocol is in place,
     what other array-like implementations might arise?
     In-memory compression?  Probabilistic?  Symbolic?
+
+Update
+------
+
+After discussing this topic at the
+[May NumPy Developer Sprint](https://scisprints.github.io/#may-numpy-developer-sprint)
+at [BIDS](https://bids.berkeley.edu/)
+a few of us have drafted a Numpy Enhancement Proposal (NEP)
+[available here](https://github.com/numpy/numpy/pull/11189).
+
+
