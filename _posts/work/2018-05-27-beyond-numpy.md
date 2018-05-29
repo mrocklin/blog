@@ -1,7 +1,7 @@
 ---
 layout: post
 title: Beyond Numpy Arrays in Python
-tagline: Protocols for GPU, distributed, and sparse arrays for Python
+tagline: Preparing the ecosystem for GPU, distributed, and sparse arrays
 category: work
 tags: [Programming, Python, scipy, dask]
 theme: twitter
@@ -30,8 +30,8 @@ We start by discussing two kinds of libraries:
     of it
 
 
-Libraries the Implement the Numpy API
--------------------------------------
+Libraries that Implement the Numpy API
+--------------------------------------
 
 The Numpy array is one of the foundations of the numeric Python ecosystem,
 and serves as the standard model for similar libraries in other languages.
