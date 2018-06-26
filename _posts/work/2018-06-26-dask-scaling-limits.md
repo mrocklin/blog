@@ -132,12 +132,35 @@ lists a few issues that arise for larger deployments:
 
     Dask provides users more power than they're accustomed to.
     It's easy for them to accidentally clobber some other component of their
-    systems, like distributed storage, with too many requests.
-    We try to provide some guidance in our documentation, but there are really
-    too many possibilities here to mention.
+    systems, like distributed storage, a local database, the network, and so
+    on, with too many requests.
+
+    Many of these systems provide abstractions that are very well tested and
+    stable for normal single-machine use, but that quickly become brittle when
+    you have a thousand machines acting on them with the full creativity of a
+    novice user.  Dask provies some primitives like distributed locks and
+    queues to help control access to these resources, but it's on the user to
+    use them well and not break things.
+
+
+## Conclusion
+
+Dask scales happily out to tens of nodes, like in the example above, or to
+thousands of nodes, which I'm not showing here simply due to lack of resources.
+
+Dask provides this scalability while still maintaining the flexibility and
+freedom to build custom systems that has defined the project since it began.
+However, the combination of scalability and freedom makes it hard for Dask to
+fully protect users from breaking things.  It's much easier to protect users
+when you can constrain what they can do.  When users stick to standard
+workflows like Dask dataframe or Dask array they'll probably be ok, but when
+operating with full creativity at the thousand-node scale some expertise will
+invariably be necessary.  We try hard to provide the diagnostics and tools
+necessary to investigate issues and control operation.  The project is getting
+better at this every day, in large part due to some expert users out there.
 
 
 ## A Call for Examples
 
-Do you use Dask on more than one machine?  We'd love to hear about it in the
-omments.
+Do you use Dask on more than one machine to do interesting work?
+We'd love to hear about it in the comments below!
