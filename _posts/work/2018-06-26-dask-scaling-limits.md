@@ -165,4 +165,5 @@ better at this every day, in large part due to some expert users out there.
 ## A Call for Examples
 
 Do you use Dask on more than one machine to do interesting work?
-We'd love to hear about it in the comments below!
+We'd love to hear about it either in the comments below, or in this [online
+form](https://goo.gl/forms/ueIMoGl6ZPl529203).
