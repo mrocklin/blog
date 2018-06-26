@@ -41,7 +41,7 @@ medium-data on single-nodes may have given people a more humble impression of
 Dask than is appropriate.
 
 As a small nudge, here is an example using Dask to interact with 50 36-core
-nodes on an artificial multi-terabyte dataset.
+nodes on an artificial terabyte dataset.
 
 <iframe width="700"
         height="394"
@@ -53,7 +53,9 @@ nodes on an artificial multi-terabyte dataset.
 This is a common size for a typical modestly sized Dask cluster.  We usually
 see Dask deployment sizes either in the tens of machines (usually with Hadoop
 style or ad-hoc enterprise clusters), or in the few-thousand range (usually
-with high performance computers or cloud deployments).
+with high performance computers or cloud deployments).  We're showing the
+modest case here just due to lack of resources.  Everything in that example
+should work fine scaling out a couple extra orders of magnitude.
 
 
 ## Challenges to Scaling Out
@@ -77,7 +79,7 @@ limitations to keep in mind:
 2.  The scheduler has an overhead of around 200 microseconds per task.
     So if each task takes one second then your scheduler can saturate 5000
     cores, but if each task takes only 100ms then your scheduler can only
-    saturate around 500 cores, and so on.  Task duration imposes and inversely
+    saturate around 500 cores, and so on.  Task duration imposes an inversely
     proportional constraint on scaling.
 
     If you want to scale larger than this then your tasks will need to
