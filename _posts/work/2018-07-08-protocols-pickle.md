@@ -1,0 +1,144 @@
+---
+layout: post
+title: Pickle isn't slow, it's a protocol
+category: work
+draft: true
+tags: [Programming, Python, scipy, dask]
+theme: twitter
+---
+{% include JB/setup %}
+
+*This work is supported by [Anaconda Inc](http://anaconda.com)*
+
+**tl;dr:** *Pickle isn't slow, it's a protocol.  Protocols are important for
+ecosystems.*
+
+A recent Dask issue showed that using Dask with PyTorch was
+slow because sending PyTorch models between Dask workers took a long time
+([Dask GitHub issue](https://github.com/dask/dask-ml/issues/281)).
+
+This turned out
+to be because pickling PyTorch models was very slow (1 MB/s for GPU based
+models, 50 MB/s for CPU based models).  There is no architectural reason why
+this needs to be this slow.  Every part of the pipeline is much faster than
+this.
+
+We could have fixed this in Dask by special-casing PyTorch models, but being
+good ecosystem citizens, we decided to raise the performance problem in an
+issue upstream
+([PyTorch Github issue](https://github.com/pytorch/pytorch/issues/9168)).
+This resulted in a five-line-fix to PyTorch that turned a 1-50 MB/s
+serialization bandwidth into a 1 GB/s bandwidth, which is more than fast enough
+for most use cases
+([PR to PyTorch](https://github.com/pytorch/pytorch/pull/9184)).
+
+```diff
+     def __reduce__(self):
+-        return type(self), (self.tolist(),)
++        b = io.BytesIO()
++        torch.save(self, b)
++        return (_load_from_bytes, (b.getvalue(),))
+
+
++def _load_from_bytes(b):
++    return torch.load(io.BytesIO(b))
+```
+
+Thanks to the PyTorch reviewers this problem was solved pretty easily.  PyTorch
+tensors and models now serialize efficiently in Dask or in *any other Python
+library* that might want to use them in distributed systems like PySpark,
+IPython parallel, Ray, or anything else.  We didn't solve a Dask problem, we
+solved an ecosystem problem.
+
+I have to solve this problem frequently enough in other libraries that I've
+noticed two common, and I believe incorrect, beliefs that I'd like to address:
+
+1.  Pickle is slow
+2.  You should use our specialized way to serialize objects instead
+
+<a href="https://github.com/pytorch/pytorch/issues/9168#issuecomment-402514019">
+  <img src="{{BASE_PATH}}/images/pytorch-pickle-is-slow-comment.png"
+     alt="Github Image of maintainer saying that PyTorch's pickle implementation is slow"
+     width="100%"></a>
+
+Pickle is slow
+--------------
+
+Pickle is *not* slow.  Pickle is a protocol.  *We* implement pickle.  If it's slow
+then it is *our* fault, not Pickle's.
+
+To be clear, there are many reasons not to use Pickle.
+
+-  It's not cross-language
+-  It's not very easy to parse
+-  It doesn't provide random access
+-  It's insecure
+-  etc..
+
+So you shouldn't store your data or create public services using Pickle, but
+for things like moving data on a wire it's a great default choice if you're
+moving strictly from Python processes to Python processes in a trusted
+environment.
+
+It's great because it's as fast as you can make it (up a a memory copy) and
+other libraries in the ecosystem can use it without needing to special case
+your code into theirs.
+
+This is the change we did for PyTorch.
+
+```diff
+     def __reduce__(self):
+-        return type(self), (self.tolist(),)
++        b = io.BytesIO()
++        torch.save(self, b)
++        return (_load_from_bytes, (b.getvalue(),))
+
+
++def _load_from_bytes(b):
++    return torch.load(io.BytesIO(b))
+```
+
+The slow part wasn't Pickle, it was the `.tolist()` call within `__reduce__`
+that converted a PyTorch tensor into a list of Python ints and floats.  I
+suspect that the belief that common belief that "Pickle is just slow" stopped
+anyone else from investigating the poor performance here.  I was surprised to
+learn that a project as popular and well regarded as PyTorch hadn't fixed this
+already.
+
+*As a reminder, you can implement the pickle protocol by providing the
+`__reduce__` method on your class.  The `__reduce__` function returns a
+loading function and sufficient arguments to reconstitute your object.  Here we
+used torch's existing save/load functions to create a bytestring that we could
+pass around.*
+
+
+Just use our specialized option
+-------------------------------
+
+Specialized options can be great.  They can have nice APIs with many options,
+they can tune themselves to specialized communication hardware if it exists
+(like RDMA or NVLink), and so on.  But people need to learn about them first, and
+that's actually pretty hard in two ways.
+
+### Hard for users
+
+Today we use dozens of different libraries when building systems or analyzing
+data.   New libraries arise frequently, so it's hard for users to become
+experts in all of them.  They have come to trust that library developers will
+make things easy for them by adhering to custom standard APIs, by providing
+good error messages, and easily navigable objects.  Because of this we're
+starting to see the rise of standard APIs like Numpy's array computing API,
+Scikit-Learn's fit/transform/predict Estimator API, and so on.
+
+How to turn your objects into a bytestream probably isn't in the quickstart,
+and so it probably isn't something that the majority of users will end up
+learning about.  Adhering to standards helps to empower users immediately
+without asking them to invest in training up on new libraries.
+
+### Hard for other libraries
+
+Other libraries that need to interact with yours *definitely* won't read the
+documentation, and even if they did it's not sensible for every library to
+special case every other library's favorite method to turn their objects into
+bytes.  Ecosystems of libraries depend strongly on the presence of protocols
+and a strong consensus around implementing them consistently and efficiently.
