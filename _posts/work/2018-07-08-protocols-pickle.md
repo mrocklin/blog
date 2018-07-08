@@ -44,23 +44,30 @@ for most use cases
 +    return torch.load(io.BytesIO(b))
 ```
 
-Thanks to the PyTorch reviewers this problem was solved pretty easily.  PyTorch
-tensors and models now serialize efficiently in Dask or in *any other Python
-library* that might want to use them in distributed systems like PySpark,
-IPython parallel, Ray, or anything else.  We didn't solve a Dask problem, we
+Thanks to the PyTorch maintainers this problem was solved pretty easily.
+PyTorch tensors and models now serialize efficiently in Dask or in *any other
+Python library* that might want to use them in distributed systems like
+PySpark, IPython parallel, Ray, or anything else without having to add
+special-case code or do anything special.  We didn't solve a Dask problem, we
 solved an ecosystem problem.
 
-However before we solved this problem we discussed things a bit and I ran into
-two beliefs that I often find in these situations that I believe to be
-incorrect:
-
-1.  Pickle is slow
-2.  You should use our specialized way to serialize objects instead
+However before we solved this problem we discussed things a bit.  This comment
+stuck with me:
 
 <a href="https://github.com/pytorch/pytorch/issues/9168#issuecomment-402514019">
   <img src="{{BASE_PATH}}/images/pytorch-pickle-is-slow-comment.png"
      alt="Github Image of maintainer saying that PyTorch's pickle implementation is slow"
      width="100%"></a>
+
+This comment contains two beliefs that are both very common, and that I find
+somewhat counter-productive:
+
+1.  Pickle is slow
+2.  You should use our specialized methods instead
+
+I'm sort of picking on the PyTorch maintainers here a bit (sorry!) but I've
+found that they're quite widespread, so I'd like to address them here.
+
 
 Pickle is slow
 --------------
@@ -101,10 +108,9 @@ This is the change we did for PyTorch.
 
 The slow part wasn't Pickle, it was the `.tolist()` call within `__reduce__`
 that converted a PyTorch tensor into a list of Python ints and floats.  I
-suspect that the belief that common belief that "Pickle is just slow" stopped
-anyone else from investigating the poor performance here.  I was surprised to
-learn that a project as active and well maintained as PyTorch hadn't fixed this
-already.
+suspect that the common belief of "Pickle is just slow" stopped anyone else
+from investigating the poor performance here.  I was surprised to learn that a
+project as active and well maintained as PyTorch hadn't fixed this already.
 
 *As a reminder, you can implement the pickle protocol by providing the
 `__reduce__` method on your class.  The `__reduce__` function returns a
@@ -119,11 +125,11 @@ Just use our specialized option
 Specialized options can be great.  They can have nice APIs with many options,
 they can tune themselves to specialized communication hardware if it exists
 (like RDMA or NVLink), and so on.  But people need to learn about them first, and
-that's actually pretty hard in two ways.
+learning about them can be hard in two ways.
 
 ### Hard for users
 
-Today we use a large and rapidly changing set of different libraries. It's hard
+Today we use a large and rapidly changing set of libraries. It's hard
 for users to become experts in all of them.  Increasingly we rely on new
 libraries making it easy for us by adhering to standard APIs, providing
 informative error messages that lead to good behavior, and so on..
