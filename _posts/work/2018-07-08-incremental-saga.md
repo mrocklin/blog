@@ -8,7 +8,9 @@ theme: twitter
 ---
 {% include JB/setup %}
 
-*This work is supported by [Anaconda Inc](http://anaconda.com)*
+*This work is supported by TODO add Fabian's affiliation, [Anaconda
+Inc](http://anaconda.com), and the [Berkeley Institute for Data
+Science](https://bids.berkeley.edu/)*
 
 At a recent Scikit-learn/Scikit-image/Dask sprint at BIDS, Fabian Pedregosa (a
 machine learning researcher and Scikit-learn core developer) and Matthew
