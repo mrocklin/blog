@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Dask Development Log
+title: Incremental SAGA
 category: work
 draft: true
 tags: [Programming, Python, scipy, dask]
