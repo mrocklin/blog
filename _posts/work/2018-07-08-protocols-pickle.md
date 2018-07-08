@@ -50,8 +50,9 @@ library* that might want to use them in distributed systems like PySpark,
 IPython parallel, Ray, or anything else.  We didn't solve a Dask problem, we
 solved an ecosystem problem.
 
-I have to solve this problem frequently enough in other libraries that I've
-noticed two common, and I believe incorrect, beliefs that I'd like to address:
+However before we solved this problem we discussed things a bit and I ran into
+two beliefs that I often find in these situations that I believe to be
+incorrect:
 
 1.  Pickle is slow
 2.  You should use our specialized way to serialize objects instead
@@ -77,8 +78,8 @@ To be clear, there are many reasons not to use Pickle.
 
 So you shouldn't store your data or create public services using Pickle, but
 for things like moving data on a wire it's a great default choice if you're
-moving strictly from Python processes to Python processes in a trusted
-environment.
+moving strictly from Python processes to Python processes in a trusted and
+uniform environment.
 
 It's great because it's as fast as you can make it (up a a memory copy) and
 other libraries in the ecosystem can use it without needing to special case
@@ -102,7 +103,7 @@ The slow part wasn't Pickle, it was the `.tolist()` call within `__reduce__`
 that converted a PyTorch tensor into a list of Python ints and floats.  I
 suspect that the belief that common belief that "Pickle is just slow" stopped
 anyone else from investigating the poor performance here.  I was surprised to
-learn that a project as popular and well regarded as PyTorch hadn't fixed this
+learn that a project as active and well maintained as PyTorch hadn't fixed this
 already.
 
 *As a reminder, you can implement the pickle protocol by providing the
@@ -122,22 +123,14 @@ that's actually pretty hard in two ways.
 
 ### Hard for users
 
-Today we use dozens of different libraries when building systems or analyzing
-data.   New libraries arise frequently, so it's hard for users to become
-experts in all of them.  They have come to trust that library developers will
-make things easy for them by adhering to custom standard APIs, by providing
-good error messages, and easily navigable objects.  Because of this we're
-starting to see the rise of standard APIs like Numpy's array computing API,
-Scikit-Learn's fit/transform/predict Estimator API, and so on.
-
-How to turn your objects into a bytestream probably isn't in the quickstart,
-and so it probably isn't something that the majority of users will end up
-learning about.  Adhering to standards helps to empower users immediately
-without asking them to invest in training up on new libraries.
+Today we use a large and rapidly changing set of different libraries. It's hard
+for users to become experts in all of them.  Increasingly we rely on new
+libraries making it easy for us by adhering to standard APIs, providing
+informative error messages that lead to good behavior, and so on..
 
 ### Hard for other libraries
 
-Other libraries that need to interact with yours *definitely* won't read the
+Other libraries that need to interact *definitely* won't read the
 documentation, and even if they did it's not sensible for every library to
 special case every other library's favorite method to turn their objects into
 bytes.  Ecosystems of libraries depend strongly on the presence of protocols
