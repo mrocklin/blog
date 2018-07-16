@@ -10,7 +10,7 @@ theme: twitter
 
 *This work is supported by [Anaconda Inc](http://anaconda.com)*
 
-People often ask me general questions like "Who uses Dask?" or more specific
+People often ask general questions like "Who uses Dask?" or more specific
 questions like the following:
 
 1.  For what applications do people use Dask dataframe?
@@ -21,20 +21,19 @@ questions like the following:
 6.  Does anyone in the insurance industry use Dask?
 6.  ...
 
-This yields interesting and productive conversations where we can dive into
-historical use cases, and learn how they can inform potential user's choices
-about if and how they use the project.
+This yields interesting and productive conversations where new users can dive
+into historical use cases which informs their choices if and how they use the
+project in the future.
 
 *New users can learn a lot from existing users.*
 
-However, I would like to remove myself from this conversation and enable users
-to share their stories with each other more directly.  To that end there is a
-new tiny project, [dask-stories](https://dask-stories.readthedocs.io).  This is
-a small documentation page where people can submit how they use Dask and have
-that published for others to see.
+To further enable this conversation we've made a new tiny project,
+[dask-stories](https://dask-stories.readthedocs.io).  This is a small
+documentation page where people can submit how they use Dask and have that
+published for others to see.
 
-To seed the site I've personally cajoled six generous users to write down their
-story on how their group uses Dask.  You can read about them here:
+To seed this site six generous users have written down how their group uses
+Dask.  You can read about them here:
 
 1.  [Sidewalk Labs: Civic Modeling](http://dask-stories.readthedocs.io/en/latest/sidewalk-labs.html)
 2.  [Genome Sequencing for Mosquitoes](http://dask-stories.readthedocs.io/en/latest/mosquito-sequencing.html)
@@ -44,10 +43,9 @@ story on how their group uses Dask.  You can read about them here:
 6.  [NCAR: Hydrologic Modeling](http://dask-stories.readthedocs.io/en/latest/hydrologic-modeling.html)
 
 We've focused on a few questions, available in [our
-template](http://dask-stories.readthedocs.io/en/latest/template.html).  We've
-tried to keep things focused on the problem rather than the technology, and we
-make sure to ask for negative as well as positive experiences when using the
-project.
+template](http://dask-stories.readthedocs.io/en/latest/template.html) that
+focus on problems over technology, and include negative as well as positive
+feedback to get a complete picture.
 
 1.  Who am I?
 2.  What problem am I trying to solve?
@@ -72,3 +70,6 @@ tool* in *some topic*")
 
 If you use Dask today in an interesting way then please share your story.
 The world would love to hear your voice, and it's for a good cause.
+
+If you maintain another project you might consider doing the same.  I'm hoping
+that this is successful enough for other projects to copy.
