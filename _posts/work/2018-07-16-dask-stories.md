@@ -62,13 +62,14 @@ is then built with ReadTheDocs and updated immediately.  We tried to make this
 as smooth and familiar to our existing userbase as possible.
 
 This is important.  Sharing real-world experiences like this are probably more
-valuable than code contributions the Dask project at this stage.  Dask is far
+valuable than code contributions to the Dask project at this stage.  Dask is
 more technically mature than it is well-known.  Users look to other users to
 help them understand a project (think of every time you've Googled for "*some
 tool* in *some topic*")
 
 If you use Dask today in an interesting way then please share your story.
-The world would love to hear your voice, and it's for a good cause.
+The world would love to hear your voice.
 
-If you maintain another project you might consider doing the same.  I'm hoping
-that this is successful enough for other projects to copy.
+If you maintain another project you might consider implementing the same model.
+I hope that this proves successful enough for other projects in the ecosystem
+to reuse.
