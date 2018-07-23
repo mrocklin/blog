@@ -2,7 +2,6 @@
 layout: post
 title: Pickle isn't slow, it's a protocol
 category: work
-draft: true
 tags: [Programming, Python, scipy, dask]
 theme: twitter
 ---
@@ -17,20 +16,19 @@ A recent Dask issue showed that using Dask with PyTorch was
 slow because sending PyTorch models between Dask workers took a long time
 ([Dask GitHub issue](https://github.com/dask/dask-ml/issues/281)).
 
-This turned out
-to be because pickling PyTorch models was very slow (1 MB/s for GPU based
-models, 50 MB/s for CPU based models).  There is no architectural reason why
-this needs to be this slow.  Every part of the pipeline is much faster than
-this.
+This turned out to be because serializing PyTorch models with pickle was very
+slow (1 MB/s for GPU based models, 50 MB/s for CPU based models).  There is no
+architectural reason why this needs to be this slow.  Every part of the
+hardware pipeline is much faster than this.
 
-We could have fixed this in Dask by special-casing PyTorch models, but being
-good ecosystem citizens, we decided to raise the performance problem in an
-issue upstream
-([PyTorch Github issue](https://github.com/pytorch/pytorch/issues/9168)).
-This resulted in a five-line-fix to PyTorch that turned a 1-50 MB/s
-serialization bandwidth into a 1 GB/s bandwidth, which is more than fast enough
-for most use cases
-([PR to PyTorch](https://github.com/pytorch/pytorch/pull/9184)).
+We could have fixed this in Dask by special-casing PyTorch models (Dask has
+it's own optional serialization system for performance), but being good
+ecosystem citizens, we decided to raise the performance problem in an issue
+upstream ([PyTorch Github
+issue](https://github.com/pytorch/pytorch/issues/9168)).  This resulted in a
+five-line-fix to PyTorch that turned a 1-50 MB/s serialization bandwidth into a
+1 GB/s bandwidth, which is more than fast enough for many use cases ([PR to
+PyTorch](https://github.com/pytorch/pytorch/pull/9184)).
 
 ```diff
      def __reduce__(self):
@@ -141,3 +139,29 @@ documentation, and even if they did it's not sensible for every library to
 special case every other library's favorite method to turn their objects into
 bytes.  Ecosystems of libraries depend strongly on the presence of protocols
 and a strong consensus around implementing them consistently and efficiently.
+
+
+Sometimes Specialized Options are Appropriate
+---------------------------------------------
+
+There *are* good reasons to support specialized options.  Sometimes you need
+more than 1GB/s bandwidth.  While this is rare in general (very few pipelines
+process faster than 1GB/s/node), it is true in the particular case of PyTorch
+when they are doing parallel training on a single machine with multiple
+processes.  Soumith (PyTorch maintainer) writes the following:
+
+When sending Tensors over multiprocessing, our custom serializer actually
+shortcuts them through shared memory, i.e. it moves the underlying Storages
+to shared memory and restores the Tensor in the other process to point to the
+shared memory. We did this for the following reasons:
+
+- **Speed:** we save on memory copies, especially if we amortize the cost of
+  moving a Tensor to shared memory before sending it into the multiprocessing
+  Queue. The total cost of actually moving a Tensor from one process to another
+  ends up being O(1), and independent of the Tensor's size
+
+- **Sharing:** If Tensor A and Tensor B are views of each other, once we
+  serialize and send them, we want to preserve this property of them being
+  views. This is critical for neural-nets where it's common to re-view the
+  weights / biases and use them for another.  With the default pickle solution,
+  this property is actually lost.
