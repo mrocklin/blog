@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Protocols: Pickle isn't slow, it's a protocol
+title: Pickle isn't slow, it's a protocol
 category: work
 tags: [Programming, Python, scipy, dask]
 theme: twitter
