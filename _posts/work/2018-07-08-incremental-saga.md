@@ -17,7 +17,7 @@ machine learning researcher and Scikit-learn developer) and Matthew
 Rocklin (Dask core developer) sat down together to develop an implementation of the
 [SAGA optimizer](https://arxiv.org/pdf/1407.0202.pdf) on parallel Dask datasets.
 
-It as an interesting both to see how the algorithm performed and also to see
+It was interesting both to see how the algorithm performed and also to see
 the ease and challenges to parallelizing a research algorithm with Dask.
 
 ### Start
@@ -90,7 +90,7 @@ smaller Numpy array, one at a time, carrying along a set of parameters along
 the way.
 
 
-### Process
+### Development Process
 
 In order to better understand the challenges of writing Dask algorithms, Fabian
 did most of the actual coding to start.  Fabian is good example of a researcher who
@@ -101,8 +101,8 @@ introduce Dask to researchers like Fabian.
 
 ### Step 1: Build a sequential algorithm with pure functions
 
-To start we actually didn't use Dask at all, instead, Matt asked Fabian to
-modify his algorithm in a few ways:
+To start we actually didn't use Dask at all, instead, Fabian modified his
+algorithm in a few ways:
 
 1.  It should operate over a list of Numpy arrays (this is like a Dask array,
     but simpler)
@@ -116,7 +116,7 @@ modify his algorithm in a few ways:
     explicitly provided as inputs.
 
 These requested modifiations affect performance a bit, we end up making more
-copies of the parameters and of some intermediate state.  In terms of
+copies of the parameters and more copies of intermediate state.  In terms of
 programming difficulty this took a bit of time (around a couple hours) but is a
 straightforward task that Fabian didn't seem to find challenging or foreign.
 
@@ -127,27 +127,13 @@ from sklearn.linear_model.sag import get_auto_step_size
 
 
 @njit
-def deriv_logistic(p, y):
-    # derivative of logistic loss
-    # same as in lightning (with minus sign)
-    p *= y
-    if p > 0:
-        phi = 1. / (1 + np.exp(-p))
-    else:
-        exp_t = np.exp(p)
-        phi = exp_t / (1. + exp_t)
-    return (phi - 1) * y
-
-
-
-@njit
-def _chunk_saga(
-    A, b, n_samples, f_deriv, x, memory_gradient, gradient_average, step_size):
+def _chunk_saga(A, b, n_samples, f_deriv, x, memory_gradient, gradient_average, step_size):
+    # Make explicit copies of inputs
     x = x.copy()
     gradient_average = gradient_average.copy()
     memory_gradient = memory_gradient.copy()
 
-    # sample randomly
+    # Sample randomly
     idx = np.arange(memory_gradient.size)
     np.random.shuffle(idx)
 
@@ -192,105 +178,109 @@ def full_saga(data, max_iter=100, callback=None):
 
 ### Step 2: Apply dask.delayed
 
-After things looked good, meaning that no functions either modified their
-inputs nor relied on global state we went over a [dask.delayed
-example](https://mybinder.org/v2/gh/dask/dask-examples/master?filepath=delayed.ipynb
-) together, and then applied the `@dask.delayed` decorator to the functions
-that Fabian had written.  Fabian did this at first in about five minutes and to
+Once functions neither modified their inputs nor relied on global state we went
+over a [dask.delayed example](https://mybinder.org/v2/gh/dask/dask-examples/master?filepath=delayed.ipynb),
+and then applied the `@dask.delayed` decorator to the functions that
+Fabian had written.  Fabian did this at first in about five minutes and to our
 mutual surprise, things actually worked
 
 ```diff
+@dask.delayed(nout=3)                               # <<<---- New
+@njit
+def _chunk_saga(A, b, n_samples, f_deriv, x, memory_gradient, gradient_average, step_size):
+    ...
 
+def full_saga(data, max_iter=100, callback=None):
+    n_samples = 0
+    for A, b in data:
+        n_samples += A.shape[0]
+    data = dask.persist(*data)                      # <<<---- New
 
--
-+@dask.delayed(nout=3)
- @njit
- def _chunk_saga(
-     A, b, n_samples, f_deriv, x, memory_gradient, gradient_average, step_size):
-@@ -47,6 +47,7 @@ def full_saga(data, max_iter=100, callback=None):
-     n_samples = 0
-     for A, b in data:
-         n_samples += A.shape[0]
-+    data = dask.persist(*data)
-     n_features = data[0][0].shape[1]
-     memory_gradients = [np.zeros(A.shape[0]) for (A, b) in data]
-     gradient_average = np.zeros(n_features)
-@@ -61,6 +62,13 @@ def full_saga(data, max_iter=100, callback=None):
-                     A, b, n_samples, deriv_logistic, x, memory_gradients[i],
-                     gradient_average, step_size)
-         if callback is not None:
--            print(callback(x, data))
-+            cb = dask.delayed(callback)(x, data)
-+        else:
-+            cb = None
-+        x, cb = dask.persist(x, cb)
-+        if callback:
-+            print(cb.compute())
+    ...
+
+    for _ in range(max_iter):
+        for i, (A, b) in enumerate(data):
+            x, memory_gradients[i], gradient_average = _chunk_saga(
+                    A, b, n_samples, deriv_logistic, x, memory_gradients[i],
+                    gradient_average, step_size)
+        cb = dask.delayed(callback)(x, data)        # <<<---- Changed
+
+        x, cb = dask.persist(x, cb)                 # <<<---- New
+        print(cb.compute()
 ```
 
-TODO: Example diff when applying dask.delayed and image of dashboard after
-running
+However, they didn't work *that well*.  When we took a look at the dask
+dashboard we find that there is a lot of dead space, a sign that we're still
+doing a lot of computation on the client side.
 
-XXX see SAGA-dask1.ipynb, for the diff, execute nbdime SAGA-dask0 SAGA-dask1
+<a href="{{BASE_PATH}}/images/saga-1.png">
+  <img src="{{BASE_PATH}}/images/saga-1.png" width="70%">
+</a>
 
 
 ### Step 3: Diagnose and add more dask.delayed calls
 
-However, while things worked, they were also fairly slow.  If you notice the
-dashboard plot above you'll see that there is plenty of white inbetween colored
-rectangles.  This shows that there are long periods where none of the workers
-is doing any work.
+While things worked, they were also fairly slow.  If you notice the
+dashboard plot above you'll see that there is plenty of white in between
+colored rectangles.  This shows that there are long periods where none of the
+workers is doing any work.
 
 This is a common sign that we're mixing work between the workers (which shows
 up on the dashbaord) and the client.  The solution to this is usually more
-targetted use of dask.delayed.  Dask delayed is very useful to help parallelize
-custom code and while it is trivial to start using, does require some
-experience to use well.  It's important to keep track of which operations and
-variables are delayed and which aren't.  There is some cost to mixing between
-them.
+targetted use of dask.delayed.  Dask delayed is trivial to start using, but
+does require some experience to use well.  It's important to keep track of
+which operations and variables are delayed and which aren't.  There is some
+cost to mixing between them.
 
-At this point Matt stepped in and added delayed in a few more places and things
-started looking cleaner.
+At this point Matt stepped in and added delayed in a few more places and the
+dashboard plot started looking cleaner.
 
-```diff
--data = [((np.random.randn)(5000, n_features), ((np.random.randint)(0, 2, 5000) - 0.5) * 2) for _ in range(10)]
-+data = [(dask.delayed(np.random.randn)(n_rows, n_features), (dask.delayed(np.random.randint)(0, 2, n_rows) - 0.5) * 2) for _ in range(10)]
 
-## modified /cells/3/source:
-@@ -47,14 +47,14 @@ def full_saga(data, max_iter=100, callback=None):
-     n_samples = 0
-     for A, b in data:
-         n_samples += A.shape[0]
--    data = dask.persist(*data)
-     n_features = data[0][0].shape[1]
--    memory_gradients = [np.zeros(A.shape[0]) for (A, b) in data]
--    gradient_average = np.zeros(n_features)
--    x = np.zeros(n_features)
-+    data = dask.persist(*data)
-+    memory_gradients = [dask.delayed(np.zeros)(A.shape[0]) for (A, b) in data]
-+    gradient_average = dask.delayed(np.zeros)(n_features)
-+    x = dask.delayed(np.zeros)(n_features)
+```python
+@dask.delayed(nout=3)                               # <<<---- New
+@njit
+def _chunk_saga(A, b, n_samples, f_deriv, x, memory_gradient, gradient_average, step_size):
+    ...
 
--    steps = [get_auto_step_size(row_norms(A, squared=True).max(), 0, 'log', False) for (A, b) in data]
--    step_size = 0.3 * np.min(steps)
-+    steps = [dask.delayed(get_auto_step_size)(dask.delayed(row_norms)(A, squared=True).max(), 0, 'log', False) for (A, b) in data]
-+    step_size = 0.3 * dask.delayed(np.min)(steps)
 
-     for _ in range(max_iter):
-         for i, (A, b) in enumerate(data):
-@@ -65,10 +65,8 @@ def full_saga(data, max_iter=100, callback=None):
-             cb = dask.delayed(callback)(x, data)
-         else:
-             cb = None
--        x, cb = dask.persist(x, cb)
-+        x, memory_gradients, gradient_average, step_size, cb = dask.persist(x, memory_gradients, gradient_average, step_size, cb)
-         if callback:
-             print(cb.compute())
+def full_saga(data, max_iter=100, callback=None):
+    n_samples = 0
+    for A, b in data:
+        n_samples += A.shape[0]
+    n_features = data[0][0].shape[1]
+    data = dask.persist(*data)                      # <<<---- New
+    memory_gradients = [dask.delayed(np.zeros)(A.shape[0])
+                        for (A, b) in data]         # <<<---- New
+    gradient_average = dask.delayed(np.zeros)(n_features)  #  New
+    x = dask.delayed(np.zeros)(n_features)          # <<<---- New
+
+    steps = [dask.delayed(get_auto_step_size)(
+                dask.delayed(row_norms)(A, squared=True).max(),
+                0, 'log', False)
+             for (A, b) in data]                    # <<<---- New
+    step_size = 0.3 * dask.delayed(np.min)(steps)   # <<<---- New
+
+    for _ in range(max_iter):
+        for i, (A, b) in enumerate(data):
+            x, memory_gradients[i], gradient_average = _chunk_saga(
+                    A, b, n_samples, deriv_logistic, x, memory_gradients[i],
+                    gradient_average, step_size)
+        cb = dask.delayed(callback)(x, data)        # <<<---- New
+        x, memory_gradients, gradient_average, step_size, cb = \
+            dask.persist(x, memory_gradients, gradient_average, step_size, cb)  # New
+        print(cb.compute())                         # <<<---- New
+
+    return x
 ```
 
-TODO: show code diff with extra delayed calls and new image of dashboard
+<a href="{{BASE_PATH}}/images/saga-2.png">
+  <img src="{{BASE_PATH}}/images/saga-2.png" width="70%">
+</a>
 
-XXX see SAGA-dask2
+From a dask perspective this now looks good.  We're not getting any parallelism
+(this is just a sequential algorithm) but we don't have much dead space.  The
+model seems to jump between the various workers, processing on a chunk of data
+before moving on to new data.
 
 
 ### Step 4: Profile
@@ -303,10 +293,20 @@ However, when we look at the profile plot of the computation across all of our
 cores (Dask constantly runs a profiler on all threads on all workers to get
 this information) we see that most of our time is spent compiling Numba code.
 
-TODO: image of profile
+<a href="{{BASE_PATH}}/images/saga-profile.png">
+  <img src="{{BASE_PATH}}/images/saga-profile.png" width="50%">
+</a>
 
 We started a conversation for this on the [numba issue
-tracker](https://github.com/numba/numba/issues/3026)
+tracker](https://github.com/numba/numba/issues/3026) which has since been
+resolved.  That same computation over the same time now looks like this:
+
+<a href="{{BASE_PATH}}/images/saga-3.png">
+  <img src="{{BASE_PATH}}/images/saga-3.png" width="70%">
+</a>
+
+The tasks, which used to take seconds, now take tens of milliseconds, so we can
+process much more quickly.
 
 
 ### Future Work
@@ -321,5 +321,3 @@ actual users we need to do a few things:
 2.  Integrate Fabian's other work that uses sparse arrays.  Hopefully on the
     SAGA side this just means doing a type check and then choosing between the
     two algorithms on a task-by-task basis
-3.  Resolve the Numba re-deserialization issue, probably by caching functions
-    within Dask
