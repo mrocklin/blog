@@ -1565,8 +1565,8 @@ pre {
   word-break: break-all;
   word-wrap: break-word;
   background-color: #fff;
-  border: 2px solid #ccc;
-  border-radius: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
 }
 pre code {
   padding: 0;
