@@ -184,7 +184,7 @@ and then applied the `@dask.delayed` decorator to the functions that
 Fabian had written.  Fabian did this at first in about five minutes and to our
 mutual surprise, things actually worked
 
-```diff
+```python
 @dask.delayed(nout=3)                               # <<<---- New
 @njit
 def _chunk_saga(A, b, n_samples, f_deriv, x, memory_gradient, gradient_average, step_size):
@@ -287,7 +287,7 @@ before moving on to new data.
 
 The dashboard image above gives confidence that our algorithm is operating as
 it should.  The block-sequential nature of the algorithm comes out cleanly, and
-there gaps between tasks are very short.
+the gaps between tasks are very short.
 
 However, when we look at the profile plot of the computation across all of our
 cores (Dask constantly runs a profiler on all threads on all workers to get
@@ -306,18 +306,19 @@ resolved.  That same computation over the same time now looks like this:
 </a>
 
 The tasks, which used to take seconds, now take tens of milliseconds, so we can
-process much more quickly.
+process through many more chunks in the same amount of time.
 
 
 ### Future Work
 
 This was a useful experience to build an interesting algorithm.  Most of the
-work above took place in an afternoon.  However to make this more valuable to
-actual users we need to do a few things:
+work above took place in an afternoon.  We came away from this activity
+with a few tasks of our own:
 
 1.  Build a normal Scikit-Learn style estimator class for this algorithm
     so that people can use it without thinking too much about delayed objects,
     and can instead just use dask arrays or dataframes
-2.  Integrate Fabian's other work that uses sparse arrays.  Hopefully on the
-    SAGA side this just means doing a type check and then choosing between the
-    two algorithms on a task-by-task basis
+2.  Integrate Fabian's other work that uses sparse arrays, stopping criteria,
+    and so on.
+3.  Think about how to improve the learning experience so that dask.delayed can
+    teach new users when it is being used correctly
