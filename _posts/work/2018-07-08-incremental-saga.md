@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Incremental SAGA
+title: Building SAGA for Dask arrays
 category: work
 draft: true
 tags: [Programming, Python, scipy, dask]
@@ -12,18 +12,18 @@ theme: twitter
 Inc](http://anaconda.com), and the [Berkeley Institute for Data
 Science](https://bids.berkeley.edu/)*
 
-At a recent Scikit-learn/Scikit-image/Dask sprint at BIDS, Fabian Pedregosa (a
+At a recent Scikit-learn/Scikit-image/Dask sprint at BIDS, [Fabian Pedregosa](http://fa.bianp.net) (a
 machine learning researcher and Scikit-learn developer) and Matthew
-Rocklin (Dask core developer) sat down together to develop an implementation of the
-[SAGA optimizer](https://arxiv.org/pdf/1407.0202.pdf) on parallel Dask datasets.
+Rocklin (Dask core developer) sat down together to develop an implementation of the incremental optimization algorithm
+[SAGA](https://arxiv.org/pdf/1407.0202.pdf) on parallel Dask datasets. The result is a sequential algorithm that can be run on any dask array, and so allows the data to be stored on disk or even distributed among different machines.
 
 It was interesting both to see how the algorithm performed and also to see
-the ease and challenges to parallelizing a research algorithm with Dask.
+the ease and challenges to run a research algorithm on a Dask distributed dataset.
 
 ### Start
 
 
-We started with an intitial implementation that Fabian had written for Numpy
+We started with an initial implementation that Fabian had written for Numpy
 arrays using Numba. The following code solves an optimization problem of the form
 
 $$
@@ -49,7 +49,13 @@ def deriv_logistic(p, y):
     return (phi - 1) * y
 
 @njit
-def SAGA(A, b, f_deriv, step_size, max_iter=100):
+def SAGA(A, b, step_size, max_iter=100):
+  """
+  SAGA algorithm
+
+  A : n_samples x n_features numpy array
+  b : n_samples numpy array with values -1 or 1
+  """
 
     n_samples, n_features = A.shape
     memory_gradient = np.zeros(n_samples)
@@ -64,7 +70,7 @@ def SAGA(A, b, f_deriv, step_size, max_iter=100):
 
         # .. inner iteration ..
         for i in idx:
-            grad_i = f_deriv(np.dot(x, A[i]), b[i])
+            grad_i = deriv_logistic(np.dot(x, A[i]), b[i])
 
             # .. update coefficients ..
             delta = (grad_i - memory_gradient[i]) * A[i]
@@ -84,10 +90,10 @@ def SAGA(A, b, f_deriv, step_size, max_iter=100):
 
 This implementation is a simplified version of the [SAGA
 implementation](https://github.com/openopt/copt/blob/master/copt/randomized.py)
-that Fabian uses regularly as part of his research.  We wanted to apply it
-across a parallel Dask array by applying it to each chunk of the Dask array, a
-smaller Numpy array, one at a time, carrying along a set of parameters along
-the way.
+that Fabian uses regularly as part of his research, and that assumes that  $f$ is the [logistic loss](https://en.wikipedia.org/wiki/Loss_functions_for_classification#Logistic_loss), i.e., $f(z) = \log(1 + \exp(-z))$. It can be used to solve problems with other values of $f$ by overwriting the function <code>deriv_logistic</code>.
+
+
+We wanted to apply it across a parallel Dask array by applying it to each chunk of the Dask array, a smaller Numpy array, one at a time, carrying along a set of parameters along the way.
 
 
 ### Development Process
@@ -101,11 +107,9 @@ introduce Dask to researchers like Fabian.
 
 ### Step 1: Build a sequential algorithm with pure functions
 
-To start we actually didn't use Dask at all, instead, Fabian modified his
-algorithm in a few ways:
+To start we actually didn't use Dask at all, instead, Fabian modified his implementation in a few ways:
 
-1.  It should operate over a list of Numpy arrays (this is like a Dask array,
-    but simpler)
+1.  It should operate over a list of Numpy arrays. A list of Numpy arrays is similar to a Dask array, but simpler.
 2.  It should separate blocks of logic into separate functions, these will
     eventually become tasks, so they should be sizable chunks of work. In this
     case, this led to the creating of the function `_chunk_saga` that
@@ -115,10 +119,13 @@ algorithm in a few ways:
     the parameters that we're learning in our algorithm) should be
     explicitly provided as inputs.
 
-These requested modifiations affect performance a bit, we end up making more
+These requested modifications affect performance a bit, we end up making more
 copies of the parameters and more copies of intermediate state.  In terms of
 programming difficulty this took a bit of time (around a couple hours) but is a
 straightforward task that Fabian didn't seem to find challenging or foreign.
+
+
+These changes resulted in the following code:
 
 ```python
 from numba import njit
@@ -153,6 +160,10 @@ def _chunk_saga(A, b, n_samples, f_deriv, x, memory_gradient, gradient_average, 
 
 
 def full_saga(data, max_iter=100, callback=None):
+  """
+  data: list of (A, b), where A is a n_samples x n_features
+  numpy array and b is a n_samples numpy array
+  """
     n_samples = 0
     for A, b in data:
         n_samples += A.shape[0]
@@ -242,7 +253,6 @@ dashboard plot started looking cleaner.
 def _chunk_saga(A, b, n_samples, f_deriv, x, memory_gradient, gradient_average, step_size):
     ...
 
-
 def full_saga(data, max_iter=100, callback=None):
     n_samples = 0
     for A, b in data:
@@ -250,25 +260,25 @@ def full_saga(data, max_iter=100, callback=None):
     n_features = data[0][0].shape[1]
     data = dask.persist(*data)                      # <<<---- New
     memory_gradients = [dask.delayed(np.zeros)(A.shape[0])
-                        for (A, b) in data]         # <<<---- New
-    gradient_average = dask.delayed(np.zeros)(n_features)  #  New
-    x = dask.delayed(np.zeros)(n_features)          # <<<---- New
+                        for (A, b) in data]         # <<<---- Changed
+    gradient_average = dask.delayed(np.zeros)(n_features)  #  Changed
+    x = dask.delayed(np.zeros)(n_features)          # <<<---- Changed
 
     steps = [dask.delayed(get_auto_step_size)(
                 dask.delayed(row_norms)(A, squared=True).max(),
                 0, 'log', False)
-             for (A, b) in data]                    # <<<---- New
-    step_size = 0.3 * dask.delayed(np.min)(steps)   # <<<---- New
+             for (A, b) in data]                    # <<<---- Changed
+    step_size = 0.3 * dask.delayed(np.min)(steps)   # <<<---- Changed
 
     for _ in range(max_iter):
         for i, (A, b) in enumerate(data):
             x, memory_gradients[i], gradient_average = _chunk_saga(
                     A, b, n_samples, deriv_logistic, x, memory_gradients[i],
                     gradient_average, step_size)
-        cb = dask.delayed(callback)(x, data)        # <<<---- New
+        cb = dask.delayed(callback)(x, data)        # <<<---- Changed
         x, memory_gradients, gradient_average, step_size, cb = \
             dask.persist(x, memory_gradients, gradient_average, step_size, cb)  # New
-        print(cb.compute())                         # <<<---- New
+        print(cb.compute())                         # <<<---- changed
 
     return x
 ```
@@ -318,7 +328,7 @@ with a few tasks of our own:
 1.  Build a normal Scikit-Learn style estimator class for this algorithm
     so that people can use it without thinking too much about delayed objects,
     and can instead just use dask arrays or dataframes
-2.  Integrate Fabian's other work that uses sparse arrays, stopping criteria,
-    and so on.
+2.  Integrate some of Fabian's research on this algorithm that improves performance with
+    [sparse data and in multi-threaded environments](https://arxiv.org/pdf/1707.06468.pdf).
 3.  Think about how to improve the learning experience so that dask.delayed can
-    teach new users when it is being used correctly
+    teach new users how to use it correctly
