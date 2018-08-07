@@ -2,7 +2,6 @@
 layout: post
 title: Building SAGA optimization for Dask arrays
 category: work
-draft: true
 tags: [Programming, Python, scipy, dask]
 theme: twitter
 ---
