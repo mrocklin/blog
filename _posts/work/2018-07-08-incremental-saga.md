@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Building SAGA for Dask arrays
+title: Building SAGA optimization for Dask arrays
 category: work
 draft: true
 tags: [Programming, Python, scipy, dask]
@@ -332,3 +332,11 @@ with a few tasks of our own:
     [sparse data and in multi-threaded environments](https://arxiv.org/pdf/1707.06468.pdf).
 3.  Think about how to improve the learning experience so that dask.delayed can
     teach new users how to use it correctly
+
+### Links
+
+-  [Notebooks for different stages of SAGA+Dask implementation](https://gist.github.com/5282dcf47505e2a1d214fd15c7da0ec3)
+-  [Scikit-Learn/Image + Dask Sprint issue tracker](https://github.com/scisprints/2018_05_sklearn_skimage_dask)
+-  [Paper on SAGA algorithm](https://github.com/scisprints/2018_05_sklearn_skimage_dask)
+-  [Fabian's more fully featured non-Dask SAGA implementation](https://github.com/openopt/copt/blob/master/copt/randomized.py)
+-  [Numba issue on repeated deserialization](https://github.com/numba/numba/issues/3026)
