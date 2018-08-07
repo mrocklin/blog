@@ -224,7 +224,7 @@ dashboard we find that there is a lot of dead space, a sign that we're still
 doing a lot of computation on the client side.
 
 <a href="{{BASE_PATH}}/images/saga-1.png">
-  <img src="{{BASE_PATH}}/images/saga-1.png" width="70%">
+  <img src="{{BASE_PATH}}/images/saga-1.png" width="90%">
 </a>
 
 
@@ -283,13 +283,15 @@ def full_saga(data, max_iter=100, callback=None):
 ```
 
 <a href="{{BASE_PATH}}/images/saga-2.png">
-  <img src="{{BASE_PATH}}/images/saga-2.png" width="70%">
+  <img src="{{BASE_PATH}}/images/saga-2.png" width="90%">
 </a>
 
-From a dask perspective this now looks good.  We're not getting any parallelism
-(this is just a sequential algorithm) but we don't have much dead space.  The
-model seems to jump between the various workers, processing on a chunk of data
-before moving on to new data.
+From a dask perspective this now looks good.  We see that one `partial_fit`
+call is active at any given time with no large horizontal gaps between
+`partial_fit` calls. We're not getting any parallelism (this is just a
+sequential algorithm) but we don't have much dead space.  The model seems to
+jump between the various workers, processing on a chunk of data before moving
+on to new data.
 
 
 ### Step 4: Profile
@@ -303,7 +305,7 @@ cores (Dask constantly runs a profiler on all threads on all workers to get
 this information) we see that most of our time is spent compiling Numba code.
 
 <a href="{{BASE_PATH}}/images/saga-profile.png">
-  <img src="{{BASE_PATH}}/images/saga-profile.png" width="50%">
+  <img src="{{BASE_PATH}}/images/saga-profile.png" width="100%">
 </a>
 
 We started a conversation for this on the [numba issue
@@ -311,7 +313,7 @@ tracker](https://github.com/numba/numba/issues/3026) which has since been
 resolved.  That same computation over the same time now looks like this:
 
 <a href="{{BASE_PATH}}/images/saga-3.png">
-  <img src="{{BASE_PATH}}/images/saga-3.png" width="70%">
+  <img src="{{BASE_PATH}}/images/saga-3.png" width="90%">
 </a>
 
 The tasks, which used to take seconds, now take tens of milliseconds, so we can
