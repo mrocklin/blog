@@ -2,7 +2,6 @@
 layout: post
 title: Cloud Lock-in and Open Standards
 category: work
-draft: true
 tags: [Programming, Python, scipy, dask]
 theme: twitter
 ---
