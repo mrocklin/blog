@@ -9,30 +9,32 @@ theme: twitter
 
 {% include JB/setup %}
 
-As open source software displaces all-in-one solutions, many institutions are
-re-assessing how they build software to support their users.  This is true
-across for-profit enterprises, government agencies, universities, and
-home-grown communities.
+As general purpose open source software displaces domain-specific all-in-one
+solutions, many institutions are re-assessing how they build and maintain
+software to support their users.  This is true across for-profit enterprises,
+government agencies, universities, and home-grown communities.
 
 While this shift brings opportunities for growth and efficiency, it also raises
 questions and challenges about how these institutions should best serve their
-communities as they grow dependent on software that is developed and controlled
-externally to their organization.
+communities as they grow increasingly dependent on software developed and
+controlled outside of their organization.
 
--  How do they ensure that it continues to serve the needs of their users?
+-  How do they ensure that this software will persist for many years?
+-  How do they guide this software to better serve the needs of their users?
 -  How do they transition users from previous all-in-one solutions to a new
-   open source solution?
+   open source platform?
 -  What do they do with their existing employees who historically maintained
    software in this field?
 -  If they have a mandate to support this field, what is the best role for them
-   to play, and how can they justify their efforts upstream?
+   to play, and how can they justify their efforts to the groups that control
+   their budget?
 
 This blogpost investigates this situation from the perspective of **large
 organizations that serve the public good**, such as government organizations
-like the National Science Foundation, National Institutions of Health,
-Department of Defense, NASA, etc. and large private non-profit institutions
-like the Gates or Chan-Zuckerberg foundations.  I hope to write separately
-about this topic from both enterprise and community perspectives in the future.
+like the National Science Foundation, NASA, DoD, etc. or large private
+non-profit institutions like the Gates or Chan-Zuckerberg foundations.  I hope
+to write separately about this topic from both enterprise and community
+perspectives in the future.
 
 This blogpost provides context, describes a few common approaches and their
 outcomes, and draws some general conclusions.
@@ -60,7 +62,7 @@ is relevant to many other institutions as well?
 
 We list a few common approaches, and some challenges or potential outcomes.
 
-1.  **Approach**: Open your existing stack for community development
+1.  **Open your existing stack for community development**
 
     You've heard that by placing your code and development cycle on Github that
     your software will be adopted by other groups and that you'll be able to
@@ -70,17 +72,20 @@ We list a few common approaches, and some challenges or potential outcomes.
     **Positive Outcome**: Your existing user-base may appreciate this and some
     of them may start submitting bugs and even patches.
 
-    **Negative Outcome**: Your software stack is already very very specific to
-    your particular domain.  It's unlikely that you'll get the same groundswell
-    response as a general purpose project like Jupyter, Pandas, or Spark.
+    **Negative Outcome**: Your software stack is already quite specific to your
+    domain.  It's unlikely that you will see the same response as a general
+    purpose project like Jupyter, Pandas, or Spark.
 
     Additionally, maintaining an open development model is hard.  You have to
     record all of your conversations and decision-making online.  When people
     from other domains come with ideas you will have to choose between
-    supporting them and supporting your own missing, which will very frequently
-    come into contact.
+    supporting them and supporting your own mission, which will frequently
+    come into conflict.
 
-2.  **Approach**: Start a new general purpose open source framework
+    In practice your engineers will start ignoring external users, and as a
+    result your external users will stay away.
+
+2.  **Start a new general purpose open source framework**
 
     **Positive**: If your project becomes widely adopted then you both get some
     additional development help, but perhaps more importantly your institution
@@ -106,10 +111,10 @@ We list a few common approaches, and some challenges or potential outcomes.
         to employ people to support users from all of those domains, and this
         is probably outside of your mandate.
 
-3.  **Appraoch**: Get out of the business of maintaining software entirely.
-    Your institution may no longer be strictly needed.
+3.  **Get out of the business of maintaining software entirely.**
+    Your institution may no longer be strictly needed in this role.
 
-    The open source communities seem to have a decent pipeline to maintain
+    The open source communities seem to have a decent pipeline to support
     users, lets just divert our userbase to them and focus on other efforts.
 
     **Positive**: You reduce operating budget and can allocate your people to
@@ -132,72 +137,76 @@ We list a few common approaches, and some challenges or potential outcomes.
 We now discuss a few concrete things to help where your institution is likely
 uniquely positioned to play a critical role:
 
-1.  **Approach**: Maintain the existing stack
+1.  **Maintain the existing stack**
 
     It's likely that the existing all-in-one stack will still be used for years
     by current researchers and automated systems.  You're not off the hook to
-    provide maintenance.  You might want to communicate an end-of-life to your
-    userbase though saying that support will expire in a few years time (or
-    whatever is appropriate for your domain
+    provide maintenance.  However you might want to communicate an end-of-life
+    to your userbase though saying that new feature requests are unlikely to be
+    implemented and that support will expire in a few years time (or whatever
+    is appropriate for your domain)
 
-2.  **Approach**: Develop learning materials to help users transition to the
-    new stack.
+2.  **Develop learning materials to help users transition to the new stack**
 
     Your institution uniquely understands the needs of your user community.
     There are common analyses, visualizations, storage formats, and so on that
-    are common among your users and are obvious with the all-in-one solution,
-    but which may take some effort to produce with the new system.
+    are common among your users and are easy with the all-in-one solution, but
+    which take effort with the new system.
 
-    You can build teaching materials like blogposts, how-to guides, online
-    tutorials and so on that assist the non-early-adopters to transition.
+    You can build teaching materials like blogposts, how-to guides, and online
+    tutorials that assist the non-early-adopters to transition more smoothly.
     You can provide in-person teaching at conferences and meetings common to
-    your community.  It's likely that the open source tooling that you're
-    transitioning to already has materials that you can copy-and-modify.
+    your community.  It's likely that the open source ecosystem that you're
+    transitioning to already has materials that you can copy-and-modify for
+    your domain.
 
-    Assist users in reporting bugs, and filter these to reduce impact on
+    Assist users in reporting bugs, and filter these to reduce burden on
     the upstream OSS projects.  It's likely that your users will express
-    problems in a way that is particular to their domain like "Satellite
-    mission MODIS data doesn't load properly" that is unlikely to make much
-    sense to the OSS maintainers.  Your engineers can help to filter and
-    translate these requests into technical terms appropriate for the upstream
-    project.  The people previously working on the all-in-one solution have a
-    unique combination of technical and domain experience that is essential to
-    mediate these interactions.
+    problems in a way that is particular to their domain, but which doesn't
+    make sense to maintainers.
 
-3.  **Approach**: Contribute code upstream either to mainline packages or new
-    subpackages.
+    -  User says: *Satellite mission MODIS data doesn't load properly*
+    -  Developer wants to hear: *GeoTIFF loader fails when given S3 route*
+
+    Your engineers can help to filter and translate these requests into
+    technical terms appropriate for the upstream project.  The people
+    previously working on the all-in-one solution have a unique combination of
+    technical and domain experience that is essential to mediate these
+    interactions.
+
+3.  **Contribute code upstream either to mainline packages or new subpackages**
 
     After you've spent some time developing training materials and assisting
     users to transition you'll have a much better sense of what needs to be
     fixed upstream, or what small new packages might be helpful.  You'll also
     have much more experience interacting with the upstream development
-    community so that you get a sense of how they operate.  Now is a good time
-    to start contributing actual code, either into the package itself if
-    sufficiently general purpose, or into a spinoff project that is small in
-    scope and focuses on your domain.
+    community so that you get a sense of how they operate and they'll better
+    understand your needs.  Now is a good time to start contributing actual
+    code, either into the package itself if sufficiently general purpose, or
+    into a spinoff project that is small in scope and focuses on your domain.
 
     It's very tempting to jump directly to this step and create new software,
-    but waiting a while and focusing on teaching can often yield better
-    results.
+    but waiting a while and focusing on teaching can often yield more
+    long-lasting results.
 
-4.  **Approach**: Enable employees to spend time maintaining upstream projects
-    and ensure that this time counts towards their career advancement.
+4.  **Enable employees to spend time maintaining upstream projects and ensure that this time counts towards their career advancement**
 
     By this time you will have a few employees who have taken on a maintenance
     role within the upstream projects.  You should explicitly give them time
     within the work schedule to continue these activities.  The work that they
     do may not be explicitly within scope for your institution, but having them
-    active within the core of a project makes sure that the goals of your
-    institution will be well represented in the future of that project.
+    active within the core of a project makes sure that the mission of your
+    institution will be well represented in the future of the open source
+    project.
 
     These people will often do this work on their own at home or on the side in
     personal time if you don't step in.  Your institution should make it clear
     to them that it values these activities and that they are good for the
     employee's career within your institution.  Besides ensuring that your
     institution's perspective is represented within the core of the upstream
-    projects you're also improving employee retention.
+    projects you're also improving retention of a core employee.
 
-5.  **Approach**: Co-write grant proposals with maintainers of the core project
+5.  **Co-write grant proposals with maintainers of the core project**
 
     If your institution provides or applies for external funding, consider
     writing up a grant proposal that has your institution and the OSS project
@@ -217,3 +226,16 @@ uniquely positioned to play a critical role:
     like [NumFOCUS](https://numfocus.org/).
 
 
+## Summary
+
+As primary development of software moves from inside the institution to outside,
+a very real cultural shift occurs.  The institution transitions from leading
+development and being fully in charge of its own destiny to playing a support
+role in a much larger ecosystem.  They can first help to lead their their user
+community through this transition, and through that develop the experience and
+relationships to act effectively within the broader ecosystem.
+
+This requires time and patience at several levels of the organization.  At the
+end of the day many people within the institution will have to collaborate with
+external organizations while still staying within the mandate and career track
+of the institution itself.  This requires changes at several levels.
