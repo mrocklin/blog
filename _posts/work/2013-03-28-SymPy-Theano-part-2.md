@@ -1,8 +1,9 @@
 ---
 layout: post
 title:  SymPy and Theano -- Scalar Simplification
-tagline:  
-category : work 
+tagline:
+category : work
+theme: twitter
 tags : [SymPy, Theano, scipy]
 ---
 {% include JB/setup %}
@@ -14,7 +15,7 @@ Introduction
 
 In my [last post](http://matthewrocklin.com/blog/work/2013/03/19/SymPy-Theano-part-1/) I showed how SymPy can benefit from Theano.  In particular Theano provided a mature platform for code generation that outperformed SymPy's attempt at the same problem.  I argued that projects should stick to one specialty and depend on others for secondary concerns.  Interfaces are better than add-ons.
 
-In this post I'll show how Theano can benefit from SymPy.  In particular I'll demonstrate the practicality of SymPy's impressive scalar simplification routines for generating efficient programs.  
+In this post I'll show how Theano can benefit from SymPy.  In particular I'll demonstrate the practicality of SymPy's impressive scalar simplification routines for generating efficient programs.
 
 After re-reading over this post I realize that it's somewhat long.  I've decided to put the results first in hopes that it'll motivate you to keep reading.
 
@@ -72,7 +73,7 @@ $$ \frac{1}{210} \sqrt{70} x^{2} \left(- 4 x^{2} + 32 x - 56\right) e^{- x} - \f
     print latex(simplify(expr.diff(x)))
 
 $$ \frac{2}{315} \sqrt{70} x \left(x^{4} - 17 x^{3} + 90 x^{2} - 168 x + 84\right) e^{- x} $$
-    
+
     print "Operations: ", count_ops(simplify(expr.diff(x)))
     Operations:  18
 
@@ -85,7 +86,7 @@ $$ \frac{\partial}{\partial x}\left(\frac{1}{210} \sqrt{70} x^{2} \left(- \frac{
 Bounds on the cost of Differentiation
 -------------------------------------
 
-Scalar differentiation is actually a very simple transformation.  
+Scalar differentiation is actually a very simple transformation.
 
 You need to know how to transform all of the elementary functions (`exp, log, sin, cos, polynomials, etc...`), the chain rule, and that's it.  Theorems behind automatic differentiation state that the cost of a derivative will be at most five times the cost of the original.  In this case we're guaranteed to have at most `17*5 == 85` operations in the derivative computation; this holds in our case because `48 < 85`
 
@@ -95,7 +96,7 @@ However derivatives are often far simpler than this upper bound.  We see that af
 Theano Simplification
 ---------------------
 
-Like SymPy, Theano transforms graphs to mathematically equivalent but computationally more efficient representations.  It provides standard compiler optimizations like constant folding, and common sub-expressions as well as array specific optimizations like the element-wise operation fusion.  
+Like SymPy, Theano transforms graphs to mathematically equivalent but computationally more efficient representations.  It provides standard compiler optimizations like constant folding, and common sub-expressions as well as array specific optimizations like the element-wise operation fusion.
 
 Because users regularly handle mathematical terms Theano also provides a set of optimizations to simplify some common scalar expressions.  For example Theano will convert expressions like `x*y/x` to `y`.  In this sense it overlaps with SymPy's `simplify` functions.  This post is largely a demonstration that SymPy's scalar simplifications are far more powerful than Theano's and that their use can result in significant improvements.  This shouldn't be surprising.  Sympians are devoted to scalar simplification to a degree that far exceeds the Theano community's devotion to this topic.
 
@@ -153,7 +154,7 @@ $$ \frac{\partial}{\partial x}\left(\frac{1}{210} \sqrt{70} x^{2} \left(- \frac{
 
 SymPy + Theano
 
-$$ \frac{2}{315} \sqrt{70} x \left(x^{4} - 17 x^{3} + 90 x^{2} - 168 x + 84\right) e^{- x} $$ 
+$$ \frac{2}{315} \sqrt{70} x \left(x^{4} - 17 x^{3} + 90 x^{2} - 168 x + 84\right) e^{- x} $$
 
     Operations:                              13
     Operations after Theano Simplification:  10

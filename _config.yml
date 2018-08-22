@@ -3,7 +3,7 @@
 permalink: /:categories/:year/:month/:day/:title
 
 exclude: [".rvmrc", ".rbenv-version", "README.md", "Rakefile", "changelog.md"]
-pygments: true
+highlighter: rouge
 
 # Themes are encouraged to use these universal variables
 # so be sure to set them if your theme uses them.
@@ -19,7 +19,7 @@ author :
 
 name: Working notes by Matthew Rocklin
 description: Working notes by Matthew Rocklin
-url: http://matthewrocklin.com/blog/
+url: https://matthewrocklin.com/blog/
 
 # The production_url is only used when full-domain names are needed
 # such as sitemap.txt
@@ -29,7 +29,7 @@ url: http://matthewrocklin.com/blog/
 # Else if you are pushing to username.github.com, replace with your username.
 # Finally if you are pushing to a GitHub project page, include the project name at the end.
 #
-production_url : http://mrocklin.github.com/blog
+production_url : https://mrocklin.github.com/blog
 
 # All Jekyll-Bootstrap specific configurations are namespaced into this hash
 #
@@ -58,7 +58,7 @@ JB :
   #   - Only the following values are falsy: ["", null, false]
   #   - When setting BASE_PATH it must be a valid url.
   #     This means always setting the protocol (http|https) or prefixing with "/"
-  BASE_PATH : http://mrocklin.github.com/blog
+  BASE_PATH : https://mrocklin.github.com/blog
 
   # By default, the asset_path is automatically defined relative to BASE_PATH plus the enabled theme.
   # ex: [BASE_PATH]/assets/themes/[THEME-NAME]
@@ -102,7 +102,7 @@ JB :
   analytics :
     provider : google
     google :
-        tracking_id : 'UA-18218894-1'
+        tracking_id : 'UA-18218894-4'
     getclicky :
       site_id :
     mixpanel :
@@ -127,4 +127,16 @@ JB :
   #   ./_includes/custom/[HELPER]
   # where [HELPER] is the name of the helper you are overriding.
 
-markdown: kramdown
+incremental: true
+
+github: [metadata]
+kramdown:
+    input: GFM
+    hard_wrap: false
+    parse_block_html: true
+gems:
+    - jekyll-coffeescript
+    - jekyll-paginate
+    - jekyll-gist
+gist:
+    noscript: false

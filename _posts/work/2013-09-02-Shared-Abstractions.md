@@ -3,6 +3,7 @@ layout: post
 title:  Dictionaries v. Objects
 tagline:  a story of shared abstractions
 category : work
+theme: twitter
 tags : [Functional]
 ---
 {% include JB/setup %}

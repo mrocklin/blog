@@ -2,8 +2,9 @@
 layout: post
 title: Matrix Computations in SymPy
 tagline: Encoding mathematical BLAS
-category : work 
+category : work
 tags : [SymPy, Matrices]
+theme: twitter
 ---
 {% include JB/setup %}
 
@@ -40,14 +41,14 @@ And then call it in Python like this
 {% highlight python %}
 
     nA, nB, nx = .... # Get numpy arrays
-    f(nalpha, nA, nB.T, nx.T)) 
+    f(nalpha, nA, nB.T, nx.T))
 
 {% endhighlight %}
 
 What is BLAS?
 -------------
 
-[BLAS](http://en.wikipedia.org/wiki/BLAS) stands for Basic Linear Algebra Subroutines. It is a library of Fortran functions for dense linear algebra first published in 1979. 
+[BLAS](http://en.wikipedia.org/wiki/BLAS) stands for Basic Linear Algebra Subroutines. It is a library of Fortran functions for dense linear algebra first published in 1979.
 
 The most famous BLAS routine is [DGEMM](http://www.netlib.org/blas/dgemm.f) a routine for **D**ouble precision **GE**nerally structured **M**atrix **M**ultiplication. `DGEMM` is very well implemented. `DGEMM` traditionally handles blocking for fewer cache misses, autotuning for each individual architecture, and even assembly level code optimization. You should never code up your own matrix multiply, you should always use `DGEMM`. Unfortunately, you may not know Fortran, and, even if you did, you might find the function header to be daunting.
 
@@ -66,14 +67,14 @@ D = A*B*C # store A*B  -> _1
     D = _1*C  # store _1*C -> _2
     D = _2    # store _2   ->  D
     {% endhighlight %}
-    It might have been cleaner to multiply `A*B*C` as `(A*B)*C` or `A*(B*C)` depending on the shapes of the matrices. Additionally the temporary matrices `_1`, and `_2` did not need to be created. If we're allowed to *reason about the computation* before execution then we can make some substantial optimizaitons. 
+    It might have been cleaner to multiply `A*B*C` as `(A*B)*C` or `A*(B*C)` depending on the shapes of the matrices. Additionally the temporary matrices `_1`, and `_2` did not need to be created. If we're allowed to *reason about the computation* before execution then we can make some substantial optimizaitons.
 
-2.  BLAS contains many special functions for special cases. For example you can use `DSYMM` when one of your matrices is **SY**metric or `DTRMM` when one of your matrices is **TR**iangular. These allow for faster execution time if we are able to reason about our matrices. 
+2.  BLAS contains many special functions for special cases. For example you can use `DSYMM` when one of your matrices is **SY**metric or `DTRMM` when one of your matrices is **TR**iangular. These allow for faster execution time if we are able to reason about our matrices.
 
 Previous Work
 -------------
 
-In the cases above we argue that we can make substantial gains if we are allowed to reason about the computation before it is executed. This is the job of a compiler. Computation usually happens as follows: 
+In the cases above we argue that we can make substantial gains if we are allowed to reason about the computation before it is executed. This is the job of a compiler. Computation usually happens as follows:
 
 1.  Write down code
 2.  Reason about and transform code
@@ -91,7 +92,7 @@ Where does SymPy fit in?
 
 The projects above are all numerical in nature. They are generally good at solving problems of the first kind (operation ordering, inplace operations, ...) but none of them think very clearly about the *mathematical* properties of the matrices. This is where SymPy can be useful. Using the assumptions logical programming framework SymPy is able to reason about the properties of matrix expressions. Consider the following situation
 
-We know that `A` is symmetric and positive definite. We know that `B` is orthogonal. 
+We know that `A` is symmetric and positive definite. We know that `B` is orthogonal.
 
 Question: is `BAB'` symmetric and positive definite?
 
@@ -137,20 +138,20 @@ We usually write code in a linear top-down text file. This representation does n
 
 A computation can be described as a directed acyclic graph (DAG) where each node in the graph is an atomic computation (a function call like `DGEMM` or `Cholesky`) and each directed edge represents a data dependency between function calls (an edge from `DGEMM` to `Cholesky` implies that the `Cholesky` requires an output of the `DGEMM` call in order to run). This graph may not contain cycles - they would imply that some set of jobs all depend on each other; they could never start.
 
-Graphs must be eventually linearized and turned into code. Before that happens we can think about optimal ordering and, if we feel adventurous, parallel scheduling onto different machines. 
+Graphs must be eventually linearized and turned into code. Before that happens we can think about optimal ordering and, if we feel adventurous, parallel scheduling onto different machines.
 
 SymPy contains a very simple Computation graph object. Here we localize all of the logic about inplace operations, ordering, and (eventually) parallel scheduling.
 
 Translating Matrix Expressions into Matrix Computations
 -------------------------------------------------------
 
-So how can we transform a matrix expression like 
-    
+So how can we transform a matrix expression like
+
 {% highlight python %}
     (alpha*A*B).I * x
 {% endhighlight %}
 
-And a set of predicates like 
+And a set of predicates like
 
 {% highlight python %}
     Q.lower_triangular(A) & Q.lower_triangular(B) & Q.invertible(A*B)

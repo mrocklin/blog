@@ -1,19 +1,20 @@
 ---
 layout: post
 title:  SymPy and Theano -- Code Generation
-tagline:  
-category : work 
+tagline:
+category : work
+theme: twitter
 tags : [SymPy, Theano, scipy]
 ---
 {% include JB/setup %}
 
 No one is good at everything, that's why we have society.
 
-No project is good at everything, that's why we have interfaces.  
+No project is good at everything, that's why we have interfaces.
 
-This is the first of three posts that join `SymPy`, a library for symbolic mathematics, and `Theano`, a library for mathematical compilation to numeric code.  Each library does a few things really well.  Each library also over-reaches bit and does a few things not-as-well.  Fortunately the two libraries have clear and simple data structures and so can be used together effectively. 
+This is the first of three posts that join `SymPy`, a library for symbolic mathematics, and `Theano`, a library for mathematical compilation to numeric code.  Each library does a few things really well.  Each library also over-reaches bit and does a few things not-as-well.  Fortunately the two libraries have clear and simple data structures and so can be used together effectively.
 
-In this post I'll focus on how SymPy can use Theano to generate efficient code. 
+In this post I'll focus on how SymPy can use Theano to generate efficient code.
 
 Physics
 -------
@@ -27,7 +28,7 @@ SymPy knows Physics.  For example, here is the radial wavefunction corresponding
 
 $$\frac{8}{3} x \left(- 4 x + 4\right) e^{- 2 x}$$
 
-SymPy is great at this.  It can manipulate high level mathematical expressions very naturally.  When it comes to numeric computation it is less effective. 
+SymPy is great at this.  It can manipulate high level mathematical expressions very naturally.  When it comes to numeric computation it is less effective.
 
 
 Numerics
@@ -89,7 +90,7 @@ In the above example we used Theano to copy the behavior of SymPy's existing `nu
 
 $$ \begin{pmatrix}\frac{8}{3} x \left(- 4 x + 4\right) e^{- 2 x}, & \frac{32}{3} \left(2 x^{2} - 4 x + 1\right) e^{- 2 x}\end{pmatrix} $$
 
-We redefine our functions to produce both outputs, instead of just `expr` alone 
+We redefine our functions to produce both outputs, instead of just `expr` alone
 
     fn_numpy  = lambdify([x], outputs, 'numpy')
     fn_theano = theano_function([x], outputs, dims={x: 1}, dtypes={x: 'float64'})
@@ -105,7 +106,7 @@ The expression and its derivative look like this:
 
 ![]({{ BASE_PATH }}/images/R_31_prime.png)
 
-Because Theano handles common subexpressions well it is able to perform the extra computation with only a very slight increase in runtime, easily eclipsing either of the other two options. 
+Because Theano handles common subexpressions well it is able to perform the extra computation with only a very slight increase in runtime, easily eclipsing either of the other two options.
 
     >>> timeit fn_numpy(xx)
     100 loops, best of 3: 2.85 ms per loop

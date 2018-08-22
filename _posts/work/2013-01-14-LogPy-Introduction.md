@@ -1,13 +1,14 @@
 ---
 layout: post
 title:  Introducing LogPy
-tagline: 
-category : work 
+tagline:
+category : work
+theme: twitter
 tags : [LogPy, SymPy]
 ---
 {% include JB/setup %}
 
-[LogPy](http://github.com/logpy/logpy) is a library for logic and relational programming in Python.  This post contains some introductory examples. 
+[LogPy](http://github.com/logpy/logpy) is a library for logic and relational programming in Python.  This post contains some introductory examples.
 
 Informative Examples
 --------------------
@@ -40,7 +41,7 @@ The following code asks for a number, x, such that `(1, 2) == (1, x)` holds.
 {% endhighlight %}
 
 The above examples use `eq`, a *goal* to state that two expressions are equal.  Other goals exist.  `membero(item, coll)`, a goal, states that `item`
-is a member of `coll`, a collection.  
+is a member of `coll`, a collection.
 
 The following example uses `membero` twice to ask for 2 values of x, such that x is a member of `(1, 2, 3)` *and* that x is a member of `(2, 3, 4)`.
 
@@ -70,7 +71,7 @@ Want just a few primes?  Here are five numbers that satisfy the `primo` goal
 Relations
 ---------
 
-We often want to state and then query data.  Logic programming represents data a set of facts and represents queries with logical goals.  In the following examples we assert some facts about the Simpsons family, construct queries through logical goals and then run the queries to obtain results.  
+We often want to state and then query data.  Logic programming represents data a set of facts and represents queries with logical goals.  In the following examples we assert some facts about the Simpsons family, construct queries through logical goals and then run the queries to obtain results.
 
 The following code defines a `parent` relation and uses it to state who fathered whom.
 
@@ -96,12 +97,12 @@ We can use intermediate variables for more complex queries.  Who is Bart's grand
 
 {% highlight python %}
 >>> y = var()
->>> run(1, x, parent(x, y), 
-              parent(y, 'Bart'))  
+>>> run(1, x, parent(x, y),
+              parent(y, 'Bart'))
 ('Abe',)
 {% endhighlight %}
 
-We can express the grandfather relationship separately.  In this example we use `conde`, a goal constructor for logical *and* and *or*. 
+We can express the grandfather relationship separately.  In this example we use `conde`, a goal constructor for logical *and* and *or*.
 
 {% highlight python %}
 >>> def grandparent(x, z):
@@ -129,7 +130,7 @@ Logic Programming in General
 
 Logic and relational programming are making a comeback.  They were popular in the 80s, died during the AI dark ages, and have recently begun a resurgence in the functional programming community.  Logic programs write music, search databases, write numeric algorithms, and build testing frameworks.  It is expressive for a wide class of problems.
 
-The design of LogPy is based off of `miniKanren`, a simple and powerful implementation in Scheme popularized through the `core.logic` Clojure library.  
+The design of LogPy is based off of `miniKanren`, a simple and powerful implementation in Scheme popularized through the `core.logic` Clojure library.
 
 
 References

@@ -3,13 +3,14 @@ layout: post
 title: Computing the Kalman Filter
 tagline: connecting pieces
 category : work
+theme: twitter
 tags : [SymPy, Matrices, Uncertainty]
 ---
 {% include JB/setup %}
 
 The [Kalman Filter](http://en.wikipedia.org/wiki/Kalman_filter) is an algorithm to update probability distributions with new observations made under noisy conditions.  It is used in everything from smartphone GPS navigation systems to large scale climate simulations.  It is implemented in hardware ranging from embedded devices to super-computers.  It is important and widely used.
 
-In this post I will 
+In this post I will
 
 1.  Show how to compute the Kalman Filter with BLAS/LAPACK
 2.  Relate this to old work on `sympy.stats`
@@ -57,18 +58,18 @@ mathcomp.show()
 
 [![]({{ BASE_PATH }}/images/kalman-math-1.png)]({{ BASE_PATH }}/images/kalman-math-1.pdf)
 
-This is a useful result. 
+This is a useful result.
 
 History with stats
 ------------------
 
 Two years ago I wrote two blogposts about the Kalman filter, one on [the univariate case](http://sympystats.wordpress.com/2011/07/02/a-lesson-in-data-assimilation-using-sympy/) and one on [the multivariate case](http://sympystats.wordpress.com/2011/07/19/multivariate-normal-random-variables/).  At the time I was working on `sympy.stats`, a module that enabled uncertainty modeling through the introduction of a random variables into the SymPy language.
 
-SymPy stats was designed with atomicity in mind.  It tried to be as small and thin a layer as possible.  
+SymPy stats was designed with atomicity in mind.  It tried to be as small and thin a layer as possible.
 
-*   It turned queries on continuous random expressions into integral expressions.  
-*   It turned queries on discrete random expressions into iterators and sums.  
-*   It also turned queries on multivariate normal random expressions into matrix expressions.  
+*   It turned queries on continuous random expressions into integral expressions.
+*   It turned queries on discrete random expressions into iterators and sums.
+*   It also turned queries on multivariate normal random expressions into matrix expressions.
 
 The goal was to turn a specialized problem (uncertainty quantification) into a general one (integrals, sums, matrix expressions) under the assumption that tools are much richer to solve general problems than specific ones.
 
@@ -77,7 +78,7 @@ The first blogpost on the univariate kalman filter produced integral expressions
 $$\mu' = \mu + \Sigma H^T \left( R + H \Sigma H^T \right )^{-1} \left(H\mu - \textrm{data} \right) $$
 $$\Sigma' = \left( \mathbb{I} - \Sigma H^T \left(R + H \Sigma H^T \right)^{-1} H \right) \Sigma $$
 
-That blogpost finished with this result, claiming that the job of `sympy.stats` was finished and that any of the popular numerical linear algebra packages could pick up from that point. 
+That blogpost finished with this result, claiming that the job of `sympy.stats` was finished and that any of the popular numerical linear algebra packages could pick up from that point.
 
 These two equations are the Kalman filter and were our starting point for today.  Matrix Expressions are an intermediate representation layer between `sympy.stats` and `sympy.computations.matrices`.
 
@@ -92,13 +93,13 @@ First, unlike previous examples it has two outputs, `new_mu` and `new_Sigma`.  T
 
 Second, lets appreciate that `H*Sigma*H + R` is identified as symmetric positive definite allowing the more efficient `POSV` routine.  I've brought this up before in artificial examples.  It's nice to see that this occurs in practice.
 
-Third, there is an unfortunately common motif.  This instance was taken from the upper right of the image but the `GE/SYMM -> AXPY` motif occurs four times in this graph. 
+Third, there is an unfortunately common motif.  This instance was taken from the upper right of the image but the `GE/SYMM -> AXPY` motif occurs four times in this graph.
 
 ![]({{ BASE_PATH }}/images/kalman-math-gemm-axpy-motif.png)
 
 `GEMM/SYMM` are matrix multiply operations used to break down expressions like `alpha*A*B`.  `AXPY` is a matrix addition used to break down expressions like `alpha*A + B`.  They are both used properly here.
 
-This motif is unforunate because `GEMM` is also capable of breaking down a larger expression like `alpha*A*B + beta*C`, doing a fused matrix multiply and add all in one pass.   The `AXPY` would be unnecessary if the larger `GE/SYMM` patterns had matched correctly.  
+This motif is unforunate because `GEMM` is also capable of breaking down a larger expression like `alpha*A*B + beta*C`, doing a fused matrix multiply and add all in one pass.   The `AXPY` would be unnecessary if the larger `GE/SYMM` patterns had matched correctly.
 
 Canonicalization
 ----------------

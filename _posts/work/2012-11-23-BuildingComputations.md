@@ -1,8 +1,9 @@
 ---
 layout: post
-title: Building Computations 
+title: Building Computations
 tagline: Non-trivial results
 category : work
+theme: twitter
 tags : [SymPy, Matrices]
 ---
 {% include JB/setup %}
@@ -73,12 +74,12 @@ This function combines logic (`patterns/assumptions`) with control (`exhaust/mul
 
 We still have same output but now the input is broken down into smaller pieces by a set of computations.  These computations are arranged in a graph based on their dependencies.  We had to use a `GESV`, a `POSV`, two `GEMM`s a `SYMM` and two `AXPY`s to break down this computation.  Our inputs are now `a,b,c,W,X,Y,Z` as desired.
 
-`rule(identcomp)` iterates over all possible computations to compute this expression.  If you are not satisfied with the computation above you may ask for another. 
+`rule(identcomp)` iterates over all possible computations to compute this expression.  If you are not satisfied with the computation above you may ask for another.
 
 Inplace Computations
 --------------------
 
-The BLAS/LAPACK routines are *inplace*; they write their results to the memory locations of some of their inputs.  The above *matheamtical* graph doesn't have the necessary information to think about this *computational* concern. We have a separate system to compile and optimize inplace computations. 
+The BLAS/LAPACK routines are *inplace*; they write their results to the memory locations of some of their inputs.  The above *matheamtical* graph doesn't have the necessary information to think about this *computational* concern. We have a separate system to compile and optimize inplace computations.
 
 {% highlight python %}
     from sympy.computations.inplace import inplace_compile
@@ -92,13 +93,13 @@ Each variable is now of the form
 
     Mathematical Expression @ memory location
 
-We have introduced `Copy` operations into the graph where necessary to prevent dangerous overwrites. 
+We have introduced `Copy` operations into the graph where necessary to prevent dangerous overwrites.
 If you track the memory locations you can see which BLAS/LAPACK operations overwrite which variables.  For example `Z` is never overwritten and so is never copied. On the other hand `W` is used in two overwrite operations and so it is copied to two new variables, `W_2` and `W_3`.  Copies are not added if obviously unnecessary.
 
 Future Work
 -----------
 
-There are a couple of small items and one large one. 
+There are a couple of small items and one large one.
 
 1.  An expert in BLAS/LAPACK will note that there are some issues with my graphs; they are not yet ideal.  I don't handle `IPIV` permutation operations well (I need to add some new patterns), I am overwrie the `INFO` out parameter, and there are a few cases where a copy could be avoided by operation reordering.
 
@@ -109,7 +110,7 @@ There are a couple of small items and one large one.
 Closing Note
 ------------
 
-Except for the mathematical definition of BLAS none of this code is specific to generating matrix computations.  The majority of this technology isn't even specific to building computations.  The computaitonal core of most of the technologies isn't even dependent on SymPy.  My final `sympy.computations.matrices` directory is small.  
+Except for the mathematical definition of BLAS none of this code is specific to generating matrix computations.  The majority of this technology isn't even specific to building computations.  The computaitonal core of most of the technologies isn't even dependent on SymPy.  My final `sympy.computations.matrices` directory is small.
 
 Throughout this project I've tried to keep all of the technology as general as possible in hopes that others will make use of it.  Only a small fraction of my work has been specific to my application.  I hope that others find this work interesting.  I hope that this technology enables a variety of other unrelated projects.
 

@@ -2,7 +2,8 @@
 layout: post
 title: Statistical Simplification
 tagline: an example of multi-compilation
-category : work 
+category : work
+theme: twitter
 tags : [SymPy, Stats]
 ---
 {% include JB/setup %}
@@ -38,12 +39,12 @@ The surrounding infrastructure looks like this
 
 ![]({{ BASE_PATH }}/images/stats-simp.png)
 
-When SymPy expressions are imbued with random variables they form stochastic expressions.  Sympy.stats transforms these into integral expressions which are then again converted through a variety of methods, either numeric (like Monte Carlo) or again symbolic. 
+When SymPy expressions are imbued with random variables they form stochastic expressions.  Sympy.stats transforms these into integral expressions which are then again converted through a variety of methods, either numeric (like Monte Carlo) or again symbolic.
 
 Each stage within this pipeline presents us with the opportunity to simplify the expression with knowledge relevant to that stage.  For example at the input and output SymPy Expr layers we make algebraic and trigonometric simplifications like the following
 
     X + X -> 2*X
-    sin(x)**2 + cos(x)**2 -> 1 
+    sin(x)**2 + cos(x)**2 -> 1
 
 At the integration stage we might separate multivariate integrals if possible or use integration by parts.
 
@@ -58,8 +59,8 @@ In [1]: from sympy.stats import *
 
 In [2]: X = Normal('X', 0, 1)  # A standard normal random variable
 
-In [3]: density(X**2)  
-Out[3]: 
+In [3]: density(X**2)
+Out[3]:
 << failure: unevaluated integral >>
 {% endhighlight %}
 
@@ -79,17 +80,17 @@ StandardNormal()**2 + ChiSquared(n) -> ChiSquared(n+1)
 
 Each stage in the compilation pipeline presents us with an opportunity to apply expert knowledge.  The `Stochastic Expr` stage is such an opportunity of which we are not currently taking advantage.
 
-Leemis's chart is written declaratively, highlighting which logical transformations are possible under which conditions.  The new modules on 
+Leemis's chart is written declaratively, highlighting which logical transformations are possible under which conditions.  The new modules on
 [unification]({{ BASE_PATH }}/work/2012/11/01/Unification/)
-and 
+and
 [strategies]({{ BASE_PATH }}/work/2012/11/07/Strategies/)
-should provide all of the necessary infrastructure to translate Leemis' chart to functioning code.  Writing a minimal simpliication scheme for the above problem might be as simple as 
+should provide all of the necessary infrastructure to translate Leemis' chart to functioning code.  Writing a minimal simpliication scheme for the above problem might be as simple as
 
 {% highlight python %}
 #    rewriterule(from-pattern, to-pattern, wilds)
 p1 = rewriterule(Normal(name, 0, 1), StandardNormal(name), wilds=(name,))
 p2 = rewriterule(StandardNormal(name)**2, ChiSquared(name, 1), wilds=(name,))
-p3 = rewriterule(StandardNormal(name)**2 + ChiSquared(name, n), 
+p3 = rewriterule(StandardNormal(name)**2 + ChiSquared(name, n),
                  ChiSquared(name, n+1), wilds=(name, n))
 
 statsimp = exhaust(bottom_up(multiplex(p1, p2, p3)))
