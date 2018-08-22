@@ -1,8 +1,9 @@
 ---
 layout: post
-title:  Maximum a Posteriori Estimation 
+title:  Maximum a Posteriori Estimation
 tagline:  Preprocessing a common numerical problem
-category : work 
+category : work
+theme: twitter
 tags : [SymPy, stats]
 ---
 {% include JB/setup %}
@@ -31,14 +32,14 @@ In the lab we observe many samples $x_i$ taken from `count`.  From these we wish
 
 $$ p(\lambda \vert x_i) \propto \prod_i p(x_i \vert \lambda) \cdot p(\lambda) $$
 
-In this case the distributions are given by 
+In this case the distributions are given by
 {% highlight python %}
 pdf = density(count, rate);  print latex(pdf(x))  # density of count, given rate
 pdf = density(rate);         print latex(pdf(lam))
 {% endhighlight %}
 
 $$ p(x_i \vert \lambda) = \frac{\lambda^{x}}{e^{\lambda} x!} \;\;\;\;
-p(\lambda) = \frac{\lambda^{a - 1} \left(- \lambda + 1\right)^{b - 1} \Gamma\left(a +   b\right)}{\Gamma\left(a\right) \Gamma\left(b\right)}$$ 
+p(\lambda) = \frac{\lambda^{a - 1} \left(- \lambda + 1\right)^{b - 1} \Gamma\left(a +   b\right)}{\Gamma\left(a\right) \Gamma\left(b\right)}$$
 
 To find the maximizer of $p(\lambda \vert x_i)$ we set the derivative equal to zero.  We simplify the computation by taking the `log`.  Because `log` is monotonic this does not change the solution.
 
@@ -60,7 +61,7 @@ loglikelihood = log(Product(density(count, rate)(data(i)) * density(rate)(lam), 
 Eq(simplify(loglikeihood.diff(lam)), 0)
 {% endhighlight %}
 
-$$ \sum_{i=1}^{n} \frac{a \left(\lambda - 1\right) + b \lambda - \lambda                \left(\lambda - 1\right) - 2 \lambda + \left(\lambda - 1\right)                         \operatorname{data}{\left\[i \right\]} + 1}{\lambda \left(\lambda - 1\right)} = 0 $$ 
+$$ \sum_{i=1}^{n} \frac{a \left(\lambda - 1\right) + b \lambda - \lambda                \left(\lambda - 1\right) - 2 \lambda + \left(\lambda - 1\right)                         \operatorname{data}{\left\[i \right\]} + 1}{\lambda \left(\lambda - 1\right)} = 0 $$
 
 
 Discussion
@@ -79,4 +80,4 @@ References
 
 *   [Maximum A Posteriori Estimation](http://en.wikipedia.org/wiki/Maximum_a_posteriori_estimation)
 *   [Poisson process](http://en.wikipedia.org/wiki/Poisson_process)
-*   [Householder's Method](http://en.wikipedia.org/wiki/Householder%27s_method) 
+*   [Householder's Method](http://en.wikipedia.org/wiki/Householder%27s_method)

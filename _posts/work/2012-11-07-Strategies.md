@@ -2,8 +2,9 @@
 layout: post
 title: Strategies
 tagline: Programming control flow
-category : work 
+category : work
 tags : [SymPy]
+theme: twitter
 ---
 {% include JB/setup %}
 
@@ -29,18 +30,18 @@ However we found that this function did not work deep within an expression tree
 *Short version*: we give you a higher order function, `top_down` which turns a
 expression-wise function into a tree-wise function.  We provide a set of similar functions which can be composed to various effects.
 
-* * * * 
+* * * *
 
 A Toy Example
 -------------
 
-How do we express control programmatically? 
+How do we express control programmatically?
 
 Traditional control flow is represented with constructs like `if`, `for`, `while`, `def`, `return`, `try`, etc....  These terms direct the flow of what computation occurs when.  Traditionally we mix control and logic.  Consider the following toy problem that reduces a number until it reaches a multiple of ten
 
 {% highlight python %}
 def reduce_to_ten(x):
-    """ Reduce a number to the next lowest multiple of ten 
+    """ Reduce a number to the next lowest multiple of ten
 
     >>> reduce_ten(26)
     20
@@ -52,18 +53,18 @@ def reduce_to_ten(x):
     return x
 {% endhighlight %}
 
-While the logic in this function is somewhat trivial 
+While the logic in this function is somewhat trivial
 
 {% highlight python %}
 if (x % 10 != 0):
     x -= 1
 {% endhighlight %}
 
-the control pattern is quite common in serious code 
+the control pattern is quite common in serious code
 
 {% highlight python %}
 while(old != expr):
-    old = expr 
+    old = expr
     expr = f(expr)
 return expr
 {% endhighlight %}
@@ -76,12 +77,12 @@ def exhaust(rule):
     def exhaustive_rl(expr):
         old = None
         while(expr != old):
-            expr, old = rule(expr), expr 
-        return expr 
+            expr, old = rule(expr), expr
+        return expr
     return exhaustive_rl
 {% endhighlight %}
 
-We show how to use this function to achieve the previous result. 
+We show how to use this function to achieve the previous result.
 
 {% highlight python %}
 def dec_10(x):                          # Close to pure logic
@@ -90,10 +91,10 @@ def dec_10(x):                          # Close to pure logic
 
 reduce_to_ten = exhaust(dec_10)
 {% endhighlight %}
-        
+
 By factoring out the control strategy we achieve several benefits
 
-1.  Code reuse of the `while(old != new)` control pattern 
+1.  Code reuse of the `while(old != new)` control pattern
 2.  Exposure of logic - we can use the `dec_10` function in other contexts more easily. This version is more extensible.
 3.  Programmability of control - the control pattern is now first class.  We can manipulate and compose it as we would manipulate or compose a variable or function.
 
@@ -101,12 +102,12 @@ Example - Debug
 ---------------
 
 When debugging code we often want to see the before and after effects of running a function.  We often do something like the following
-    
+
 {% highlight python %}
 new = f(old)
 if new != old:
-    print "Before: ", old 
-    print "After:  ", new 
+    print "Before: ", old
+    print "After:  ", new
 {% endhighlight %}
 
 This common structure is encapsulated in the debug strategy
@@ -175,7 +176,7 @@ And there are a number of strategies like `exhaust` and `top_down` which transfo
 
     strategy :: parameters, rule -> rule
 
-For example there are general rules like `flatten` that simplify nested expressions like 
+For example there are general rules like `flatten` that simplify nested expressions like
 
 `Add(1, 2, Add(3, 4)) -> Add(1, 2, 3, 4)`
 
@@ -192,7 +193,7 @@ def flatten(expr):
     return new(expr.__class__, *args)
 {% endhighlight %}
 
-We compose these general rules (e.g. 'flatten', 'unpack', 'sort', 'glom') with strategies to create large canonicalization functions 
+We compose these general rules (e.g. 'flatten', 'unpack', 'sort', 'glom') with strategies to create large canonicalization functions
 
 {% highlight python %}
 rules = (rm_identity(lambda x: x == 0 or isinstance(x, ZeroMatrix)),

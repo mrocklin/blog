@@ -1,8 +1,9 @@
 ---
 layout: post
 title:  SymPy and Theano -- Matrix Expressions
-tagline:  
-category : work 
+tagline:
+category : work
+theme: twitter
 tags : [SymPy, scipy, Matrices, Theano]
 ---
 {% include JB/setup %}
@@ -81,14 +82,14 @@ Y = BlockMatrix([[E, F],
 print latex(X*Y)
 {% endhighlight %}
 
-$$ \begin{bmatrix} A & B \\\\ C & D \end{bmatrix} 
+$$ \begin{bmatrix} A & B \\\\ C & D \end{bmatrix}
    \begin{bmatrix} E & F \\\\ G & K \end{bmatrix}$$
 
 {% highlight python %}
 print latex(block_collapse(X*Y))
 {% endhighlight %}
 
-$$ \begin{bmatrix} A E + B G & A F + B K \\\\ 
+$$ \begin{bmatrix} A E + B G & A F + B K \\\\
                    C E + D G & C F + D K\end{bmatrix} $$
 
 We are now able to focus on substantially smaller chunks of the array.  For example we can choose to keep `A` in local memory and perform all computations that involve `A`.  We will still need to shuffle some memory around (this is inevitable) but by organizing with blocks we're able to shuffle less.
@@ -99,8 +100,8 @@ This idea extends beyond matrix multiplication.  For example, SymPy knows how to
 print latex(block_collapse(X.I))
 {% endhighlight %}
 
-$$ \begin{bmatrix} 
-\left(- B D^{-1} C + A\right)^{-1} & - A^{-1} B \left(- C A^{-1} B + D\right)^{-1} \\\\ 
+$$ \begin{bmatrix}
+\left(- B D^{-1} C + A\right)^{-1} & - A^{-1} B \left(- C A^{-1} B + D\right)^{-1} \\\\
 - \left(- C A^{-1} B + D\right)^{-1} C A^{-1} & \left(- C A^{-1} B + D\right)^{-1}
 \end{bmatrix} $$
 
@@ -162,7 +163,7 @@ However, there are some drawbacks.
 
 Frequent readers of my blog might recall a [previous post about the Kalman filter](http://matthewrocklin.com/blog/work/2012/11/24/Kalman-Filter/).  In it I showed how we could use SymPy's inference engine to select appropriate BLAS/LAPACK calls.  For example we could infer that because $ H \Sigma H^T + R $ was symmetric positive definite we could use the substantially more efficient `POSV` routine for matrix solve rather than `GESV` (`POSV` uses the Cholesky algorithm for decomposition rather than straight LU).  Theano doesn't support the specialized BLAS/LAPACK routines though, so we are unable to take advantage of this benefit.  The lower-level interface (Theano) is not sufficiently rich to use all information captured in the higher-level (SymPy) representation.
 
-Also, I've noticed that the blocked version of this computation experiences some significant roundoff errors (on the order of `1e-3`).  I'm in the process of tracking this down.  The problem must occur somewhere in the following tool-chain 
+Also, I've noticed that the blocked version of this computation experiences some significant roundoff errors (on the order of `1e-3`).  I'm in the process of tracking this down.  The problem must occur somewhere in the following tool-chain
 
     SymPy -> Blocking -> Theano -> SciPy -> C routines -> BLAS
 
@@ -172,7 +173,7 @@ Debugging in this context can be wonderful if all elements are well unit-tested.
 References
 ----------
 
-Scripts 
+Scripts
 
 *   [Kalman example]({{ BASE_PATH }}/scripts/kalman.py)
 *   [Block Matrix example]({{ BASE_PATH }}/scripts/blocks.py)

@@ -3,9 +3,14 @@ layout: post
 title: Introducing Blaze - Expressions
 tagline: interfaces for tabular data
 category : work
-tags : [scipy, Python, Programming]
+theme: twitter
+tags : [scipy, Python, Programming, Blaze]
 ---
 {% include JB/setup %}
+
+*This work is supported by [Continuum Analytics](http://continuum.io)
+and the [XDATA Grant](http://www.darpa.mil/program/XDATA)
+as part of the [Blaze Project](http://blaze.pydata.org)*
 
 **tl;dr Blaze abstracts tabular computation, providing uniform access to a
 variety of database technologies**

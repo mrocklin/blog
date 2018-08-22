@@ -2,7 +2,8 @@
 layout: post
 title: Characteristic Functions
 tagline: and sympy.stats
-category : work 
+category : work
+theme: twitter
 tags : [SymPy, Stats, scipy]
 ---
 {% include JB/setup %}
@@ -13,7 +14,7 @@ In a recent post, [Characteristic Functions and scipy.stats](http://jpktd.blogsp
 
 *Since I haven't seen it yet, I sat down and tried it myself. I managed to code the characteristic function of the t-distribution, but it returns NaNs when it is evaluated close to zero for large df.  I didn't find a Bessel "k" function that works in this case*
 
-He then includes his code and discusses a particular application of the characteristic function which I won't discuss here. 
+He then includes his code and discusses a particular application of the characteristic function which I won't discuss here.
 
 
 Symbolic Solution
@@ -31,14 +32,14 @@ It equal to the expectation of `exp(i*t*X)`.  Lets do this in SymPy
     >>> mu = Symbol('mu', bounded=True)
     >>> sigma = Symbol('sigma', positive=True, bounded=True)
     >>> t = Symbol('t', positive=True)
-    
+
     >>> X = Normal('X', mu, sigma)  # Normal random variable
     >>> simplify(E(exp(I*t*X)))     # Expectation of exp(I*t*X)
                   2  2
-                 σ ⋅t 
+                 σ ⋅t
          ⅈ⋅μ⋅t - ─────
-                   2  
-       ℯ             
+                   2
+       ℯ
 
 I was actually pretty surprised that this worked as smoothly as it did.  SymPy stats wasn't designed for this.
 
@@ -76,7 +77,7 @@ Whoops, simple substitution at that number of degrees of freedom fails, giving u
     │╶┐     ⎜              │ ───────────⎟ + │╶┐     ⎜              │ ──────────⎟
     ╰─╯1, 3 ⎝25, 0, 1/2    │      2     ⎠   ╰─╯1, 3 ⎝25, 0, 1/2    │     2     ⎠
     ────────────────────────────────────────────────────────────────────────────
-                            1240896803466478878720000⋅π                         
+                            1240896803466478878720000⋅π
 
 
 The solution is in terms of [Meijer-G](http://en.wikipedia.org/wiki/Meijer-G) functions.  Can we evaluate this close to `t = 0`?
@@ -84,7 +85,7 @@ The solution is in terms of [Meijer-G](http://en.wikipedia.org/wiki/Meijer-G) fu
     >>> simplify(E(exp(I*t*X))).subs(t, 1e-6).evalf()
     0.999999999999479 + 1.56564942264937e-29⋅ⅈ
 
-    >>> simplify(E(exp(I*t*X))).subs(t, 1e-30).evalf()  
+    >>> simplify(E(exp(I*t*X))).subs(t, 1e-30).evalf()
     1.0 - 1.2950748484704e-53⋅ⅈ
 
 This is where scipy's special functions failed in Josef's post, yielding infinity instead of 1.

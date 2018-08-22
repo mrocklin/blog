@@ -2,8 +2,9 @@
 layout: post
 title: Unification in SymPy
 tagline: Enabling logical programming in Python
-category : work 
+category : work
 tags : [SymPy, Matrices]
+theme: twitter
 ---
 {% include JB/setup %}
 
@@ -48,7 +49,7 @@ We solve this task with unification by setting up a pattern and then unifying th
 
 We get back a matching for each of the wildcards (name, n, m, B) and see that `'name'` was matched to the string `'X'`. Is this better or worse than the straight Python solution? Given the relative number of users between Python and Prolog it's a safe bet that the style of Python programs have some significant advantages over the logical programming paradigm. Why would we program in this strange way?
 
-Unification allows a clean separation between *what we're looking for* and *how we find it*. In the Python solution the mathematical definition of what we want is spread among a few lines and is buried inside of control flow. 
+Unification allows a clean separation between *what we're looking for* and *how we find it*. In the Python solution the mathematical definition of what we want is spread among a few lines and is buried inside of control flow.
 
 {% highlight python %}
 for arg in matadd.args:
@@ -85,7 +86,7 @@ Lets see how unify works on a slightly more interesting expression
 In this situation because both matrices `X` and `Y` are inside transposes our pattern to match "the name of a symbol in a transpose" could equally well return the strings `'X'` or `'Y'`. The unification algorithm will give us both of these options
 
 {% highlight python %}
->>> for match in unify(pattern, expr): 
+>>> for match in unify(pattern, expr):
 ...    print match
 {'name': 'Y', m: 3, n: 3, B: 'X'}
 {'name': 'X', m: 3, n: 3, B: 'Y'}
@@ -129,7 +130,7 @@ We were able to turn a mathematical identity `sin(x)**2 + cos(x)**2 => 1` into a
 []
 {% endhighlight %}
 
-I will leave the solution of this problem to a future post. Instead, I want to describe why I'm working on all of this. 
+I will leave the solution of this problem to a future post. Instead, I want to describe why I'm working on all of this.
 
 Matrix Computations
 -------------------
@@ -137,10 +138,10 @@ Matrix Computations
 [My last post](http://matthewrocklin.com/blog/work/2012/10/29/Matrix-Computations/) was about translating Matrix Expressions into high-performance Fortran Code. I ended this post with the following problem:
 
 
-* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * 
+* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
 *So how can we transform a matrix expression like*
-    
+
 {% highlight python %}
 (alpha*A*B).I * x
 {% endhighlight %}
@@ -154,7 +155,7 @@ DGEMM(alpha, A, B, 0, B) -> DTRSV(alpha*A*B, x)
 DTRMM(alpha, A, B)       -> DTRSV(alpha*A*B, x)
 {% endhighlight %}
 
-* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * 
+* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
 This problem can be partially solved by unification and rewrite rules. Each `BLAS` operation is described by a class
 

@@ -3,9 +3,14 @@ layout: post
 title: Introducing Blaze - Migrations
 tagline: interfaces for migrating data
 category : work
-tags : [scipy, Python, Programming]
+theme: twitter
+tags : [scipy, Python, Programming, Blaze]
 ---
 {% include JB/setup %}
+
+*This work is supported by [Continuum Analytics](http://continuum.io)
+and the [XDATA Grant](http://www.darpa.mil/program/XDATA)
+as part of the [Blaze Project](http://blaze.pydata.org)*
 
 **tl;dr Blaze migrates data efficiently between a variety of data stores.**
 

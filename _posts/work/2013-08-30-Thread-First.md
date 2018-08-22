@@ -1,8 +1,9 @@
 ---
 layout: post
 title:  Thread First Pattern
-tagline: 
-category : work 
+tagline:
+category : work
+theme: twitter
 tags : [Functional, Python, scipy]
 ---
 {% include JB/setup %}
@@ -36,7 +37,7 @@ Normally for tabular data I would just point him towards `numpy.loadtxt` or the 
     *   Lines 11 onward is a traditional table with many float columns
 2.  The first column to the first two sections contains integers instead of floating point numbers
 
-Neither the `csv` module nor the `numpy.loadtxt/genfromtext` functions are capable of wrapping this complexity.  This is commonplace, we often have data that doesn't quite fit our module's expectations.  At this point we often fall back to traditional programming.  
+Neither the `csv` module nor the `numpy.loadtxt/genfromtext` functions are capable of wrapping this complexity.  This is commonplace, we often have data that doesn't quite fit our module's expectations.  At this point we often fall back to traditional programming.
 
 My colleague's solution was a sequence of for loops, appending data onto a set of lists.
 
@@ -118,7 +119,7 @@ Here are my thoughts on why the functional solution is worse.  If you have other
 Here are my thoughts on why the functional solution is better.  Again, if you have other thoughts please do list them in the comments:
 
 1.  The intent of the operation is more explicit.
-2.  The component functions used are well tested.  There are fewer opportunities for bugs.  
+2.  The component functions used are well tested.  There are fewer opportunities for bugs.
 3.  The information content of each term is high.  This solution reinvents the minimum amount of technology.
 
 
@@ -130,8 +131,8 @@ Today I wouldn't use this solution in production code mainly because my usual co
 *   Standard library - The use of standard library functions supports more rapid understanding of your code.
 *   Composition - Mechanisms for function composition and encapsulation (like `thread_first`) promote rapid development of novel and robust solutions.
 
-In general I think that while for loops and low-level code are globally accessible they also demand significant investment to understand their particular role in a certain application.  High-level/broad vocabulary solutions more directly present their intent but are limited to those programmers who understand them.  
+In general I think that while for loops and low-level code are globally accessible they also demand significant investment to understand their particular role in a certain application.  High-level/broad vocabulary solutions more directly present their intent but are limited to those programmers who understand them.
 
 ### References
 
-*   [`functoolz`](http://github.com/mrocklin/functoolz/): The functional solution uses `thread_first`, a function from the non-standard `functoolz` library. 
+*   [`functoolz`](http://github.com/mrocklin/functoolz/): The functional solution uses `thread_first`, a function from the non-standard `functoolz` library.

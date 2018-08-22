@@ -24,7 +24,7 @@ Usage:
   {% include custom/pages_list %}
 {% else %}
   {% for node in pages_list %}
-  {% if node.draft != true %}
+    {% if node.draft != true %}
     {% if node.title != null %}
       {% if group == null or group == node.group %}
       	{% if page.url == node.url %}
