@@ -228,14 +228,23 @@ uniquely positioned to play a critical role:
 
 ## Summary
 
-As primary development of software moves from inside the institution to outside,
-a very real cultural shift occurs.  The institution transitions from leading
+As primary development of software moves from inside the institution to
+outside, a cultural shift occurs.  The institution transitions from leading
 development and being fully in charge of its own destiny to playing a support
-role in a much larger ecosystem.  They can first help to lead their their user
+role in a larger ecosystem.  They can first help to lead their their user
 community through this transition, and through that develop the experience and
 relationships to act effectively within the broader ecosystem.
 
-This requires time and patience at several levels of the organization.  At the
-end of the day many people within the institution will have to collaborate with
-external organizations while still staying within the mandate and career track
-of the institution itself.  This requires changes at several levels.
+From this process they often find roles within the ecosystem that are critical.
+Large public institutions are some of the only organizations with the public
+mandate and long time horizon to maintain public software over decade-long time
+scales.  They have a crucial role to play both in domain specific software
+packages that directly overlap with their mandate and also with more general
+purpose packages on which their domain depends indirectly.  Finding their new
+role and learning to engage with external organizations is a skill that they'll
+need to re-learn as they engage with an entirely new set of partners.
+
+This growth requires time and patience at several levels of the organization.
+At the end of the day many people within the institution will have to
+collaborate with people outside while still staying within the mandate and
+career track of the institution itself.
