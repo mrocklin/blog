@@ -13,11 +13,11 @@ theme: twitter
 
 ## Question
 
-> How does dask.dataframe performance compare to Pandas?  Also, what about
-> Spark dataframes and Arrow?  How do they compare?
+> How does Dask dataframe performance compare to Pandas?  Also, what about
+> Spark dataframes and what about Arrow?  How do they compare?
 
-I get this question every few weeks, so I decided to write down my answer once
-here in order to avoid repetition.
+I get this question every few weeks.  This post is to avoid repetition.
+
 
 ## Caveats
 
@@ -30,8 +30,7 @@ here in order to avoid repetition.
 ### Pandas
 
 If you're coming from Python and have smallish datasets then Pandas is the
-right choice.  It's usable, widely understood by current and future employees,
-efficient, and well maintained.
+right choice.  It's usable, widely understood, efficient, and well maintained.
 
 
 ### Benefits of Parallelism
@@ -42,6 +41,8 @@ computations you do:
 
 1.  If you're doing small computations then Pandas is always the right choice.
     The administrative costs of parallelizing will outweigh any benefit.
+    You should not parallelize if your computations are taking less than, say,
+    100ms.
 
 2.  For simple operations like filtering, cleaning, and aggregating large data
     you should expect linear speedup by using a parallel dataframes.
@@ -57,55 +58,67 @@ computations you do:
     Someone experienced in database-like computations and parallel computing
     can probably predict pretty well which computations will do well.
 
+However, configuration may be required.  Often people find that parallel
+solutions don't meet expectations when they first try them out.  Unfortunately
+most distributed systems require some configuration to perform optimally.
+
 
 ### There are other options to speed up Pandas
 
-It's worth pointing out that many people looking to speed up Pandas don't need
-parallelism.  There are often several other tricks like encoding text data,
-using efficient file formats, avoiding groupby.apply, and so on that are more
-effective at speeding up Pandas than switching to parallelism.
+Many people looking to speed up Pandas don't need parallelism.  There are often
+several other tricks like encoding text data, using efficient file formats,
+avoiding groupby.apply, and so on that are more effective at speeding up Pandas
+than switching to parallelism.
 
 
 ### Comparing Apache Spark and Dask
 
-When it comes to dataframes Apache Spark and Dask are similar in some ways and
-different in others.  At a high level ...
+> Assuming that yes, I do want parallelism, should I choose Apache Spark, or Dask dataframes?
 
--  Spark dataframes will be much better when you have complex SQL-style queries
+This is often decided more by cultural preferences (JVM vs Python,
+all-in-one-tool vs integration with other tools) than performance differences,
+but I'll try to outline a few things here:
+
+-  Spark dataframes will be much better when you have large SQL-style queries
    (think 100+ line queries) where their query optimizer can kick in.
--  Dask dataframes will be much better when queries go outside of Spark's
-   internal map-shuffle-reduce paradigm.  This happens most often in time
-   series, random access, and other complex computations.
--  Spark will integrate better with JVM and data engineering technology. That
-   is where it comes from.
--  Dask will integrate better with Python code.  A dask dataframe is just a
-   bunch of Pandas dataframes, so if you're coming from Pandas it's usually
-   pretty trivial to evolve to Dask.
+-  Dask dataframes will be much better when queries go beyond typical database
+   queries.  This happens most often in time series, random access, and other
+   complex computations.
+-  Spark will integrate better with JVM and data engineering technology.
+   Spark will also come with everything pre-packaged.  Spark is its own
+   ecosystem.
+-  Dask will integrate better with Python code.  Dask is designed to integrate
+   with other libraries and pre-existing systems.  If you're coming from an
+   existing Pandas-based workflow then it's usually much easier to evolve to
+   Dask.
 
-Generally speaking though for most operations you'll be fine using either one.
-But generally people often choose between Pandas/Dask and Spark based on
-cultural preference.  Either they have people that really like the Python
-ecosystem, or they have people that really like the Spark ecosystem.
+Generally speaking for most operations you'll be fine using either one.  People
+often choose between Pandas/Dask and Spark based on cultural preference.
+Either they have people that really like the Python ecosystem, or they have
+people that really like the Spark ecosystem.
 
-Also dataframes are only a small part of each project.  Spark and Dask both do
-many other things where the comparison is much more distinct.  Spark has a
-graph analysis library, Dask doesn't.  Dask supports multi-dimensional arrays,
-Spark doesn't.  Spark is generally higher level and all-in-one while Dask is
+Dataframes are also only a small part of each project.  Spark and Dask both do
+many other things that aren't dataframes.  For example Spark has a graph
+analysis library, Dask doesn't.  Dask supports multi-dimensional arrays, Spark
+doesn't.  Spark is generally higher level and all-in-one while Dask is
 lower-level and focuses on integrating into other tools.
+
+For more information, see [Dask's "Comparison to Spark documentation"](http://dask.pydata.org/en/latest/spark.html).
 
 
 ### Apache Arrow
 
 > What about Arrow?  Is Arrow faster than Pandas?
 
-This question doesn't make sense... yet.
+This question doesn't quite make sense... *yet*.
 
-Today, Arrow isn't a computational dataframe implementation; it's just a way to
-move data around between different systems and file formats.  As a result, the
-question of "is Arrow faster than Pandas" isn't actually a question that you
-want answered today.  Arrow doesn't do any computation today.
+Arrow is not a replacement for Pandas.  Arrow is a way to move data around
+between different systems and different file formats.  Arrow does not do
+computation today.  If you use Pandas or Spark or Dask you might be using Arrow
+without even knowing it.  Today Arrow is more useful for other libraries than
+it is to end-users.
 
-However, this is likely to change in the future.  Arrow developers are planning
+However, this is likely to change in the future.  Arrow developers plan
 to write computational code around Arrow that we would expect to be faster than
 the code in either Pandas or Spark.  This is probably a year or two away
 though.  There will probably be some effort to make this semi-compatible with
