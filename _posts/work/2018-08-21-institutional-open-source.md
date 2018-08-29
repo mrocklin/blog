@@ -32,8 +32,8 @@ controlled outside of their organization.
 This blogpost investigates this situation from the perspective of **large
 organizations that serve the public good**, such as government organizations
 like the National Science Foundation, NASA, DoD, etc. or large private
-non-profit institutions like the Gates or Chan-Zuckerberg foundations.  I hope
-to write separately about this topic from both enterprise and community
+non-profit institutions like the Gates, Moore, or Chan-Zuckerberg foundations.
+I hope to write separately about this topic from both enterprise and community
 perspectives in the future.
 
 This blogpost provides context, describes a few common approaches and their
