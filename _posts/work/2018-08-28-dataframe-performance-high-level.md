@@ -2,7 +2,6 @@
 layout: post
 title: High level performance of Pandas, Dask, Spark, and Arrow
 category: work
-draft: true
 tags: [Programming, Python, scipy, dask]
 theme: twitter
 ---
