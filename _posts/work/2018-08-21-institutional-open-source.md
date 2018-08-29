@@ -20,11 +20,11 @@ communities as they grow increasingly dependent on software developed and
 controlled outside of their organization.
 
 -  How do they ensure that this software will persist for many years?
--  How do they guide this software to better serve the needs of their users?
+-  How do they influence this software to better serve the needs of their users?
 -  How do they transition users from previous all-in-one solutions to a new
    open source platform?
--  What do they do with their existing employees who historically maintained
-   software in this field?
+-  How do they continue to employ their existing employees who have historically
+   maintained software in this field?
 -  If they have a mandate to support this field, what is the best role for them
    to play, and how can they justify their efforts to the groups that control
    their budget?
@@ -110,6 +110,25 @@ We list a few common approaches, and some challenges or potential outcomes.
     2.  If you succeeded in a good general purpose design you would also have
         to employ people to support users from all of those domains, and this
         is probably outside of your mandate.
+
+3.  **Pull open source tools into your organization, but don't engage externally**.
+
+    You're happy to use open source tools but don't see a need to engage
+    external communities.  You'll pull tools inside of your organization and
+    then manage and distribute them internally as usual.
+
+    **Positive**: You get the best of software today, but also get to manage
+    the experience internally, giving you the control that your organization
+    needs.  This is well within the comfort zone of both your legal and IT
+    departments.
+
+    **Negative**: As the outside world changes you will struggle to integrate
+    these changes with your internal processes.  Eventually your version of the
+    software will diverge and become an internal fork that you have to
+    maintain.  This locks you into current-day functionality and puts you on
+    the hook to integrate critical patches as they arise.  Additionally you
+    miss out on opportunities to move the software in directions that your
+    organization would find valuable.
 
 3.  **Get out of the business of maintaining software entirely.**
     Your institution may no longer be strictly needed in this role.
