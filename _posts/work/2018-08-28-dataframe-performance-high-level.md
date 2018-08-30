@@ -111,11 +111,13 @@ For more information, see [Dask's "Comparison to Spark documentation"](http://da
 
 This question doesn't quite make sense... *yet*.
 
-Arrow is not a replacement for Pandas.  Arrow is a way to move data around
-between different systems and different file formats.  Arrow does not do
-computation today.  If you use Pandas or Spark or Dask you might be using Arrow
-without even knowing it.  Today Arrow is more useful for other libraries than
-it is to end-users.
+Arrow is not a replacement for Pandas.  Today Arrow is useful to people
+building *systems* and not to analysts directly like Pandas.  Arrow is used to
+move data between different computational systems and file formats.  Arrow does
+not do computation today, but is commonly used as a component in other
+libraries that do do computation.  For example, if you use Pandas or Spark or
+Dask today you may be using Arrow without knowing it.  Today Arrow is more
+useful for other libraries than it is to end-users.
 
 However, this is likely to change in the future.  Arrow developers plan
 to write computational code around Arrow that we would expect to be faster than
