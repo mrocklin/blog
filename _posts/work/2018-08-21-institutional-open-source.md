@@ -2,7 +2,6 @@
 layout: post
 title: Public Institutions and Open Source Software
 category: work
-draft: true
 tags: [Programming, Python, scipy, dask]
 theme: twitter
 ---
@@ -30,11 +29,10 @@ controlled outside of their organization.
    their budget?
 
 This blogpost investigates this situation from the perspective of **large
-organizations that serve the public good**, such as government organizations
-like the National Science Foundation, NASA, DoD, etc. or large private
-non-profit institutions like the Gates, Moore, or Chan-Zuckerberg foundations.
-I hope to write separately about this topic from both enterprise and community
-perspectives in the future.
+organizations that serve the public good**, such as government funding agencies
+or research institutes like the National Science Foundation, NASA, DoD, and so
+on.  I hope to write separately about this topic from both enterprise and
+community perspectives in the future.
 
 This blogpost provides context, describes a few common approaches and their
 outcomes, and draws some general conclusions.
