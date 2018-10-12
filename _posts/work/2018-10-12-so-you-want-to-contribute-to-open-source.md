@@ -42,9 +42,9 @@ of the problem, and some suggestions on how it might be resolved.  If you need
 to ask questions, you can make an account on Github and ask them there.
 
 It is very common for people to ask questions on Github.  We understand that
-this may cause some anxiety your first time (I always find it hard to introduce
-yourself to a new community), but a "Good first issue" issue is a safe place to
-get started.  People expect newcomers to show up there.
+this may cause some anxiety your first time (I always find it really hard to
+introduce myself to a new community), but a "Good first issue" issue is a safe
+place to get started.  People expect newcomers to show up there.
 
 
 ### Read developer guidelines
@@ -74,9 +74,8 @@ time inventing cool algorithms.  You may notice this yourself as you look
 through the issue list.  What fraction of them excite you?
 
 I say this not to discourage you (indeed, please come help!) but just as a
-warning.  Many people who arrive at an OSS project excited to help, end up
-leaving pretty quickly.  This can be for many reasons, but lack of interest is
-certainly one of them.
+warning.  Many people leave OSS pretty quickly.  This can be for many reasons,
+but lack of interest is certainly one of them.
 
 *The desire to maintain software is rarely enough to keep people engaged in
 open source long term*
@@ -100,5 +99,6 @@ So my biggest piece of advice to you is not to try to contribute to a package
 because it is popular or exciting, but rather wait until you run into a problem
 with a piece of software that you use daily, and then contribute a fix to that
 project.  It can be more rewarding to contribute to something that is already
-in your life.  As an active user you also already have a voice in that
-community, so you are more likely to connect to other people.
+in your life and as an active user you already have a ton of experience and
+a place in the community.  You are much more likely to be successful
+contributing to a project if you have been using it for a long time.
