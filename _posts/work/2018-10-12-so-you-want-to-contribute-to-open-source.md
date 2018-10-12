@@ -2,7 +2,6 @@
 layout: post
 title: So you want to contribute to open source
 category: work
-draft: true
 tags: [Programming, Python, scipy]
 theme: twitter
 ---
