@@ -13,7 +13,7 @@ that serves the weather and climate forecasting needs of the UK (and several
 other nations).  I was there with other open source colleagues including [Joe
 Hamman](https://joehamman.com/) and
 [Ryan May](https://dopplershift.github.io/) from
-about open source tools like
+open source tools like
 [Dask](https://dask.org),
 [Xarray](https://xarray.pydata.org),
 [JupyterHub](https://jupyterhub.readthedocs.io/en/stable/),
