@@ -8,12 +8,12 @@ theme: twitter
 ---
 {% include JB/setup %}
 
-I recently visited the UK Meteorology office, a moderately large organization
+I recently visited the UK Meteorology Office, a moderately large organization
 that serves the weather and climate forecasting needs of the UK (and several
 other nations).  I was there with other open source colleagues including [Joe
 Hamman](https://joehamman.com/) and
 [Ryan May](https://dopplershift.github.io/) from
-open source tools like
+open source projects like
 [Dask](https://dask.org),
 [Xarray](https://xarray.pydata.org),
 [JupyterHub](https://jupyterhub.readthedocs.io/en/stable/),
@@ -37,15 +37,15 @@ My goals for these visits are the following:
 ## Step 1: Meet allies on the ground
 
 We were invited by early adopters within the institution, both within the UK
-Met office's [Informatics Lab](https://www.informaticslab.co.uk/) a research /
+Met Office's [Informatics Lab](https://www.informaticslab.co.uk/) a research /
 incubation group within the broader organization, and the Analysis,
-Visualization, and Data group (AVD) who serve 500 analysts at the office with
-their suite of open source tooling.
+Visualization, and Data group (AVD) who serve 500 analysts at the Met Office
+with their suite of open source tooling.
 
 Both of these groups are forward thinking, already use and appreciate the tools
-that we were talking about, and hope to use us to evangelize what they've
-already been saying throughout the company.  They need outside experts to
-provide external validation within the company; that's our job.
+that we were talking about, and hope to leverage our presence evangelize what 
+they've already been saying throughout the company.  They need outside experts
+to provide external validation within the company; that's our job.
 
 The goals for the early adopters are the following:
 
@@ -99,7 +99,7 @@ in this talk was ...
 
 We provided social proof by showing that lots of other popular projects
 and developer communities integrate with these tools, and that many large
-government organizations (peers to the UK met office) are already adopting
+government organizations (peers to the UK Met Office) are already adopting
 these tools and seeing efficiency gains.
 
 Our goals for this section are the following:
@@ -112,7 +112,7 @@ Our goals for this section are the following:
     This means two things for them:
 
     1.  These methods are well established outside of the institution,
-        and not just something that their engineers are enamored with short-term
+        and not just something that their engineers are presently enamored with
     2.  These methods can enable transformative change within the organization
 
 
@@ -131,14 +131,16 @@ more specific quickly.
 During this process I had the good fortune to work with [Peter
 Killick](https://github.com/dkillick) and [Bill
 Little](https://github.com/bjlittle) who had done a bit of work on Dask in the
-past and were interested in doing more.  Before coming to the office we found a
-bug that was of relevance to them, but also involved learning some more Dask
+past and were interested in doing more.  Before coming to the Met Office we found
+a bug that was of relevance to them, but also involved learning some more Dask
 skills.  We worked on it off and on during the visit and it was great to get to
 know them better and hopefully they're more likely to fix issues that arise in
 the future with more familiarity.
 
 
 ## Step 6: Make technical plans
+
+<!-- This paragraph could use a second pass -->
 
 There was good conversation around the future relationship between
 [Xarray](https://xarray.pydata.org) and
