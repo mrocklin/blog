@@ -170,3 +170,5 @@ community structures:
 
 Finally, both Anaconda and NVIDIA are currently hiring developers to work on
 Dask.  Come join, there's plenty to do.
+
+Edit: Anaconda Inc. has a [Dask-related job posting here](https://boards.greenhouse.io/anaconda/jobs/1396688).
