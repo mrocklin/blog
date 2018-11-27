@@ -42,9 +42,9 @@ Visualization, and Data group (AVD) who serve 500 analysts at the Met Office
 with their suite of open source tooling.
 
 Both of these groups are forward thinking, already use and appreciate the tools
-that we were talking about, and hope to leverage our presence evangelize what
-they've already been saying throughout the company.  They need outside experts
-to provide external validation within the company; that's our job.
+that we were talking about, and hope to leverage our presence to evangelize
+what they've already been saying throughout their institution.  They need
+outside experts to provide external validation; that's our job.
 
 The goals for the early adopters are the following:
 
@@ -52,7 +52,7 @@ The goals for the early adopters are the following:
     tools and approaches can improve operations within the institution
 2.  Discuss specific challenges that they've been having with the software
     directly with maintainers
-3.  Design future approaches within their more forward thinking groups
+3.  Design future approaches to adopt within their forward-thinking groups
 
 So our visit was split between meeting a variety of groups within the
 institution (analysts, IT, ...) and talking shop.
@@ -94,9 +94,9 @@ focusing first on the scientific objectives, and then following up with a more
 brief summary on how the software accomplishes this.  A pretty constant message
 in this talk was ...
 
-> other institutions like yours already do this and are seeing transformative change
+> other institutions like yours have already adopted this approach and are experiencing transformative change as a result
 
-We provided social proof by showing that lots of other popular projects
+We provide social proof by showing that lots of other popular projects
 and developer communities integrate with these tools, and that many large
 government organizations (peers to the UK Met Office) are already adopting
 these tools and seeing efficiency gains.
@@ -168,6 +168,6 @@ even better walking.  I'm thankful to [Phil Elson](https://pelson.github.io/)
 and Jo Camp for hosting me over the weekend where we succeeded in chatting
 about things other than work.
 
-<img src="{{ BASE_PATH }}/images/sw-england.jpg" width="50%">
+<a href="{{ BASE_PATH }}/images/sw-england.jpg"><img src="{{ BASE_PATH }}/images/sw-england.jpg" width="50%"></a>
 
-<img src="{{ BASE_PATH }}/images/uk-met-pub.jpg" width="50%">
+<a href="{{ BASE_PATH }}/images/uk-met-pub.jpg"><img src="{{ BASE_PATH }}/images/uk-met-pub.jpg" width="50%"></a>
