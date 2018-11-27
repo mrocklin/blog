@@ -43,7 +43,7 @@ Visualization, and Data group (AVD) who serve 500 analysts at the Met Office
 with their suite of open source tooling.
 
 Both of these groups are forward thinking, already use and appreciate the tools
-that we were talking about, and hope to leverage our presence evangelize what 
+that we were talking about, and hope to leverage our presence evangelize what
 they've already been saying throughout the company.  They need outside experts
 to provide external validation within the company; that's our job.
 
@@ -107,6 +107,7 @@ Our goals for this section are the following:
 1.  Encourage the users within the audience to apply pressure to their
     management/IT to make it easier for them to integrate these tools to their
     everyday workflow
+
 2.  Convince management that this is a good approach.
 
     This means two things for them:
@@ -138,17 +139,27 @@ know them better and hopefully they're more likely to fix issues that arise in
 the future with more familiarity.
 
 
-## Step 6: Make technical plans
+## Step 6: Engage with other core developers
 
-<!-- This paragraph could use a second pass -->
+Between the visitors and our hosts we had several core developers present on
+related projects (XArray, Iris, Dask, Cartopy, Metpy, ...).  This was a good
+time not just for evangelism and growing the community, but also for making
+long-term plans about existing projects, identifying structural issues in the
+ecosystem, and identifying new projects to fix those issues.
 
 There was good conversation around the future relationship between
 [Xarray](https://xarray.pydata.org) and
 [Iris](https://scitools.org.uk/iris/docs/latest/) two similar packages that
-could play better together, the popular
-[Cartopy](https://scitools.org.uk/cartopy/) library ([Ryan
-May](http://dopplershift.github.io/) was visiting at the same time),
-and some very early stage prototypes of a library for unstructured meshes.
+could play better together.  We discussed current
+[JupyterHub](https://jupyterhub.readthedocs.io/en/stable/) deployments both
+within the UK Met office, and without.  Developers for the popular
+[Cartopy](https://scitools.org.uk/cartopy/) library got together.  A couple of
+us prototyped a very early stage unstructured mesh data structure.
+
+These visits are one of the few times when a mostly distributed community gets
+together and can make in-person plans.  Sitting down with a blank sheet of
+paper is a useful exercise that is still remarkably difficult to replicate
+remotely.
 
 
 ## Step 7: Have a good time
