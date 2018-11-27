@@ -2,7 +2,6 @@
 layout: post
 title: Anatomy of an OSS Institutional Visit
 category: work
-draft: true
 tags: [Programming, Python, scipy, dask]
 theme: twitter
 ---
