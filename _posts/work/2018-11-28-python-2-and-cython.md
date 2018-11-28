@@ -184,7 +184,7 @@ However, as someone who maintains a sizable Python-2 compatible project that is
 used by large institutions, and whose livelihood depends a bit on continued
 uptake, I'll admit that I'm hesitant to jump onto the
 [Python 3 Statement](https://python3statement.org/).
-For me personally, seeing Cython as an option to provide continued to support
+For me personally, seeing Cython as an option to provide continued support
 makes me much more comfortable with dropping Python 2.
 
 I also think that maintaining a conda channel of Cython-compiled
