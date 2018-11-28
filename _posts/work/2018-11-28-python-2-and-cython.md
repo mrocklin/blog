@@ -15,36 +15,38 @@ Many popular Python packages are dropping support for Python 2 next month.
 This will be painful for several large institutions.
 Cython can provide a temporary fix by letting us compile a Python 3 codebase into something usable by Python 2 in
 many cases.
-It's not clear if we should do this.
+
+It's not clear if we should do this, but it's an interesting and little known feature of Cython.
 
 
-Background
-----------
+Background: Dropping Python 2 Might be Harder than we Expect
+------------------------------------------------------------
 
 Many major numeric Python packages are dropping support for Python 2 at the end
 of this year.  This includes packages like Numpy, Pandas, and Scikit-Learn.
 Jupyter already dropped Python 2 earlier this year.
 
-For most developers in the ecosystem this isn't a problem.  Most of our
-packages are Python-3 compatible.  However, for larger companies or government
-organizations it's often far harder to switch.  The [PyCon 2017 keynote by Lisa
-Guo and Hui Ding from Instagram](https://www.youtube.com/watch?v=66XoCk79kjM)
-gives a good look into why this can be challenging for large production
-codebases (and also gives a good example of someone successfully transitioning).
+For most *developers* in the ecosystem this isn't a problem.
+Most of our packages are Python-3 compatible and we've learned how to switch libraries.
+However, for larger companies or government organizations it's often far harder to switch.
+The [PyCon 2017 keynote by Lisa Guo and Hui Ding from Instagram](https://www.youtube.com/watch?v=66XoCk79kjM)
+gives a good look into why this can be challenging for large production codebases
+and also gives a good example of someone successfully navigating this transition.
 
-It will be interesting to see what happens when Numpy, Pandas, and Scikit-Learn
-start publishing Python-3 only releases.  It may be that we start uncovering a
-lot of pain within larger institutions.  In that case, what should we do?
+It will be interesting to see what happens when Numpy, Pandas, and Scikit-Learn start publishing Python-3 only releases.
+We may uncover a lot of pain within larger institutions.
+In that case, what should we do?
 
-(Although, to be fair, the data science stack tends to get used more often in
+*(Although, to be fair, the data science stack tends to get used more often in
 isolated user environments, which tend to be more amenable to making the Python
-2-3 switch than web-services production codebases).
+2-3 switch than web-services production codebases).*
 
 
 Cython
 ------
 
-The Cython compiler provides a possible solution.
+The Cython compiler provides a possible solution that I don't hear discussed
+very often, so I thought I'd cover it briefly.
 
 The Cython compiler can convert a Python 3 codebase into a C-Extension
 module that is usable by both Python 2 and 3.  We could probably use Cython
