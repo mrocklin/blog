@@ -63,7 +63,7 @@ laptop, start IPython or a Jupyter notebook, and try something out immediately.
 However, most data scientists, actual scientists, and students that I run into
 today do have some access to GPU resources through their institution.  Many
 companies, labs, and universities today seem to have purchased some sort of GPU
-cluster that, more often than not, sits idle.  These are often an `ssh` command
+cluster that, more often than not, sit under-utilized.  These are often an `ssh` command
 away, and generally available.
 
 Two weeks ago I was visiting Joe Hamman, a scientific collaborator at NCAR and
@@ -387,9 +387,9 @@ at the same time.
 Come help
 ---------
 
-To me, NVIDIA's plan here to build a GPU-compatible data science stack seems
-ambitious.  However, they also seem to be treating the problem seriously, and
-seem willing to put resources and company focus behind the problem.
+NVIDIA's plan to build a GPU-compatible data science stack seems ambitious.
+However, they also seem to be treating the problem seriously, and seem willing
+to put resources and company focus behind the problem.
 
 If any of the work above sounds interesting to you please engage either as an
 ...
@@ -403,8 +403,9 @@ If any of the work above sounds interesting to you please engage either as an
 
    .. or as an ...
 
--  **Institution**: You may already have both a cluster of GPUs going unused
-   within your institution, and large teams of data scientists familiar with
-   the Python but unfamiliar with CUDA.  NVIDIA seems eager to find partners
-   who are interested in cost-sharing arrangements to build out functionality
-   for specific domains.  Please reach out if this sounds familiar.
+-  **Institution**: You may already have both an under-utilized cluster of GPUs
+   within your institution, and also large teams of data scientists familiar
+   with the Python but unfamiliar with CUDA.  NVIDIA seems eager to find
+   partners who are interested in cost-sharing arrangements to build out
+   functionality for specific domains.  Please reach out if this sounds
+   familiar.
