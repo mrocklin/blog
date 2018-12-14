@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Python and GPUs, First Impressions and Future Work
+title: PyData, GPUs, First Impressions, and Future Work
 category: work
 draft: true
 tags: [Programming, Python, scipy, dask]
