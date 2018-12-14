@@ -8,32 +8,39 @@ theme: twitter
 ---
 {% include JB/setup %}
 
-First impressions and plans at NVIDIA
-
-This is my first full week working at NVIDIA.
-I thought I'd share my first impressions,
+For my first full week at NVIDIA I explored some of the challenges of working
+with GPUs in the PyData ecosystem.
+This post shares my first impressions
 and plans for near-term work.
 I'll mostly focus on technical details around Dask, GPUs, and PyData
 
 
-GPUs present an interesting opportunity
----------------------------------------
+GPU Performances Presents an Opportunity
+----------------------------------------
 
-Like many PyData developers, I'm loosely aware that GPUs can be quite fast,
-but it's not really something that I think about much (until recently).
-I wanted to get a feel for the performance differences, so I logged into a GPU
+Like many PyData developers, I'm loosely aware that GPUs can be quite fast, but
+it's not really something that I think much about (until recently).  To get a
+more visceral feel for the performance differences, I logged into a GPU
 machine, opened up CuPy (a Numpy-like GPU library developed mostly by Chainer
 in Japan) and cuDF (a Pandas-like library in development at NVIDIA) and did a
-couple of small speed comparisons.
+couple of small speed comparisons:
+
+### Numpy/Cupy
 
 TODO, speed comparisons
 
-I intentionally wanted to try things that weren't deep learning, and that might
+### Pandas/cuDF
+
+TODO, speed comparisons
+
+I intentionally tried things that weren't deep learning, and that might
 instead be representative of normal scientific computing and data processing.
 
-The speed difference here is substantial, and represents the opportunity that
-GPUs could offer to general computing.  This speed difference 's one of the
-reasons that made me curious about working for NVIDIA in the first place.
+GPUs do offer an orders-of-magnitude performance difference over traditional
+CPUs (at least in the naive cases presented above).  This represents an
+opportunity that GPUs could offer to general computing.  This speed difference
+'s one of the reasons that made me curious about working for NVIDIA in the
+first place.
 
 Roadblocks
 ----------
@@ -43,7 +50,7 @@ computational programming today.
 I thought I'd go through a few of them here.
 
 This is just my personal experience which, let me be clear, is limited to a few
-days.  I'm probably wrong about lots of things here.
+days.  I'm probably wrong about lots of things below.
 
 
 Not everyone has a GPU
@@ -56,12 +63,13 @@ laptop, start IPython or a Jupyter notebook, and try something out immediately.
 However, most data scientists, actual scientists, and students that I run into
 today do have some access to GPU resources through their institution.  Many
 companies, labs, and universities today seem to have purchased some sort of GPU
-cluster that, more often than not, sits idle.
+cluster that, more often than not, sits idle.  These are often an `ssh` command
+away, and generally available.
 
-I spent last week visiting Joe Hamman, a collaborator at NCAR and UW eScience
-institute and he said "Oh yeah, we have a GPU cluster at work that I never
-use".  About 20 minutes later he had a GPU stack installed and was running an
-experiment very much like what we did above.
+Two weeks ago I was visiting Joe Hamman, a scientific collaborator at NCAR and
+UW eScience institute and he said "Oh yeah, we have a GPU cluster at work that
+I never use".  About 20 minutes later he had a GPU stack installed and was
+running an experiment very much like what we did above.
 
 
 Installation and Drivers
@@ -69,38 +77,41 @@ Installation and Drivers
 
 Before conda packages, wheels, Anaconda and conda forge, installing the PyData
 software stack (Numpy, Pandas, Scikit-Learn, Matplotlib) was challenging.  This
-was because users had to match a combination system libraries, compiler stacks,
-and Python packages.  "Oh, you're on Mac?  First brew install X, then make sure
-you have gfortran, then pip install scipy"
+was because users had to match a combination of system libraries, compiler
+stacks, and Python packages.  "Oh, you're on Mac?  First brew install X, then
+make sure you have `gfortran`, then `pip install scipy`"
 
-This pain left the ecosystem when we were able to bring the entire stack under
-the one umbrella of conda, or was greatly diminished with wheels.
+The ecosystem solved this pain when we were able to bring the entire stack
+under the one umbrella of conda, or alternatively was greatly diminished with
+wheels.
 
-Unfortunately, CUDA drivers have to be managed on the system side, so there is
-a bit of matching that happens again depending on what CUDA version you're
-using.  Here are PyTorch's installation instructions as an example
+Unfortunately, CUDA drivers have to be managed by the system side, so we're
+back to matching system libraries with Python libraries, depending on what CUDA
+version you're using.
 
-```
+Here are PyTorch's installation instructions as an example:
+
 -  CUDA 8.0: `conda install pytorch torchvision cuda80 -c pytorch`
 -  CUDA 9.2: `conda install pytorch torchvision -c pytorch`
 -  CUDA 10.0: `conda install pytorch torchvision cuda100 -c pytorch`
 -  No CUDA: `conda install pytorch-cpu torchvision-cpu -c pytorch`
-```
 
-Unfortunately Anaconda's packaging of TensorFlow, and NVIDIA's packaging of
-RAPIDS all follow different conventions.  It is again unlikely that a novice
-user will get a working system if they don't do their homework.
+Additionally, these conventions also differ from the conventions used by
+Anaconda's packaging of TensorFlow and NVIDIA's packaging of RAPIDS.  It is
+again unlikely that a novice user will get a working system if they don't do
+some research ahead of time.
 
 There is some work happening in Conda that can help with this in the future.
 Regardless, we will need to develop better shared conventions between the
 different Python GPU development groups.
 
-After speaking about this with John Kirkham, he suggested that the situation is
-also a bit like the conda ecosystem before conda-forge, where everyone built
-their own packages however they liked and uploaded them to anaconda.org without
-agreeing on a common build environment.  As much of the scientific community
-knows, this inconsistency can lead to a fragmented stack, where certain
-families of packages work well only with certain other families.
+After speaking about this with [John Kirkham](https://github.com/jakirkham)
+(Conda Forge maintainer), he suggested that the situation is also a bit like
+the conda ecosystem before conda-forge, where everyone built their own packages
+however they liked and uploaded them to anaconda.org without agreeing on a
+common build environment.  As much of the scientific community knows, this
+inconsistency can lead to a fragmented stack, where certain families of
+packages work well only with certain packages within their family.
 
 
 Community fragmentation
@@ -128,16 +139,19 @@ Generally the goal of RAPIDS is to build a data science stack around
 conventional numeric computation that mimics the PyData/SciPy stack.  They
 seem to be targeting libraries like:
 
--   Pandas by building a new library, cuDF
+-   Pandas by building a new library, [cuDF](https://cudf.readthedocs.io/en/latest/)
 -   Scikit-Learn / traditional non-deep machine learning by building a new
-    library cuML
+    library [cuML](https://github.com/rapidsai/cuml)
 -   Numpy by leveraging existing libraries like CuPy, PyTorch, TensorFlow (Jax?)
     and focusing on improving interoperation within the ecosystem
 
 Driven by the standard slew of scientific/data centric applications like
 imaging, earth science, ETL, finance, and so on.
 
-Now lets talk about the current challenges for those systems.
+Now lets talk about the current challenges for those systems.  In general, none
+of this stack is yet mature (except for array computing in the deep-learning
+case).
+
 
 Pandas/cuDF
 -----------
@@ -156,9 +170,16 @@ What I failed to show was that many operations erred.
 The library can do some things, but is far from complete.
 
 ```python
+# There are many holes in the cuDF API
+cudf.read_csv(...)      # works
+cudf.read_parquet(...)  # fails if compression is present
+
+df.x.mean()  # works
+df.mean()    # fails
+
+df.groupby('id').x.mean()   # works
+df.x.groupby(df.id).mean()  # fails
 df = cudf.read_parquet(...)  # with compression
-df = cudf.read_csv(..., option=...)
-df.x.groupby(df.id).mean()
 ```
 
 Additionally, there are areas where the cudf semantics don't match Pandas
@@ -178,14 +199,14 @@ working to keep up (come help!).
 Numpy/cupy/PyTorch/Tensorflow
 -----------------------------
 
-The Numpy story is generally smoother, mostly because of the recent excitement
-around deep learning over the last few years.  It seems like most large tech
-companies have made their own deep learning framework, each of which contains a
-partial clone of the Numpy API.
+The Numpy story is generally smoother, mostly because of the excitement around
+deep learning over the last few years.  It seems like most large tech companies
+have made their own deep learning framework, each of which contains a partial
+clone of the Numpy API.
 
 This is great, because there is a ton of good functionality to choose from, but
 somewhat painful, because the ecosystem here is fragmented.  There are some
-things that would be good to see going forward
+things that would be good to see going forward to heal this rift:
 
 -   A standard way to communicate low-level information about arrays between
     frameworks like device memory pointer, datatype, shape, and so on.  This
@@ -193,7 +214,7 @@ things that would be good to see going forward
     computational operations defined in another framework.
 
     The Numba team prototyped something a few months ago, and the CuPy team
-    seemed happy with it.  See https://github.com/cupy/cupy/pull/1144
+    seemed happy with it.  See [cupy/cupy #1144](https://github.com/cupy/cupy/pull/1144)
 
     ```python
     @property
@@ -210,10 +231,10 @@ things that would be good to see going forward
          return desc
     ```
 
--   A standard way for developers to write basic code that runs on all
-    backends.  Currently the best approach to this seems to be to use Numpy
-    functions as a lingua franca, but allow the frameworks to hijack those
-    functions and interpret them as they will.
+-   A standard way for developers to write backend-agnostic array code.
+    Currently my favorit approach to this is to use Numpy functions as a lingua
+    franca, but allow the frameworks to hijack those functions and interpret
+    them as they will.
 
     This has been proposed and accepted within Numpy itself in
     [NEP-0018](https://www.numpy.org/neps/nep-0018-array-function-protocol.html)
@@ -233,17 +254,18 @@ new estimators in external libraries that connect to the ecosystem well is
 pretty straightforward.
 
 ```python
+# This code is aspirational
 from sklearn.model_selection import RandomSearchCV
 from sklearn.pipeline import make_pipeline
 from sklearn.feature_extraction.text import TfidfTransformer
 
 # from sklearn.feature_extraction.text import HashingVectorizer
-from cuml.feature_extraction.text import HashingVectorizer
+from cuml.feature_extraction.text import HashingVectorizer  # swap out for GPU versions
 
 # from sklearn.linear_model import LogisticRegression, RandomForest
 from cuml.linear_model import LogisticRegression, RandomForest
 
-pipeline = make_pipeline([HashingVectorizer(),
+pipeline = make_pipeline([HashingVectorizer(),  # use Scikit-Learn infrastructure
                           TfidfTransformer(),
                           LogisticRegression()])
 
@@ -254,21 +276,26 @@ RandomSearchCV(pipeline).fit(data, labels)
 probably naive (I don't know ML well).*
 
 However, aside from the straightforward task of building these GPU-enabled
-estimators (seems seems to be routine for the CUDA developers at NVIDIA)
-there are still many challenges around cleanly passing non-Numpy arrays around,
-coercing only when necessary, and so on that we'll need to work out with
-Scikit-Learn.  Fortunately this work has already started because of Dask Array
-(the Dask and Scikit-Learn devs have been collaborating to better enable
-pluggability over the last year) and so hopefully this additional use case
-proceeds along those existing efforts.
+estimators (which seems to be routine for the CUDA developers at NVIDIA) there
+are still challenges around cleanly passing non-Numpy arrays around, coercing
+only when necessary, and so on that we'll need to work out within Scikit-Learn.
+
+Fortunately this work has already started because of Dask Array, which has the
+same problem.  The Dask and Scikit-Learn communities have been collaborating to
+better enable pluggability over the last year.  Hopefully this additional use
+case proceeds along these existing efforts, but now with more support.
 
 
 The Deep Learning Frameworks
 ----------------------------
 
-As Dask expanded through the PyData ecosystem we ran into lots of small issues
-around parallel computing that hadn't been addressed before because, for the
-most part, few people used Python for parallelism at the time.
+There are many small issues around integrating pieces of the deep learning
+frameworks into a more general purpose ecosystem.
+
+We went through a similar experience with Dask early on, when the Python
+ecosystem wasn't ready for parallel computing.  As Dask expanded we ran into
+many small issues around parallel computing that hadn't been addressed before
+because, for the most part, few people used Python for parallelism at the time.
 
 -  Various libraries didn't release the GIL (thanks for the work Pandas, Scikit-Image, and others!)
 -  Various libraries weren't threadsafe in some cases (like h5py, and even Scikit-Learn in one case)
@@ -282,25 +309,25 @@ well-scoped and well-described problem on GitHub).  These libraries were
 designed to be used with other libraries, and so they were well incentivized to
 make themselves easy to work with.
 
-We're now running into the same problems with the deep learning frameworks.
-For the most part they are large fully-featured codebases that were designed
-for a single fairly narrowly-scoped workflow.  As a result they aren't yet very
-easy to work with from other parts of the ecosystem.  They often don't
-serialize well, don't operate well when called in multiple threads, and so
-on.  This is to be expected, most people to date using a tool like TensorFlow
-or PyTorch are just using TensorFlow or PyTorch.  They're not using it in
-concert with the rest of the ecossytem.
+The deep learning frameworks have these same sorts of problems.
+They often don't serialize well, don't operate well when called in multiple
+threads, and so on.  This is to be expected, most people to date using a tool
+like TensorFlow or PyTorch are just using TensorFlow or PyTorch.  They're not
+using it in concert with the rest of the ecossytem.
+Taking tools that were designed for fairly narrow workflows and encouraging
+them towards general purpose collaboration in an ecosystem of tools takes some
+time and effort, both technically and socially.
 
-To be clear, this isn't their fault.  The non-deep-learning OSS community
-hasn't really made a strong effort to engage the deep-learning developer
-communities yet.  I think that this will be an interesting experiment in
-interactions between two different kinds of dev groups.  I suspect that they
-have different styles, and can likely learn from each other.
+The non-deep-learning OSS community hasn't really made a strong effort to
+engage the deep-learning developer communities yet.  I think that this will be
+an interesting experiment in interactions between two different kinds of dev
+groups.  I suspect that they have different styles, and can likely learn from
+each other.
 
-*Note: Chainer/CuPy is an interesting exception here.  The fact that Chainer
-(another deep learning framework that is quite common in Japan) explicitly
-separated out its array library CuPy makes it much easier to deal with.  This,
-combined with an adherence to the Numpy API, is probably why they've been the
+*Note: Chainer/CuPy is an interesting exception here.  The Chainer library
+(another deep learning framework common in Japan) explicitly separated out its
+array library CuPy, which makes it much easier to deal with.  This, combined
+with a strict adherence to the Numpy API, is probably why they've been the
 early target for most ongoing Python OSS interactions.*
 
 
@@ -309,15 +336,16 @@ Deploying Dask around GPUs
 
 On high-end systems it is common to have several GPUs on a single machine.
 Programming across these GPUs is challenging because you need to think about
-data locality and also need to invoke special commands to invoke kernels on one
-machine or the other.  Dask is well-positioned to handle this for users (a
-multi-GPU node looks a bit like a small multi-node CPU cluster) and indeed this
-is why many Dask+GPU users use Dask today.  However, most people doing this
-today have some arcane script to set things up that includes a combination of
-environment variables, `dask-worker` calls, additional calls to CUDA profiling
-utilities and so on.  We should probably make a simple `LocalGPUCluster` Python
-object that people can call easily within a local script, similar to how they
-do today for `LocalCluster`.
+data locality, load balancing, and so on.
+
+Dask is well-positioned to handle this for users (a multi-GPU node looks a bit
+like a small multi-node CPU cluster) and indeed this is why many Dask+GPU users
+use Dask today.  However, most people doing this today have some arcane script
+to set things up that includes a combination of environment variables,
+`dask-worker` calls, additional calls to CUDA profiling utilities and so on.
+We should probably make a simple `LocalGPUCluster` Python object that people
+can call easily within a local script, similar to how they do today for
+`LocalCluster`.
 
 This problem also carries over to the multi-gpu multi-node case, and will
 probably require us to get a bit creative with the existing distributed
@@ -359,11 +387,12 @@ at the same time.
 Come help
 ---------
 
-To be honest, NVIDIA's plan here to build a GPU-compatible data science stack
-seems ambitious to me.  However, they also seem to be treating the problem
-seriously, and seem willing to put resources and company focus behind the
-problem.  If any of the work above sounds interesting to you please engage
-either as an ...
+To me, NVIDIA's plan here to build a GPU-compatible data science stack seems
+ambitious.  However, they also seem to be treating the problem seriously, and
+seem willing to put resources and company focus behind the problem.
+
+If any of the work above sounds interesting to you please engage either as an
+...
 
 -  **Individual**: either as an open source contributor (RAPIDS is Apache 2.0
    licensed and seems to be operating as a normal OSS project, while Dask is
@@ -378,4 +407,4 @@ either as an ...
    within your institution, and large teams of data scientists familiar with
    the Python but unfamiliar with CUDA.  NVIDIA seems eager to find partners
    who are interested in cost-sharing arrangements to build out functionality
-   for specific domains.
+   for specific domains.  Please reach out if this sounds familiar.
