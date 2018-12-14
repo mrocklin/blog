@@ -395,9 +395,9 @@ If any of the work above sounds interesting to you please engage either as an
 ...
 
 -  **Individual**: either as an open source contributor (RAPIDS is Apache 2.0
-   licensed and seems to be operating as a normal OSS project, while Dask is
-   BSD) or as an employee (see active [job
-   postings](https://www.google.com/search?q=nvidia+rapids&ibp=htl;jobs#fpstate=tldetail&htidocid=PEj50HJ9NiABW4nJAAAAAA%3D%3D&htivrt=jobs)).
+   licensed and seems to be operating as a normal OSS project on GitHub) or as
+   an employee
+   (see active [job postings](https://www.google.com/search?q=nvidia+rapids&ibp=htl;jobs#fpstate=tldetail&htidocid=PEj50HJ9NiABW4nJAAAAAA%3D%3D&htivrt=jobs)).
 
    There is lots of exciting work to do here.
 
@@ -406,6 +406,6 @@ If any of the work above sounds interesting to you please engage either as an
 -  **Institution**: You may already have both an under-utilized cluster of GPUs
    within your institution, and also large teams of data scientists familiar
    with the Python but unfamiliar with CUDA.  NVIDIA seems eager to find
-   partners who are interested in cost-sharing arrangements to build out
+   partners who are interested in mutual arrangements to build out
    functionality for specific domains.  Please reach out if this sounds
    familiar.
