@@ -503,7 +503,7 @@ If any of the work above sounds interesting to you please engage either as an
 -  **Individual**: either as an open source contributor (RAPIDS is Apache 2.0
    licensed and seems to be operating as a normal OSS project on GitHub) or as
    an employee
-   (see active [job postings](https://www.google.com/search?q=nvidia+rapids&ibp=htl;jobs#fpstate=tldetail&htidocid=PEj50HJ9NiABW4nJAAAAAA%3D%3D&htivrt=jobs)).
+   (see active [job postings](https://nvidia.wd5.myworkdayjobs.com/en-US/NVIDIAExternalCareerSite/job/US-TX-Austin/Senior-Library-Software-Engineer---RAPIDS_JR1919608-1).  The team is currently remotely distributed.).
 
    There is lots of exciting work to do here.
 
