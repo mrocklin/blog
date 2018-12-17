@@ -1,19 +1,18 @@
 ---
 layout: post
-title: Opportunities and Challenges of GPU-enabled PyData
-tagline: First impressions of GPUs in the PyData stack
+title: First Impressions of GPUs and PyData
+tagline: Opportunities and challenges to integrating GPUs into traditional data science workloads
 category: work
-draft: true
 tags: [Programming, Python, scipy, dask]
 theme: twitter
 ---
 {% include JB/setup %}
 
 I recently [moved from Anaconda to NVIDIA](../../../2018/11/26/joining-nvidia)
-within the RAPIDS team, building a PyData-friendly GPU-enabled data science
-stack.  For my first week I explored some of the current challenges of working
-with GPUs in the PyData ecosystem.  This post shares my first impressions and
-also outlines plans for near-term work.
+within the RAPIDS team, which is building a PyData-friendly GPU-enabled data
+science stack.  For my first week I explored some of the current challenges of
+working with GPUs in the PyData ecosystem.  This post shares my first
+impressions and also outlines plans for near-term work.
 
 First, lets start with the value proposition of GPUs, significant speed
 increases over traditional CPUs.
@@ -85,11 +84,12 @@ The dataframe examples were cherry-picked to find supported operations
 
 ### Analysis
 
-I intentionally tried examples that weren't deep learning specific, and that
-might instead be representative of normal everyday scientific computing and
-data processing tasks.
+This speed difference is *potentially* transformative to a number of scientific
+disciplines.  I intentionally tried examples that were more generic than
+typical  deep learning workloads today, examples that might represent more
+traditional scientific computing and data processing tasks.
 
-GPUs still offer orders-of-magnitude performance increases over traditional
+GPUs seem to offer orders-of-magnitude performance increases over traditional
 CPUs (at least in the naive cases presented above).  This speed difference is
 an interesting lever for us to push on, and is what made me curious about
 working for NVIDIA in the first place.
@@ -104,19 +104,14 @@ I thought I'd go through a few of them in this blogpost so we can see the sorts
 of things that we would need to resolve.
 
 -  Not everyone has a GPU.  They can be large and expensive
--  Installing CUDA-enabled libraries can be tricky when you need to match
-   drivers or need to establish consistency with other CUDA-enabled libraries
--  There are many CUDA-enabled libraries, but not yet a real ecosystem with
-   established conventions.
--  Many of the libraries in the ecosystem need specific help:
-    -  The cuDF library itself is immature, and needs many simple API changes
-    -  The Array computing libraries need better protocols to improve sharing
-       data and functionality
-    -  The deep learning libraries have plenty of functionality, but aren't
-       currently designed to share that functionality with other players in the
-       ecosystem
-    -  Deploying Dask on multi-GPU systems can be improved.  Most groups doing
-       this today invoke their own home-grown scripts
+-  Installing CUDA-enabled libraries can be tricky, even with conda
+-  Current CUDA-enabled libraries don't yet form a coherent ecosystem with
+   established conventions
+-  Many of the libraries around RAPIDS need specific help:
+    -  cuDF is immature, and needs many simple API and feature improvements
+    -  Array computing libraries need protocols to share data and functionality
+    -  Deep learning libraries have functionality, but don't share functionality easily
+    -  Deploying Dask on multi-GPU systems can be improved
     -  Python needs better access to high performance communication libraries
 
 This is just my personal experience which, let me be clear, is only limited to
@@ -230,8 +225,8 @@ of this stack is yet mature (except for the array-computing-in-deep-learning
 case).
 
 
-The cuDF library doesn't yet implement the Pandas API
------------------------------------------------------
+cuDF is missing Pandas functionality
+------------------------------------
 
 When I showed cuDF at the top of this post,
 I ran the following computations, which ran 30-40x as fast as Pandas..
@@ -339,8 +334,8 @@ We can help to heal this rift with a few technical approaches:
     like XArray.
 
 
-Built traditional machine learning with Scikit-Learn / cuML
-------------------------------------------------------------
+cuML needs features, Scikit-Learn needs datastructure agnosticism
+-----------------------------------------------------------------
 
 While deep learning on the GPU is commonplace today, more traditional
 algorithms like GLMs, random forests, preprocessing and so on haven't received
@@ -435,8 +430,8 @@ Numpy API, is probably why they've been the early target for most ongoing
 Python OSS interactions.*
 
 
-Deploying Dask around GPUs
---------------------------
+Dask needs convenience scripts for GPU deployment
+-------------------------------------------------
 
 On high-end systems it is common to have several GPUs on a single machine.
 Programming across these GPUs is challenging because you need to think about
@@ -460,8 +455,8 @@ non-GPU case and adding to community maintenance costs will be an interesting
 challenge, and will require creativity.
 
 
-High Performance Communication
-------------------------------
+Python needs High Performance Communication libraries
+-----------------------------------------------------
 
 High-end GPU systems often use high-end networking.  This is especially
 important when our compute times drop significantly because communication time
@@ -489,11 +484,13 @@ systems and provides general infrastructure applicable across the community at
 the same time.*
 
 
-Come help
----------
+Come help!
+----------
 
-NVIDIA's plan to build a GPU-compatible data science stack seems ambitious to
-me.  However, they also seem to be treating the problem seriously, and seem
+This post outlined challenges surrounding the Python and GPU experience today.
+NVIDIA's plan to build a GPU-compatible data science stack seems ambitious.
+Fortunately, all of the challenges above seem to have straightforward
+solutions, and NVIDIA seems to be treating the problem seriously, and seems
 willing to put resources and company focus behind the problem.
 
 If any of the work above sounds interesting to you please engage either as an
