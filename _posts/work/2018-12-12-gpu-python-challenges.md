@@ -487,11 +487,15 @@ the same time.*
 Come help!
 ----------
 
-This post outlined challenges surrounding the Python and GPU experience today.
-NVIDIA's plan to build a GPU-compatible data science stack seems ambitious.
-Fortunately, all of the challenges above seem to have straightforward
-solutions, and NVIDIA seems to be treating the problem seriously, and seems
-willing to put resources and company focus behind the problem.
+This post started with the promise of 100x speed improvements (at least for
+computation), and then outlined many of the challenges to getting there.  These
+challenges are serious, but also mostly straightforward technical and social
+engineering problems.  There is a lot of basic work with a high potential
+payoff.
+
+NVIDIA's plan to build a GPU-compatible data science stack seems ambitious, but
+they seem to be treating the problem seriously, and seem willing to put
+resources and company focus behind the problem.
 
 If any of the work above sounds interesting to you please engage either as an
 ...
