@@ -38,14 +38,18 @@ development at NVIDIA) and did a couple of small speed comparisons:
 >>> x = numpy.random.random((10000, 10000))
 >>> y = cupy.random.random((10000, 10000))
 
->>> %timeit (np.sin(x) ** 2 + np.cos(x) ** 2 == 1).all()
-402 ms ± 8.59 ms per loop (mean ± std. dev. of 7 runs, 1 loop each)
+>>> %timeit bool((numpy.sin(x) ** 2 + numpy.cos(x) ** 2 == 1).all())
+446 ms ± 53.1 ms per loop (mean ± std. dev. of 7 runs, 1 loop each)
 
->>> %timeit (cupy.sin(y) ** 2 + cupy.cos(y) ** 2 == 1).all()
-746 µs ± 1.26 ms per loop (mean ± std. dev. of 7 runs, 1 loop each)
+>>> %timeit bool((cupy.sin(y) ** 2 + cupy.cos(y) ** 2 == 1).all())
+86.3 ms ± 50.7 µs per loop (mean ± std. dev. of 7 runs, 10 loops each)
 ```
 
-On this mundane example, the GPU computation is a full 500x faster.
+On this mundane example, the GPU computation is about 5x faster.
+
+*Note: an earlier version of this blogpost erroneously showed a 500x speed
+increase.  This was because cupy was operating asynchronously in the
+background rather than blocking on the final result.*
 
 
 ### Compare Pandas and cuDF
@@ -487,7 +491,7 @@ the same time.*
 Come help!
 ----------
 
-This post started with the promise of 100x speed improvements (at least for
+This post started with the promise of 5-50x speed improvements (at least for
 computation), and then outlined many of the challenges to getting there.  These
 challenges are serious, but also mostly straightforward technical and social
 engineering problems.  There is a lot of basic work with a high potential
