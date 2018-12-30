@@ -30,7 +30,7 @@ Actually this computation isn't that impressive.
 It's a simple workload,
 for which most of the time is spent creating and destroying random data.
 The computation and communication patterns are simple,
-reflecting the simplicity of common for data processing workloads.
+reflecting the simplicity commonly found in data processing workloads.
 
 What *is* impressive is that we were able to create a distributed parallel GPU
 array quickly by composing these three existing libraries:
@@ -239,7 +239,7 @@ approachable to non-experts (at least for array computing).
 We can work to expand the computation above in a variety of directions.
 There is a ton of work we still have to do to make this reliable.
 
-1.  Use more complex array computing workloads.
+1.  **Use more complex array computing workloads**
 
     The Dask Array algorithms were designed first around Numpy.  We've only
     recently started making them more generic to other kinds of arrays (like
@@ -250,7 +250,7 @@ There is a ton of work we still have to do to make this reliable.
     you would get an error because our `mean` computation contains an easy to
     fix error that assumes Numpy arrays exactly.
 
-2.  Use Pandas and cuDF instead of Numpy and CuPy
+2.  **Use Pandas and cuDF instead of Numpy and CuPy**
 
     The cuDF library aims to reimplement the Pandas API on the GPU,
     much like how CuPy reimplements the NumPy API.
@@ -259,7 +259,7 @@ There is a ton of work we still have to do to make this reliable.
 
     I believe that there is plenty of low-hanging fruit here.
 
-3.  Improve and move LocalCUDACluster
+3.  **Improve and move LocalCUDACluster**
 
     The `LocalCUDAClutster` class used above is an experimental `Cluster` type
     that creates as many workers locally as you have GPUs, and assigns each
@@ -273,7 +273,7 @@ There is a ton of work we still have to do to make this reliable.
     questions about how to handle concurrency on top of GPUs, balancing between
     CPU cores and GPU cores, and so on.
 
-4.  Multi-node computation
+4.  **Multi-node computation**
 
     There's no reason that we couldn't accelerate computations like these
     further by using multiple multi-GPU nodes.  This is doable today with
@@ -283,15 +283,16 @@ There is a ton of work we still have to do to make this reliable.
     [dask-jobqueue](https://jobqueue.dask.org), to make this easier for
     non-experts who want to use a cluster of multi-GPU resources.
 
-5.  Expense
+5.  **Expense**
 
     The machine I ran this on is expensive.  Well, it's nowhere close to as
     expensive to own and operate as a traditional cluster that you would need
     for these kinds of results, but it's still well beyond the price point of a
-    hobbyist.
+    hobbyist or student.
 
     It would be useful to run this on a more budget system to get a sense of
-    the tradeoffs on more reasonably priced systems.
+    the tradeoffs on more reasonably priced systems.  I should probably also
+    learn more about provisioning GPUs on the cloud.
 
 
 ### Come help!
@@ -299,7 +300,7 @@ There is a ton of work we still have to do to make this reliable.
 If the work above sounds interesting to you then come help!
 
 Additionally, if you're interested in being paid to focus more on these topics,
-then consider applying for a job?  The NVIDIA corporation is hiring around the
+then consider applying for a job.  The NVIDIA corporation is hiring around the
 use of Dask with GPUs.
 
 -  TODO: job posting.
