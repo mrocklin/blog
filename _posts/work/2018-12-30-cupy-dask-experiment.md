@@ -210,7 +210,12 @@ wait for it to finish before walking away from my computer.
 Actually, it's quite fun to watch on the dashboard (especially after you've
 been waiting for three hours for the sequential solution to run):
 
-TODO
+<blockquote class="imgur-embed-pub"
+            lang="en"
+            data-id="a/6hkPPwA">
+<a href="//imgur.com/6hkPPwA"></a>
+</blockquote>
+<script async src="//s.imgur.com/min/embed.js" charset="utf-8"></script>
 
 
 ## Conclusion
