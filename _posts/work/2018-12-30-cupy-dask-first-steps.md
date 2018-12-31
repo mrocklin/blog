@@ -73,7 +73,7 @@ These libraries allow us to quickly judge the costs of this computation for
 the following hardware choices:
 
 1.  Single-threaded CPU
-2.  Multi-threaded CPU with 80 cores
+2.  Multi-threaded CPU with 40 cores (80 H/T)
 3.  Single-GPU
 4.  Multi-GPU on a single machine with 8 GPUs
 
@@ -96,7 +96,7 @@ we present a table of results.
       <td> 2hr 39min </td>
     </tr>
     <tr>
-      <th> Eighty CPU Cores </th>
+      <th> Forty CPU Cores </th>
       <td> 11min 30s </td>
     </tr>
     <tr>
@@ -178,7 +178,7 @@ And again, here are the results:
       <td> 2hr 39min </td>
     </tr>
     <tr>
-      <th> Eighty CPU Cores </th>
+      <th> Forty CPU Cores </th>
       <td> 11min 30s </td>
     </tr>
     <tr>
@@ -192,14 +192,14 @@ And again, here are the results:
   </tbody>
 </table>
 
-First, this is my first time playing with an 80-core system.  I was surprised
+First, this is my first time playing with an 40-core system.  I was surprised
 to see that many cores.  I was also pleased to see that Dask's normal threaded
 scheduler happily saturates many cores.
 
 <img src="{{BASE_PATH}}/images/python-gil-8000-percent.png" width="100%">
 
 Although later on it did dive down to around 5000-6000%, and if you do the math
-you'll see that we're not getting an 80x speedup.  My *guess* is that
+you'll see that we're not getting a 40x speedup.  My *guess* is that
 performance would improve if we were to play with some mixture of threads and
 processes, like having ten processes with eight threads each.
 
