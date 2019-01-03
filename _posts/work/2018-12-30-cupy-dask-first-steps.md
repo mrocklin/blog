@@ -298,9 +298,13 @@ There is a ton of work we still have to do to make this reliable.
 ### Come help!
 
 If the work above sounds interesting to you then come help!
+There is a lot of low-hanging and high impact work to do.
 
-Additionally, if you're interested in being paid to focus more on these topics,
-then consider applying for a job.  The NVIDIA corporation is hiring around the
-use of Dask with GPUs.
+If you're interested in being paid to focus more on these topics, then consider
+applying for a job.  The NVIDIA corporation is hiring around the use of Dask
+with GPUs.
 
--  TODO: job posting.
+-  [Senior Library Software Engineer - RAPIDS](https://nvidia.wd5.myworkdayjobs.com/en-US/NVIDIAExternalCareerSite/job/US-TX-Austin/Senior-Library-Software-Engineer---RAPIDS_JR1919608-1)
+
+That's a fairly generic posting.  If you're interested the posting doesn't seem
+to fit then please apply anyway and we'll tweak things.
