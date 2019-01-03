@@ -3,7 +3,6 @@ layout: post
 title: GPU Dask Arrays, first steps
 tagline: throwing Dask and CuPy together
 category: work
-draft: true
 tags: [Programming, Python, scipy, dask]
 theme: twitter
 ---
