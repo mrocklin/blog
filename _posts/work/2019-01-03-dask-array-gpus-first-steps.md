@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Early Experiments with GPU Dask Arrays
+title: GPU Dask Arrays, first steps
 tagline: throwing Dask and CuPy together
 category: work
 tags: [Programming, Python, scipy, dask]
@@ -29,7 +29,7 @@ Actually this computation isn't that impressive.
 It's a simple workload,
 for which most of the time is spent creating and destroying random data.
 The computation and communication patterns are simple,
-reflecting the simplicity of common for data processing workloads.
+reflecting the simplicity commonly found in data processing workloads.
 
 What *is* impressive is that we were able to create a distributed parallel GPU
 array quickly by composing these three existing libraries:
@@ -72,7 +72,7 @@ These libraries allow us to quickly judge the costs of this computation for
 the following hardware choices:
 
 1.  Single-threaded CPU
-2.  Multi-threaded CPU with 80 cores
+2.  Multi-threaded CPU with 40 cores (80 H/T)
 3.  Single-GPU
 4.  Multi-GPU on a single machine with 8 GPUs
 
@@ -95,7 +95,7 @@ we present a table of results.
       <td> 2hr 39min </td>
     </tr>
     <tr>
-      <th> Eighty CPU Cores </th>
+      <th> Forty CPU Cores </th>
       <td> 11min 30s </td>
     </tr>
     <tr>
@@ -177,7 +177,7 @@ And again, here are the results:
       <td> 2hr 39min </td>
     </tr>
     <tr>
-      <th> Eighty CPU Cores </th>
+      <th> Forty CPU Cores </th>
       <td> 11min 30s </td>
     </tr>
     <tr>
@@ -191,14 +191,14 @@ And again, here are the results:
   </tbody>
 </table>
 
-First, this is my first time playing with an 80-core system.  I was surprised
+First, this is my first time playing with an 40-core system.  I was surprised
 to see that many cores.  I was also pleased to see that Dask's normal threaded
 scheduler happily saturates many cores.
 
 <img src="{{BASE_PATH}}/images/python-gil-8000-percent.png" width="100%">
 
 Although later on it did dive down to around 5000-6000%, and if you do the math
-you'll see that we're not getting an 80x speedup.  My *guess* is that
+you'll see that we're not getting a 40x speedup.  My *guess* is that
 performance would improve if we were to play with some mixture of threads and
 processes, like having ten processes with eight threads each.
 
@@ -238,7 +238,7 @@ approachable to non-experts (at least for array computing).
 We can work to expand the computation above in a variety of directions.
 There is a ton of work we still have to do to make this reliable.
 
-1.  Use more complex array computing workloads.
+1.  **Use more complex array computing workloads**
 
     The Dask Array algorithms were designed first around Numpy.  We've only
     recently started making them more generic to other kinds of arrays (like
@@ -249,7 +249,7 @@ There is a ton of work we still have to do to make this reliable.
     you would get an error because our `mean` computation contains an easy to
     fix error that assumes Numpy arrays exactly.
 
-2.  Use Pandas and cuDF instead of Numpy and CuPy
+2.  **Use Pandas and cuDF instead of Numpy and CuPy**
 
     The cuDF library aims to reimplement the Pandas API on the GPU,
     much like how CuPy reimplements the NumPy API.
@@ -258,7 +258,7 @@ There is a ton of work we still have to do to make this reliable.
 
     I believe that there is plenty of low-hanging fruit here.
 
-3.  Improve and move LocalCUDACluster
+3.  **Improve and move LocalCUDACluster**
 
     The `LocalCUDAClutster` class used above is an experimental `Cluster` type
     that creates as many workers locally as you have GPUs, and assigns each
@@ -272,7 +272,7 @@ There is a ton of work we still have to do to make this reliable.
     questions about how to handle concurrency on top of GPUs, balancing between
     CPU cores and GPU cores, and so on.
 
-4.  Multi-node computation
+4.  **Multi-node computation**
 
     There's no reason that we couldn't accelerate computations like these
     further by using multiple multi-GPU nodes.  This is doable today with
@@ -282,23 +282,28 @@ There is a ton of work we still have to do to make this reliable.
     [dask-jobqueue](https://jobqueue.dask.org), to make this easier for
     non-experts who want to use a cluster of multi-GPU resources.
 
-5.  Expense
+5.  **Expense**
 
     The machine I ran this on is expensive.  Well, it's nowhere close to as
     expensive to own and operate as a traditional cluster that you would need
     for these kinds of results, but it's still well beyond the price point of a
-    hobbyist.
+    hobbyist or student.
 
     It would be useful to run this on a more budget system to get a sense of
-    the tradeoffs on more reasonably priced systems.
+    the tradeoffs on more reasonably priced systems.  I should probably also
+    learn more about provisioning GPUs on the cloud.
 
 
 ### Come help!
 
 If the work above sounds interesting to you then come help!
+There is a lot of low-hanging and high impact work to do.
 
-Additionally, if you're interested in being paid to focus more on these topics,
-then consider applying for a job?  The NVIDIA corporation is hiring around the
-use of Dask with GPUs.
+If you're interested in being paid to focus more on these topics, then consider
+applying for a job.  The NVIDIA corporation is hiring around the use of Dask
+with GPUs.
 
--  TODO: job posting.
+-  [Senior Library Software Engineer - RAPIDS](https://nvidia.wd5.myworkdayjobs.com/en-US/NVIDIAExternalCareerSite/job/US-TX-Austin/Senior-Library-Software-Engineer---RAPIDS_JR1919608-1)
+
+That's a fairly generic posting.  If you're interested the posting doesn't seem
+to fit then please apply anyway and we'll tweak things.

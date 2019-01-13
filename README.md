@@ -1,7 +1,8 @@
 Working Notes
 =============
 
-A collection of working notes from [Matthew Rocklin](matthewrocklin.com)
+A collection of working notes from [Matthew Rocklin](https://matthewrocklin.com)
+hosted at [matthewrocklin.com/blog](https://matthewrocklin.com/blog).
 
 Infrastructure
 --------------
