@@ -86,3 +86,11 @@ Reasons I strongly dislike interacting on Slack:
     GitHub is public an conversations across different projects can easily
     cross reference each other.  This encourages collaboration between projects
     and avoids wheel reinvention.
+
+
+I still love Slack for inter-personal contact though.  It's great for
+chit-chatting with teammates, checking in to see how people are doing
+emotionally, or sharing pictures about our lives.  Professionally I think it's
+also a good place for internal teams to do daily check-ins and sometimes to
+arrange short-term priorities.  Slack has many great uses, but I think that
+in-depth technical conversation and long-term planning isn't one of them.
