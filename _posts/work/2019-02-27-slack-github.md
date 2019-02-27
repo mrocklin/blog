@@ -1,3 +1,14 @@
+---
+layout: post
+title: "Why I Avoid Slack"
+author: Matthew Rocklin
+draft: true
+tags: []
+theme: twitter
+---
+{% include JB/setup %}
+
+
 I -hate- *strongly dislike* interacting on slack.  Actually, that's not fair,
 Slack is a great tool, certainly the most polished of the chat tools.  What I
 dislike is chat systems generally, especially as an open source
