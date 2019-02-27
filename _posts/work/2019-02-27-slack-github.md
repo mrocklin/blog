@@ -2,19 +2,19 @@
 layout: post
 title: "Why I Avoid Slack"
 author: Matthew Rocklin
-draft: true
 tags: []
 theme: twitter
 ---
 {% include JB/setup %}
 
 
-I -hate- *strongly dislike* interacting on slack.
+I ~~hate~~  *strongly dislike* interacting on slack.
 
 Actually, that's not fair, Slack is a great tool.  Slack is a great way for
-colleagues within an institution or effort to communicate with each other real
-time with chat, voice, or video.  Slack is certainly the most polished of the
-enterprise chat tools.
+colleagues within an institution or group to communicate real-time with chat,
+voice, or video.  Slack is certainly the most polished of the enterprise chat
+tools, and today is something that probably most companies and collaborations
+should use.
 
 What I dislike is chat systems generally, especially as an open source software
 maintainer.  My belief is that chat systems aren't well suited to developing or
@@ -28,7 +28,7 @@ Yourself (DRY) I'm writing this up as a blogpost.
 Reasons I strongly dislike interacting on Slack:
 
 1.  We need to engage people that aren't on our Slack system.
-    This includes external collaborators that work for another institution.
+    This includes external collaborators that work in other institutions.
 
     1.  External collaborators may have the *answers* that we need.  Having the
         conversation in a private place means that we can't ask them for help,
@@ -36,7 +36,8 @@ Reasons I strongly dislike interacting on Slack:
         the entire conversation that we've had privately, which wastes time.
 
     2.  External collaborators may have *questions or context* that we need.
-        Again, we don't want to have to repeat our entire conversation to them.
+        Their questions and experience can help us create a better product than
+        we're capable of producing with only our in-house expertise.
 
     3.  External collaborators are much more likely to *buy in* to whatever we
         come up with if they were able to see the reasoning behind it and
@@ -44,16 +45,16 @@ Reasons I strongly dislike interacting on Slack:
 
     As we adopt community maintained open source software we have to recognize
     that the broader team we're working with extends beyond the borders of
-    those people that have access to our Slack.  It is as if we only had
-    meetings with half the team at a time.
+    those people that have access to our Slack.
 
 2.  We want to record the conversation in case participants change in the
     future.
 
-    Most development efforts change hands over time.  The original designers
-    and developers move on to other projects and new people arrive.  These new
-    developers ask questions about why something was done and there are one of
-    two answers, depending on whether the conversation was on Slack or GitHub:
+    Most development efforts change hands over time.  We may work on this
+    project today, but next month some of us will probably move on to other
+    projects and new people will arrive.  These new developers ask questions
+    about why something was done and there are one of two answers, depending on
+    whether the conversation was on Slack or GitHub:
 
     -  **Slack**: We had a conversation about this a while ago and decided
         that it was the right course of action.
@@ -66,31 +67,35 @@ Reasons I strongly dislike interacting on Slack:
 3.  We want to enable the silent majority of users to find answers to their
     bugs without asking maintainers individually.
 
-    On Slack maintainers get asked the same questions daily.  We have people
+    On Slack, maintainers get asked the same questions daily.  We have people
     ask for "a few minutes of our time" every few minutes.  We strongly prefer
     to answer questions once in a place where future users can find the answer
     from a web search.  This includes people outside the company, but also
     people within the company.
 
+    Maintainers are much happier devoting a lot of time to craft a high quality
+    answer to questions if those questions and answers can help others in the
+    future.
+
 4.  GitHub forces people to think more before they write.  It's a permanent
     historical record.  This is hard on question askers and on easy
     conversation, yes, but we're not here for easy conversation.  Asking people
     to spend a minute crafting comments generally results in a conversation
-    that is higher functioning and much easier to review later.
+    that is higher functioning, more concise, and much easier to review later.
 
-5.  Slack is silo'ed to particular organizations.  It doesn't allow people to
+5.  Slack is siloed to particular organizations.  It doesn't allow people to
     cross reference people or conversations.  OSS maintainers get invited to
     literally dozens of Slack organizations.  It is not feasible to manage
     dozens of Slack tabs and different siloed organziations.
 
-    GitHub is public an conversations across different projects can easily
+    GitHub is public and conversations across different projects can easily
     cross reference each other.  This encourages collaboration between projects
-    and avoids wheel reinvention.
+    and avoids wheel-reinvention.
 
 
-I still love Slack for inter-personal contact though.  It's great for
-chit-chatting with teammates, checking in to see how people are doing
-emotionally, or sharing pictures about our lives.  Professionally I think it's
-also a good place for internal teams to do daily check-ins and sometimes to
-arrange short-term priorities.  Slack has many great uses, but I think that
-in-depth technical conversation and long-term planning isn't one of them.
+I still love Slack for inter-personal contact though.  It's great for chatting
+with teammates, checking in to see how people are doing emotionally, or sharing
+pictures about our lives.  Professionally I think it's also a good place for
+internal teams to do daily check-ins and sometimes to arrange short-term
+priorities.  Slack has many great uses, but I think that in-depth technical
+conversation and long-term planning aren't among them.
