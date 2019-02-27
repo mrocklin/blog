@@ -25,10 +25,9 @@ I ask colleagues several times a day if we could move conversation from Slack
 to GitHub and give a long explanation as to why.  In the spirit of Don't Repeat
 Yourself (DRY) I'm writing this up as a blogpost.
 
-Reasons I strongly dislike interacting on Slack:
+I strongly dislike interacting on Slack because I want to  because I want to ...
 
-1.  We need to engage people that aren't on our Slack system.
-    This includes external collaborators that work in other institutions.
+1.  **Engage collaborators** that aren't on our Slack
 
     1.  External collaborators may have the *answers* that we need.  Having the
         conversation in a private place means that we can't ask them for help,
@@ -47,8 +46,7 @@ Reasons I strongly dislike interacting on Slack:
     that the broader team we're working with extends beyond the borders of
     those people that have access to our Slack.
 
-2.  We want to record the conversation in case participants change in the
-    future.
+2.  **Record the conversation** in case participants change in the future.
 
     Most development efforts change hands over time.  We may work on this
     project today, but next month some of us will probably move on to other
@@ -64,8 +62,8 @@ Reasons I strongly dislike interacting on Slack:
        easily pick up that thread of conversation on GitHub a year later
        (this happens all the time in OSS).
 
-3.  We want to enable the silent majority of users to find answers to their
-    bugs without asking maintainers individually.
+3.  **Serve the silent majority** of users who search the web for answers to
+    their questions or bugs.
 
     On Slack, maintainers get asked the same questions daily.  We have people
     ask for "a few minutes of our time" every few minutes.  We strongly prefer
@@ -77,23 +75,24 @@ Reasons I strongly dislike interacting on Slack:
     answer to questions if those questions and answers can help others in the
     future.
 
-4.  GitHub forces people to think more before they write.  It's a permanent
-    historical record.  This is hard on question askers and on easy
-    conversation, yes, but we're not here for easy conversation.  Asking people
-    to spend a minute crafting comments generally results in a conversation
-    that is higher functioning, more concise, and much easier to review later.
+4.  **Encourage thoughtful discourse**.
+    Because GitHub is a permanent record it forces people to think more before
+    they write.  This is hard on casual conversation, yes, but we're not here
+    for casual conversation.  Asking people to spend a minute crafting comments
+    generally results in a conversation that is higher functioning, more
+    concise, and much easier to review later.
 
-5.  Slack is siloed to particular organizations.  It doesn't allow people to
-    cross reference people or conversations.  OSS maintainers get invited to
-    literally dozens of Slack organizations.  It is not feasible to manage
-    dozens of Slack tabs and different siloed organziations.
+5.  **Cross reference issues**.
+    Slack is siloed.  It doesn't allow people to cross reference people or
+    conversations across Slacks.  OSS maintainers get invited to literally
+    dozens of Slack organizations.  It is not feasible to manage dozens of
+    Slack tabs and different siloed organziations.
 
     GitHub is public and conversations across different projects can easily
     cross reference each other.  This encourages collaboration between projects
     and avoids wheel-reinvention.
 
-
-I still love Slack for inter-personal contact though.  It's great for chatting
+I still love Slack for inter-personal contact.  It's great for chatting
 with teammates, checking in to see how people are doing emotionally, or sharing
 pictures about our lives.  Professionally I think it's also a good place for
 internal teams to do daily check-ins and sometimes to arrange short-term
