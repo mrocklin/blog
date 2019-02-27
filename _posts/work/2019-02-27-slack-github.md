@@ -9,10 +9,17 @@ theme: twitter
 {% include JB/setup %}
 
 
-I -hate- *strongly dislike* interacting on slack.  Actually, that's not fair,
-Slack is a great tool, certainly the most polished of the chat tools.  What I
-dislike is chat systems generally, especially as an open source
-software maintainer.
+I -hate- *strongly dislike* interacting on slack.
+
+Actually, that's not fair, Slack is a great tool.  Slack is a great way for
+colleagues within an institution or effort to communicate with each other real
+time with chat, voice, or video.  Slack is certainly the most polished of the
+enterprise chat tools.
+
+What I dislike is chat systems generally, especially as an open source software
+maintainer.  My belief is that chat systems aren't well suited to developing or
+maintaining open source software projects whose users and developers span a
+variety of institutions.
 
 I ask colleagues several times a day if we could move conversation from Slack
 to GitHub and give a long explanation as to why.  In the spirit of Don't Repeat
