@@ -18,9 +18,9 @@ tools, and today is something that probably most companies and collaborations
 should use.
 
 What I dislike is chat systems generally, especially as an open source software
-maintainer.  My belief is that chat systems aren't well suited to developing or
-maintaining open source software projects whose users and developers span a
-variety of institutions.
+maintainer.  I believe that chat systems like Slack aren't well suited to
+developing or maintaining open source software projects whose users and
+developers span a variety of institutions and a long range in time.
 
 I ask colleagues several times a day to move conversation from Slack to GitHub
 and frequently give long explanation as to why.  In the spirit of Don't Repeat
