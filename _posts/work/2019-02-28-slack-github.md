@@ -2,7 +2,6 @@
 layout: post
 title: "Why I Avoid Slack"
 author: Matthew Rocklin
-draft: true
 tags: []
 theme: twitter
 ---
@@ -122,8 +121,16 @@ than Slack.  I prefer GitHub because I want to ...
     cross reference each other.  This encourages collaboration between projects
     and avoids wheel-reinvention.
 
-I still love Slack for inter-personal contact.  It's great for chatting
-with teammates, checking in to see how people are doing emotionally, or sharing
+Slack is the easy choice.  It's so much easier just to open up a one-on-one
+conversation with someone, chat with them for a bit, get your answer, and feel
+like you've had a productive experience.  It feels good, but is rarely the
+correct choice long term, especially when you add up how many times that same
+conversation occurs.  Putting in a bit more effort and starting (or
+continuing!) a well-posed conversation in a public issue tracker like GitHub is
+likely better for your project and for your teammates long term.
+
+I still love Slack for inter-personal contact.  It's great for chatting with
+teammates, checking in to see how people are doing emotionally, or sharing
 pictures about our lives.  Professionally I think it's also a good place for
 internal teams to do daily check-ins and sometimes to arrange short-term
 priorities.  Slack has many great uses, but I think that in-depth technical
