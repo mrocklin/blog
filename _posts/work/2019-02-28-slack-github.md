@@ -57,7 +57,7 @@ than Slack.  I prefer GitHub because I want to ...
 
         <img src="https://imgs.xkcd.com/comics/standards.png" width="70%">
 
-        If you open the design process to the creators of the
+        If you open the design process to the creators and users of the
         previous 14 standards, the 15th standard has a much higher probability
         of actually being used.
 
@@ -99,7 +99,7 @@ than Slack.  I prefer GitHub because I want to ...
     Maintainers are much happier devoting a lot of time to craft a high quality
     answer to questions if those questions and answers can help others in the
     future.  I personally spend a lot of time crafting answers on Stack
-    Overflow, while I usally ignore questions on chat systems.  Want a good
+    Overflow, while I usually ignore questions on chat systems.  Want a good
     ansewr?  Pose a [good
     question](https://matthewrocklin.com/blog/work/2018/02/28/minimal-bug-reports)
     in a public place.
