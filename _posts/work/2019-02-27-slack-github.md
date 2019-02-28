@@ -9,42 +9,45 @@ theme: twitter
 {% include JB/setup %}
 
 
-I ~~hate~~  *strongly dislike* interacting on Slack, specifically for technical
-conversations around open source software.
+I avoid interacting on Slack, especially for technical conversations around
+open source software.  Instead, I encourage colleagues to have technical and
+design conversations on GitHub, or some other system that is public, permanent,
+searchable, and cross-referenceable.  In the spirit of Don't Repeat Yourself
+(DRY) I'm writing up these thoughts as a blogpost.
 
-Actually, that's not fair, Slack is a great tool.  Slack is a great way for
-colleagues within an institution or group to communicate real-time with chat,
-voice, or video.  Slack is certainly the most polished of the enterprise chat
-tools, and today is something that probably most companies and collaborations
-should use.
+Slack is a great tool.  Slack is a great way for colleagues within an
+institution or group to communicate real-time with chat, voice, or video.
+Slack is probably the most polished of the enterprise chat tools, and today is
+something that probably most companies and collaborations should use.
 
-What I dislike is chat systems generally, especially as an open source software
-maintainer.  I believe that chat systems like Slack aren't well suited to
-developing or maintaining open source software projects whose users and
-developers span a variety of institutions and a long range in time.
+However internal real-time chat systems are, I think, bad for productivity
+generally, especially for public open source software maintenance.  Real-time
+chat systems make everyone feel productive (it's fun to have a face-paced
+technical conversation with colleagues), but do relatively little for long-term
+community consensus building, particularly when the users and developers of a
+project span a variety of institutions and a long range of time.
 
-I ask colleagues several times a day to move conversation from Slack to GitHub
-and frequently give long explanation as to why.  In the spirit of Don't Repeat
-Yourself (DRY) I'm writing this up as a blogpost.
-
-I strongly dislike interacting on Slack because I want to ...
+Here are some more reasons in-depth why I prefer conversation on GitHub rather
+than Slack.  I prefer GitHub because I want to ...
 
 1.  **Engage collaborators** that aren't on our Slack
 
     1.  External collaborators may have the *answers* that we need.  Having the
-        conversation in a private place means that we can't ask them for help,
-        or, if we do eventually need to ask them for help, we need to repeat
-        the entire conversation that we've had privately, which wastes time.
+        conversation in a private place means that we can't ask them for their
+        help, or, if we do eventually need to ask them for help, we need to
+        summarize the entire conversation that we've had privately, which
+        wastes time.
 
-        Open source maintainers often don't know the answers that people ask
-        them, but they do know how to redirect to someone who does.  More often
-        than not, that person is in another institution.
+        Individual open source maintainers often don't know the answers that
+        people ask, but they do know how to redirect to someone who does.
+        More often than not, that person is in another institution.  If you ask
+        your question on GitHub this redirection is easy.
 
     2.  External collaborators may have *questions or context* that we need.
         Their questions and experience can help us create a better product than
         we're capable of producing with only our in-house expertise.
 
-        Most important problems are useful across many organizations, yet
+        Most important problems are useful across many organizations, while
         solutions built within one organization are often overly-specific to
         the needs of that organization.  By getting broader context, OSS has a
         much higher likelihood of success.
@@ -53,9 +56,9 @@ I strongly dislike interacting on Slack because I want to ...
         come up with if they were able to see the reasoning behind it and
         participate during that conversation.
 
-        <img src="https://imgs.xkcd.com/comics/standards.png" width="50%">
+        <img src="https://imgs.xkcd.com/comics/standards.png" width="70%">
 
-        Surprisingly, if you open the design process to the creators of the
+        If you open the design process to the creators of the
         previous 14 standards, the 15th standard has a much higher probability
         of actually being used.
 
@@ -72,12 +75,13 @@ I strongly dislike interacting on Slack because I want to ...
     whether the conversation was on Slack or GitHub:
 
     -  **Slack**: We had a conversation about this a while ago and decided
-        that it was the right course of action.
+        that it was the right course of action.  Just go with it.
+
     -  **GitHub**: Go look at Issue #1234 and you'll be able to see the
        reasoning why, who had which opinions, and whether or not your concern
        was raised there.  If your concern wasn't raised there then we can
        easily pick up that thread of conversation on GitHub a year later
-       (this happens all the time in OSS).
+       (this happens all the time in long running OSS projects).
 
     Even in the same group we often find that people repeat the same
     conversations.  If there is an obvious place for that conversation, and you
@@ -95,7 +99,11 @@ I strongly dislike interacting on Slack because I want to ...
 
     Maintainers are much happier devoting a lot of time to craft a high quality
     answer to questions if those questions and answers can help others in the
-    future.
+    future.  I personally spend a lot of time crafting answers on Stack
+    Overflow, while I usally ignore questions on chat systems.  Want a good
+    ansewr?  Pose a [good
+    question](https://matthewrocklin.com/blog/work/2018/02/28/minimal-bug-reports)
+    in a public place.
 
 4.  **Encourage thoughtful discourse**.
     Because GitHub is a permanent record it forces people to think more before
