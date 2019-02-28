@@ -22,11 +22,11 @@ maintainer.  My belief is that chat systems aren't well suited to developing or
 maintaining open source software projects whose users and developers span a
 variety of institutions.
 
-I ask colleagues several times a day if we could move conversation from Slack
-to GitHub and give a long explanation as to why.  In the spirit of Don't Repeat
+I ask colleagues several times a day to move conversation from Slack to GitHub
+and frequently give long explanation as to why.  In the spirit of Don't Repeat
 Yourself (DRY) I'm writing this up as a blogpost.
 
-I strongly dislike interacting on Slack because I want to  because I want to ...
+I strongly dislike interacting on Slack because I want to ...
 
 1.  **Engage collaborators** that aren't on our Slack
 
@@ -35,17 +35,32 @@ I strongly dislike interacting on Slack because I want to  because I want to ...
         or, if we do eventually need to ask them for help, we need to repeat
         the entire conversation that we've had privately, which wastes time.
 
+        Open source maintainers often don't know the answers that people ask
+        them, but they do know how to redirect to someone who does.  More often
+        than not, that person is in another institution.
+
     2.  External collaborators may have *questions or context* that we need.
         Their questions and experience can help us create a better product than
         we're capable of producing with only our in-house expertise.
+
+        Most important problems are useful across many organizations, yet
+        solutions built within one organization are often overly-specific to
+        the needs of that organization.  By getting broader context, OSS has a
+        much higher likelihood of success.
 
     3.  External collaborators are much more likely to *buy in* to whatever we
         come up with if they were able to see the reasoning behind it and
         participate during that conversation.
 
-    As we adopt community maintained open source software we have to recognize
-    that the broader team we're working with extends beyond the borders of
-    those people that have access to our Slack.
+        <img src="https://imgs.xkcd.com/comics/standards.png" width="50%">
+
+        Surprisingly, if you open the design process to the creators of the
+        previous 14 standards, the 15th standard has a much higher probability
+        of actually being used.
+
+    As we adopt community maintained open source software, the team we work
+    with extends beyond our institution, and beyond the people who listen in to
+    all of our institution's Slack conversations.
 
 2.  **Record the conversation** in case participants change in the future.
 
@@ -62,6 +77,11 @@ I strongly dislike interacting on Slack because I want to  because I want to ...
        was raised there.  If your concern wasn't raised there then we can
        easily pick up that thread of conversation on GitHub a year later
        (this happens all the time in OSS).
+
+    Even in the same group we often find that people repeat the same
+    conversations.  If there is an obvious place for that conversation, and you
+    need to scroll through previous comments, then it's far less likely that
+    people will have to repeat themselves.
 
 3.  **Serve the silent majority** of users who search the web for answers to
     their questions or bugs.
