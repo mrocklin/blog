@@ -8,7 +8,8 @@ theme: twitter
 {% include JB/setup %}
 
 
-I ~~hate~~  *strongly dislike* interacting on slack.
+I ~~hate~~  *strongly dislike* interacting on Slack, specifically for technical
+conversations around open source software.
 
 Actually, that's not fair, Slack is a great tool.  Slack is a great way for
 colleagues within an institution or group to communicate real-time with chat,
