@@ -100,7 +100,7 @@ than Slack.  I prefer GitHub because I want to ...
     answer to questions if those questions and answers can help others in the
     future.  I personally spend a lot of time crafting answers on Stack
     Overflow, while I usually ignore questions on chat systems.  Want a good
-    ansewr?  Pose a [good
+    answer?  Pose a [good
     question](https://matthewrocklin.com/blog/work/2018/02/28/minimal-bug-reports)
     in a public place.
 
