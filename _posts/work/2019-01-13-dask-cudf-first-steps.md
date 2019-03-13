@@ -248,9 +248,9 @@ In general the answer is **many small things**.
 
     ```python
     import dask.dataframe as dd
-    (df = dd.read_csv('few-large/*.csv')
-            .repartition(npartitions=100)
-            .to_csv('many-small/*.csv', index=False))
+    df = dd.read_csv('few-large/*.csv')
+           .repartition(npartitions=100)
+           .to_csv('many-small/*.csv', index=False)
     ```
 
     (See [rapidsai/cudf #568](https://github.com/rapidsai/cudf/issues/568))
