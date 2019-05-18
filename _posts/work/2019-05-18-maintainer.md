@@ -10,7 +10,7 @@ theme: twitter
 What are the expectations and best practices for maintainers of open source software libraries?
 How can we do this better?
 
-This post frames the discussion and then follows with best practices based on my personal experience and opinions.  *I make no claim that it is correct.*
+This post frames the discussion and then follows with best practices based on my personal experience and opinions.  *I make no claim that these are correct.*
 
 
 ## Let us Assume External Responsibility
@@ -62,7 +62,7 @@ software project (perhaps 10-50 issues/contributions per day).
 ### Timely Response
 
 *"Welcome Bob!  Nice question.  I'm currently a bit busy right now, but I
-think that if you look through [these notes]() that that might point you in the
+think that if you look through [these notes]() that they might point you in the
 right direction.  I should have time to check back here by Thursday."*
 
 The maintainer is often the first person a new contributor meets.
@@ -150,8 +150,9 @@ they don't show up, then it's on the maintainer.
 
 ### Prioritize your time
 
-*"It'd be great if you could provide a minimal example as described [here]().
-Please let us know if you're able to manage this, otherwise given time
+*"It'd be great if you could provide a minimal example as described
+[here](https://matthewrocklin.com/blog/work/2018/02/28/minimal-bug-reports).
+Please let us know if you're able to manage this.  otherwise given time
 constraints I'm not sure what we can do to help further."*
 
 Some contributors are awesome and do everything right.
@@ -160,7 +161,7 @@ They provide well-tested code.
 Everything.  [They're awesome.](https://matthewrocklin.com/blog/work/2016/08/25/supporting-users)
 
 Others aren't as awesome.
-They ask for a lot of your time to help them solve their problems that have
+They ask for a lot of your time to help them solve problems that have
 little to do with your software.
 You probably can't solve every problem well, and working on their problems
 steals important time away that you could be spending improving documentation
@@ -233,9 +234,9 @@ Personally I spend a bit of time in the morning and evening doing light
 maintenance.  That's a personal choice though.
 
 
-### Don't let reviewers let things drag out too long
+### Don't let reviewers drag things out too long
 
-*Can you just add one more thing?*
+*"Can you just add one more thing?"*
 
 Developers want to get their work in quickly.
 Reviewers sometimes want to ask lots of questions, make small suggestions,
@@ -268,13 +269,14 @@ separate issue*
 
 ### Thank Developers
 
-*"I appreciate all your work here.  Also, in particular I'm really happy about these tests!"*
+*"I appreciate all your work here.  In particular I'm really happy about these tests!"*
 
-They look up to you.  A small amount of praise from you can make their day and
-encourage them to continue contributing to open source.
+They look up to you.
+A small amount of praise from you can make their day and encourage them to
+continue contributing to open source.
 
-Also, if you can call out a particular thing that they did well that makes it
-more personal and effective.
+Also, as with normal life, if you can call out some specific thing that they
+did well it becomes more personal.
 
 
 ### Encourage Excellent Developers to Review, and Allow Excellent Reviewers to Maintain
@@ -295,9 +297,8 @@ for that).  You should clear the way for them to become a maintainer.
 
 To be clear, I wouldn't encourage everyone.  Even very good developers can be
 bad reviewers or maintainers.  Bad reviewers can be unwelcoming and destructive
-to the process in a variety of ways.  This activity requires social sensitivity
-that aren't universally held by software developers, regardless of their
-programming skill.
+to the process in a variety of ways.  This activity requires social skills
+that aren't universally held, regardless of programming skill.
 
 
 ### Take a Vacation (But Tell Someone)
@@ -308,9 +309,15 @@ things?"*
 Maintaining a project with a few peers is wonderful because it's easier for
 people to take breaks and attend to their mental health.  However, it's
 important to make people aware of your absence during vacations or illness.
-It's all of our jobs to make sure that someone is around to monitor things.  A
-quick word to a colleague about an absence, expected or otherwise, can help to
-keep things running smoothly.
+A quick word to a colleague about an absence, expected or otherwise, can help
+to keep things running smoothly.
+
+*Many* OSS projects today have a single core maintainer.  This is hard on them
+and hard on the project (solo-maintainers tend to quickly become gruff).
+This post is designed with this problem in mind.
+Hopefully as we develop a vocabulary and conversation around the administrative
+sides of maintenance it will become easier to identify and encourage these
+behaviors in new maintainers.
 
 
 ## Summary
