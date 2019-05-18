@@ -43,7 +43,7 @@ Next, let's disambiguate the role of *developer*, *reviewer*, and *maintainer*
 3.  **Maintainers** are loosely aware of the entire project.
     They track ongoing work and make sure that it gets reviewed and merged in a
     timely manner.  They direct the orchestra of developers and reviewers,
-    making sure that they connect to each other approrpriately, often serving
+    making sure that they connect to each other appropriately, often serving
     as dispatcher.
 
     Maintainers also have final responsibility.
@@ -98,7 +98,7 @@ every problem, and you probably don't have time anyway.  It's your job to make
 sure that the right reviewer sees the problem, and then track that it gets
 resolved.
 
-But also, don't *overuse* your reviewers.  Everyone has a tolernace for how
+But also, don't *overuse* your reviewers.  Everyone has a tolerance for how
 much they're willing to help.  You may have to spread things out a little.
 Getting to know your reviewers personally and learning their interests can help
 you to make decisions about when and where to use them.
@@ -114,7 +114,7 @@ suggestions for Bob on this?"*
 The reviewers you rely on are likely to swoop in, convey expertise, and then
 disappear back to their normal lives.  Thank them for their help, and don't
 rely on them to track the work to completion, that's your job.  You may have to
-direct converstion a bit.
+direct conversation a bit.
 
 We often see the following timeline:
 
