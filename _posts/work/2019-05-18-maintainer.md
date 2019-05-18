@@ -118,12 +118,12 @@ direct conversation a bit.
 
 We often see the following timeline:
 
--  **Contributor:** "Hi! I made a patch for X!"
+-  **Developer:** "Hi! I made a patch for X!"
 -  **Maintainer:** "Welcome!  Nice patch!  Hey Reviewer, you know X really well,
    could you take a look?"
--  **Reviewer:** "Hi Contributor!  Great patch!  I found a bunch of things that
+-  **Reviewer:** "Hi Developer!  Great patch!  I found a bunch of things that
    were wrong with it, but I think that you can probably fix them easily!"
--  **Contributor:** "Oh yeah!  You're right, great, I've fixed everything you
+-  **Developer:** "Oh yeah!  You're right, great, I've fixed everything you
    said!"
 -  ...
 -  *silence*
@@ -136,8 +136,8 @@ At this point, jump in again!
 
    "Also, I notice that your code didn't pass the linter.  Please check out
    this doc for how to run our auto-linter."
--  **Contributor:** "Done!"
--  **Maintainer:** "OK, merging. Thanks Contributor!"
+-  **Developer:** "Done!"
+-  **Maintainer:** "OK, merging. Thanks Developer!"
 
 This situation is nice, but not ideal from the maintainer's perspective.
 Ideally the reviewer would finish things up, but often they don't.
@@ -254,10 +254,11 @@ and then we should be done.  This breaks down in a few ways:
     iterations.
 2.  **Serial Reviewers:** After one reviewer finishes up, a second reviewer
     arrives with their own set of requested changes.
-3.  **Reviewer Disagreement:** The two reviewers provide different suggestions and the contributor makes
-    changes and undoes those changes based on who spoke last.
+3.  **Reviewer Disagreement:** The two reviewers provide different suggestions
+    and the developer makes changes and undoes those changes based on who spoke
+    last.
 4.  **Endless Discussion:** The reviewers then engage in very long and detailed
-    technical conversation, scaring away the original contributor.
+    technical conversation, scaring away the original developer.
 
 This is reviewer breakdown, and it's up to the maintainer to identify that
 it's happening, step in and say the following:
@@ -284,10 +285,10 @@ did well it becomes more personal.
 *"Hey Bob, this new work is similar to work that you've done before.  Any
 interest in taking a look?"*
 
-Over time you will notice that a repeat contributor returns to the project
+Over time you will notice that a repeat developer returns to the project
 frequently, often to work on a particular topic.  When a new contribution
 arrives in that part of the code, you might intentionally invite the repeat
-contributor to review that work.  You might invite them to become a reviewer.
+developer to review that work.  You might invite them to become a reviewer.
 
 Similarly, when you find that a skilled reviewer frequently handles issues on
 their own, you should find ways to give them ownership over that section of the
