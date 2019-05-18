@@ -46,7 +46,7 @@ Next, let's disambiguate the role of *developer*, *reviewer*, and *maintainer*
     making sure that they connect to each other approrpriately, often serving
     as dispatcher.
 
-    They also have final responsibility.
+    Maintainers also have final responsibility.
     If no reviewer can be found for an important contribution, they review.
     If no developer can be found to fix an important bug, they develop.
     If something goes wrong, it's eventually the maintainer's fault.
@@ -98,6 +98,11 @@ every problem, and you probably don't have time anyway.  It's your job to make
 sure that the right reviewer sees the problem, and then track that it gets
 resolved.
 
+But also, don't *overuse* your reviewers.  Everyone has a tolernace for how
+much they're willing to help.  You may have to spread things out a little.
+Getting to know your reviewers personally and learning their interests can help
+you to make decisions about when and where to use them.
+
 
 ### But follow up
 
@@ -108,8 +113,10 @@ suggestions for Bob on this?"*
 
 The reviewers you rely on are likely to swoop in, convey expertise, and then
 disappear back to their normal lives.  Thank them for their help, and don't
-rely on them to track the work to completion, that's your job.  We often see
-the following timeline:
+rely on them to track the work to completion, that's your job.  You may have to
+direct converstion a bit.
+
+We often see the following timeline:
 
 -  **Contributor:** "Hi! I made a patch for X!"
 -  **Maintainer:** "Welcome!  Nice patch!  Hey Reviewer, you know X really well,
@@ -261,11 +268,19 @@ separate issue*
 
 ### Thank Developers
 
+*"I appreciate all your work here.  Also, in particular I'm really happy about these tests!"*
+
 They look up to you.  A small amount of praise from you can make their day and
 encourage them to continue contributing to open source.
 
+Also, if you can call out a particular thing that they did well that makes it
+more personal and effective.
+
 
 ### Encourage Excellent Developers to Review, and Allow Excellent Reviewers to Maintain
+
+*"Hey Bob, this new work is similar to work that you've done before.  Any
+interest in taking a look?"*
 
 Over time you will notice that a repeat contributor returns to the project
 frequently, often to work on a particular topic.  When a new contribution
@@ -287,8 +302,8 @@ programming skill.
 
 ### Take a Vacation (But Tell Someone)
 
-*I'd like to checking out for a week.  Alice, would you mind keeping an eye on
-things?*
+*"I'd like to checking out for a week.  Alice, would you mind keeping an eye on
+things?"*
 
 Maintaining a project with a few peers is wonderful because it's easier for
 people to take breaks and attend to their mental health.  However, it's
@@ -300,6 +315,8 @@ keep things running smoothly.
 
 ## Summary
 
+*"Thanks for taking the time"*
+
 Maintaining a project is not about being a great developer or a clever
 reviewer.  It's about enabling others, removing road-blocks before they arise,
 and identifying and resolving difficult social situations.  It has much more to
@@ -307,12 +324,12 @@ do with logistics, coordination, and social behaviors than it has to do with
 algorithms and version control.
 
 I have to admit, I'm not great at this, but I'm trying to become better.
-Learning to maintain a software project is a learned skill and takes effort.
+Maintaining a software project is a learned skill and takes effort.
 The reward can be significant though.
 
 A well maintained project is pleasant to work on and attracts a productive team
 of friendly developers and reviewers that support each other.  It's also a
-great way to learn more about how people use you software project than you ever
-could while writing code.  The activity of maintaining software gives you
+great way to learn more about how people use your software project than you
+ever could while writing code.  The activity of maintaining software gives you
 enough exposure to see where the project is headed and what's possible going
 forward.
