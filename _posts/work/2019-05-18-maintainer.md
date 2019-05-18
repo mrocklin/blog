@@ -7,8 +7,8 @@ theme: twitter
 ---
 {% include JB/setup %}
 
-What are the expectations of maintainer of open source software libraries?
-What are best practices?  How can we do this better?
+What are the expectations and best practices for maintainers of open source software libraries?
+How can we do this better?
 
 This post frames the discussion and then follows with best practices based on my personal experience and opinions.  *I make no claim that it is correct.*
 
