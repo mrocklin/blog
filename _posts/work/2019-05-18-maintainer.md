@@ -13,14 +13,14 @@ What are best practices?  How can we do this better?
 This post frames the discussion and then follows with best practices based on my personal experience and opinions.  *I make no claim that it is correct.*
 
 
-## Lets Assume External Responsibility
+## Let us Assume External Responsibility
 
 First, the most common answer to to this question is the following:
 
 -  **Q:** *What are expectations on OSS maintainers?*
 -  **A:** *Nothing at all.  They're volunteers.*
 
-However, lets assume for a moment that these maintainers are paid to maintain
+However, let's assume for a moment that these maintainers are paid to maintain
 the project some modest amount, like 10 hours a week.
 
 How can they best spend this time?
@@ -54,7 +54,7 @@ Next, let's disambiguate the role of *developer*, *reviewer*, and *maintainer*
 
 ## Best Practices
 
-Now lets get into the best practices of a maintainer, again assuming the
+Now let's get into the best practices of a maintainer, again assuming the
 context that they are paid to do this about 25% time for a moderately busy
 software project (perhaps 10-50 issues/contributions per day).
 
