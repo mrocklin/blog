@@ -7,10 +7,10 @@ theme: twitter
 ---
 {% include JB/setup %}
 
-What is the role of a maintainer of a moderately used open source software
-library?  What are expectations and best practices?
+What are the expectations of maintainer of open source software libraries?
+What are best practices?  How can we do this better?
 
-This post is based on my personal opinions.  I make no claim that it is correct.
+This post frames the discussion and then follows with best practices based on my personal experience and opinions.  *I make no claim that it is correct.*
 
 
 ## Lets Assume External Responsibility
