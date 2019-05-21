@@ -15,7 +15,7 @@ This post frames the discussion and then follows with best practices based on my
 
 ## Let us Assume External Responsibility
 
-First, the most common answer to to this question is the following:
+First, the most common answer to this question is the following:
 
 -  **Q:** *What are expectations on OSS maintainers?*
 -  **A:** *Nothing at all.  They're volunteers.*
@@ -108,7 +108,7 @@ you to make decisions about when and where to use them.
 
 *"Just checking in here.  It looks like Reviewer Alice has asked for X,
 Developer Bob is this something that you have time to do?  Also it looks like
-Developer Bob has a quesiton about Y.  Reviewer Alice do you have any
+Developer Bob has a question about Y.  Reviewer Alice do you have any
 suggestions for Bob on this?"*
 
 The reviewers you rely on are likely to swoop in, convey expertise, and then
