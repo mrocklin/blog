@@ -93,13 +93,6 @@ Both review and debugging are far more often bottlenecks in modern community
 code than is original development.  Because of this, I often encourage
 developers to avoid abstraction, and "please inline this function definition".
 
-Indirection of function definitions makes it more challenging for new readers
-to get a clear picture of what's going on quickly, without understanding the
-full mental model of the original author.
-This mental model may be quite clever, but we can't require
-new readers to understand it every time they touch code,
-specifically in community projects with hundreds of contributors.
-
 But functions are still a good idea
 -----------------------------------
 
@@ -107,7 +100,7 @@ Just to be clear,
 there are plenty of reasons to separate complex logic into multiple functions,
 particularly when there is repetition,
 or when some important policy is likely to change in the future.
-This is some balance to find.
+There is some balance to find here.
 
 Mostly, I want authors to be aware that there is a human cost to indirection
 that is felt more acutely by everyone reading the code except the original author.
