@@ -68,7 +68,7 @@ However, there is also a cost to this behavior.
 When a new reader encounters this code,
 they need to jump between many function definitions in many files.
 This non-linear reading process requires more mental focus
-than just reading a linear function definition.
+than reading linear code.
 
 This indirection isn't as much of a problem during the writing process,
 the original author is focused on building up an abstraction model in their head,
@@ -84,9 +84,10 @@ This happens in two important situations:
 2.  **While debugging** future issues.
     This code will eventually be involved in a bug and some completely
     different developer will have to glance at this code to figure out what's going on.
-    They'll have to understand this code within a few minutes
+    They'll have to understand some small section this code within a few minutes
     to determine what is relevant.
-    A web of function definitions can slow down this process considerably.
+    They won't be able to invest the time to understand the full thought process behind it,
+    and a web of function definitions can slow down this process considerably.
 
 Both review and debugging are far more often bottlenecks in modern community
 code than is original development.  Because of this, I often encourage
@@ -103,13 +104,13 @@ But functions are still a good idea
 -----------------------------------
 
 Just to be clear,
-there are plenty of reasons to use functions,
+there are plenty of reasons to separate complex logic into multiple functions,
 particularly when there is repetition,
 or when some important policy is likely to change in the future.
 This is some balance to find.
-Mostly, I want people to be aware that there is a human cost to indirection
-that is felt more acutely by everyone reading the code except the original author,
-for whom that cost feels like nothing.
+
+Mostly, I want authors to be aware that there is a human cost to indirection
+that is felt more acutely by everyone reading the code except the original author.
 
 Further reading
 ---------------
