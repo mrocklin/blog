@@ -1,7 +1,7 @@
 ---
 layout: post
 title: Write Short Blogposts
-tagline: quantity doesn't conflict with quality
+tagline: reducing expectations for the win
 category: work
 tags: [Programming, Python, scipy]
 theme: twitter
@@ -62,7 +62,7 @@ They are not scientific journal articles.  They can just be longer-than-average
 tweets.
 
 We can **write short blogposts** that we write in a fixed amount of time.
-Personally, I like timing myself (I started this bloppost just 18 minutes ago)
+Personally, I like timing myself (I started this blopgost just 18 minutes ago)
 and time-boxing myself (I plan to publish this this afternoon before my next
 meeting).
 
@@ -98,3 +98,4 @@ Timings
 -  13:26: Publish
 -  13:27: Tweet
 -  13:29: Back to work!
+-  13:32: Oops! Typo.
