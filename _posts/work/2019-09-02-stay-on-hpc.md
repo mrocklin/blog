@@ -10,7 +10,7 @@ theme: twitter
 {% include JB/setup %}
 
 Scientific institutions today are considering how to balance their current HPC
-infrastructure with a possible transition to commerical cloud.
+infrastructure with a possible transition to commercial cloud.
 
 This transition is partially motivated by data science users,
 who find that HPC policies make their workflows difficult.
@@ -31,7 +31,7 @@ staying on in-house HPC.  There is no single right answer.*
 With that prelude out of the way, here are some reasons:
 
 1.  **You already have an in-house HPC center** so you might as well use it.
-    Adopting a technology is easy, but changing the behaviors of an institution
+    Adopting a technology is easy, but changing the culture of an institution
     is a multi-year effort that is going to be more intense than you expect.
     Even very nimble for-profit companies have a hard time at this, and if you
     have an in-house HPC center, then you are probably an organization with
@@ -72,3 +72,10 @@ With that prelude out of the way, here are some reasons:
 
     Arguably, it's good for government funded public institutions to maintain
     some level of independence from commercial cloud.
+
+Again, there are plenty of reasons to move to Cloud.  It can be cheaper, easier
+to maintain, and open up new ways of doing business/science that aren't
+possible with HPC centers.  But we should acknowledge that in many cases it
+will also be the wrong choice, especially for some classes of compute and data
+intensive fields.  I've listed a few reasons above on why sticking with an HPC
+center can make sense, but there are more.
