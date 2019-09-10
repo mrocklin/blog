@@ -22,7 +22,7 @@ But should we bother?
 Why might an institution choose to adopt cloud,
 and why might they choose to stay with in-house HPC resources?
 Some colleagues of mine recently published
-[an opinion paper supporting a move to cloud](TODO),
+[an opinion paper supporting a move to cloud](https://arxiv.org/abs/1908.03356?),
 so I thought I would respond with some arguments in the other direction.
 
 *To be clear, I support a move to cloud in many cases, as they would support
@@ -34,7 +34,7 @@ With that prelude out of the way, here are some reasons:
     Adopting a technology is easy, but changing the behaviors of an institution
     is a multi-year effort that is going to be more intense than you expect.
     Even very nimble for-profit companies have a hard time at this, and if you
-    have an in-house HPC center, then you probably an organization with
+    have an in-house HPC center, then you are probably an organization with
     considerable inertia.
 
 2.  **Your data may be generated in-house** if you're running
@@ -60,7 +60,7 @@ With that prelude out of the way, here are some reasons:
 4.  **User familiarity**: In some ways HPC systems are more familiar to scientific
     users today than cloud environments.  For example when you move to the
     cloud you often lose things like POSIX file systems, file formats like HDF,
-    and more.  In the long run this is fine, there are excellent alternatives,
+    and more.  In the long run this is fine, there are excellent alternatives
     to these technologies, but a lot of user code will have to change a bit.
 
 5.  **Lockin**:  The clouds will sell you products that are highly productive,

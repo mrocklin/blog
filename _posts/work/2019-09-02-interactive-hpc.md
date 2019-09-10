@@ -13,8 +13,13 @@ infrastructure with a possible transition to commerical cloud.
 
 This transition is partially motivated by data science users,
 who find that HPC policies make their workflows hard or impossible.
+These data science worklaods differ in a few ways from traditional HPC.
+In particular they are data centric, interactive, and ad-hoc, using tools like
+Python and Jupter notebooks rather than highly tuned C++/MPI code that runs
+overnight.
+
 This frustration is reasonable.
-HPC systems weren't designed around these use cases,
+HPC hardware and policies weren't designed for these use cases,
 but there are steps we can take to adapt HPC centers for data science use.
 These steps can either be taken at the user level (this is prevalent today)
 or at the institutional level (this is generally rare, but growing quickly).
@@ -127,14 +132,14 @@ supercomputing center.
 Data scientist's workloads are both bursty, and intolerant to delays.
 
 Often they want to quickly spin up 50 machines to churn through 100 TB of data
-for a five minutes, generate a plot, and then stare at that plot for an hour.
+for five minutes, generate a plot, and then stare at that plot for an hour.
 Then, when they get an idea, they want to do that again, right now.
-They're comfortable waiting for a few mninutes, but if there is an
+They're comfortable waiting for a few minutes, but if there is an
 hour-long wait in the queue then they're going to switch off to something
-else.
+else, and they're probably not going to try this workflow in the future.
 
 These bursty workloads don't fit into most HPC job scheduling policies.
-These policies are designed to optimnize not for on-demand computing, but for
+These policies are designed to optimize not for on-demand computing, but for
 high utilization and batch jobs.  This policy causes some users a great deal of
 pain because it means long wait times even for very short jobs.
 
@@ -159,6 +164,8 @@ Today there are a few solutions to this, but they aren't great
     to submit many small fast jobs and assemble those jobs into a broader
     distributed computing network.
 
+    *For more on this, see [Dask Jobqueue](https://jobqueue.dask.org)*
+
 -  **System administrators** can improve the situation here by making a few
    small policy decisions:
 
@@ -167,4 +174,9 @@ Today there are a few solutions to this, but they aren't great
         for bursty workloads.  Users are comfortable paying a premium for
         on-demand access, especially if it allows them to be efficient with
         their use of jobs (remember that their alternative is to keep their
-        jobs running all the time, even when they're staring at plots)
+        jobs running all the time, even when they're staring at plots).
+
+        Many HPC systems are judged on *utilization*, but it's important to
+        remember that scientific productivity does not necessarily follow
+        utilization perfectly.  Policies that optimize slightly away from
+        utilization may be better at producing actual science.
