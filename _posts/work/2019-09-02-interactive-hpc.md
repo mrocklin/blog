@@ -18,9 +18,12 @@ In particular they are data centric, interactive, and ad-hoc, using tools like
 Python and Jupter notebooks rather than highly tuned C++/MPI code that runs
 overnight.
 
+This mismatch causes frustration both for users and for system administrators.
 This frustration is reasonable.
 HPC hardware and policies weren't designed for these use cases,
-but there are steps we can take to adapt HPC centers for data science use.
+and the rise of data science happened more quickly than our typical HPC
+procurement cycle.
+Fortunately, there are steps we can take to adapt existing HPC centers for data science use today.
 These steps can either be taken at the user level (this is prevalent today)
 or at the institutional level (this is generally rare, but growing quickly).
 
@@ -31,59 +34,59 @@ This post briefly outlines three of the main causes of frustration:
 3.  Elastic and on-demand computing
 
 and also describes technology choices that users and institutions make today
-to solve or at least lessen this frustration.  In particular, we focus on
-Conda, Jupyter{Hub/Lab}, and a marriage of Dask and job schedulers.
-This can be seen either as a how-to for users, or a sales pitch to IT.
+to solve or at least reduce this frustration.
+In particular, we focus on tools common in the Python ecosystem,
+including Conda, Jupyter{Hub/Lab}, and a marriage of Dask and job schedulers.
+This post can be seen either as a how-to for users, or as a sales pitch to IT.
 
 In [a companion post](stay-on-hpc), we write to data science users and
 management, giving reasons why they should stay in HPC centers, rather than
 transition to the cloud.
 
-
-## Resolving Data Scientist Frustration
-
-Data scientists dealing with HPC centers today often run into common issues.
-This section details those issues and provides some common workarounds that we
-see today.
-
-
 ### Softawre environments
 
-Traditionally when a user needed some piece of software they would raise a
+Historically, when a user needed some piece of software they would raise a
 ticket with the HPC system administrators who would then build the software
 and include it as a module.  This might take a few days.
 
-Today, modern data science users change their software stack several times a
-day, and rely on a variety of both stable and bleeding edge software.
-Additionally, each data science user probably uses a *slightly* different set
-of libraries, compounding this problem by 100x (assuming you support 100
-users).
+Today, modern data science users can change their software stack several times
+a day, and rely on a variety of both stable and bleeding edge software at
+various levels of maturity.
+Additionally, every data science user probably uses a *slightly* different set
+of libraries, compounding this problem by 100x
+(assuming an HPC center supports only 100 users).
 
 Asking an IT system administrator to manage hundreds of bespoke software
 environments is infeasible.  Neither side would be happy with this arrangement.
 
 To solve this ...
 
--   **Users** today often install their software stack in user space, commonly
-    with tools like Anaconda or Miniconda, which was designed to be self
-    contained and require only user-level permissions.  For many fields,
-    Anaconda has everything that a data scientist needs, including both Python
-    and R libraries like Pandas and the tidyverse, as well as native compiled
-    libraries like HDF5, MPI, GDAL, and more.  They might not be optimally
-    compiled for the machine at hand, but they're often good enough.
+-   **Users** today often install their software stack in user space,
+    commonly with tools like Anaconda or Miniconda, which was designed to be
+    self contained and require only user-level permissions.  For many fields,
+    Anaconda has everything that a data scientist needs,
+    including both high-level Python and R libraries,
+    as well as native compiled libraries like HDF5, MPI, and GDAL.
+    They might not be optimally compiled for the machine at hand,
+    but they're often good enough.
 
--   **System Administrators** often have mixed feelings about this.  It is both
-    liberating and scary to give up control over software environments.  In the
-    end though, at least now it's the user's responsibility to take charge of
-    their own problems, freeing up IT for other more institutionally focused
-    work.
+-   **System Administrators** understandably have mixed feelings about this.
+    It is both liberating and scary to give up control over the software run on your machine.
+    In the end though, at least now it's the user's responsibility
+    to take charge of their own problems,
+    freeing up IT for other more institutionally focused work.
 
 
-### Access and Rich Environments
+### Easy Access and Rich User Environments
 
-Most cloud offerings provide slick visual user interfaces
-with Jupyter notebooks, dashboards, simple authentication
-that appeal to less technical data science or science audiences.
+<img src="https://miro.medium.com/max/2714/1*BjjkqOv7jwJIZdaBTIsbhA.png"
+     width="50%"
+     align="right"
+     alt="Amazon SageMaker splash screen">
+
+Most cloud offerings today provide slick visual user interfaces with Jupyter
+notebooks, dashboards, point-and-click UI's and simple authentication that
+appeal to less technical data science or science audiences.
 
 In contrast, users on HPC machines typically open up a terminal window, SSH in
 a few times (checking their security token each time), and operate in bash.
@@ -109,13 +112,15 @@ To solve this ...
 
 -  **System Administrators** might support this kind of activity by deploying
    [JupyterHub](https://jupyter.org/hub) within their institution.
-   JupyterHub integrates very nicely into existing job queuing systems like
+   JupyterHub integrates nicely into existing job queuing systems like
    SLURM/PBS/LSF/SGE/... and can use the existing security policies that you
    already have in place, including two-factor security tokens.
 
    This gives users the visual rich UI/UX that they've come to expect,
    while still giving system administrators the security and control that they
    need in order to maintain stability over the system.
+   It also, conveniently, gets users off of the login nodes and onto compute
+   nodes where they belong.
 
    Several large and well respected supercomputing centers have deployed
    JupyterHub internally, including NERSC, SDSC, NCAR, and many others.
@@ -133,17 +138,18 @@ Data scientist's workloads are both bursty, and intolerant to delays.
 
 Often they want to quickly spin up 50 machines to churn through 100 TB of data
 for five minutes, generate a plot, and then stare at that plot for an hour.
-Then, when they get an idea, they want to do that again, right now.
-They're comfortable waiting for a few minutes, but if there is an
+Then, when they get an idea, they want to do that again, immediately.
+They're comfortable waiting for a minute or two, but if there is an
 hour-long wait in the queue then they're going to switch off to something
-else, and they're probably not going to try this workflow in the future.
+else, and they're probably not going to try this workflow again in the future.
 
 These bursty workloads don't fit into most HPC job scheduling policies.
 These policies are designed to optimize not for on-demand computing, but for
 high utilization and batch jobs.  This policy causes some users a great deal of
 pain because it means long wait times even for very short jobs.
 
-Today there are a few solutions to this, but they aren't great
+Today there are a few solutions to this, but they're not perfect without some
+help from IT.
 
 -  **Users** end up doing one of the following:
 
@@ -154,15 +160,18 @@ Today there are a few solutions to this, but they aren't great
     That is, unless of course there are some gaps in the schedule, and if IT
     have taken some steps to promote small jobs.
 
-    Most HPC machines don't hit 100% utilization.  There are little small gaps
-    in the schedule which, if your jobs are fast, you can sneak into.  A good
-    analogy I've heard before is that if you fill a bucket full of rocks, you
-    can still pour in a fair amount of sand.  Our goal is to be like sand.
+    Most HPC machines don't hit 100% utilization.  There are always little gaps
+    in the schedule which, if your jobs are fast and loosely coupled, you can
+    sneak into.  A good analogy I've heard before is that if you fill a bucket
+    full of rocks, you can still pour in a fair amount of sand.  Our goal is to
+    be like sand.
 
-    Distributed systems like [Dask](https://dask.org),
+    Data science oriented distributed systems like [Dask](https://dask.org),
     are designed to work with job-queue schedulers (PBS/SLURM/SGE/LSF/...)
     to submit many small fast jobs and assemble those jobs into a broader
-    distributed computing network.
+    distributed computing network.  Users frequently use systems like Dask to
+    take over 10-20 nodes and process 100 TB datasets today.  It's commonly run
+    on a large number of supercomputer centers.
 
     *For more on this, see [Dask Jobqueue](https://jobqueue.dask.org)*
 
@@ -180,3 +189,24 @@ Today there are a few solutions to this, but they aren't great
         remember that scientific productivity does not necessarily follow
         utilization perfectly.  Policies that optimize slightly away from
         utilization may be better at producing actual science.
+
+
+## Summary
+
+Our ability to generate large scientific datasets on
+supercomputers has vastly outstripped our ability to analyze them.
+It's correct for us to drastically rethink how we support scalable data science
+workloads on these datasets.
+
+However, in the meantime, we can use our existing infrastructure to great effect.
+Advanced users do this today and generate excellent science as a result.
+We should work to make these workflows more accessible to less advanced users,
+both by documentating best practices
+and by codifying some of these approaches into our software.
+
+At the same time, we should also approach this from the systems administration side.
+Sysadmins want to provide systems that guide data science users towards safe and
+controlled behavior, while also giving them the tools they need to do great science.
+
+Fortunately, new tooling is out there that was intentionally designed to bridge
+this IT-User gap, including Conda, JupyterHub, and Dask.
