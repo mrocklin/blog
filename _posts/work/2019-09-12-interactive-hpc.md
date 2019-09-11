@@ -9,13 +9,13 @@ theme: twitter
 {% include JB/setup %}
 
 Scientific institutions today are considering how to balance their current HPC
-infrastructure with a possible transition to commerical cloud.
+infrastructure with a possible transition to commercial cloud.
 
 This transition is partially motivated by data science users,
 who find that HPC policies make their workflows hard or impossible.
-These data science worklaods differ in a few ways from traditional HPC.
+These data science workloads differ in a few ways from traditional HPC.
 In particular they are data centric, interactive, and ad-hoc, using tools like
-Python and Jupter notebooks rather than highly tuned C++/MPI code that runs
+Python and Jupyter notebooks rather than highly tuned C++/MPI code that runs
 overnight.
 
 This mismatch causes frustration both for users and for system administrators.
@@ -30,48 +30,47 @@ or at the institutional level (this is generally rare, but growing quickly).
 This post briefly outlines three of the main causes of frustration:
 
 1.  Rapidly changing software environments
-2.  Access and rich user experience
+2.  Accessibility and rich user interfaces
 3.  Elastic and on-demand computing
 
-and also describes technology choices that users and institutions make today
-to solve or at least reduce this frustration.
-In particular, we focus on tools common in the Python ecosystem,
-including Conda, Jupyter{Hub/Lab}, and a marriage of Dask and job schedulers.
-This post can be seen either as a how-to for users, or as a sales pitch to IT.
+This post also describes technology choices that users and institutions make
+today to solve or at least reduce this frustration.  In particular, we focus on
+tools common in the Python ecosystem, including Conda, Jupyter{Hub/Lab}, and a
+marriage of Dask and job schedulers.  This post can be seen either as a how-to
+for users, or as a sales pitch to IT.
 
 In [a companion post](stay-on-hpc), we write to data science users and
 management, giving reasons why they should stay in HPC centers, rather than
 transition to the cloud.
 
-### Softawre environments
+### Software environments
 
-Historically, when a user needed some piece of software they would raise a
+Historically, when a user needed some piece of software, they would raise a
 ticket with the HPC system administrators who would then build the software
 and include it as a module.  This might take a few days.
 
 Today, modern data science users can change their software stack several times
-a day, and rely on a variety of both stable and bleeding edge software at
-various levels of maturity.
-Additionally, every data science user probably uses a *slightly* different set
+a day, and rely on a variety of both stable and bleeding edge software.
+Additionally, every data science user uses a *slightly* different set
 of libraries, compounding this problem by 100x
 (assuming an HPC center supports only 100 users).
 
 Asking an IT system administrator to manage hundreds of bespoke software
-environments is infeasible.  Neither side would be happy with this arrangement.
+environments is infeasible.  Neither side would be happy with the arrangement.
 
 To solve this ...
 
 -   **Users** today often install their software stack in user space,
-    commonly with tools like Anaconda or Miniconda, which was designed to be
+    commonly with tools like Anaconda or Miniconda, which were designed to be
     self contained and require only user-level permissions.  For many fields,
-    Anaconda has everything that a data scientist needs,
+    Anaconda today includes most libraries that a data scientist needs,
     including both high-level Python and R libraries,
     as well as native compiled libraries like HDF5, MPI, and GDAL.
     They might not be optimally compiled for the machine at hand,
     but they're often good enough.
 
 -   **System Administrators** understandably have mixed feelings about this.
-    It is both liberating and scary to give up control over the software run on your machine.
+    It is both liberating and scary to give up control over the software that runs on your machine.
     In the end though, at least now it's the user's responsibility
     to take charge of their own problems,
     freeing up IT for other more institutionally focused work.
@@ -102,13 +101,15 @@ To solve this ...
 
    Here are some images of such a session.
 
-   <img src="https://data.bloomberglp.com/company/sites/40/2016/07/JupyterLab.png"
-        width="80%"
-        alt="Jupyter Lab session">
+   <a href="https://data.bloomberglp.com/company/sites/40/2016/07/JupyterLab.png">
+     <img src="https://data.bloomberglp.com/company/sites/40/2016/07/JupyterLab.png"
+        width="47%"
+        alt="Jupyter Lab session"></a>
 
+   <a href="https://github.com/jacobtomlinson/jupyterlab-nvdashboard/raw/master/demo.gif">
    <img src="https://github.com/jacobtomlinson/jupyterlab-nvdashboard/raw/master/demo.gif"
-        width="80%"
-        alt="Jupyter Lab session">
+        width="47%"
+        alt="Jupyter Lab session"></a>
 
 -  **System Administrators** might support this kind of activity by deploying
    [JupyterHub](https://jupyter.org/hub) within their institution.
@@ -201,7 +202,7 @@ workloads on these datasets.
 However, in the meantime, we can use our existing infrastructure to great effect.
 Advanced users do this today and generate excellent science as a result.
 We should work to make these workflows more accessible to less advanced users,
-both by documentating best practices
+both by documenting best practices
 and by codifying some of these approaches into our software.
 
 At the same time, we should also approach this from the systems administration side.
