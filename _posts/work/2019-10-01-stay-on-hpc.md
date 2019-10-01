@@ -3,7 +3,6 @@ layout: post
 title: Reasons to keep your on-site HPC center
 tagline: and avoid the cloud
 category: work
-draft: true
 tags: []
 theme: twitter
 ---

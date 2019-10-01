@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Tips for Interactive HPC over Commerical Cloud
+title: Tips for Interactive HPC
 category: work
 tags: []
 theme: twitter
