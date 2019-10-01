@@ -9,6 +9,8 @@ theme: twitter
 ---
 {% include JB/setup %}
 
+*This is co-released with a companion post [Tips for Interactive HPC](interactive-hpc).*
+
 Scientific institutions today are considering how to balance their current HPC
 infrastructure with a possible transition to commercial cloud.
 

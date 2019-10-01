@@ -2,17 +2,19 @@
 layout: post
 title: Tips for Interactive HPC over Commerical Cloud
 category: work
-draft: true
 tags: []
 theme: twitter
 ---
 {% include JB/setup %}
 
+*This is co-released with a companion post [Five reeasons to keep your HPC
+center, and avoid the cloud](stay-on-hpc).*
+
 Scientific institutions today are considering how to balance their current HPC
 infrastructure with a possible transition to commercial cloud.
 
-This transition is partially motivated by data science users,
-who find that HPC policies make their workflows hard or impossible.
+This transition is largely motivated by data science users,
+who find a mismatch between interactive workflows and HPC policies.
 These data science workloads differ in a few ways from traditional HPC.
 In particular they are data centric, interactive, and ad-hoc, using tools like
 Python and Jupyter notebooks rather than highly tuned C++/MPI code that runs
@@ -39,9 +41,6 @@ tools common in the Python ecosystem, including Conda, Jupyter{Hub/Lab}, and a
 marriage of Dask and job schedulers.  This post can be seen either as a how-to
 for users, or as a sales pitch to IT.
 
-In [a companion post](stay-on-hpc), we write to data science users and
-management, giving reasons why they should stay in HPC centers, rather than
-transition to the cloud.
 
 ### Software environments
 
