@@ -7,6 +7,11 @@ theme: twitter
 ---
 {% include JB/setup %}
 
+<meta property="og:title" content="Tips for Interactive HPC">
+<meta property="og:description" content="Using Conda, Jupyter, and Conda to transorm HPC centers into interactive machines">
+<meta property="og:image" content="https://github.com/jacobtomlinson/jupyterlab-nvdashboard/raw/master/demo.gif">
+<meta property="og:url" content="http://matthewrocklin.com/blog/work/2019/10/01/interactive-hpc">
+
 *This is co-released with a companion post [Five reeasons to keep your HPC
 center, and avoid the cloud](stay-on-hpc).*
 
