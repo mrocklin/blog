@@ -80,3 +80,8 @@ possible with HPC centers.  But we should acknowledge that in many cases it
 will also be the wrong choice, especially for some classes of compute and data
 intensive fields.  I've listed a few reasons above on why sticking with an HPC
 center can make sense, but there are more.
+
+*Thanks to [Anderson Banihirwe](https://andersonbanihirwe.dev/),
+[Jacob Tomlinson](https://www.jacobtomlinson.co.uk/),
+and [Joe Hamman](http://joehamman.com/)
+for their review and help in writing this post*

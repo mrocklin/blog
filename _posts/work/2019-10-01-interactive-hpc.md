@@ -215,3 +215,9 @@ controlled behavior, while also giving them the tools they need to do great scie
 
 Fortunately, new tooling is out there that was intentionally designed to bridge
 this IT-User gap, including Conda, JupyterHub, and Dask.
+
+
+*Thanks to [Anderson Banihirwe](https://andersonbanihirwe.dev/),
+[Jacob Tomlinson](https://www.jacobtomlinson.co.uk/),
+and [Joe Hamman](http://joehamman.com/)
+for their review and help in writing this post*
