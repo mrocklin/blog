@@ -3,9 +3,9 @@ layout: post
 title: What Every Engineer Should Know About Sales
 category: work
 tags: []
-draft: true
 theme: twitter
 ---
+
 {% include JB/setup %}
 
 -  **Engineer:** *Hey Boss, what should I know to more effectively sell our product?*
