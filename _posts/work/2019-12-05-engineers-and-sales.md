@@ -81,8 +81,10 @@ making the website faster because customers were dropping off due to long wait
 times.
 
 They've tried to translate this pain point into a set of technical features
-for which they are now on the lookout.  Their guess about what they need
-may be incorrect, and it's useful to go check things if you can do so quickly.
+(fast database)
+for which they are now on the lookout.
+But they're usually pretty bad at this, and so we need to learn a lot more
+about them before we know how to help.
 For example maybe they don't need to invest in a new database product,
 but instead they just need a progress bar, or better CSS on their webpage.
 
@@ -90,3 +92,10 @@ If you can discover their pain point then
 you're much better equipped to solve their problem effectively.
 If you identify a good product fit at this stage then selling is easy.
 If you don't then you've avoided a long and fruitless sales process.
+
+Summary
+-------
+
+Selling (or helping people generally) has much more to with learning about them
+and having empathy than it does with talking about what yourself or your
+product.
