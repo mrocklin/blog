@@ -49,7 +49,7 @@ Here is a small example interaction
 ### Good.  Engineer listens first
 
 -   **Customer:** Is your database product fast?
--   **Good Engiineer:** Yes, in many ways, but I'm curious, why do you care
+-   **Good Engineer:** Yes, in many ways, but I'm curious, why do you care
     about speed?  I see that you work at an insurance company.  Is this for
     analytics?
 -   **Customer:** No actually.  While we do do lots of analytics, our main need
