@@ -1,6 +1,7 @@
 ---
 layout: post
-title: What Every Engineer Should Know About Sales
+title: Sales is about listening
+tagline: A practical tip for for engineers in sales calls
 category: work
 tags: []
 theme: twitter
