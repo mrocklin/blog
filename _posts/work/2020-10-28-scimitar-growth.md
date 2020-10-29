@@ -72,7 +72,7 @@ about GitHub stars.
 
 -   **VC:** *I guess that's ok*
 
-    **Me:** *But a better matric is probably that 5% of Python users use Dask
+    **Me:** *But a better metric is probably that 5% of Python users use Dask
     (according to the PSF survey, which is biased towards people who care).*
 
     *So any company that has 20 Python users has a decent chance of using Dask
@@ -92,7 +92,7 @@ I don't envy investors.  Rapidly assessing the commercial potential of highly
 technical software is hard.  It's rare to find individuals with dual
 expertise in distributed systems and business acumen.
 
-Still, the star metric makes me less-than-happy.  It's a measure of hype, not of use, or utility.
+Still, the star metric makes me less-than-happy.  It's a measure of hype, not of use, or of utility.
 
 
 ### Thoughts
@@ -110,7 +110,9 @@ sister projects like RAPIDS, Prefect, Pangeo/Xarray, XGBoost, and so on that
 Dask supports.  As a *community* project, Dask tries hard to blend in
 and support peer projects.  This integration is the strength of community
 software.  Dask and many other OSS projects strengthen the collective weave of
-PyData.  We're less like a monolith, and more like carbon fiber.
+PyData.  We're less like a monolith, and more like carbon fiber.  Hat tip to
+similar computational projects Arrow, RAPIDS, Numba, and Numpy all of whom work
+tirelessly on standards and open integration.
 
 I fundamentally believe that pragmatic sustainable software is better built
 organically and collectively.  I am curious what metrics might capture these
