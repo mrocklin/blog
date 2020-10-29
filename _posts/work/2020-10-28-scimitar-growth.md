@@ -35,7 +35,7 @@ He went on to ask about rapid, hockey-stick growth.
 
 -   **SF:** *Well, along that journey, what happened that cause you go finally achieve hockey-stick growth?*
 
-    <img src="http://blogs-images.forbes.com/sageworks/files/2016/10/HSP_Graphic1_11_16-2-e1477181247697.jpg" width="40%">
+    <img src="http://blogs-images.forbes.com/sageworks/files/2016/10/HSP_Graphic1_11_16-2-e1477181247697.jpg" width="60%">
     (Image source,
     [Forbes](https://www.forbes.com/sites/sageworks/2016/10/23/navigating-the-make-or-break-years-as-you-create-hockey-stick-growth/#764356305ed7))
 
