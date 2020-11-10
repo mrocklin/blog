@@ -126,13 +126,8 @@ Tech lead behaviors
     doing well.  While you don't have direct budget authority to give raises or
     promotions, you do have *soft power* and can advocate for great teammates.
 
-    On the reverse, you also know when someone isn't working out in the team.
-    For managers it's *really hard* to fire someone.
-    Many times the manager knows that it's not working out, but that's also
-    somewhat their fault for not coaching/assigning the teammate well enough.
-    Managers feel horrible and so tend to wait a long time before firing someone.
-    A tech lead doesn't have this block, and so can more clearly make this
-    assessment.  This usually makes the manager's job easier.
+    Conversely, you also know when someone isn't working out in the team,
+    and can work to address problems quickly before they become serious issues.
 
     A tech lead is like a cool aunt/uncle.  People say things to them that they
     wouldn't say to siblings or parents, and they're disconnected enough to
