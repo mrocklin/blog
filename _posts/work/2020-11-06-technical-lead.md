@@ -56,7 +56,7 @@ Tech lead behaviors
     those moves.
 
     If the team has to spend time dealing with, or paying down technical debt
-    that that's your fault.  You should think about simple and extensible designs,
+    then that's your fault.  You should think about simple and extensible designs,
     so that your teammates can solve individual problems that robustly lead to
     an efficient solution.
 
@@ -65,14 +65,25 @@ Tech lead behaviors
     people can develop on at once in parallel is hard and requires thoughtful
     design.
 
--   **Scope problems for your team:** you don't have time to do all of the work
-    yourself, but you may have time to describe how you would solve a
-    particularly tricky part of a problem, or to craft a test for the behavior
-    that you want.
+    In some sense, a technical lead is able to realize the "mythical man-month"
+    by finding a path through the problem that exposes enough concurrency to
+    enable acceleration through parallelism.
+
+-   **Scope problems for your team:** a small amount of scoping and support
+    work from you can
+    often save your teammates long hours of work.  This can take many forms:
+
+    -   Presenting a problem in context
+    -   Provide a recommended approach, and pointers to relevant pieces of the
+        code
+    -   Tests that you think should pass that encode important behavior or make
+        the API clear
 
     As you know, a lot of software development time is spent understanding
     design, and exploring wrong paths.  You're probably faster at this than
     your teammates, and so it's a highly productive activity for you.
+    By providing enough detail up-front you can reduce uncertainty, stress, and
+    delays from your teammates' work, which they will appreciate.
 
 -   **Know your team:** In order to properly scope and describe tasks for your
     teammates you need to know their technical capabilities and preferences
@@ -135,7 +146,7 @@ Tech lead behaviors
     professionalism, and also understand the non-technical needs of others.
     They need to understand why the work that they do is important to people.
 
--   **Listen, and have no ego:** because of this, tech leads need to listen,
+-   **Listen, and avoid ego:** because of this, tech leads need to listen,
     and have very little ego when it comes to technical work
     (I personally need to work on this).
 
