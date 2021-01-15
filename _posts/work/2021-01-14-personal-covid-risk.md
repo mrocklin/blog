@@ -46,7 +46,7 @@ Very roughly, I suspect that my parents are about 10% likely to contract COVID b
 
     Without checking numbers, I'm going to guess that this makes one about 2x more likely to get COVID on a day-by-day basis
 
--   My parents are old (sorry folks) and,
+-   My parents are older (sorry folks) and,
     like most people their age,
     have various health issues.
     They're likely to be early in line for a vaccine, but not first.
@@ -56,7 +56,9 @@ Very roughly, I suspect that my parents are about 10% likely to contract COVID b
 
     x 50 days until vaccination
 
-    So a 1 in 10 chance of contracting COVID prior to receiving a vaccine in March
+    results in a 1 in 10 chance of contracting COVID prior to receiving a vaccine in March
+
+    *if* they act like their friends and neighbors
 
 As a relatively healthy relatively young person, I'm probably closer to 1 in 5 (20%)
 due to getting a vaccine a bit later in the year.
@@ -64,6 +66,6 @@ due to getting a vaccine a bit later in the year.
 
 ## Disclaimer
 
-Remember, I am just a crank on the internet.
+Remember that I am just a crank on the internet.
 Please take this post more as an exercise for how to approximate risk,
 rather than as an actual estimate of that risk.
