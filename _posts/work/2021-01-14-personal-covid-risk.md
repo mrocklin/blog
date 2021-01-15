@@ -19,7 +19,8 @@ It's somewhere in the middle.  But where?
 After speaking with my parents for a while I learned that they didn't have a
 good mental model on how to think about quantitative risk.  This post is for them.
 This post estimates the probability that an individual contracts
-COVID before they get a vaccine.  To be specific, this post uses my parents,
+COVID before they get a vaccine using rough facts and back-of-the envelope calculations.
+To be specific, this post uses my parents,
 who are in their seventies and live in Southern California.
 
 *Disclaimer: I am not a medical professional.
