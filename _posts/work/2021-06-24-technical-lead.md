@@ -3,7 +3,6 @@ layout: post
 title: Admirable Traits of Tech Leads
 tagline:
 category: work
-draft: true
 tags: []
 theme: twitter
 ---
