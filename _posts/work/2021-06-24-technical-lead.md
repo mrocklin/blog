@@ -154,9 +154,14 @@ Tech lead behaviors
     happens often if you pay attention).
 
 -   **Respect senior engineers:** Tech leads often work alongside other senior
-    engineers who may have more experiene as developers, but don't care to
+    engineers who may have more experience as developers, but don't care to
     direct the work of others.  It's important to remember that these people
     are often smarter than you, and seek their technical opinion.
+
+-   **Respect junior engineers:** Tech leads often dispense critical feedback
+    about code to junior engineers.  This puts them at risk of appearing to be
+    jerks.  Good tech leads study human management skills, and how to deliver
+    feedback in particular.
 
 
 OSS Maintainers make good Tech Leads
