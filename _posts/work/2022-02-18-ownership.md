@@ -14,6 +14,8 @@ ownership over larger issues.  Ownership comes with both authority and more
 responsibility.  This can be scary, especially when we're put into the
 spotlight.
 
+Effective ownership requires confidence to fail comfortably.
+
 Ownership is easy when things go well, but we're truly tested when things go
 poorly and we need to identify and fix a problem that happened on our watch.
 This post goes through common reactions to things-going-poorly that I've seen

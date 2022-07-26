@@ -29,7 +29,7 @@ single experience selling open source software in the data infrastructure space.
 
 -   Not Scalable
 -   Not Dependable
--   Maybe supports future product development
+-   Maybe informs future product development
 
 I think that this activity is actually great when you're starting out.
 There's no better way to understand customer pain points than figuring out what
@@ -109,6 +109,10 @@ charge for their time.  There are other challenges, like supporting old
 versions of the software, getting clear bug reports on your software when you
 may not have permissions to touch that software directly, etc..
 
+Fortunatley though, the world has also improved since the days of Cloudera.
+Technologies like Kubernetes and "on-prem cloud" reduce (but don't eliminate)
+this pain.
+
 
 ## Product (cloud SaaS)
 
@@ -121,15 +125,15 @@ may not have permissions to touch that software directly, etc..
 Hooray product revenue attached to a system over which you have full visibility!
 Cloud SaaS is considered to be the highest velocity approach because once it
 works it's easy to scale out to lots of customers with low effort.  Of course,
-it may be hard to get to that point.  You'll have to get good at convincing
-customers that your internal systems are safe.  This will be easy in some
-sectors (SMBs, non-sensitive industries) but harder in others (Large
+it may be *really* hard to get to that point.  You'll have to get good at
+convincing customers that your internal systems are safe.  This will be easy in
+some sectors (SMBs, non-sensitive industries) but harder in others (Large
 Enterprise, finance, government, etc.).
 
 
 ## Summary
 
-Money is good.  Learning is good.  Focus is good.
+Money is good.  Dependability is good.  Learning is good.
 
 All of these activities are good in some ways and bad in others.  Rather than
 say services are bad and product is good we should be asking questions about
