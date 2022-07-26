@@ -39,8 +39,8 @@ Of course, one needs to be careful that we're learning from this experience,
 rather than just chasing money (although that's ok too if you're doing it
 intentionally).
 
-Typically these contracts are hourly.  I've seen rates anywhere from $150/hr to
-$1000/hr.
+Typically these contracts are hourly.  I've seen rates anywhere from *$150/hr* to
+*$1000/hr*.
 
 
 ## Funded Development
@@ -60,7 +60,7 @@ this work isn't very dependable it's hard to build a team around it (at least
 not a team that needs to be dependably employed)
 
 Typically these are one-off fixed-price contracts.  I've seen contracts from
-$50,000 to $1,000,000.
+*$50,000* to *$1,000,000*.
 
 
 
@@ -83,8 +83,8 @@ fortunately all of these customers typically ask for the same things, so it
 scales pretty well.  It's also pretty dependable, so it's easy to hire people
 and rest assured that you can continue to employ them.
 
-For enterprise customers these are typically anywhere from $100,000 to
-$1,000,000, at least at the Series Seed/A size.  Multi-million dollar deals of
+For enterprise customers these are typically anywhere from *$100,000* to
+*$1,000,000*, at least at the Series Seed/A size.  Multi-million dollar deals of
 this nature are doable between larger companies.  I typically have to convince
 business people that this is ARR, despite the fact that it's definitely
 annually recurring revenue.
